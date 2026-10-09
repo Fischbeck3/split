@@ -598,7 +598,7 @@
       },
       {
         "name": "The Same Challenge Rule",
-        "body": "Postcards and text shares retain the challenge date once the daily run opens, so opening a result later preserves its glass and pour. Preview shares retain #dayN and never count toward the daily record. Use the centralized public address from site/js/config.js. Keep LAUNCH_READY false for public preview deployment while HTTPS is being provisioned; preparing the launch sets it true and fixes the release date. Changing that date later would renumber existing challenges.",
+        "body": "Postcards and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain #dayN and never count toward the daily record. Use the centralized public address from site/js/config.js. The launch date is fixed at 2026-10-09; changing it later would renumber existing challenges.",
         "section": "components"
       }
     ],
