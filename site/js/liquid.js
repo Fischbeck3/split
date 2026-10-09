@@ -1,8 +1,8 @@
-// The liquid line moves inside the glass, but its amount stays the same.
+// The liquid line moves inside a round glass, but its volume stays the same.
 import {RENDER_PROFILES as PROFILES, renderWidthAt as widthAt} from './render-vessels.js';
 
 const ROW_COUNT = 96;
-const BISECTION_STEPS = 16;
+const BISECTION_STEPS = 20;
 const profiles = new Map();
 const finite = (value, fallback) => typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 
@@ -18,32 +18,54 @@ function sampledProfile(vessel){
   return profile;
 }
 
-function uprightArea(widths, level){
-  let area = 0;
+function uprightVolume(widths, level){
+  let volume = 0;
   for (let i = 0; i < ROW_COUNT; i++){
     const bottom = (i + 1) / ROW_COUNT;
-    area += 2 * widths[i] * Math.max(0, bottom - Math.max(i / ROW_COUNT, level));
+    volume += Math.PI * widths[i] * widths[i] * Math.max(0, bottom - Math.max(i / ROW_COUNT, level));
   }
-  return area;
+  return volume;
 }
 
-// Each cached row is a thin rectangle. Integrating its clipped ramp exactly
-// keeps small inclinations continuous instead of snapping between sample rows.
-function slantedArea(widths, center, inclination){
-  let area = 0;
+// Area of the portion of a unit disk to the left of the surface's crossing.
+function diskArea(crossing){
+  const u = Math.max(-1, Math.min(1, crossing));
+  return Math.PI / 2 + Math.asin(u) + u * Math.sqrt(Math.max(0, 1 - u * u));
+}
+
+// The integral of diskArea from -1 to u. Each cached row is a thin cylinder;
+// integrating its circular segment through its depth keeps tiny tilts smooth.
+function diskIntegral(u){
+  const root = Math.sqrt(Math.max(0, 1 - u * u));
+  return u * (Math.PI / 2 + Math.asin(u)) + root * (2 + u * u) / 3;
+}
+
+function slantedVolume(widths, center, inclination){
+  let volume = 0;
   for (let i = 0; i < ROW_COUNT; i++){
     const top = i / ROW_COUNT, bottom = (i + 1) / ROW_COUNT, width = widths[i];
-    const dryUntil = center - inclination * width;
-    const fullFrom = center + inclination * width;
-    area += 2 * width * Math.max(0, bottom - Math.max(top, fullFrom));
+    const extent = inclination * width;
+    const dryUntil = center - extent;
+    const fullFrom = center + extent;
+    volume += Math.PI * width * width * Math.max(0, bottom - Math.max(top, fullFrom));
     const rampTop = Math.max(top, dryUntil), rampBottom = Math.min(bottom, fullFrom);
     if (rampBottom > rampTop){
-      const topSpan = width + (rampTop - center) / inclination;
-      const bottomSpan = width + (rampBottom - center) / inclination;
-      area += (topSpan + bottomSpan) * 0.5 * (rampBottom - rampTop);
+      const span = rampBottom - rampTop;
+      const uSpan = span / extent;
+      if (uSpan < 1e-3){
+        // Near a sideways glass, subtracting two almost equal primitives loses
+        // precision. Two-point Gaussian integration stays stable even at 90°.
+        const middle = ((rampTop + rampBottom) * 0.5 - center) / extent;
+        const offset = uSpan / (2 * Math.sqrt(3));
+        volume += width * width * span * (diskArea(middle - offset) + diskArea(middle + offset)) * 0.5;
+      } else {
+        const uTop = Math.max(-1, Math.min(1, (rampTop - center) / extent));
+        const uBottom = Math.max(-1, Math.min(1, (rampBottom - center) / extent));
+        volume += width * width * extent * (diskIntegral(uBottom) - diskIntegral(uTop));
+      }
     }
   }
-  return area;
+  return volume;
 }
 
 /** A volume-preserving surface in vessel-local coordinates.
@@ -71,11 +93,13 @@ export function getLiquidSurface(options = {}){
   if (level === 0) return {centerLevel: -extent, slope};
   if (level === 1) return {centerLevel: 1 + extent, slope};
 
-  const target = uprightArea(widths, level);
+  // Radius is widthAt * aspect. The shared aspect² factor cancels from both
+  // volumes, leaving the round cross sections in profile-relative units.
+  const target = uprightVolume(widths, level);
   let low = -extent, high = 1 + extent;
   for (let i = 0; i < BISECTION_STEPS; i++){
     const center = (low + high) * 0.5;
-    if (slantedArea(widths, center, inclination) > target) low = center;
+    if (slantedVolume(widths, center, inclination) > target) low = center;
     else high = center;
   }
   return {centerLevel: (low + high) * 0.5, slope};

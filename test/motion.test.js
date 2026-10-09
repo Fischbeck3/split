@@ -87,3 +87,20 @@ test('invalid motion inputs remain finite and long background gaps are bounded',
   assert.ok(isMotionSettled(safe));
   assert.ok(!isMotionSettled({angle: NaN}));
 });
+
+test('an emptier glass tips farther and still returns promptly without changing the sip', () => {
+  for (const id of ['pub', 'beach', 'munich']){
+    const P = physicalGlassParams(id);
+    const atLevel = level => {
+      let state = makeMotionState();
+      for (let i = 0; i < 120; i++) state = stepMotion(P, state, {drinking:true, input:1, level, elapsed:i / 120, dt:1 / 120});
+      return state;
+    };
+    const upper = atLevel(0.2), lower = atLevel(0.8);
+    assert.ok(lower.angle > upper.angle + 15, P.theme.id + ': tipping should follow the dropping beer line');
+    assert.ok(lower.angle < 55, 'keep the mark and glass within the playable view');
+    assert.ok(isMotionSettled(moveFor(P, lower, 0.95, {drinking:false})), 'deeper tilt still settles in under a second');
+    const reduced = stepMotion(P, lower, {drinking:true, input:1, level:0.8, dt:0.2, reducedMotion:true});
+    assert.equal(reduced.angle, 0, 'still glass keeps the device preference');
+  }
+});

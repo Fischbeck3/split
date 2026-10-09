@@ -45,18 +45,29 @@ test('Corona has a continuous rounded shoulder, slender neck, and straight body'
   assert.equal(renderWidthAt('corona', 2), renderWidthAt('corona', 1));
 });
 
-test('the slimmer Corona display preserves the frozen Corona neck, shoulder, and body timing', () => {
-  const P = physicalGlassParams('beach'), before = structuredClone(P);
-  // Reference levels from the published pour at constant K and 120 Hz. These
-  // span the quick neck, shoulder transition, and the body’s regular glug.
-  const checkpoints = new Map([[60, 0.30453750085829956], [120, 0.40356184638546005], [240, 0.5687516396459574]]);
-  let drink = makeDrinkState(P);
+test('Corona display lookups preserve the calibrated bottle momentum pour', () => {
+  // Keep this physical calibration independent of the authored day schedule.
+  const P = physicalGlassParams('beach');
+  const before = structuredClone(P), profilesBefore = structuredClone(PROFILES);
+  // Calibrated levels for the authorized round-section momentum model at
+  // constant K and 120 Hz: neck, shoulder, and two regular body glugs.
+  const checkpoints = new Map([[12, 0.14722400527028784], [30, 0.32449484007936713],
+    [120, 0.462580604363762], [240, 0.6178894004419483]]);
+  let drink = makeDrinkState(P), withoutRendering = makeDrinkState(P);
   for (let tick = 1; tick <= 240; tick++){
     renderWidthAt(renderVessel(P.theme), drink.level);
     drink = stepDrink(P, drink, P.K, 1 / 120);
-    if (checkpoints.has(tick)) assert.ok(Math.abs(drink.level - checkpoints.get(tick)) < 1e-12, 'published timing changed at tick ' + tick);
+    withoutRendering = stepDrink(P, withoutRendering, P.K, 1 / 120);
+    assert.deepEqual(drink, withoutRendering, 'display lookup changed the pour at tick ' + tick);
+    if (checkpoints.has(tick)) assert.ok(Math.abs(drink.level - checkpoints.get(tick)) < 1e-12, 'calibrated timing changed at tick ' + tick);
   }
-  const released = stepDrink(P, drink, 0, 0.25);
-  assert.equal(released.level, drink.level, 'the bottle must still stop immediately on release');
+  const moving = stepDrink(P, drink, 0, 1 / 120);
+  assert.ok(moving.level > drink.level && moving.velocity > 0, 'bottle momentum must carry briefly after release');
+  const released = stepDrink(P, drink, 0, 0.21);
+  assert.ok(Math.abs(released.level - 0.632749298625497) < 1e-12, 'calibrated afterflow changed');
+  assert.ok(released.level - drink.level > 0.01 && released.level - drink.level < 0.02, 'bottle afterflow must stay brief and learnable');
+  assert.equal(released.velocity, 0, 'bottle must settle within its 0.21-second release window');
+  assert.equal(stepDrink(P, released, 0, 0.25).level, released.level, 'bottle moved after settling');
   assert.deepEqual(P, before, 'rendering changed the seeded pour or target');
+  assert.deepEqual(PROFILES, profilesBefore, 'rendering changed the physical drinking profiles');
 });

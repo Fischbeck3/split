@@ -9,13 +9,37 @@ import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
+import {readPreference, savePreference} from './motion-preference.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 
 const $ = id => document.getElementById(id);
 // A fixed release calendar keeps prototype scores out of the public run.
 const STORE = 'split.v1:' + LAUNCH;
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let reducedMotion = motionQuery.matches;
+let preferenceStorage;
+try { preferenceStorage = window.localStorage; } catch { /* keep the preference in memory */ }
+let glassMotionOverride = readPreference(preferenceStorage);
+const stillGlass = () => glassMotionOverride ?? reducedMotion;
+function renderMotionPreference(){
+  const still = stillGlass(), btn = $('motionBtn');
+  btn.setAttribute('aria-pressed', String(!still));
+  btn.setAttribute('aria-label', still ? 'Turn glass motion on' : 'Turn glass motion off');
+  btn.title = still ? 'Glass motion off. Turn it on.' : 'Glass motion on. Turn it off.';
+  $('motionNote').hidden = !still;
+  $('motionNote').textContent = glassMotionOverride === null
+    ? 'Glass motion is off to match your device. The glass button above turns it on.'
+    : 'Glass motion is off. The glass button above turns it on.';
+}
+const onMotionPreferenceChange = event => {
+  reducedMotion = event.matches;
+  renderMotionPreference();
+  if (S.P && S.state !== 'drinking' && S.state !== 'locked') draw(performance.now());
+};
+if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotionPreferenceChange);
+else if (motionQuery.addListener) motionQuery.addListener(onMotionPreferenceChange);
+renderMotionPreference();
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
   result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState()};
@@ -148,30 +172,29 @@ function begin(){
   $('drinkControl').textContent = 'Hold to drink';
   $('recalibrateBtn').hidden = S.mode !== 'tilt';
   $('recalibrateBtn').disabled = false;
-  $('footPill').textContent = S.mode === 'tilt' ? 'Tilt to sip. Come upright at the mark.' : 'Hold to sip. Release at the mark.';
+  $('footPill').textContent = S.mode === 'tilt' ? 'Come upright early; settle at the mark.' : 'Release early; settle at the mark.';
   if (S.mode === 'hold') $('drinkControl').focus({preventScroll: true});
 }
 const wantsDrink = () => S.mode === 'tilt' ? tiltAngle() > TILT_START : S.holding;
 const wantsStop = () => S.mode === 'tilt' ? tiltAngle() < TILT_STOP : !S.holding;
-function rate(now){
-  const base = S.mode === 'tilt' ? tiltRate(S.P.K, tiltAngle()) : S.P.K * Math.min(1, (now - S.holdStart) / 600);
-  return base;
-}
+function rate(){ return S.mode === 'tilt' ? tiltRate(S.P.K, tiltAngle()) : S.P.K; }
 function frame(now){
   if (document.hidden){ S.last = 0; requestAnimationFrame(frame); return; }
-  const dt = Math.min(0.05, (now - (S.last || now)) / 1000); S.last = now;
+  const dt = Math.min(0.25, (now - (S.last || now)) / 1000); S.last = now;
   const elapsed = S.drink?.elapsed || 0;
+  let drinkDt = dt;
   if (S.state === 'ready' && wantsDrink()){
     refreshDayStatus();
     setPhase('drinking'); if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
+    if (S.mode === 'hold') drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
     analytics.capture('sip_started', {...gameProperties(S), counts:!S.practice && canRecordChallenge({key:S.key, kind:S.kind})});
     sound.start(S.theme);
     $('recalibrateBtn').disabled = true;
-    $('footPill').textContent = S.mode === 'hold' ? 'Release to stop. Let it settle.' : 'Come upright to stop. Let it settle.';
+    $('footPill').textContent = S.mode === 'hold' ? 'Release early. Let the sip settle.' : 'Come upright early. Let the sip settle.';
   }
   if (S.state === 'drinking'){
     if (wantsStop()) lock(now);
-    else { S.drink = stepDrink(S.P, S.drink, rate(now), dt); S.L = S.drink.level; }
+    else { S.drink = stepDrink(S.P, S.drink, rate(), drinkDt); S.L = S.drink.level; }
     if (S.L >= DRAIN_LEVEL){ S.drained = true; lock(now); }
   }
   if (S.state === 'locked'){
@@ -179,7 +202,7 @@ function frame(now){
     if (S.L >= DRAIN_LEVEL) S.drained = true;
   }
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
-    input: S.state === 'drinking' ? Math.min(1, rate(now) / S.P.K) : 0, elapsed, dt, reducedMotion});
+    input: S.state === 'drinking' ? Math.min(1, rate() / S.P.K) : 0, level:S.L, elapsed, dt, reducedMotion: stillGlass()});
   sound.update(S.theme, {drinking:S.state === 'drinking', elapsed:S.drink?.elapsed || 0});
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
   if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = sipKind() + ' · ' + Math.round(tiltAngle()) + '° · ' + S.theme.feel;
@@ -192,7 +215,7 @@ function frame(now){
 function lock(now){
   setPhase('locked'); S.lockAt = now; up();
   $('drinkControl').disabled = true; $('drinkControl').textContent = 'Settling…';
-  $('footPill').textContent = 'Returning upright…';
+  $('footPill').textContent = stillGlass() ? 'Letting the sip settle…' : 'Returning upright. Let the sip settle…';
 }
 function finish(now){
   const finishedAt = new Date(); refreshDayStatus(finishedAt);
@@ -234,7 +257,8 @@ function renderResult(){
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
   $('resKind').textContent = S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
-  $('officialBtn').hidden = r.counts || S.kind !== 'today' || !load().days[S.key]?.done;
+  const saved = load().days[S.key];
+  $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
   const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
   $('friendComparison').hidden = !comparison;
@@ -348,6 +372,14 @@ const down = e => {
   if (S.mode === 'hold'){ S.holding = true; if (S.state === 'ready') S.holdStart = performance.now(); }
 };
 const up = () => {
+  // Account for the final part of a hold at the release event, rather than
+  // allowing a slower screen's next animation frame to choose the stopping time.
+  if (S.mode === 'hold' && S.holding && S.state === 'drinking'){
+    const now = performance.now(), dt = Math.max(0, Math.min(0.25, (now - S.last) / 1000));
+    S.drink = stepDrink(S.P, S.drink, S.P.K, dt); S.L = S.drink.level; S.last = now;
+    if (S.L >= DRAIN_LEVEL) S.drained = true;
+    lock(now);
+  }
   S.holding = false; $('drinkControl').setAttribute('aria-pressed', 'false');
   if (S.state === 'ready' || S.state === 'drinking') $('drinkControl').textContent = 'Hold to drink';
 };
@@ -372,6 +404,12 @@ $('drinkControl').addEventListener('keydown', e => { if (e.code === 'Enter' && !
 $('drinkControl').addEventListener('keyup', e => { if (e.code === 'Enter') up(); });
 $('recalibrateBtn').addEventListener('click', () => { if (S.state === 'ready'){ calibrate(); toast('Upright position reset. Ready to sip.'); } });
 $('startTilt').addEventListener('click', enableTilt);
+$('motionBtn').addEventListener('click', () => {
+  glassMotionOverride = !stillGlass();
+  savePreference(preferenceStorage, glassMotionOverride);
+  renderMotionPreference();
+  toast(stillGlass() ? 'Glass motion off. The sip and scoring work the same.' : 'Glass motion on. Hold to lift and tip your glass.');
+});
 $('soundBtn').addEventListener('click', async () => {
   const btn = $('soundBtn'), requested = !sound.enabled;
   btn.disabled = true; btn.setAttribute('aria-busy', 'true');
@@ -395,7 +433,7 @@ for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventL
 $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
   if (!canRecordChallenge({key:S.key, kind:S.kind})) return;
-  const rec = load().days[S.key]; if (!rec || !rec.done) return;
+  const rec = load().days[S.key]; if (!rec || !rec.done || rec.theme !== S.theme.id) return;
   S.practice = false; S.mode = rec.mode; S.L = rec.L;
   S.result = {...rec, counts:true}; setPhase('result'); draw(performance.now()); renderResult();
 });
@@ -438,7 +476,14 @@ async function init(){
   }
   $('introGoal').textContent = $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
   $('introFeel').textContent = S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour');
-  $('vesselHint').textContent = S.theme.line;
+  $('vesselHint').textContent = S.theme.vessel === 'bottle'
+    ? 'The narrow neck empties quickly, then air enters in glugs through the body. Release a little early and let it settle.'
+    : S.theme.vessel === 'stein'
+      ? 'The heavy stein starts slowly and keeps flowing briefly after release. Come upright before the mark.'
+      : S.theme.vessel === 'mug'
+        ? 'The sip keeps moving briefly after release. Release before the mark and let it settle.'
+        : 'As the glass narrows, the beer line falls faster. Release before the mark and let the sip settle.';
+  renderMotionPreference();
   document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
   scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the brief dashed target line across ' + S.theme.target + '.');
   if (S.designPreview){
