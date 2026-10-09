@@ -7,6 +7,7 @@ import * as motion from '../site/js/motion.js';
 
 const main = readFileSync(new URL('../site/js/main.js', import.meta.url), 'utf8');
 const motionSetup = main.slice(main.indexOf('const motionQuery = '), main.indexOf('const S = '));
+const pourFeel = main.slice(main.indexOf('function pourFeel(){'), main.indexOf('function challengeDate(){'));
 const sipStart = main.slice(main.indexOf('function begin(){'), main.indexOf('const wantsDrink = '));
 const sipFrames = main.slice(main.indexOf('const wantsDrink = '), main.indexOf('function finish(now){'));
 const holdInput = main.slice(main.indexOf('const down = '), main.indexOf('for (const target of '));
@@ -38,7 +39,7 @@ function holdApp({deviceReduced = false, previousMode = 'hold'} = {}){
     analytics:{capture(){}}, sound:{start(){}, stop(){}, update(){}}, draw(){},
     finish:() => { S.state = 'result'; },
     setPhase:phase => { S.state = phase; }, sipKind:() => 'Practice'});
-  vm.runInContext(motionSetup + '\n' + sipStart + '\n' + sipFrames + '\n' + holdInput, context);
+  vm.runInContext(motionSetup + '\n' + pourFeel + '\n' + sipStart + '\n' + sipFrames + '\n' + holdInput, context);
   const begin = () => vm.runInContext('begin();', context);
   const press = () => vm.runInContext('down({cancelable:true,preventDefault(){}});', context);
   const release = () => vm.runInContext('up();', context);

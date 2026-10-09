@@ -224,6 +224,8 @@ At widths of 700px and above, the HUD and sheet receive wider side padding and t
 
 The `site/design.html` review route shows all three opening days and their sample cards in three columns, switching to a single column at 900px. This is a preview composition, not a new in-game navigation structure. Its link to `site/motion.html` opens a separate three-vessel preview with sip playback and frozen Ready, Drinking, Just released, and Settled stages; neither preview saves daily scores.
 
+The bookmark-only `#admin/<themeId>` review keeps the vessel as the focal point on phone and desktop. A compact footer strip uses the current theme's sheet, ink, and separator colors. Entry, live, and result controls reserve space above it; a slightly smaller vessel keeps the mark clear at short phone heights.
+
 ## Elevation & Depth
 
 The interface is mostly flat. Theme-colored sheets meet the painted travel scene without floating-card effects. Depth comes from the place's worn wood, canopy or roof, distant company, and natural light, then the glass rim and wall highlights, condensation or dimples, beer gradient, dense microfoam, and lacing. The desktop game container and transient toast use ambient CSS shadows: respectively `0 10px 60px #0003` and `0 8px 24px #0003`. The hold control uses a shallow inset edge at rest (`inset 0 -3px 0 #0002`) and an inset pressed shadow (`inset 0 2px 5px #0003`) to make the gesture tangible.
@@ -257,6 +259,10 @@ The fixed launch date is October 9, 2026 for the old Irish pub. The opening line
 ### Preview navigation
 
 The bottom preview strip is shown only for hash-based day previews. Pub, Beach, and Fest links use foreground ink. The active link adds bold weight and a stronger accent underline, with `aria-current` preserving its meaning. Preview layouts reserve room for this strip.
+
+### Theme review
+
+The catalog footer pairs familiar Karla controls with a persistent “Theme review · not saved” label. Previous and next use current-color SVG arrows in 44px targets, flanking a 44px native picker populated from `THEMES`; both directions wrap. Refill and Exit are compact underlined text actions. Intro, live status, results, and postcards keep the unsaved state explicit, while shared links preserve the selected theme. Review uses the existing visual system and hold gesture across the full catalog.
 
 ### Vessel and physics
 
