@@ -39,7 +39,7 @@ test('published attribution never takes a holiday draft or campaign span as appr
   const t = {id:'pub', glassId:'guinness-tulip', vessel:'tulip', scene:'pub', visualTheme:'irish-pub'};
   assert.deepEqual(getCalendarAttribution('2026-10-10', t), {
     glass_id:'guinness-tulip', vessel:'tulip', scene:'pub', visual_theme:'irish-pub',
-    campaign_id:'opening-2026', campaign_day:2, schedule_version:1
+    campaign_id:'opening-2026', campaign_day:2, schedule_version:CALENDAR.version
   });
   assert.equal(getCalendarAttribution('2026-10-25', t).campaign_id, 'none');
   const partial = copy(); partial.campaigns['halloween-2026'].status = 'published';
@@ -75,7 +75,7 @@ test('draft imports preserve published days; promotion requires ready content on
   const draftReview = prepareCalendarChange(input, {now:NOW});
   assert.deepEqual(draftReview.plan.days, normalizeCalendarPlan(CALENDAR).days);
   assert.equal(draftReview.plan.campaigns['halloween-2026'].status, 'draft');
-  assert.equal(draftReview.plan.version, 2);
+  assert.equal(draftReview.plan.version, CALENDAR.version + 1);
   assert.equal(draftReview.changes.length, 1);
   assert.deepEqual(draftReview.changes[0], {section:'drafts', key:'2026-10-25', before:CALENDAR.drafts['2026-10-25'], after:input.drafts['2026-10-25']});
   assert.throws(() => prepareCalendarChange(input, {now:NOW, publish:true}), /cannot schedule/);
@@ -128,7 +128,7 @@ test('feeds keep actual and draft glass selections separate with stable all-day 
   assert.match(actual[0], /URL:https:\/\/dailysplit.us\/#day17/);
   assert.match(drafts.at(-1), /DTSTART;VALUE=DATE:20261025\r\nDTEND;VALUE=DATE:20261101/);
   assert.match(drafts.at(-1), /UID:split-campaign-halloween-2026@dailysplit.us/);
-  assert.match(drafts[0], /SEQUENCE:1/);
+  assert.ok(drafts[0].includes('SEQUENCE:' + CALENDAR.version));
   const requested = [];
   createCalendarFeed({...options, plan, includeDrafts:true, resolveTheme:(date,id) => {requested.push([date,id]); return theme(date,id);}});
   assert.deepEqual(requested[0], ['2026-10-25','cider']);

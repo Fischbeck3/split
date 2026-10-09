@@ -4,8 +4,10 @@ export const LEGACY_ROTATION_IDS = Object.freeze(['pub', 'beach', 'munich', 'sap
 export const LEGACY_OPENING_IDS = Object.freeze(['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach']);
 
 export const CALENDAR = {
-  version: 1,
-  updatedAt: '2026-10-09T20:00:00.000Z',
+  // Advance subscription revisions for the corrected readiness labels and
+  // tentative fallback status. Glass assignments and seeds stay unchanged.
+  version: 2,
+  updatedAt: '2026-10-09T23:17:00.000Z',
   days: {
     '2026-10-09': {themeId: 'pub', campaignId: 'opening-2026'},
     '2026-10-10': {themeId: 'peroni', campaignId: 'opening-2026'},
