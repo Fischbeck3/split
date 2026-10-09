@@ -70,7 +70,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -79,8 +79,7 @@
           "trendsFilter": {
             "display": "ActionsLineGraph",
             "showLegend": true
-          },
-          "version": 2
+          }
         }
       }
     },
@@ -120,7 +119,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -145,7 +144,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -154,8 +153,7 @@
           "trendsFilter": {
             "display": "ActionsLineGraph",
             "showLegend": true
-          },
-          "version": 2
+          }
         }
       }
     },
@@ -238,7 +236,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -263,7 +261,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -288,7 +286,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 },
                 {
@@ -296,7 +294,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -305,8 +303,7 @@
           "trendsFilter": {
             "display": "ActionsLineGraph",
             "showLegend": true
-          },
-          "version": 2
+          }
         }
       }
     },
@@ -328,9 +325,7 @@
             {
               "kind": "EventsNode",
               "event": "friend_link_opened",
-              "name": "friend_link_opened",
               "custom_name": "Friend arrival",
-              "math": "dau",
               "properties": [
                 {
                   "key": "attempt_kind",
@@ -345,7 +340,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -353,9 +348,7 @@
             {
               "kind": "EventsNode",
               "event": "sip_started",
-              "name": "sip_started",
               "custom_name": "Started daily sip",
-              "math": "dau",
               "properties": [
                 {
                   "key": "attempt_kind",
@@ -370,7 +363,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -378,9 +371,7 @@
             {
               "kind": "EventsNode",
               "event": "sip_completed",
-              "name": "sip_completed",
               "custom_name": "Finished daily sip",
-              "math": "dau",
               "properties": [
                 {
                   "key": "attempt_kind",
@@ -395,7 +386,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 },
                 {
@@ -403,7 +394,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -520,7 +511,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -545,7 +536,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -570,7 +561,7 @@
                   "type": "event",
                   "operator": "exact",
                   "value": [
-                    true
+                    "true"
                   ]
                 }
               ]
@@ -579,8 +570,7 @@
           "trendsFilter": {
             "display": "ActionsLineGraph",
             "showLegend": true
-          },
-          "version": 2
+          }
         }
       }
     }

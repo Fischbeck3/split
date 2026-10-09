@@ -3,6 +3,77 @@ import assert from 'node:assert/strict';
 import {loadDashboard, provisionDashboard} from '../scripts/provision-posthog-dashboard.js';
 
 const options = {projectId:'123', personalKey:'phx_test_personal_key'};
+
+test('saved native insights match the connected PostHog query schemas', async () => {
+  const plan = await loadDashboard();
+  // The connected query-trends, query-funnel and query-retention schemas
+  // require string values in exact-match arrays, even for boolean properties.
+  // Funnel EventsNode has no dau aggregation; its default is a unique-actor
+  // funnel. Retention identifies named events using a string id.
+  const property = (filters, key, value) => filters.some(filter =>
+    filter.type === 'event' && filter.key === key && filter.operator === 'exact' &&
+    Array.isArray(filter.value) && filter.value.includes(value));
+  function checkFilters(filters) {
+    for (const filter of filters) {
+      assert.equal(filter.type, 'event');
+      assert.equal(filter.operator, 'exact');
+      assert.equal(typeof filter.key, 'string');
+      assert.ok(Array.isArray(filter.value));
+      assert.ok(filter.value.length > 0);
+      assert.ok(filter.value.every(value => typeof value === 'string'), filter.key);
+    }
+  }
+  for (const insight of plan.insights) {
+    assert.ok(insight.description.length <= 400, insight.name);
+    const source = insight.query.source;
+    if (source.kind === 'HogQLQuery') continue;
+    assert.deepEqual(source.dateRange, {date_from:'-30d', date_to:null});
+    checkFilters(source.properties || []);
+    if (source.kind === 'RetentionQuery') {
+      const retention = source.retentionFilter;
+      assert.equal(retention.period, 'Day');
+      assert.equal(retention.totalIntervals, 2);
+      assert.equal(retention.timeWindowMode, 'strict_calendar_dates');
+      assert.equal(retention.cumulative, false);
+      assert.equal(retention.retentionType, 'retention_recurring');
+      for (const entity of [retention.targetEntity, retention.returningEntity]) {
+        assert.equal(entity.id, 'sip_started');
+        assert.equal(entity.type, 'events');
+        checkFilters(entity.properties);
+        assert.ok(property(entity.properties, 'attempt_kind', 'daily'));
+      }
+      continue;
+    }
+    assert.ok(source.series.length > 0);
+    for (const node of source.series) {
+      assert.equal(node.kind, 'EventsNode');
+      assert.equal(typeof node.event, 'string');
+      checkFilters(node.properties);
+      if (node.event !== 'game_opened') assert.ok(property(node.properties, 'attempt_kind', 'daily'));
+      if (['sip_completed','result_shared','result_copied','postcard_save_attempted','postcard_saved','postcard_save_failed'].includes(node.event)) {
+        assert.ok(property(node.properties, 'counts', 'true'), node.event);
+      }
+      if (source.kind === 'FunnelsQuery') {
+        assert.ok(!Object.hasOwn(node, 'math'), 'native funnels count actors without a dau field');
+        assert.ok(!Object.hasOwn(node, 'name'), 'funnel event names use event/custom_name');
+        assert.ok(property(node.properties, 'friend_link', 'true'));
+      } else {
+        assert.equal(source.kind, 'TrendsQuery');
+        assert.ok(['dau','total'].includes(node.math));
+        assert.equal(source.interval, 'day');
+        assert.deepEqual(source.trendsFilter, {display:'ActionsLineGraph', showLegend:true});
+        assert.ok(!Object.hasOwn(source, 'version'), 'typed TrendsQuery has no version field');
+      }
+    }
+    if (source.kind === 'FunnelsQuery') {
+      assert.deepEqual(source.funnelsFilter, {
+        funnelVizType:'steps', funnelOrderType:'ordered',
+        funnelWindowInterval:1, funnelWindowIntervalUnit:'hour', layout:'vertical'
+      });
+    }
+  }
+});
+
 function fakePostHog(){
   const records = {dashboards:[], insights:[]};
   const calls = [];
