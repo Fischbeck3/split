@@ -27,10 +27,10 @@ test('invalid dates and ambiguous metadata cannot produce a launch plan', () => 
 });
 
 test('same-date launch preparation preserves the configured fresh share image', () => {
-  const withImage = config + "export const SOCIAL_IMAGE = 'og-opening-v2.jpg';\n";
+  const withImage = config + "export const SOCIAL_IMAGE = 'og-opening-v3.jpg';\n";
   const socialHtml = html + '\n<meta name="twitter:image" content="https://old.example/og.png">';
   const plan = planLaunch('2026-10-09', withImage, socialHtml);
-  assert.match(plan.html, /content="https:\/\/dailysplit\.us\/og-opening-v2\.jpg"/);
+  assert.match(plan.html, /content="https:\/\/dailysplit\.us\/og-opening-v3\.jpg"/);
   assert.doesNotMatch(plan.html, /old\.example/);
   assert.deepEqual(planLaunch('2026-10-09', plan.config, plan.html), plan);
   for (const asset of ['https://other.example/image.jpg', '../image.jpg', 'missing', 'image.jpg?token=secret']){
