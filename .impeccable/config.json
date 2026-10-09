@@ -62,6 +62,15 @@
         ],
         "createdAt": "2026-10-09T17:52:53.479Z",
         "reason": "Agent: DESIGN.md explicitly preserves the incumbent Fraunces/Karla pairing and Split wordmark; this task refines glass motion and fluid behavior within that established identity."
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/calendar.html"
+        ],
+        "createdAt": "2026-10-09T22:48:45.114Z",
+        "reason": "Codex verified browser computed padding: daily performance has 32px left inset on desktop and 20px top inset on mobile with no left border; upcoming section has 24px top inset; run, plan and feed sections have 45px desktop and 32px mobile top padding. Detector misses padding shorthand."
       }
     ]
   }

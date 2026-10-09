@@ -6,8 +6,10 @@
   <meta name="theme-color" content="#f6f0e3">
   <meta name="robots" content="noindex">
   <title>The daily calendar · Split</title>
-  <meta name="description" content="See the daily Split lineup, plan future glasses and holiday runs, and subscribe to the calendar.">
+  <meta name="description" content="Check today’s Split glass, see the next seven days, open your performance reports, and plan upcoming themes.">
+  <meta name="apple-mobile-web-app-title" content="Split Calendar">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="css/calendar.css">
   <script type="module" src="js/calendar.js"></script>
 </head>
@@ -17,11 +19,22 @@
     <nav aria-label="Calendar navigation"><a href="./next-days.html">The concept studio</a><a href="./">Play today’s glass</a></nav>
   </header>
   <main>
-    <section class="page-intro" aria-labelledby="pageTitle">
-      <div><h1 id="pageTitle">A glass for<br>every day.</h1><p>See what’s pouring. Leave room for the next place,<br class="desktop-break"> a holiday week, or a whole new season.</p></div>
-      <div class="intro-note"><p>Plan here. Publish after review.</p><p>The daily lineup is live. Your changes are drafts saved in this browser. Export a plan for review before it changes anyone’s glass.</p><a id="dashboardLink" href="#performance">See how the glasses perform <span aria-hidden="true">↗</span></a></div>
+    <section class="daily-check" aria-labelledby="pageTitle">
+      <div class="daily-heading"><h1 id="pageTitle">Your daily check.</h1><p id="glanceDate">Loading today’s lineup…</p></div>
+      <div class="daily-overview">
+        <div class="today-glass"><h2 id="todayDrink">Today’s glass</h2><p id="todayPlace"></p><p id="todayContext" class="small-note"></p><a id="playToday" class="primary-button" href="./">Play today’s glass</a></div>
+        <div class="daily-performance"><h2>Performance</h2><p id="reportingDate"></p><div class="daily-report-links"><a id="latestAnalytics" href="#performance" target="_blank" rel="noopener">Review the latest completed day <span aria-hidden="true">↗</span></a><a id="dailyDashboard" href="#performance" target="_blank" rel="noopener">Visitors, players &amp; shares <span aria-hidden="true">↗</span></a><a id="dashboardLink" href="#performance">Compare glasses &amp; themes <span aria-hidden="true">↗</span></a></div><p class="small-note">Numbers open in your private PostHog project. Today’s results are still growing.</p></div>
+      </div>
     </section>
-    <p id="pageStatus" class="page-status" role="status" aria-live="polite">Loading the calendar…</p>
+    <section class="upcoming-section" aria-labelledby="upcomingTitle">
+      <div class="upcoming-heading"><h2 id="upcomingTitle">The next seven days</h2><p id="upcomingSummary" class="small-note"></p></div>
+      <ol id="upcomingDays" class="upcoming-days"></ol>
+    </section>
+    <details class="access-help"><summary>Keep this a tap away</summary><p>Bookmark this page on your Mac. On iPhone, open it in Safari, tap Share, then Add to Home Screen. It opens on today’s lineup each time.</p><a href="#feedTitle">Subscribe in your calendar app</a></details>
+    <details id="planningTools" class="planning-tools">
+      <summary>Plan &amp; edit the calendar</summary>
+      <p class="planning-note">Changes save as drafts in this browser. Export a plan for review before it changes the daily game or subscription feeds.</p>
+      <p id="pageStatus" class="page-status" role="status" aria-live="polite">Loading the calendar…</p>
     <div class="planner">
       <section class="calendar-area" aria-labelledby="monthTitle">
         <div class="calendar-toolbar"><h2 id="monthTitle">October 2026</h2><div class="month-controls"><button id="previousMonth" class="icon-button" type="button" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><button id="todayButton" class="quiet-button" type="button">Today</button><button id="nextMonth" class="icon-button" type="button" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7"/></svg></button></div></div>
@@ -48,6 +61,7 @@
     </section>
     <section class="plan-section" aria-labelledby="planTitle"><div class="section-lead"><h2 id="planTitle">Keep the plan.<br>Then pass it on.</h2><p id="planSummary">No browser changes yet.</p></div><div class="plan-actions"><button id="exportPlan" class="primary-button" type="button">Export plan for review</button><label class="file-button" for="importPlan">Import a plan<input id="importPlan" type="file" accept="application/json,.json"></label><button id="downloadLocalFeed" class="quiet-button" type="button">Download this planning calendar</button><p class="small-note">Exported JSON includes the published baseline and your draft proposals. Ask Codex to review and publish it. The game and subscription feeds update after release.</p><details><summary id="reviewSummary">Review all draft dates</summary><div id="allDrafts" class="all-drafts"></div></details></div></section>
     <section class="feed-section" aria-labelledby="feedTitle"><div class="section-lead"><h2 id="feedTitle">Take the dates<br>with you.</h2><p>All-day entries follow the glass’s calendar date. A subscription refreshes from the published feed; a download is a snapshot.</p></div><div class="feed-options"><article><h3>The daily lineup</h3><p>The current published glasses, including the automatic rotation.</p><div class="link-row"><a id="subscribeLive" href="calendar.ics">Subscribe to the lineup</a><a id="downloadLive" href="calendar.ics" download="split-calendar.ics">Download .ics</a></div><input id="liveFeedUrl" aria-label="Published calendar subscription URL" readonly></article><article><h3>The planning calendar</h3><p>Published dates plus shared draft runs. Browser-only changes join after review and release.</p><div class="link-row"><a id="subscribePlanning" href="calendar-planning.ics">Subscribe to the plan</a><a id="downloadPlanning" href="calendar-planning.ics" download="split-calendar-planning.ics">Download .ics</a></div><input id="planningFeedUrl" aria-label="Planning calendar subscription URL" readonly></article></div></section>
+    </details>
     <section id="performance" class="performance-section" aria-labelledby="performanceTitle"><h2 id="performanceTitle">Which glasses get shared?</h2><p>Compare daily players, completed sips, and unique sharers by glass, place, or published run. Results live in PostHog; future plans have no performance yet.</p><div class="link-row"><a id="themeAnalytics" href="#" target="_blank" rel="noopener">Compare glasses and runs <span aria-hidden="true">↗</span></a><a id="performanceDashboard" href="#" target="_blank" rel="noopener">Open the daily dashboard <span aria-hidden="true">↗</span></a></div></section>
   </main>
   <footer class="page-footer"><a class="wordmark" href="./">Split<span>.</span></a><p>One glass. One sip. A new place to remember.</p><a href="./next-days.html">Back to the concepts</a></footer>
