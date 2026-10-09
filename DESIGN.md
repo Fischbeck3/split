@@ -96,11 +96,12 @@ typography:
 rounded:
   card: "6px"
   control: "8px"
+  control-tray: "16px"
   preview-frame: "10px"
 spacing:
   compact: "8px"
   small: "12px"
-  control-top: "18px"
+  control-top: "16px"
   button-inline: "20px"
   heading-inline: "24px"
   mobile-inline: "26px"
@@ -130,7 +131,8 @@ components:
     backgroundColor: "{colors.pub-accent}"
     textColor: "{colors.pub-accent-ink}"
     rounded: "{rounded.control}"
-    height: "64px"
+    padding: "12px 16px"
+    height: "56px"
     width: "100%"
   preview-nav:
     backgroundColor: "{colors.pub-sheet}"
@@ -207,7 +209,7 @@ The heavy serif gives the wordmark and score a familiar pub-sign character; Karl
 
 - **Display:** the day title uses the frontmatter display role and balanced wrapping. A short viewport reduces it to 33px.
 - **Wordmark:** the tight, heavy `Split.` wordmark anchors the top-left corner; it reduces to 30px on a short viewport.
-- **Title:** the goal uses the title role; live goals, result verdicts, and review-page headings have nearby observed sizes (27px, 28px, and 26px).
+- **Title:** the goal uses the title role; live goals, result verdicts, and review-page headings have nearby observed sizes (24px, 28px, and 26px).
 - **Body and support:** the body role is the base; instructions and day descriptions use the support scale, with muted ink where appropriate.
 - **Label:** mode, vessel feel, preview navigation, practice status, and daily note stay compact. Day numbers and scores use tabular numerals where the DOM renders them.
 - **Score:** the result score uses the score role. The exported card scales Fraunces up within its fixed canvas rather than changing the font identity.
@@ -242,13 +244,13 @@ Corona has its own display outline: a slim straight body, long gently tapered ne
 
 ### Buttons
 
-Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the single input across devices; phone sensor input, motion permissions, and recalibration have been removed. The vessel tips within the scene while holding and returns upright on release. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens and depresses it by 2px when motion is allowed. All keyboard focus outlines use foreground ink (2px, offset 5px).
+Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the single input across devices; phone sensor input, motion permissions, and recalibration have been removed. The vessel tips within the scene while holding and returns upright on release. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 56px tall, or 52px on short viewports. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control adds an inset shadow and depresses it by 2px when motion is allowed. Press feedback preserves the theme's text contrast. All keyboard focus outlines use foreground ink (2px, offset 5px).
 
 Text actions have underlined foreground labels and a minimum height of 38px. The outlined “Save postcard” action uses a thin theme separator border, foreground ink, and a separator-colored hover fill. “Copy text” is a text action inside “See text card.” Disabled controls reduce opacity to one half. Inline arrow and share icons use the current text color.
 
 ### Intro and live controls
 
-The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status, then a settling state while the glass returns upright. Practice starts in hold mode even when restoring an older result that used phone tilt.
+The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control is one centered tray, capped at the same 450px width as the entry and result sheets. A 16px rounded boundary and thin theme separator surround 16px of padding on every side, keeping the 8px rounded hold button inset from the tray. The 24px goal, 14px status, and broad button have distinct spacing. Each theme supplies its existing sheet, text, separator, and accent colors. Short viewports use 12px padding and a lower anchor to preserve space around the vessel and preview navigation. The tray shows the current status, then a settling state while the glass returns upright. Practice starts in hold mode even when restoring an older result that used phone tilt.
 
 The fixed launch date is October 9, 2026 for the old Irish pub. The opening lineup continues with Peroni at Trastevere sunset on October 10 and Sapporo at the Tokyo izakaya on October 11. HTTPS is valid and enforced, and `LAUNCH_READY` is true. Public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Root visits open today's official glass; today's local date offers one scored sip. An earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. Hash-based `#dayN` previews remain unsaved. If midnight passes during official play, the older glass becomes an archive before any record is written.
 
