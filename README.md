@@ -78,7 +78,9 @@ The extracted visual system is in [DESIGN.md](DESIGN.md), with component preview
 
 ## Plan the daily calendar
 
-Open `/calendar.html` for the month/week lineup and a day inspector with the current drink, place, vessel, published run, and unsaved `#dayN` preview. Released, scheduled, and automatic-rotation dates describe the game lineup. Draft badges describe proposals and never change that lineup. Halloween week, October 25–31, starts as an unapproved draft using existing glasses as placeholders; holiday artwork has not been approved.
+Open `/calendar.html` for today's glass, the next seven days, and links to the private performance reports. Bookmark it or use Safari's Add to Home Screen for daily access. The date summary refreshes after midnight or when a background tab returns. Traffic reporting dates are labeled UTC; the glass follows the player's local date.
+
+Expand **Plan & edit the calendar**, or select an upcoming day, for the month/week lineup and a day inspector with the current drink, place, vessel, published run, and unsaved `#dayN` preview. Released, scheduled, and automatic-rotation dates describe the game lineup. Draft badges describe proposals and never change that lineup. Halloween week, October 25–31, starts as an unapproved draft using existing glasses as placeholders; holiday artwork has not been approved.
 
 Choose a future date to propose a catalog glass, run, and review note, or create a named run with inclusive start/end dates. A new run fills its dates with existing-glass placeholders for further editing. Browser edits are allowed only after the date already live in UTC+14, protecting a challenge that has opened anywhere in the world. Published days and published runs cannot be changed from this page. Source proposals remain visible when they become past dates, but their live portions are locked.
 

@@ -99,10 +99,54 @@ function initCalendar(){
   };
   const select = (date, {focus = false, reveal = false} = {}) => {
     if (!isDateKey(date) || date < LAUNCH) return;
+    if (reveal) $('planningTools').open = true;
     selected = date; viewDate = date; render();
     if (focus) $('monthGrid').querySelector('[aria-selected="true"]')?.focus();
     if (reveal) $('dayInspector').scrollIntoView({block:'start', behavior:'auto'});
   };
+
+  function renderDailyCheck(){
+    const today = localToday(), first = today < LAUNCH ? LAUNCH : today;
+    const live = actual(first), campaign = getCampaignForDate(first);
+    $('glanceDate').textContent = longDate(today);
+    $('todayDrink').textContent = live.theme.name;
+    $('todayPlace').textContent = live.theme.label;
+    $('todayContext').textContent = (today < LAUNCH ? 'Opens ' + shortDate(LAUNCH) + ' · ' : 'Today · ') +
+      '#' + String(keyToDayNumber(first)).padStart(3, '0') + ' · ' + (campaign?.name || 'Automatic rotation');
+    // Traffic charts use UTC; challenge comparisons use each player’s local
+    // challenge date. Label both rather than treating these as the same day.
+    const completedReportingDay = addDateDays(new Date().toISOString().slice(0, 10), -1);
+    $('reportingDate').textContent = completedReportingDay < LAUNCH
+      ? 'Tracking began October 9. The first complete reporting day is still ahead.'
+      : 'Latest complete traffic day: ' + shortDate(completedReportingDay) + ' (UTC).';
+    const previousChallenge = addDateDays(today, -1);
+    $('latestAnalytics').hidden = previousChallenge < LAUNCH;
+    $('latestAnalytics').textContent = 'Review ' + shortDate(previousChallenge) + '’s glass ↗';
+    $('latestAnalytics').href = analyticsUrlForDate(previousChallenge);
+    $('dailyDashboard').href = ANALYTICS_DASHBOARD_URL;
+    $('dashboardLink').href = THEME_ANALYTICS_URL;
+    $('dashboardLink').target = '_blank'; $('dashboardLink').rel = 'noopener';
+    $('upcomingDays').replaceChildren();
+    let drafts = 0, rotations = 0;
+    for (let i = 1; i <= 7; i++){
+      const date = addDateDays(first, i), next = actual(date), draft = plan.drafts[date];
+      const row = element('li'), button = element('button', 'upcoming-day'); button.type = 'button';
+      const dateLabel = element('span', 'upcoming-date', format(date, {weekday:'short'}) + ' ' + shortDate(date));
+      const details = element('span', 'upcoming-glass');
+      details.append(element('strong', '', next.theme.name), element('span', 'upcoming-place', next.theme.label));
+      const status = element('span', draft ? 'upcoming-draft' : 'upcoming-status', draft ? 'Draft: ' + themeById(draft.themeId).name :
+        next.status === 'Automatic rotation' ? 'Rotation' : next.status === 'Released' ? 'Live elsewhere' : next.status);
+      button.append(dateLabel, details, status);
+      button.setAttribute('aria-label', longDate(date) + '. ' + next.theme.name + ', ' + next.theme.label +
+        (draft ? '. Draft proposal: ' + themeById(draft.themeId).name : '') + '. Open day details.');
+      button.addEventListener('click', () => { select(date, {reveal:true}); $('selectedDate').focus({preventScroll:true}); });
+      row.append(button); $('upcomingDays').append(row);
+      if (draft) drafts++;
+      if (next.status === 'Automatic rotation') rotations++;
+    }
+    $('upcomingSummary').textContent = drafts ? drafts + ' draft ' + (drafts === 1 ? 'proposal' : 'proposals') + ' to review.' :
+      rotations ? rotations + ' ' + (rotations === 1 ? 'day uses' : 'days use') + ' the automatic rotation.' : 'The upcoming lineup is scheduled.';
+  }
 
   function renderGrid(){
     const start = view === 'month' ? weekStart(monthKey(viewDate)) : weekStart(viewDate);
@@ -242,7 +286,7 @@ function initCalendar(){
     $('campaignStart').min = addDateDays(latestLiveDate(), 1);
     $('campaignEnd').min = $('campaignStart').value || $('campaignStart').min;
   }
-  function render(){ renderGrid(); renderInspector(); renderPlans(); }
+  function render(){ renderDailyCheck(); renderGrid(); renderInspector(); renderPlans(); }
 
   for (const theme of THEMES) $('draftTheme').append(new Option(theme.name + ' · ' + theme.label, theme.id));
   $('previousMonth').addEventListener('click', () => {
@@ -329,7 +373,21 @@ function initCalendar(){
   }
   $('themeAnalytics').href = THEME_ANALYTICS_URL;
   $('performanceDashboard').href = ANALYTICS_DASHBOARD_URL;
+  $('selectedDate').tabIndex = -1;
+  const revealFeed = () => { if (window.location.hash === '#feedTitle') $('planningTools').open = true; };
+  window.addEventListener('hashchange', revealFeed);
+  if (search.has('date') || search.has('campaign')) $('planningTools').open = true;
+  revealFeed();
   render(); announce(startupMessage, storageError);
+  let renderedDay = localToday(), renderedUtcDay = new Date().toISOString().slice(0, 10);
+  const refreshDates = () => {
+    const today = localToday(), utcDay = new Date().toISOString().slice(0, 10);
+    if (today === renderedDay && utcDay === renderedUtcDay) return;
+    renderedDay = today; renderedUtcDay = utcDay;
+    render();
+  };
+  window.setInterval(refreshDates, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDates(); });
 }
 
 if (typeof document !== 'undefined') initCalendar();
