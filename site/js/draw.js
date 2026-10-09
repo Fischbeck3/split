@@ -1,9 +1,11 @@
 // Canvas drawing: the places, the vessels and the marks.
-import {widthAt, mulberry32} from './core.js';
+import {mulberry32} from './core.js';
+import {renderWidthAt as widthAt} from './render-vessels.js';
 import {getLiquidSurface} from './liquid.js';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
+import {drawBrandMark} from './brand-marks.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -311,10 +313,11 @@ function drawVesselFront(c, G, theme){
     c.restore();
   }
   if (theme.vessel === 'bottle'){
-    const mw = widthAt('bottle', 0) * G.halfW, rr = gh * 0.046;
+    const mw = widthAt(G.glass, 0) * G.halfW, rr = gh * 0.046;
     c.strokeStyle = 'rgba(235,250,233,0.8)'; c.lineWidth = Math.max(1.3, gh * 0.009);
     for (const depth of [0.015, 0.038]){
-      c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, mw * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
+      const ringW = G.glass === 'corona' ? widthAt(G.glass, depth) * G.halfW : mw;
+      c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, ringW * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
     }
     c.fillStyle = 'rgba(56,93,75,0.16)'; c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.004, mw * 0.89, gh * 0.009, 0, 0, Math.PI * 2); c.fill();
     if (theme.garnish !== 'none'){
@@ -341,7 +344,7 @@ function drawVesselFront(c, G, theme){
   } else if (theme.id === 'munich'){
     c.fillStyle = 'rgba(53,74,81,0.68)'; c.font = '700 ' + gh * 0.028 + 'px ' + SANS;
     c.fillText('1 L', G.cx, G.top + gh * 0.875);
-  } else if (theme.brandText){
+  } else if (theme.brandText && theme.name !== 'Peroni'){
     c.fillStyle = theme.brandColor || theme.markFill;
     c.font = '700 ' + Math.min(gh * 0.043, G.halfW * .19) + 'px ' + SERIF;
     c.fillText(theme.brandText, G.cx, G.top + gh * .82);
@@ -399,6 +402,7 @@ function drawGlassMaterial(c, G, theme){
 
 // ---------- marks ----------
 export function drawMark(c, theme, cx, cy, h){
+  if (drawBrandMark(c, theme, cx, cy, h)) return;
   c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = Math.max(2, h * 0.08); c.strokeStyle = theme.markStroke; c.fillStyle = theme.markFill;
   if (theme.markFrame === 'shield'){
     // An open souvenir shield keeps the actual stopping line visible through H.
@@ -467,23 +471,23 @@ export function drawMark(c, theme, cx, cy, h){
   c.restore();
 }
 
-export function drawTarget(c, G, P, theme){
+export function drawTarget(c, G, P, theme, hintOpacity = 0){
   const aim = targetGeometry(G, P, theme);
   if (aim.markHeight <= 0) return;
   drawMark(c, theme, G.cx, aim.y, aim.markHeight);
-  if (aim.notchSize <= 0) return;
-  // These printed sights tip with the glass. The open center exposes the real beer line.
-  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
-  for (const side of [-1, 1]){
-    const tip = G.cx + side * aim.notchInner, outer = G.cx + side * aim.notchOuter;
-    const back = tip + side * aim.notchSize;
-    c.beginPath(); c.moveTo(outer, aim.y); c.lineTo(back, aim.y);
-    c.strokeStyle = '#17221b'; c.lineWidth = aim.railWidth; c.stroke();
-    c.strokeStyle = '#fffaf0'; c.lineWidth = aim.railWidth * .45; c.stroke();
-    c.beginPath(); c.moveTo(tip, aim.y); c.lineTo(back, aim.y - aim.notchSize * .7);
-    c.lineTo(back, aim.y + aim.notchSize * .7); c.closePath();
-    c.fillStyle = '#fffaf0'; c.strokeStyle = '#17221b'; c.lineWidth = Math.min(aim.railWidth / 2, Math.max(1, aim.markHeight * .035)); c.stroke(); c.fill();
-  }
+  drawTargetLine(c, G, P, theme, hintOpacity);
+}
+
+/** Postcard-style dashed cue; callers opt in only for a brief ready-state hint. */
+export function drawTargetLine(c, G, P, theme, opacity = 0){
+  if (!Number.isFinite(opacity) || opacity <= 0) return;
+  const aim = targetGeometry(G, P, theme);
+  if (aim.lineHalfWidth <= 0) return;
+  c.save(); c.globalAlpha = Math.min(1, opacity); c.lineCap = 'butt';
+  c.setLineDash([6, 4]); c.beginPath();
+  c.moveTo(G.cx - aim.lineHalfWidth, aim.y); c.lineTo(G.cx + aim.lineHalfWidth, aim.y);
+  c.strokeStyle = '#fffaf0'; c.lineWidth = aim.lineWidth; c.stroke();
+  c.strokeStyle = '#17221b'; c.lineWidth = aim.lineWidth * .35; c.stroke();
   c.restore();
 }
 
@@ -538,9 +542,9 @@ function drawLacing(c, G, theme, L){
 /** Draw the place, the vessel, the drink at level L (0 rim, 1 base) and the mark.
  *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place.
  *  Ambient is opt-in; leave it false for reduced motion and stable postcard exports. */
-export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false}){
+export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false, targetHint = 0}){
   const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
-  const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
+  const surface = getLiquidSurface({vessel: G.glass, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
   const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
   if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme, titleWash);
   if (ambient) drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash});
@@ -591,6 +595,6 @@ export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubble
   c.restore();
   drawVesselFront(c, G, theme);
   drawGlassMaterial(c, G, theme);
-  drawTarget(c, G, P, theme);
+  drawTarget(c, G, P, theme, targetHint);
   c.restore();
 }

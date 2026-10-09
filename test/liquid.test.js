@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {PROFILES, widthAt} from '../site/js/core.js';
+import {RENDER_PROFILES as PROFILES, renderWidthAt as widthAt} from '../site/js/render-vessels.js';
 import {getLiquidSurface} from '../site/js/liquid.js';
 
 // Independent fine 3D integration against the actual outline: every depth
@@ -30,10 +30,10 @@ test('an upright surface has the exact input level in every vessel', () => {
   }
 });
 
-test('tilt and slosh conserve true liquid volume in every round vessel', () => {
+test('tilt and slosh conserve true volume in all physical and display vessels', () => {
   for (const vessel of Object.keys(PROFILES)){
     for (const aspect of [0.2, 0.36]){
-      for (const level of [0.09, 0.29, 0.4, 0.59, 0.93]){
+      for (const level of [0.09, 0.26, 0.29, 0.31, 0.38, 0.4, 0.45, 0.47, 0.53, 0.59, 0.93]){
         const expected = volume(vessel, aspect, level, 0);
         for (const [vesselAngle, liquidAngle] of [[18, 0], [-42, 0], [55, 4], [35, -6]]){
           const surface = getLiquidSurface({vessel, level, aspect, vesselAngle, liquidAngle});
@@ -90,7 +90,7 @@ test('full and empty amounts remain full and empty at an inclination', () => {
 });
 
 test('near-sideways surfaces preserve volume without cancellation', () => {
-  for (const vessel of ['tulip', 'bottle', 'mug']){
+  for (const vessel of ['tulip', 'bottle', 'corona', 'mug']){
     for (const level of [0.09, 0.4, 0.93]){
       const expected = volume(vessel, 0.3, level, 0);
       for (const vesselAngle of [89.9999, 90]){
@@ -98,6 +98,17 @@ test('near-sideways surfaces preserve volume without cancellation', () => {
         assert.ok(Math.abs(volume(vessel, 0.3, surface.centerLevel, surface.slope) - expected) < 0.3 * 0.3 * 0.00022);
       }
     }
+  }
+});
+
+test('Corona and the green bottle retain separate cached liquid outlines', () => {
+  const options = {level: 0.36, aspect: 0.24, vesselAngle: 48};
+  const original = getLiquidSurface({...options, vessel: 'bottle'});
+  const corona = getLiquidSurface({...options, vessel: 'corona'});
+  assert.ok(Math.abs(corona.centerLevel - original.centerLevel) > 0.01, 'different shoulders must produce different slosh intercepts');
+  for (let i = 0; i < 3; i++){
+    assert.deepEqual(getLiquidSurface({...options, vessel: 'bottle'}), original);
+    assert.deepEqual(getLiquidSurface({...options, vessel: 'corona'}), corona);
   }
 });
 

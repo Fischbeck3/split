@@ -1,5 +1,5 @@
 // The liquid line moves inside a round glass, but its volume stays the same.
-import {PROFILES, widthAt} from './core.js';
+import {RENDER_PROFILES as PROFILES, renderWidthAt as widthAt} from './render-vessels.js';
 
 const ROW_COUNT = 96;
 const BISECTION_STEPS = 20;

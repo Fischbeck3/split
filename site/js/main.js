@@ -10,6 +10,8 @@ import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
 import {readPreference, savePreference} from './motion-preference.js';
+import {targetHintOpacity} from './target.js';
+import {renderVessel} from './render-vessels.js';
 
 const $ = id => document.getElementById(id);
 // A fixed release calendar keeps prototype scores out of the public run.
@@ -40,7 +42,7 @@ else if (motionQuery.addListener) motionQuery.addListener(onMotionPreferenceChan
 renderMotionPreference();
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
-  result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
+  result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState()};
 const analytics = createAnalytics();
 function resultProperties(){
   return {...gameProperties(S), score:S.result.score, drained:S.result.drained, counts:!!S.result.counts};
@@ -97,7 +99,7 @@ function glassBox(w, h, theme){
   const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665);
   const stein = theme.vessel === 'stein', halfW = Math.min(w * (stein ? .27 : b.w), (bot - top) * b.h);
   // Center the stein's full silhouette, leaving room for its handle during a sip.
-  return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: theme.vessel};
+  return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: renderVessel(theme)};
 }
 function currentBackdrop(G){
   const key = S.theme.id + ':' + W + 'x' + H + ':' + DPR;
@@ -108,7 +110,8 @@ function draw(now){
   const G = glassBox(W, H, S.theme);
   drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
-    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
+    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G),
+    targetHint: (S.state === 'intro' || S.state === 'ready') && S.targetAt !== null ? targetHintOpacity(now - S.targetAt, reducedMotion) : 0});
 }
 
 // ---------- the tilt sensor ----------
@@ -160,6 +163,7 @@ function begin(){
   setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
   S.motion = makeMotionState();
+  S.targetAt = performance.now();
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
   $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
@@ -168,7 +172,7 @@ function begin(){
   $('drinkControl').textContent = 'Hold to drink';
   $('recalibrateBtn').hidden = S.mode !== 'tilt';
   $('recalibrateBtn').disabled = false;
-  $('footPill').textContent = S.mode === 'tilt' ? 'Come upright early; settle at the notches.' : 'Release early; settle at the notches.';
+  $('footPill').textContent = S.mode === 'tilt' ? 'Come upright early; settle at the mark.' : 'Release early; settle at the mark.';
   if (S.mode === 'hold') $('drinkControl').focus({preventScroll: true});
 }
 const wantsDrink = () => S.mode === 'tilt' ? tiltAngle() > TILT_START : S.holding;
@@ -253,7 +257,8 @@ function renderResult(){
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
   $('resKind').textContent = S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
-  $('officialBtn').hidden = r.counts || S.kind !== 'today' || !load().days[S.key]?.done;
+  const saved = load().days[S.key];
+  $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
   const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
   $('friendComparison').hidden = !comparison;
@@ -428,12 +433,19 @@ for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventL
 $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
   if (!canRecordChallenge({key:S.key, kind:S.kind})) return;
-  const rec = load().days[S.key]; if (!rec || !rec.done) return;
+  const rec = load().days[S.key]; if (!rec || !rec.done || rec.theme !== S.theme.id) return;
   S.practice = false; S.mode = rec.mode; S.L = rec.L;
-  S.result = {...rec, counts:true}; setPhase('result'); renderResult();
+  S.result = {...rec, counts:true}; setPhase('result'); draw(performance.now()); renderResult();
 });
 window.addEventListener('hashchange', () => location.reload());
-window.addEventListener('resize', layout);
+window.addEventListener('resize', () => {
+  layout(); if (S.theme && $('app').classList.contains('scene-ready')) draw(performance.now());
+});
+document.querySelector('.rules').addEventListener('toggle', event => {
+  if (event.currentTarget.open && S.state === 'intro' && S.theme && $('app').classList.contains('scene-ready')){
+    S.targetAt = performance.now(); draw(S.targetAt);
+  }
+});
 
 // ---------- start ----------
 async function init(){
@@ -473,7 +485,7 @@ async function init(){
         : 'As the glass narrows, the beer line falls faster. Release before the mark and let the sip settle.';
   renderMotionPreference();
   document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
-  scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the two aiming notches beside ' + S.theme.target + '.');
+  scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the brief dashed target line across ' + S.theme.target + '.');
   if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
     const active = $('previewNav').querySelector('a[href="#day' + S.num + '"]');
@@ -485,14 +497,14 @@ async function init(){
     $('startTilt').hidden = true;
   }
 
-  setPhase('intro'); layout(); draw(performance.now()); $('app').classList.add('scene-ready');
+  setPhase('intro'); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
   $('startHold').disabled = false; $('startTilt').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
   if (rec && rec.done && rec.theme === S.theme.id){
     S.L = rec.L; setPhase('result'); S.mode = rec.mode || 'hold';
     S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString()};
-    $('intro').hidden = true; renderResult();
+    $('intro').hidden = true; draw(performance.now()); renderResult();
   }
   requestAnimationFrame(frame);
 }
