@@ -1,6 +1,6 @@
 // The public address is prepared here; registration and DNS are separate launch steps.
 export const SITE_URL = 'https://dailysplit.us/';
-export const SOCIAL_IMAGE = 'og-opening-v2.jpg';
+export const SOCIAL_IMAGE = 'og-opening-v3.jpg';
 
 // The public calendar opened on October 9, 2026. Keep this date fixed:
 // moving it would renumber existing challenges and shared results.
