@@ -15,7 +15,8 @@ export function targetGeometry(G, P, theme){
   const gh = Math.max(0, G.bot - G.top);
   const y = G.top + P.markY * gh;
   const vesselHalfWidth = Math.max(0, widthAt(G.glass, P.markY) * G.halfW);
-  const enlargement = theme.name === 'Butterbeer' ? 1.7 : 1.5;
+  // Guinness uses the complete harp and wordmark; h describes the full print.
+  const enlargement = theme.id === 'pub' ? 2.4 : theme.name === 'Butterbeer' ? 1.7 : 1.5;
   const widthLimit = 1.15;
   const markHeight = Math.max(0, Math.min(P.markH * gh * enlargement, vesselHalfWidth * widthLimit));
   const lineWidth = Math.min(3.5, Math.max(1.5, gh * .009), vesselHalfWidth * .12);

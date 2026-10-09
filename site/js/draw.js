@@ -6,6 +6,7 @@ import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
+import {loadBrandAssets} from './brand-assets.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -24,7 +25,7 @@ const sceneImages = new Map(), sceneLoads = new Map();
 /** Decode once before painting a game or export. A failed asset keeps the vector fallback. */
 export async function loadSceneAssets(theme){
   const scenes = theme ? [theme.scene] : Object.keys(SCENE_ART);
-  await Promise.all(scenes.map(scene => {
+  await Promise.all([loadBrandAssets(theme), ...scenes.map(scene => {
     if (!SCENE_ART[scene]) return;
     if (!sceneLoads.has(scene)) sceneLoads.set(scene, new Promise(resolve => {
       const image = new Image();
@@ -36,7 +37,7 @@ export async function loadSceneAssets(theme){
       image.src = SCENE_ART[scene].url;
     }));
     return sceneLoads.get(scene);
-  }));
+  })]);
 }
 
 function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
@@ -332,12 +333,7 @@ function drawVesselFront(c, G, theme){
   }
   // The printed brand sits below the scored mark, so the liquid line stays legible.
   c.save(); c.textAlign = 'center'; c.textBaseline = 'middle';
-  if (theme.id === 'pub'){
-    c.fillStyle = '#eee7d6'; c.font = '700 ' + Math.min(gh * 0.048, G.halfW * 0.2) + 'px ' + SERIF;
-    c.fillText('GUINNESS', G.cx, G.top + gh * 0.82);
-    c.strokeStyle = 'rgba(238,231,214,0.35)'; c.lineWidth = Math.max(0.8, gh * 0.002);
-    c.beginPath(); c.moveTo(G.cx - G.halfW * 0.42, G.top + gh * 0.863); c.lineTo(G.cx + G.halfW * 0.42, G.top + gh * 0.863); c.stroke();
-  } else if (theme.id === 'beach'){
+  if (theme.id === 'beach'){
     c.fillStyle = '#163e55'; c.font = '600 ' + Math.min(gh * 0.075, G.halfW * 0.34) + 'px ' + SERIF;
     c.fillText('Corona', G.cx, G.top + gh * 0.8);
     c.font = '700 ' + gh * 0.023 + 'px ' + SANS; c.fillText('CERVEZA', G.cx, G.top + gh * 0.858);
