@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Split · First three days</title><link rel="stylesheet" href="css/style.css">
+<style>
+html,body{height:auto;overflow:auto;overscroll-behavior:auto}body{background:#f6f0e3;color:#153e4d;padding:36px max(24px,calc((100vw - 1420px)/2));user-select:auto}header{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;margin-bottom:30px}h1{font:900 clamp(32px,4vw,52px)/1.1 var(--display);letter-spacing:-.03em;margin:0}header p{margin:10px 0 0;max-width:55ch;color:#556c73}header a{color:#153e4d;font-weight:700;text-underline-offset:4px;white-space:nowrap}.days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}article{min-width:0}article>h2{font:900 26px/1.2 var(--display);letter-spacing:-.025em;margin:0 0 8px}article>p{font-size:14px;color:#556c73;min-height:42px;margin:0 0 16px}iframe{width:100%;height:844px;border:0;border-radius:10px;background:#142b24}article h3{font:900 23px/1.2 var(--display);letter-spacing:-.025em;margin:28px 0 7px}.sample{font-size:12px;color:#556c73;margin:0 0 14px;min-height:0}article canvas{width:100%;height:auto;display:block;border-radius:6px}pre{white-space:pre-wrap;font:13px/1.6 var(--body);color:#153e4d;margin:20px 0 0}footer{margin:36px 0 0;border-top:1px solid #d7e0d8;padding-top:20px;color:#556c73;font-size:13px}.sample a{color:#153e4d;cursor:pointer;text-underline-offset:3px}footer a{color:#153e4d;text-underline-offset:3px}@media(max-width:900px){.days{grid-template-columns:1fr;max-width:450px;margin:auto}header{display:block;max-width:450px;margin:0 auto 28px}header a{display:inline-block;margin-top:16px}iframe{height:844px}.days article{margin-bottom:30px}}
+</style></head>
+<body>
+<header><div><h1>Wish you were here.</h1><p>Three places, three beers, and a reason to send something to the friends who were there. <a href="./motion.html">See the sip in motion</a></p></div><a href="./#day1">Open the game</a></header>
+<section class="days" aria-label="First three day designs">
+<article><h2>1. The old Irish pub</h2><p>A stout by the fire. Dark oak, warm lamps, and the G.</p><iframe src="./#day1" title="Play day 1: Old Irish pub"></iframe><h3>Remember that pub?</h3><p class="sample">Sample preview result · 100/100</p><canvas id="card1" aria-label="Sample pub share card"></canvas><p class="sample"><a id="save1" download="split-share-day1.png">Save sample card</a></p><pre id="text1"></pre></article>
+<article><h2>2. Back in Cabo</h2><p>A cold Corona under the palapa. White sand, turquoise water, and a pulsing glug.</p><iframe src="./#day2" title="Play day 2: Cabo beach"></iframe><h3>Send a little Cabo.</h3><p class="sample">Sample preview result · 89/100</p><canvas id="card2" aria-label="Sample beach share card"></canvas><p class="sample"><a id="save2" download="split-share-day2.png">Save sample card</a></p><pre id="text2"></pre></article>
+<article><h2>3. Meet me in Munich</h2><p>A liter stein, blue-white bunting, and one long table. Let the heavy glass settle.</p><iframe src="./#day3" title="Play day 3: Oktoberfest"></iframe><h3>Same table. Your turn.</h3><p class="sample">Sample preview result · 58/100</p><canvas id="card3" aria-label="Sample Oktoberfest share card"></canvas><p class="sample"><a id="save3" download="split-share-day3.png">Save sample card</a></p><pre id="text3"></pre></article>
+</section>
+<footer>Design preview. Sample cards use illustrative stopping positions; no daily scores are saved. <a href="https://github.com/Fischbeck3/split">Split on GitHub</a></footer>
+<script type="module">
+import {dayParams,scoreFromOffset} from './js/core.js';
+import {drawShareCard,buildShareText} from './js/share.js';
+import {loadSceneAssets} from './js/draw.js';
+import {SITE_URL} from './js/config.js';
+await Promise.all([loadSceneAssets(),document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla'),document.fonts.load('600 16px Karla')]);
+for(let num=1;num<=3;num++){
+ const P=dayParams(num),f=[0.02,-0.1,0.22][num-1], r={...scoreFromOffset(f,P.theme.target),f,L:P.markY+f*P.markH,mode:'tilt',counts:false,drained:false};
+ drawShareCard(document.getElementById('card'+num),{num,theme:P.theme,P,result:r,url:SITE_URL,preview:true});
+ document.getElementById('save'+num).href=document.getElementById('card'+num).toDataURL('image/png');
+ document.getElementById('text'+num).textContent=buildShareText({num,theme:P.theme,result:r,url:SITE_URL,preview:true});
+}
+</script>
+</body></html>

@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Split</title>
-<meta name="description" content="Hold your phone like a pint, tilt back to drink, stop with the line through the mark. One sip a day, a new glass and a new place every day.">
-<meta name="theme-color" content="#17110d">
+<title>Split · One sip a day</title>
+<meta name="description" content="One glass. One sip. A new place every day. Hold to drink, release on the mark, and send your score to the group chat.">
+<meta name="theme-color" content="#142b24">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Split">
-<meta property="og:description" content="Tilt your phone to drink. Stop with the line through the mark. One sip a day.">
-<meta property="og:url" content="https://fischbeck3.github.io/split/">
-<meta property="og:image" content="https://fischbeck3.github.io/split/og.png">
+<meta property="og:title" content="Split · One sip. Your turn.">
+<meta property="og:description" content="Hold to sip. Release to stop. A different glass every day.">
+<link rel="canonical" href="https://dailysplit.us/">
+<meta property="og:url" content="https://dailysplit.us/">
+<meta property="og:image" content="https://dailysplit.us/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Three glasses: a stout in a pub, a lager bottle on a beach, a stein in Munich.">
+<meta property="og:image:alt" content="A stout in a pub, a lime-topped bottle on white sand, and an Oktoberfest stein.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -22,62 +23,62 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Split">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=Karla:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <script type="module" src="js/main.js"></script>
 </head>
 <body>
-<div class="app" id="app">
-  <canvas id="scene" width="400" height="700" aria-label="Today's glass in today's place. Tilt your phone back to drink."></canvas>
-  <div class="hud">
-    <div><div class="t" id="hudTitle">Split</div><div class="s" id="hudSub"></div></div>
-    <span class="pill" id="hudMode" hidden></span>
+<main class="app" id="app">
+  <canvas id="scene" width="400" height="800" aria-label="Today's glass. Stop the beer line through the middle of the mark."></canvas>
+  <header class="hud">
+    <a class="wordmark" href="./" aria-label="Split, today's glass">Split<span class="split-dot" aria-hidden="true">.</span></a>
+    <span class="day-number" id="introNo">No. 001</span>
+  </header>
+  <div class="day-heading" id="dayHeading">
+    <h1 id="introName">Old Irish pub</h1>
+    <p id="hudSub">Guinness at the pub</p>
   </div>
-  <div class="foot"><span class="pill" id="footPill" hidden></span></div>
-
-  <div class="overlay" id="intro">
-    <div class="sheet">
-      <div><span class="muted" id="introNo">No. 1</span><h2 id="introName">Pub night</h2><p class="muted" id="introLine"></p></div>
-      <ol class="steps">
-        <li><b>1</b><span>Hold your phone upright, like the glass in your hand.</span></li>
-        <li><b>2</b><span>Tilt it back as if you are drinking. The further you tilt, the faster it goes down.</span></li>
-        <li><b>3</b><span>Bring it back upright to stop. The line that counts is the bottom of the head. Put it through the middle of the mark.</span></li>
-      </ol>
-      <p class="muted" id="introNote">One sip a day counts. Everyone gets the same glass in the same place today.</p>
-      <button class="big" id="startTilt" type="button">Start · tilt to drink</button>
-      <button class="ghost" id="startHold" type="button">Start · hold to drink instead</button>
-    </div>
+  <div class="mode" id="hudMode" hidden></div>
+  <div class="live-controls" id="liveControls" hidden>
+    <p class="live-goal" id="liveGoal">Split the G.</p>
+    <p class="live-status" id="footPill" role="status" aria-live="polite"></p>
+    <button class="drink-control" id="drinkControl" type="button">Hold to drink</button>
+    <button class="text-button" id="liveTodayBtn" type="button" hidden>Play today’s glass</button>
+    <button class="text-button" id="recalibrateBtn" type="button" hidden>Reset upright position</button>
   </div>
 
-  <div class="overlay" id="result" hidden>
+  <section class="overlay intro" id="intro" aria-label="Start today's sip">
     <div class="sheet">
-      <div class="score">
-        <div class="n" id="resScore">0</div>
-        <div><h2 id="resLabel"></h2><p class="muted" id="resDetail"></p></div>
+      <div class="goal-row"><h2 id="introGoal">Split the G.</h2><span class="feel" id="introFeel">Smooth pour</span></div>
+      <p class="instructions" id="introLine">Hold to tip and sip. Release to settle.</p>
+      <div class="start-actions">
+        <button class="big" id="startHold" type="button">Take today's sip <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="text-button" id="introTodayBtn" type="button" hidden>Play today’s glass</button>
+        <button class="text-button" id="startTilt" type="button">Use phone tilt</button>
       </div>
-      <div class="strip" id="resStrip"></div>
-      <img class="cardimg" id="cardImg" alt="Your result card">
-      <div class="share"><pre id="shareText"></pre></div>
-      <div class="row">
-        <button class="big" id="shareBtn" type="button">Share card</button>
-        <button class="ghost" id="copyBtn" type="button">Copy text</button>
-      </div>
-      <div class="row">
-        <button class="ghost" id="practiceBtn" type="button">Practice sip</button>
-      </div>
-      <p class="muted next"><span>Next glass in <span id="countdown">--:--:--</span></span><button class="ghost" id="newDayBtn" type="button" hidden>New glass is up</button></p>
-      <div class="stats">
-        <div><span class="k">Days</span><span class="v" id="stDays">0</span></div>
-        <div><span class="k">Streak</span><span class="v" id="stStreak">0</span></div>
-        <div><span class="k">Best</span><span class="v" id="stBest">—</span></div>
-        <div><span class="k">Perfect</span><span class="v" id="stPerfect">0</span></div>
-      </div>
+      <p class="daily-note" id="introNote">One scored sip. Same pour for everyone.</p>
+      <details class="rules"><summary>How to play</summary><p>Hold the glass, button, or space bar to tip and sip. Release to bring it upright. Your score comes from the settled line where the beer meets the foam through the center of the mark. With phone tilt, tip farther to sip faster and come upright to stop.</p><p id="vesselHint">A smooth pour with a clean stop.</p><p>New glasses arrive at midnight in your local time. Your first sip counts; repeats are practice. Scores and streaks stay in this browser. Shared links open that date’s glass; past glasses are archives and do not count toward your record.</p></details>
     </div>
-  </div>
+  </section>
+
+  <section class="overlay result" id="result" aria-label="Your sip result" hidden>
+    <div class="result-sheet">
+      <div class="result-top"><h2 id="resLabel">Perfect split</h2><span class="result-kind" id="resKind">Today's sip</span></div>
+      <p class="result-detail" id="resDetail"></p>
+      <img class="cardimg" id="cardImg" alt="Your themed Split result card, showing the vessel, score, and stopping line" hidden>
+      <div class="result-score" aria-label="Score"><span id="resScore">0</span><span>/100</span><span id="resStrip" class="strip" aria-label="Position of the stopping line"></span></div>
+      <div class="row share-actions">
+        <button class="big" id="shareBtn" type="button">Share your sip <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="outline" id="saveCardBtn" type="button">Save postcard</button>
+      </div>
+      <details class="share-copy"><summary>See text card</summary><pre id="shareText" tabindex="-1"></pre><button class="text-button" id="copyBtn" type="button">Copy text</button></details>
+      <div class="result-bottom"><button class="text-button" id="practiceBtn" type="button">Another sip · practice</button><p class="next">Next local midnight in <span id="countdown">--:--:--</span><button class="text-button" id="newDayBtn" type="button" hidden>Play today’s glass</button></p></div>
+      <button class="text-button" id="officialBtn" type="button" hidden>Back to today's score</button>
+      <div class="stats"><span><strong id="stDays">0</strong> days</span><span><strong id="stStreak">0</strong> streak</span><span>best <strong id="stBest">—</strong></span><span><strong id="stPerfect">0</strong> perfect</span></div>
+    </div>
+  </section>
+  <nav class="preview-nav" id="previewNav" aria-label="Preview the first three days" hidden><span>Design preview</span><a href="#day1">Pub</a><a href="#day2">Beach</a><a href="#day3">Fest</a></nav>
   <canvas id="card" width="1080" height="1350" hidden></canvas>
   <noscript><p class="noscript">Split needs JavaScript to pour.</p></noscript>
-</div>
+</main>
 </body>
 </html>

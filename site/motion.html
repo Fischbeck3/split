@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Split · See the sip</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+:root{--bg:#f6f0e3;--fg:#153e4d;--muted:#556c73;--sheet:#fffaf0;--line:#d7e0d8;--accent:#18777d;--accent-fg:#fffaf0;color-scheme:light}
+html,body{height:auto;overflow:auto;overscroll-behavior:auto}
+body{background:#f6f0e3;color:#153e4d;padding:36px max(24px,calc((100vw - 1320px)/2));user-select:auto}
+header{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;margin-bottom:24px}
+h1{font:900 clamp(32px,4vw,52px)/1.1 var(--display);letter-spacing:-.03em;margin:0}
+header p{margin:10px 0 0;max-width:58ch;color:#556c73}
+a{color:#153e4d;font-weight:700;text-underline-offset:4px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px}
+.controls button{color:#153e4d;border:1px solid #b5c8cb;background:transparent;min-height:44px;border-radius:8px;padding:9px 17px;font-weight:700}
+.controls button:hover,.controls button[aria-pressed=true]{background:#153e4d;color:#fffaf0}
+.controls :focus-visible{outline-color:#153e4d}
+#status{margin:0 0 0 auto;color:#556c73;font-size:14px}
+.vessels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+article{min-width:0}h2{font:900 26px/1.2 var(--display);letter-spacing:-.025em;margin:0 0 8px}
+article p{font-size:14px;color:#556c73;min-height:42px;margin:0 0 16px}
+canvas{display:block;width:100%;height:auto;border-radius:10px}
+footer{margin:26px 0 0;color:#556c73;font-size:13px}
+@media(max-width:800px){header{display:block}header a{display:inline-block;margin-top:16px}.vessels{grid-template-columns:1fr;max-width:450px;margin:auto}.controls{max-width:450px;margin-inline:auto}#status{flex-basis:100%;margin:0}article{margin-bottom:20px}}
+</style>
+</head>
+<body>
+<header><div><h1>Wish you were here.</h1><p>An old Irish pub. A beach in Cabo. One long table in Munich. Three places to return to, one sip at a time.</p></div><a href="./design.html">Play the first three days</a></header>
+<div class="controls" aria-label="Preview sip movement">
+  <button id="play" type="button" disabled>Play the sip</button>
+  <button id="ready" type="button" aria-pressed="true" disabled>Ready</button>
+  <button id="drinking" type="button" aria-pressed="false" disabled>Drinking</button>
+  <button id="released" type="button" aria-pressed="false" disabled>Just released</button>
+  <button id="settled" type="button" aria-pressed="false" disabled>Settled</button>
+  <p id="status" role="status">Ready to sip.</p>
+</div>
+<section class="vessels" aria-label="Vessel movement previews">
+  <article><h2>The old Irish pub.</h2><p>Guinness, dark oak, and one more story. A smooth sip and a clean stop.</p><canvas id="scene1" aria-label="Guinness in an old Irish pub motion preview"></canvas></article>
+  <article><h2>Back in Cabo.</h2><p>A cold Corona under the palapa. Clear glass, fine fizz, and a pulsing glug.</p><canvas id="scene2" aria-label="Corona on a Cabo beach motion preview"></canvas></article>
+  <article><h2>Meet me in Munich.</h2><p>A liter stein at the long table. Generous foam and a heavy return.</p><canvas id="scene3" aria-label="Stein in a Munich Oktoberfest tent motion preview"></canvas></article>
+</section>
+<footer>Illustrative motion preview. No daily scores are saved. The game and share cards use these same vessels and liquid geometry.</footer>
+<script type="module">
+import {dayParams,makeDrinkState,stepDrink,secondsToMark} from './js/core.js';
+import {makeMotionState,stepMotion} from './js/motion.js';
+import {drawScene,makeBackdrop,loadSceneAssets} from './js/draw.js';
+
+await loadSceneAssets();
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const demos=[1,2,3].map(num=>{
+  const P=dayParams(num),canvas=document.getElementById('scene'+num),w=390,h=600;
+  canvas.width=w*2;canvas.height=h*2;
+  const ctx=canvas.getContext('2d');ctx.scale(2,2);
+  const top=P.theme.vessel==='bottle'?96:P.theme.vessel==='stein'?139:116,bot=464;
+  const stein=P.theme.vessel==='stein',halfW=Math.min(w*(stein?.27:P.theme.box.w),(bot-top)*P.theme.box.h);
+  const G={cx:w/2-(stein?halfW*.24:0),top,bot,halfW,glass:P.theme.vessel};
+  const releaseAt=Math.round((secondsToMark(P)+.3)*120)/120;
+  const frames=[];
+  let drink=makeDrinkState(P),motion=makeMotionState();
+  for(let frame=0;frame<=Math.ceil((releaseAt+1)*120);frame++){
+    const elapsed=frame/120,drinking=elapsed<releaseAt&&frame>0;
+    frames.push({drink,motion,t:elapsed,drinking});
+    const input=elapsed<releaseAt?Math.min(1,elapsed/.6):0;
+    motion=stepMotion(P,motion,{drinking:elapsed<releaseAt,input,elapsed:drink.elapsed,dt:1/120,reducedMotion});
+    drink=stepDrink(P,drink,P.K*input,1/120);
+  }
+  return {P,ctx,G,w,h,releaseAt,frames,backdrop:makeBackdrop(w,h,G,P.theme,2,{titleWash:false})};
+});
+const status=document.getElementById('status');
+let playback=0;
+
+function render(progress,released=false){
+  for(const d of demos){
+    const duration=d.releaseAt+1,time=released?d.releaseAt+.07:Math.min(duration,progress*duration);
+    const {drink,motion,t,drinking}=d.frames[Math.min(d.frames.length-1,Math.round(time*120))];
+    drawScene(d.ctx,{G:d.G,w:d.w,h:d.h,L:drink.level,theme:d.P.theme,P:d.P,motion,
+      drinking,drinkElapsed:drink.elapsed,now:t*1000,guides:true,
+      bubbles:!reducedMotion,backdrop:d.backdrop});
+  }
+}
+function setStage(id,progress,message){
+  cancelAnimationFrame(playback);
+  for(const name of ['ready','drinking','released','settled'])document.getElementById(name).setAttribute('aria-pressed',String(name===id));
+  status.textContent=message;render(progress);
+}
+document.getElementById('ready').onclick=()=>setStage('ready',0,'Ready to sip.');
+document.getElementById('drinking').onclick=()=>setStage('drinking',.55,'The mark tips with the vessel. The liquid responds to gravity.');
+document.getElementById('released').onclick=()=>{
+  cancelAnimationFrame(playback);
+  for(const name of ['ready','drinking','released','settled'])document.getElementById(name).setAttribute('aria-pressed',String(name==='released'));
+  status.textContent='The sip stops. The stein has a little follow-through.';
+  render(0,true);
+};
+document.getElementById('settled').onclick=()=>setStage('settled',1,'Upright and settled. This is the line that gets scored.');
+document.getElementById('play').onclick=()=>{
+  cancelAnimationFrame(playback);
+  for(const name of ['ready','drinking','released','settled'])document.getElementById(name).setAttribute('aria-pressed','false');
+  const start=performance.now(),duration=Math.max(...demos.map(d=>d.releaseAt+1))*1000;
+  function tick(now){
+    const progress=Math.min(1,(now-start)/duration);render(progress);
+    status.textContent=progress<.7?'Taking a sip…':progress<1?'Returning upright…':'Upright and settled.';
+    if(progress<1&&!document.hidden)playback=requestAnimationFrame(tick);
+  }
+  playback=requestAnimationFrame(tick);
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(playback)});
+await Promise.all([document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla')]);
+render(0);
+for(const button of document.querySelectorAll('.controls button'))button.disabled=false;
+</script>
+</body>
+</html>
