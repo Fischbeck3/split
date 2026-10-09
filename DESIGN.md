@@ -213,13 +213,13 @@ The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-n
 
 Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the primary input across devices; optional phone tilt uses a secondary text action. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens and depresses it by 2px when motion is allowed. All keyboard focus outlines use foreground ink (2px, offset 5px).
 
-Text actions have underlined foreground labels and a minimum height of 38px. The outlined copy action uses a thin theme separator border, foreground ink, and a separator-colored hover fill. Disabled controls reduce opacity to one half. Inline arrow and share icons use the current text color.
+Text actions have underlined foreground labels and a minimum height of 38px. The outlined “Save postcard” action uses a thin theme separator border, foreground ink, and a separator-colored hover fill. “Copy text” is a text action inside “See text card.” Disabled controls reduce opacity to one half. Inline arrow and share icons use the current text color.
 
 ### Intro and live controls
 
 The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status, then a settling state while the glass returns upright. Optional tilt mode offers upright recalibration before the sip.
 
-Public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Today's local date offers one scored sip; an earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. Before launch, the root route offers a preview. If midnight passes during play, the older glass becomes an archive before any record is written.
+Once the daily run opens, public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Today's local date offers one scored sip; an earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. While `LAUNCH_READY` is false, root and date links instead offer an unsaved opening pub preview; hash-based `#dayN` previews remain available. No official records are written while this gate is closed. If midnight passes during official play, the older glass becomes an archive before any record is written.
 
 ### Preview navigation
 
@@ -241,11 +241,13 @@ Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liqui
 
 ### Results and sharing
 
-The result surface leads with a verdict, practice/archive/preview status when needed, the destination postcard, and the score. Sharing offers the image or text; another sip is an explicit secondary action. The first daily score is retained separately from later practice. A previously saved result that crosses midnight says “Archive · saved sip”; an unfinished sip that crosses midnight finishes as an unsaved archive. The share action exposes a busy state and briefly confirms successful sharing or download; copying confirms the completed action as well. If automatic copying fails, the text disclosure opens, focuses and selects the result, and scrolls it into view for manual copying; the next result closes that disclosure again.
+The result surface leads with a verdict, practice/archive/preview status when needed, the destination postcard, and the score. “Share your sip” immediately opens the native text share sheet with the score, position strip, and exact-day or preview link, without waiting for image encoding. If native text sharing is unavailable or fails, the result is copied; if copying is denied, “See text card” opens, focuses and selects the result, and scrolls it into view for manual copying. “Copy text” sits inside that disclosure; the next result closes it again. “Save postcard” separately downloads the PNG on an explicit action.
+
+Another sip is an explicit secondary action. The first daily score is retained separately from later practice. A previously saved result that crosses midnight says “Archive · saved sip”; an unfinished sip that crosses midnight finishes as an unsaved archive. Sharing exposes a busy state and briefly confirms shared or copied text, while “Save postcard” confirms the download separately. Real-phone native text sharing and tilt remain open playtest checks.
 
 The image postcard is 1080 × 1350, with a paper border framing the same painted scene and vessel used in play. A large destination title and drink cue sit above it; the actual score and verdict sit below it. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the public challenge address. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. “One sip. Your turn.” makes the social action clear without promising a result. The same destination, invitation, and one-row position appear in plain text. Preview, archive, and practice labels travel with both formats; saved archive cards distinguish a retained daily result from an unsaved archive sip. Sample review postcards are explicitly previews.
 
-**The Same Challenge Rule.** Image and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain `#dayN` and never count toward the daily record. Use the centralized public address from `site/js/config.js`; the planned `https://dailysplit.us/` is not yet connected. Freeze the launch date once the public run starts, because changing it would renumber existing challenges.
+**The Same Challenge Rule.** Postcards and text shares retain the challenge date once the daily run opens, so opening a result later preserves its glass and pour. Preview shares retain `#dayN` and never count toward the daily record. Use the centralized public address from `site/js/config.js`. Keep `LAUNCH_READY` false for public preview deployment while HTTPS is being provisioned; preparing the launch sets it true and fixes the release date. Changing that date later would renumber existing challenges.
 
 ## Do's and Don'ts
 
@@ -260,6 +262,7 @@ The image postcard is 1080 × 1350, with a paper border framing the same painted
 - **Do** preserve the challenge date in shares and offer a clear route back to today's glass from an archive.
 - **Do** keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.
 - **Do** use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails.
+- **Do** make the primary share action send the compact text result immediately, keeping postcard download an explicit secondary action.
 
 ### Don't:
 

@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {LAUNCH} from '../site/js/config.js';
+import {LAUNCH, LAUNCH_READY} from '../site/js/config.js';
 import {dayKey, dayParams, keyForDay} from '../site/js/core.js';
 import {resolveChallenge, canRecordChallenge, isCalendarDateKey} from '../site/js/challenge.js';
 
@@ -13,31 +13,56 @@ const today = keyForDay(30), now = asLocal(today);
 const moduleUrl = new URL('../site/js/challenge.js', import.meta.url).href;
 const coreUrl = new URL('../site/js/core.js', import.meta.url).href;
 
+test('the default runtime uses the configured release gate', () => {
+  assert.deepEqual(resolveChallenge({now}), resolveChallenge({now, launchReady:LAUNCH_READY}));
+  assert.equal(canRecordChallenge({key:today, kind:'today', now}), LAUNCH_READY);
+});
+
+test('a pending release always serves an unsaved opening-day preview for public links', () => {
+  const expected = {num:1, key:LAUNCH, kind:'preview', notice:'The daily run opens soon.'};
+  for (const search of ['', '?day=' + today, '?day=' + keyForDay(2), '?day=' + keyForDay(32), '?day=invalid']){
+    const challenge = resolveChallenge({now, search, launchReady:false});
+    assert.deepEqual(challenge, expected, search);
+    assert.equal(canRecordChallenge({...challenge, now, launchReady:false}), false, search);
+  }
+  // Even a stale tab carrying today's previously official kind cannot record.
+  assert.equal(canRecordChallenge({key:today, kind:'today', now, launchReady:false}), false);
+  assert.equal(canRecordChallenge({key:LAUNCH, kind:'today', now:asLocal(LAUNCH), launchReady:false}), false);
+});
+
+test('pending design previews preserve the chosen glass while remaining unsaved', () => {
+  for (const [hash, num] of [['#day1',1], ['#day0002',2], ['#day3',3], ['#day9999',9999]]){
+    const challenge = resolveChallenge({now, search:'?day=' + today, hash, launchReady:false});
+    assert.deepEqual(challenge, {num, key:keyForDay(num), kind:'preview', notice:'The daily run opens soon.'});
+    assert.equal(canRecordChallenge({...challenge, now, launchReady:false}), false);
+  }
+});
+
 test('today is official with or without an exact-date link', () => {
   const expected = {num: 30, key: today, kind: 'today', notice: ''};
-  assert.deepEqual(resolveChallenge({now}), expected);
-  assert.deepEqual(resolveChallenge({now, search: '?day=' + today}), expected);
+  assert.deepEqual(resolveChallenge({launchReady:true, now}), expected);
+  assert.deepEqual(resolveChallenge({launchReady:true, now, search: '?day=' + today}), expected);
   assert.equal(dayParams(expected.num).key, expected.key);
-  assert.ok(canRecordChallenge({...expected, now}));
+  assert.ok(canRecordChallenge({launchReady:true, ...expected, now}));
 });
 
 test('an older shared date keeps its exact pour and cannot record a daily score', () => {
-  const key = keyForDay(2), challenge = resolveChallenge({now, search: '?day=' + key});
+  const key = keyForDay(2), challenge = resolveChallenge({launchReady:true, now, search: '?day=' + key});
   assert.deepEqual(challenge, {num: 2, key, kind: 'archive', notice: ''});
   assert.equal(dayParams(challenge.num).theme.id, 'beach');
-  assert.equal(canRecordChallenge({...challenge, now}), false);
+  assert.equal(canRecordChallenge({launchReady:true, ...challenge, now}), false);
 });
 
 test('date validation rejects normalized overflow, malformed values and duplicate dates', () => {
   for (const key of ['2026-02-30', '2027-02-29', '2026-13-01', '2026-00-09', '2026-10-00', '26-10-09', '2026-1-09', '2026-10-9', '2026-10-09T00:00:00Z', 'NaN', '']){
     assert.equal(isCalendarDateKey(key), false, key);
-    const result = resolveChallenge({now, search: '?day=' + encodeURIComponent(key)});
+    const result = resolveChallenge({launchReady:true, now, search: '?day=' + encodeURIComponent(key)});
     assert.equal(result.key, today, key);
     assert.equal(result.kind, 'today', key);
     assert.match(result.notice, /invalid date/, key);
   }
   assert.equal(isCalendarDateKey('2028-02-29'), true);
-  const duplicate = resolveChallenge({now, search: '?day=' + today + '&day=' + today});
+  const duplicate = resolveChallenge({launchReady:true, now, search: '?day=' + today + '&day=' + today});
   assert.match(duplicate.notice, /invalid date/);
 });
 
@@ -45,30 +70,30 @@ test('a real leap-day challenge resolves to that date instead of March 1', () =>
   let year = Number(LAUNCH.slice(0, 4)) + 1;
   while (year % 4 || (!(year % 100) && year % 400)) year++;
   const key = year + '-02-29';
-  const challenge = resolveChallenge({now: asLocal(year + '-03-01'), search: '?day=' + key});
+  const challenge = resolveChallenge({launchReady:true, now: asLocal(year + '-03-01'), search: '?day=' + key});
   assert.equal(challenge.key, key);
   assert.equal(challenge.kind, 'archive');
   assert.equal(dayParams(challenge.num).key, key);
 });
 
 test('future and prelaunch requests recover to today with an explanation', () => {
-  const future = resolveChallenge({now, search: '?day=' + keyForDay(32)});
+  const future = resolveChallenge({launchReady:true, now, search: '?day=' + keyForDay(32)});
   assert.equal(future.key, today);
   assert.equal(future.kind, 'today');
   assert.match(future.notice, /hasn’t arrived/);
-  const before = resolveChallenge({now, search: '?day=' + keyForDay(0)});
+  const before = resolveChallenge({launchReady:true, now, search: '?day=' + keyForDay(0)});
   assert.equal(before.key, today);
   assert.match(before.notice, /before our first sip/);
 });
 
 test('design previews take priority and stay separate from official challenge links', () => {
   for (const [hash, num] of [['#day1', 1], ['#day0002', 2], ['#day9999', 9999]]){
-    const challenge = resolveChallenge({now, search: '?day=' + today, hash});
+    const challenge = resolveChallenge({launchReady:true, now, search: '?day=' + today, hash});
     assert.deepEqual(challenge, {num, key: keyForDay(num), kind: 'preview', notice: ''});
-    assert.equal(canRecordChallenge({...challenge, now}), false);
+    assert.equal(canRecordChallenge({launchReady:true, ...challenge, now}), false);
   }
   for (const hash of ['#day0', '#day10000', '#day-1', '#dayInfinity', '#day2x']){
-    const challenge = resolveChallenge({now, hash});
+    const challenge = resolveChallenge({launchReady:true, now, hash});
     assert.equal(challenge.kind, 'today', hash);
     assert.equal(challenge.key, today, hash);
     assert.match(challenge.notice, /preview is unavailable/);
@@ -77,26 +102,26 @@ test('design previews take priority and stay separate from official challenge li
 
 test('before launch, visitors can only play clearly labeled previews', () => {
   const before = asLocal(keyForDay(0));
-  const challenge = resolveChallenge({now: before, search: '?day=' + LAUNCH});
+  const challenge = resolveChallenge({launchReady:true, now: before, search: '?day=' + LAUNCH});
   assert.equal(challenge.num, 1);
   assert.equal(challenge.key, LAUNCH);
   assert.equal(challenge.kind, 'preview');
   assert.match(challenge.notice, /The daily run starts/);
-  assert.equal(canRecordChallenge({...challenge, now: before}), false);
-  const selectedPreview = resolveChallenge({now: before, hash: '#day3'});
+  assert.equal(canRecordChallenge({launchReady:true, ...challenge, now: before}), false);
+  const selectedPreview = resolveChallenge({launchReady:true, now: before, hash: '#day3'});
   assert.equal(selectedPreview.num, 3);
   assert.equal(selectedPreview.kind, 'preview');
   assert.match(selectedPreview.notice, /The daily run starts/);
 });
 
 test('recording checks the local date again when a sip crosses midnight', () => {
-  const challenge = resolveChallenge({now: asLocal(today, 23, 59, 59)});
-  assert.ok(canRecordChallenge({...challenge, now: asLocal(today, 23, 59, 59)}));
-  assert.equal(canRecordChallenge({...challenge, now: asLocal(keyForDay(31), 0)}), false);
-  assert.equal(canRecordChallenge({key: today, kind: 'archive', now}), false);
-  assert.equal(canRecordChallenge({key: today, kind: 'preview', now}), false);
-  assert.equal(canRecordChallenge({key: keyForDay(0), kind: 'today', now: asLocal(keyForDay(0))}), false);
-  assert.equal(canRecordChallenge({key: '2026-02-30', kind: 'today', now}), false);
+  const challenge = resolveChallenge({launchReady:true, now: asLocal(today, 23, 59, 59)});
+  assert.ok(canRecordChallenge({launchReady:true, ...challenge, now: asLocal(today, 23, 59, 59)}));
+  assert.equal(canRecordChallenge({launchReady:true, ...challenge, now: asLocal(keyForDay(31), 0)}), false);
+  assert.equal(canRecordChallenge({launchReady:true, key: today, kind: 'archive', now}), false);
+  assert.equal(canRecordChallenge({launchReady:true, key: today, kind: 'preview', now}), false);
+  assert.equal(canRecordChallenge({launchReady:true, key: keyForDay(0), kind: 'today', now: asLocal(keyForDay(0))}), false);
+  assert.equal(canRecordChallenge({launchReady:true, key: '2026-02-30', kind: 'today', now}), false);
 });
 
 test('the daily clock is local while the same shared challenge survives different timezones', () => {
@@ -104,7 +129,7 @@ test('the daily clock is local while the same shared challenge survives differen
   for (const [tz, expectedToday] of [['America/Los_Angeles', keyForDay(29)], ['America/New_York', keyForDay(29)], ['Pacific/Auckland', today], ['Asia/Kathmandu', today]]){
     const script = `import {resolveChallenge} from ${JSON.stringify(moduleUrl)};
       const now = new Date(${JSON.stringify(instant)});
-      console.log(JSON.stringify({today:resolveChallenge({now}),shared:resolveChallenge({now,search:${JSON.stringify('?day=' + sharedKey)}})}));`;
+      console.log(JSON.stringify({today:resolveChallenge({launchReady:true, now}),shared:resolveChallenge({launchReady:true, now,search:${JSON.stringify('?day=' + sharedKey)}})}));`;
     const result = JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', script], {encoding: 'utf8', env: {...process.env, TZ: tz}}));
     assert.equal(result.today.key, expectedToday, tz);
     assert.equal(result.shared.key, sharedKey, tz);
@@ -119,8 +144,8 @@ test('a friend one timezone-day ahead shares the same pour as an unsaved preview
     const script = `import {resolveChallenge,canRecordChallenge} from ${JSON.stringify(moduleUrl)};
       import {dayParams} from ${JSON.stringify(coreUrl)};
       const now = new Date(${JSON.stringify(instant)});
-      const challenge = resolveChallenge({now,search:${JSON.stringify(search)}});
-      console.log(JSON.stringify({challenge,params:dayParams(challenge.num),counts:canRecordChallenge({...challenge,now})}));`;
+      const challenge = resolveChallenge({launchReady:true, now,search:${JSON.stringify(search)}});
+      console.log(JSON.stringify({challenge,params:dayParams(challenge.num),counts:canRecordChallenge({launchReady:true, ...challenge,now})}));`;
     return JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', script], {encoding: 'utf8', env: {...process.env, TZ: tz}}));
   };
   const sender = run('Pacific/Auckland');
@@ -131,7 +156,7 @@ test('a friend one timezone-day ahead shares the same pour as an unsaved preview
   assert.equal(recipient.counts, false);
   assert.match(recipient.challenge.notice, /friend’s glass arrives here tomorrow/);
   assert.deepEqual(recipient.params, sender.params);
-  assert.equal(resolveChallenge({now:asLocal(sender.challenge.key), search:'?day=' + sender.challenge.key}).kind, 'today');
+  assert.equal(resolveChallenge({launchReady:true, now:asLocal(sender.challenge.key), search:'?day=' + sender.challenge.key}).kind, 'today');
 });
 
 test('spring and autumn DST rollovers advance one calendar challenge at local midnight', () => {
@@ -144,10 +169,10 @@ test('spring and autumn DST rollovers advance one calendar challenge at local mi
       const start = new Date(${year},month,date,0);
       const before = new Date(${year},month,date,23,59,59);
       const after = new Date(${year},month,date+1,0);
-      const challenge = resolveChallenge({now:before});
+      const challenge = resolveChallenge({launchReady:true, now:before});
       return {hours:(after-start)/3600000,key:challenge.key,expected:dayKey(before),
-        increment:resolveChallenge({now:after}).num-challenge.num,
-        before:canRecordChallenge({...challenge,now:before}),after:canRecordChallenge({...challenge,now:after})};
+        increment:resolveChallenge({launchReady:true, now:after}).num-challenge.num,
+        before:canRecordChallenge({launchReady:true, ...challenge,now:before}),after:canRecordChallenge({launchReady:true, ...challenge,now:after})};
     });console.log(JSON.stringify(output));`;
   const results = JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', script], {encoding: 'utf8', env: {...process.env, TZ: 'America/New_York'}}));
   assert.deepEqual(results.map(r => r.hours), [23, 25]);

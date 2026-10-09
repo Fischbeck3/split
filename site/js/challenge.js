@@ -1,6 +1,6 @@
 // Local calendar dates choose the daily sip; a shared date preserves the same pour.
 import {dayNumber, dayKey, keyForDay} from './core.js';
-import {LAUNCH} from './config.js';
+import {LAUNCH, LAUNCH_READY} from './config.js';
 
 /** Reject overflow dates such as February 30 rather than letting Date normalize them. */
 export function isCalendarDateKey(key){
@@ -22,13 +22,14 @@ function launchNotice(){
 }
 
 /** Resolve public date links and the deliberately separate design previews. */
-export function resolveChallenge({now = new Date(), search = '', hash = ''} = {}){
+export function resolveChallenge({now = new Date(), search = '', hash = '', launchReady = LAUNCH_READY} = {}){
   const today = dayKey(now), beforeLaunch = today < LAUNCH;
   const match = /^#day(\d{1,4})$/.exec(hash);
   const previewNum = match ? Number(match[1]) : 0;
   if (previewNum >= 1 && previewNum <= 9999){
-    return {num: previewNum, key: keyForDay(previewNum), kind: 'preview', notice: beforeLaunch ? launchNotice() : ''};
+    return {num: previewNum, key: keyForDay(previewNum), kind: 'preview', notice: !launchReady ? 'The daily run opens soon.' : beforeLaunch ? launchNotice() : ''};
   }
+  if (!launchReady) return {num: 1, key: keyForDay(1), kind: 'preview', notice: 'The daily run opens soon.'};
   if (beforeLaunch) return {num: 1, key: keyForDay(1), kind: 'preview', notice: launchNotice()};
 
   const current = {num: dayNumber(now), key: today, kind: 'today', notice: ''};
@@ -54,6 +55,6 @@ export function resolveChallenge({now = new Date(), search = '', hash = ''} = {}
 }
 
 /** Check again when the sip finishes, so an old tab cannot record yesterday as today. */
-export function canRecordChallenge({key, kind, now = new Date()} = {}){
-  return kind === 'today' && isCalendarDateKey(key) && key >= LAUNCH && key === dayKey(now);
+export function canRecordChallenge({key, kind, now = new Date(), launchReady = LAUNCH_READY} = {}){
+  return launchReady && kind === 'today' && isCalendarDateKey(key) && key >= LAUNCH && key === dayKey(now);
 }

@@ -3,9 +3,10 @@ import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRa
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
+import {shareResultText, copyResultText} from './share-actions.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
-import {SITE_URL, LAUNCH} from './config.js';
+import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
 
 const $ = id => document.getElementById(id);
 // A fixed release calendar keeps prototype scores out of the public run.
@@ -204,10 +205,11 @@ function renderResult(){
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !load().days[S.key]?.done;
   $('resStrip').textContent = bandEmoji(r.f);
   $('shareText').textContent = shareText(); $('shareText').closest('details').open = false;
-  resetAction($('shareBtn')); resetAction($('copyBtn')); $('copyBtn').textContent = 'Copy text';
+  for (const id of ['shareBtn', 'copyBtn', 'saveCardBtn']) resetAction($(id));
+  $('copyBtn').textContent = 'Copy text';
   $('dayHeading').hidden = true;
   $('result').hidden = false;
-  // Build the card now, so the share sheet opens straight from the tap.
+  // Prepare the postcard separately; sharing the result never waits for its image.
   const c = drawCard(); $('cardImg').src = c.toDataURL('image/png'); $('cardImg').hidden = false;
   $('cardImg').alt = S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent;
   S.card = new Promise(res => c.toBlob(blob => res({canvas: c, blob}), 'image/png'));
@@ -219,17 +221,23 @@ function drawCard(){
 async function share(){
   const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
   try {
-    const {canvas, blob} = await S.card, name = 'split-no-' + S.num + '.png', text = shareText();
-    let file = null; try { file = new File([blob], name, {type: 'image/png'}); } catch { file = null; }
-    if (file && navigator.canShare && navigator.canShare({files: [file]})){
-      try { await navigator.share({files: [file], text}); confirmAction(btn, 'Shared'); return; } catch (e){ if (e && e.name === 'AbortError') return; }
-    }
+    const outcome = await shareResultText(shareText(), navigator);
+    if (outcome === 'shared') confirmAction(btn, 'Shared');
+    else if (outcome === 'copied'){
+      confirmAction(btn, 'Copied'); toast('Result copied. Paste it into your group chat.');
+    } else if (outcome === 'manual') showManualText(btn);
+  } finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+}
+async function savePostcard(){
+  const btn = $('saveCardBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
+  try {
+    const {blob} = await S.card, name = 'split-no-' + S.num + '.png';
+    if (!blob) throw new Error('Postcard encoding failed');
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
-    $('cardImg').src = canvas.toDataURL('image/png');
     confirmAction(btn, 'Card saved');
-    toast('Card saved. Copy the text to go with it.');
-  } catch { toast('Could not build the card'); }
+    toast('Postcard saved. Send it with your result link.');
+  } catch { toast('Could not save the postcard. Try again.'); }
   finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
 }
 const actionFeedback = new WeakMap();
@@ -243,24 +251,25 @@ function confirmAction(btn, label){
   resetAction(btn); btn.textContent = label; btn.dataset.confirmed = 'true';
   actionFeedback.set(btn, {html, timer: setTimeout(() => resetAction(btn), 1800)});
 }
-function copyText(){
-  const text = shareText(), btn = $('copyBtn');
-  const fallback = () => {
-    resetAction(btn);
-    const pre = $('shareText'); pre.closest('details').open = true;
-    pre.focus({preventScroll:true});
-    const range = document.createRange(); range.selectNodeContents(pre);
-    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
-    btn.textContent = 'Select and copy'; pre.scrollIntoView({block:'nearest'});
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(() => confirmAction(btn, 'Copied')).catch(fallback);
-  } else fallback();
+function showManualText(btn){
+  resetAction(btn);
+  const pre = $('shareText'); pre.closest('details').open = true;
+  pre.focus({preventScroll:true});
+  const range = document.createRange(); range.selectNodeContents(pre);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  if (btn === $('copyBtn')) btn.textContent = 'Select and copy';
+  pre.scrollIntoView({block:'nearest'});
+  toast('Copy the selected result into your group chat.');
+}
+async function copyText(){
+  const btn = $('copyBtn'), outcome = await copyResultText(shareText(), navigator);
+  if (outcome === 'copied') confirmAction(btn, 'Copied');
+  else showManualText(btn);
 }
 
 // ---------- the record and the clock ----------
 function renderStats(){
-  const st = load(), keys = Object.keys(st.days).filter(k => st.days[k].done);
+  const st = LAUNCH_READY ? load() : {days:{}}, keys = Object.keys(st.days).filter(k => st.days[k].done);
   let best = null, perfect = 0;
   for (const k of keys){ const d = st.days[k]; if (best === null || d.score > best) best = d.score; if (Math.abs(d.f) <= PERFECT && !d.drained) perfect++; }
   let streak = 0; const cur = new Date(); cur.setHours(0, 0, 0, 0);
@@ -315,6 +324,7 @@ $('recalibrateBtn').addEventListener('click', () => { if (S.state === 'ready'){ 
 $('startTilt').addEventListener('click', enableTilt);
 $('startHold').addEventListener('click', () => { S.mode = 'hold'; begin(); });
 $('shareBtn').addEventListener('click', share);
+$('saveCardBtn').addEventListener('click', savePostcard);
 $('copyBtn').addEventListener('click', copyText);
 $('practiceBtn').addEventListener('click', () => {
   S.practice = true;
