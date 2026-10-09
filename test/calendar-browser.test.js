@@ -37,11 +37,11 @@ test('browser import preserves published runs and cannot promote or create one',
   const edited = copy(); edited.campaigns['opening-2026'].name = 'Rewritten opening';
   assert.throws(() => validate(edited), /served campaign/);
   const promoted = copy(); promoted.campaigns['halloween-2026'].status = 'published';
-  assert.throws(() => validate(promoted), /cannot publish a run/);
+  assert.throws(() => validate(promoted), /Campaign content is not built and approved/);
   const created = copy(); created.campaigns['winter-2026'] = {
     name:'Winter week', startDate:'2026-12-01', endDate:'2026-12-07', status:'published', notes:''
   };
-  assert.throws(() => validate(created), /cannot publish a run/);
+  assert.throws(() => validate(created), /Campaign content is not built and approved/);
 });
 
 test('draft editing locks as soon as the date is live in UTC+14', () => {

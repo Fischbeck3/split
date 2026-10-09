@@ -12,7 +12,7 @@ export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'r
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
-const SCENE_ART = {
+export const SCENE_ART = {
   pub: {url: new URL('../assets/scenes/irish-pub.webp', import.meta.url).href, table: .606},
   beach: {url: new URL('../assets/scenes/cabo-beach.webp', import.meta.url).href, table: .627},
   munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636},

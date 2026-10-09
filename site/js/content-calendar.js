@@ -2,6 +2,7 @@
 // not import core, themes, or browser code. Callers supply theme resolution.
 import {LAUNCH, SITE_URL} from './config.js';
 import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS} from './calendar-data.js';
+import {assertContentReady, contentReadiness, isCampaignReady} from './content-readiness.js';
 
 const DAY_MS = 86400000;
 const ID = /^[a-z][a-z0-9-]{0,63}$/;
@@ -139,6 +140,10 @@ export function validateCalendarPlan(input, {baseline = CALENDAR, now = new Date
       throw new Error('Cannot add a published campaign to served dates: ' + id + '.');
     }
   }
+  for (const [date, entry] of Object.entries(plan.days)) assertContentReady(entry, date);
+  for (const [id, campaign] of campaigns){
+    if (campaign.status === 'published' && !isCampaignReady(id)) throw new Error('Campaign content is not built and approved: ' + id);
+  }
   return plan;
 }
 
@@ -176,20 +181,24 @@ export function createCalendarFeed({startDate, endDate, plan = CALENDAR, resolve
   }
   for (let date = startDate; date <= endDate; date = addDateDays(date, 1)){
     const draft = includeDrafts && normalized.drafts[date], entry = draft || getPublishedEntry(date, normalized);
+    if (entry && !draft) assertContentReady(entry, date);
     const theme = resolveTheme(date, entry?.themeId);
     if (!theme?.id || (entry && theme.id !== entry.themeId)) throw new Error('Theme resolver did not return the requested glass on ' + date + '.');
     const campaign = entry && normalized.campaigns[entry.campaignId], number = keyToDayNumber(date);
-    const description = [draft ? 'Draft lineup. This does not change the daily game.' : entry ? 'Published lineup.' : 'Automatic rotation.',
+    const readiness = contentReadiness(entry);
+    const description = [draft ? 'Draft lineup. ' + readiness.label + '. This does not change the daily game.' :
+      entry ? 'Scheduled theme. Built and approved.' : 'Automatic rotation. Unplanned date; this fallback is not a reviewed theme assignment.',
       campaign ? campaign.name + ' (' + entry.campaignId + ').' : '', theme.vessel ? 'Glass: ' + theme.vessel + '.' : '',
       theme.scene ? 'Place: ' + theme.scene + '.' : '', draft?.notes || '', 'The link opens an unsaved preview.'].filter(Boolean).join('\n');
     event({uid:'split-' + date + '@dailysplit.us', start:date, end:addDateDays(date, 1),
-      summary:(draft ? 'Draft · ' : '') + 'Split #' + String(number).padStart(3, '0') + ' · ' + (theme.name || theme.id) + ' · ' + (theme.label || theme.id),
-      description, tentative:!!draft, url:SITE_URL + '#day' + number});
+      summary:(draft ? 'Draft · ' + readiness.label + ' · ' : !entry ? 'Unplanned fallback · ' : '') + 'Split #' + String(number).padStart(3, '0') + ' · ' + (theme.name || theme.id) + ' · ' + (theme.label || theme.id),
+      description, tentative:!!draft || !entry, url:SITE_URL + '#day' + number});
   }
   if (includeDrafts) for (const [id, campaign] of Object.entries(normalized.campaigns)){
     if (campaign.status !== 'draft' || campaign.endDate < startDate || campaign.startDate > endDate) continue;
     event({uid:'split-campaign-' + id + '@dailysplit.us', start:campaign.startDate, end:addDateDays(campaign.endDate, 1),
-      summary:'Draft week · ' + campaign.name, description:'Tentative campaign.\n' + campaign.notes, tentative:true,
+      summary:'Draft week · ' + (isCampaignReady(id) ? 'needs date review' : 'needs build & review') + ' · ' + campaign.name,
+      description:'Tentative campaign. ' + (isCampaignReady(id) ? 'Built content; dates still need review.' : 'Campaign content is not built and approved.') + '\n' + campaign.notes, tentative:true,
       url:SITE_URL + 'calendar.html?campaign=' + encodeURIComponent(id)});
   }
   lines.push('END:VCALENDAR');
