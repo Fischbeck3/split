@@ -53,6 +53,15 @@
         ],
         "createdAt": "2026-10-09T15:31:13.521Z",
         "reason": "Codex: unchanged pre-theme startup accent in style.css; init replaces it with the daily palette before enabling play."
+      },
+      {
+        "rule": "overused-font",
+        "value": "fraunces",
+        "files": [
+          "site/motion.html"
+        ],
+        "createdAt": "2026-10-09T17:52:53.479Z",
+        "reason": "Agent: DESIGN.md explicitly preserves the incumbent Fraunces/Karla pairing and Split wordmark; this task refines glass motion and fluid behavior within that established identity."
       }
     ]
   }
