@@ -110,7 +110,46 @@ npm test
 
 `--check` prints the plan without editing files. Preparation sets day No. 1, sets `LAUNCH_READY = true`, freezes the date, and synchronizes the canonical URL and social metadata. It refuses a different launch date once frozen. Review and commit the resulting diff, then release to `main`; the script itself does not deploy or change DNS. After release, preserve existing dates, seeds, and scheduled themes so shared links continue to identify the same glass.
 
-Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Choose an analytics project and add starts, finishes, share actions, friend-link arrivals, and next-day returns; analytics is not integrated in this branch. No backend, daily job, or runtime image service is required for the game itself.
+Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Analytics is prepared below and starts collecting after its public project token is configured and deployed. No backend, daily job, or runtime image service is required for the game itself.
+
+## Daily users and sharing
+
+The game is configured to report explicit events to PostHog on the HTTPS public domain. `POSTHOG_PROJECT_KEY` in `site/js/config.js` holds the project's public `phc_...` token; an empty value leaves analytics disabled. Tracking starts when that token is configured and deployed. `POSTHOG_API_HOST` defaults to the US ingestion host. Localhost, GitHub previews, and other domains do not load the analytics SDK or send events. Analytics failures leave the game and native sharing available.
+
+The browser keeps an anonymous analytics ID in local storage. Counts represent browsers, not identified people; clearing storage or using another device creates a new ID. Session recording, automatic click capture, surveys, and other unrelated PostHog features are disabled. Events strip query strings and fragments from URL properties so a friend's score and stopping offset are not copied into analytics URLs.
+
+| Event | Measurement |
+|---|---|
+| `game_opened` | Unique browsers opening the game, including returning players viewing their saved result |
+| `sip_started` | A sip actually begins drinking; opening the controls alone does not count |
+| `sip_completed` | A settled result; `counts = true` identifies a new official daily completion |
+| `result_share_attempted` | A share or explicit copy action starts |
+| `result_shared` | The native share API reports a handoff |
+| `result_copied` | Clipboard writing succeeds, including the share button's fallback |
+| `friend_link_opened` | A valid shared benchmark opens the corresponding challenge |
+| `postcard_saved` | A postcard download is initiated |
+
+Cancellation, manual-copy fallback, and share or download errors have separate events. A native handoff does not prove a message was sent, a copy does not prove it was pasted, and a download request does not prove the file was saved. Friend-link arrivals measure visits caused by shared challenge links without identifying a sender or recipient.
+
+Every event includes `local_play_date`, `challenge_date`, `challenge_number`, `theme`, `input_mode`, `attempt_kind`, and `friend_link`. `attempt_kind` distinguishes `daily`, `practice`, `archive`, and `preview`. Official completion charts require `counts = true`; restoring a saved result does not emit another completion. Result actions include the score and recording status of the result clicked, even if another sip starts before the share sheet closes.
+
+The configured live PostHog project uses its default UTC reporting clock. These dashboard definitions group timestamps by that same UTC calendar; the two date properties preserve the player's local calendar and the linked glass's date. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Sharing rate divides these sharers by official daily finishers. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back.
+
+To activate collection, copy the selected PostHog project's public `phc_...` token into `POSTHOG_PROJECT_KEY`, then release the change through the normal Pages workflow. The dashboard uses the existing project's UTC timezone. For an EU project, also change `POSTHOG_API_HOST` to `https://eu.i.posthog.com` and the SDK's `ui_host` to `https://eu.posthog.com`.
+
+`scripts/posthog-dashboard.json` contains seven saved-insight API definitions for audience, share actions, unique sharers and share rate, friend arrivals, friend conversion, next-day retention, and postcard downloads. Preview the payloads without credentials or network access:
+
+```
+node scripts/provision-posthog-dashboard.js --dry-run
+```
+
+Provisioning reads `POSTHOG_PROJECT_ID` and `POSTHOG_PERSONAL_API_KEY` from the environment. The personal key requires `dashboard:read`, `dashboard:write`, `insight:read`, and `insight:write` scopes and belongs only in the provisioning environment; the browser configuration uses the public token. `POSTHOG_APP_HOST` defaults to `https://us.posthog.com`; use `https://eu.posthog.com` for an EU project.
+
+```
+node scripts/provision-posthog-dashboard.js --apply
+```
+
+Rerunning updates the tagged Daily Split dashboard and insights, including after a partial setup; other dashboards are preserved. The JSON is an API definition, not a PostHog UI import file. An empty dashboard is expected before deployment sends its first events. Live ingestion and chart results still need verification in the authenticated project.
 
 ## Layout
 
@@ -131,11 +170,13 @@ Follow-up playtest checks are still open: iPhone and Android hold/release, optio
 - `site/js/draw.js`: shared place assets and canvas fallback, glass material, beer, foam, printed names, and marks
 - `site/js/share.js`: the destination postcard and plain-text result
 - `site/js/main.js`: input, the tilt sensor, results, local daily records, and sharing
+- `site/js/analytics.js`: optional production analytics and observed share/copy outcomes
 - `site/assets/scenes/`: compressed place illustrations and their generation/framing metadata
 - `site/fonts/`: local fonts and license files
 - `test/`: the tests
 - `scripts/serve.js`: the local server
 - `scripts/build-pages.js`: versioned Pages output in `.pages/`, using the deployment's Git commit SHA
 - `scripts/prepare-launch.js`: reviewed launch-date and metadata preparation, without deployment or DNS changes
+- `scripts/provision-posthog-dashboard.js` and `scripts/posthog-dashboard.json`: reproducible Daily Split dashboard setup
 
 Split is not affiliated with any brewer or brand. The vessels use simplified shapes, brand names, and marks drawn on canvas, layered over illustrative travel scenes.

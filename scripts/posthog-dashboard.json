@@ -1,0 +1,588 @@
+{
+  "timezone": "UTC",
+  "dashboard": {
+    "name": "Daily Split · daily users and shares",
+    "description": "Daily browser activity, daily game play, native share handoffs, copies, unique sharers, friend arrivals and next-day retention. Days use UTC; challenge_date and local_play_date track the player local day separately. Users are browsers/devices. Practice, archive and preview activity are excluded from gameplay/share metrics. Tracking starts at deployment.",
+    "pinned": true,
+    "tags": [
+      "dailysplit:dashboard-v1"
+    ]
+  },
+  "insights": [
+    {
+      "name": "Daily Split · browsers, players, finishers",
+      "description": "Unique browsers opening the game; unique browsers starting a daily sip; unique browsers saving their first eligible daily result. Reporting days use the PostHog project timezone UTC.",
+      "tags": [
+        "dailysplit:audience"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "TrendsQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "interval": "day",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "game_opened",
+              "name": "game_opened",
+              "custom_name": "Browsers",
+              "math": "dau",
+              "properties": []
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_started",
+              "name": "sip_started",
+              "custom_name": "Daily players",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_completed",
+              "name": "sip_completed",
+              "custom_name": "Daily finishers",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            }
+          ],
+          "trendsFilter": {
+            "display": "ActionsLineGraph",
+            "showLegend": true
+          },
+          "version": 2
+        }
+      }
+    },
+    {
+      "name": "Daily Split · share handoffs and copies",
+      "description": "Event totals, not unique people. Native handoffs show successful Web Share handoffs; copies show successful clipboard writes. Neither proves a message was delivered. Includes only eligible daily results.",
+      "tags": [
+        "dailysplit:share-actions"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "TrendsQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "interval": "day",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "result_shared",
+              "name": "result_shared",
+              "custom_name": "Native handoffs",
+              "math": "total",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "result_copied",
+              "name": "result_copied",
+              "custom_name": "Successful copies",
+              "math": "total",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            }
+          ],
+          "trendsFilter": {
+            "display": "ActionsLineGraph",
+            "showLegend": true
+          },
+          "version": 2
+        }
+      }
+    },
+    {
+      "name": "Daily Split · unique sharers and share rate",
+      "description": "Each browser counts once per UTC reporting day across native handoffs and clipboard copies combined. Share rate = unique daily sharers / daily finishers; blank when no finishers. Shares can concern a saved result from an earlier reporting day, so this is a same-day activity ratio, not a cohort conversion rate. Browser-local challenge_date and local_play_date remain available as event filters.",
+      "tags": [
+        "dailysplit:share-rate"
+      ],
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT day, unique_sharers, daily_finishers,\n    1.0 * unique_sharers / nullIf(daily_finishers, 0) AS share_rate\nFROM (\n    SELECT toDate(toTimeZone(timestamp, 'UTC')) AS day,\n        uniqExactIf(distinct_id, event IN ('result_shared', 'result_copied')) AS unique_sharers,\n        uniqExactIf(distinct_id, event = 'sip_completed') AS daily_finishers\n    FROM events\n    WHERE event IN ('result_shared', 'result_copied', 'sip_completed')\n        AND properties.attempt_kind = 'daily'\n        AND properties.counts = true\n        AND {filters}\n    GROUP BY day\n)\nORDER BY day DESC\nLIMIT 1000",
+          "filters": {
+            "dateRange": {
+              "date_from": "-30d",
+              "date_to": null
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "day"
+            },
+            {
+              "column": "unique_sharers"
+            },
+            {
+              "column": "daily_finishers"
+            },
+            {
+              "column": "share_rate",
+              "settings": {
+                "formatting": {
+                  "style": "percent",
+                  "decimalPlaces": 1
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Daily Split · friend arrivals and players",
+      "description": "Unique browsers opening a valid shared benchmark on the daily sip, then starting or completing a daily sip with that benchmark present. The separate ordered funnel checks actual arrival-to-play conversion.",
+      "tags": [
+        "dailysplit:friend-audience"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "TrendsQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "interval": "day",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "friend_link_opened",
+              "name": "friend_link_opened",
+              "custom_name": "Friend arrivals",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_started",
+              "name": "sip_started",
+              "custom_name": "Friend daily players",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_completed",
+              "name": "sip_completed",
+              "custom_name": "Friend daily finishers",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            }
+          ],
+          "trendsFilter": {
+            "display": "ActionsLineGraph",
+            "showLegend": true
+          },
+          "version": 2
+        }
+      }
+    },
+    {
+      "name": "Daily Split · friend arrival to completed sip",
+      "description": "Ordered unique-browser funnel from a valid daily friend benchmark arrival, to a real daily sip, to its first saved eligible result, all with friend_link=true within one hour. This reports conversion over the selected period.",
+      "tags": [
+        "dailysplit:friend-conversion"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "friend_link_opened",
+              "name": "friend_link_opened",
+              "custom_name": "Friend arrival",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_started",
+              "name": "sip_started",
+              "custom_name": "Started daily sip",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "sip_completed",
+              "name": "sip_completed",
+              "custom_name": "Finished daily sip",
+              "math": "dau",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                },
+                {
+                  "key": "friend_link",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            }
+          ],
+          "funnelsFilter": {
+            "funnelVizType": "steps",
+            "funnelOrderType": "ordered",
+            "funnelWindowInterval": 1,
+            "funnelWindowIntervalUnit": "hour",
+            "layout": "vertical"
+          }
+        }
+      }
+    },
+    {
+      "name": "Daily Split · next-day player retention",
+      "description": "Recurring cohorts of browsers starting a daily sip. Day 1 shows who starts another daily sip on the next UTC calendar date. The latest cohort remains incomplete until that date ends. Uses reporting dates rather than visitor local challenge dates.",
+      "tags": [
+        "dailysplit:next-day"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "RetentionQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "properties": [
+            {
+              "key": "attempt_kind",
+              "type": "event",
+              "operator": "exact",
+              "value": [
+                "daily"
+              ]
+            }
+          ],
+          "retentionFilter": {
+            "period": "Day",
+            "totalIntervals": 2,
+            "retentionType": "retention_recurring",
+            "retentionReference": "total",
+            "cumulative": false,
+            "timeWindowMode": "strict_calendar_dates",
+            "targetEntity": {
+              "id": "sip_started",
+              "name": "sip_started",
+              "type": "events",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                }
+              ]
+            },
+            "returningEntity": {
+              "id": "sip_started",
+              "name": "sip_started",
+              "type": "events",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Daily Split · postcard download requests",
+      "description": "Browser download attempts, initiated downloads, and failures for eligible daily results. An initiated download means the browser received the save handoff; it does not prove the file was retained.",
+      "tags": [
+        "dailysplit:postcards"
+      ],
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "TrendsQuery",
+          "dateRange": {
+            "date_from": "-30d",
+            "date_to": null
+          },
+          "interval": "day",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "event": "postcard_save_attempted",
+              "name": "postcard_save_attempted",
+              "custom_name": "Download attempts",
+              "math": "total",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "postcard_saved",
+              "name": "postcard_saved",
+              "custom_name": "Downloads initiated",
+              "math": "total",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "EventsNode",
+              "event": "postcard_save_failed",
+              "name": "postcard_save_failed",
+              "custom_name": "Download failures",
+              "math": "total",
+              "properties": [
+                {
+                  "key": "attempt_kind",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    "daily"
+                  ]
+                },
+                {
+                  "key": "counts",
+                  "type": "event",
+                  "operator": "exact",
+                  "value": [
+                    true
+                  ]
+                }
+              ]
+            }
+          ],
+          "trendsFilter": {
+            "display": "ActionsLineGraph",
+            "showLegend": true
+          },
+          "version": 2
+        }
+      }
+    }
+  ]
+}
