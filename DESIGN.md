@@ -129,7 +129,7 @@ components:
 
 **Creative North Star: "One sip. Three places."**
 
-Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
+Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
 
 The pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.
 
@@ -138,7 +138,7 @@ The pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfes
 - A large, unobscured vessel is the focal point.
 - The place changes the palette, backdrop, vessel, and share card together.
 - Heavy serif titles pair with plain, compact instructions.
-- A single stopping position carries the result.
+- A visible lift and tip explain the sip; a single settled stopping position carries the result.
 
 ## Colors
 
@@ -189,11 +189,11 @@ The game is one centered viewport, capped at 560px wide and sized to `100dvh`. I
 
 At widths of 700px and above, the HUD and sheet receive wider side padding and the centered game gains an ambient shadow. Below a height of 740px, the heading, controls, gaps, and result image tighten together. The vessel's top is chosen by shape and its bottom moves from 66.5% to 62.5% of viewport height on short screens. Preserve the clear gap around the mark when extending either scene or interface.
 
-The `site/design.html` review route shows all three opening days and their sample cards in three columns, switching to a single column at 900px. This is a preview composition, not a new in-game navigation structure.
+The `site/design.html` review route shows all three opening days and their sample cards in three columns, switching to a single column at 900px. This is a preview composition, not a new in-game navigation structure. Its link to `site/motion.html` opens a separate three-vessel preview with sip playback and frozen Ready, Drinking, Just released, and Settled stages; neither preview saves daily scores.
 
 ## Elevation & Depth
 
-The interface is mostly flat. Theme-colored sheets meet the illustrated scene without floating-card effects. Depth comes from glass highlights, the liquid gradient, the foam boundary, wood or shoreline layers, and restrained scene lighting. Only the desktop game container and transient toast use CSS shadows: respectively `0 10px 60px #0003` and `0 8px 24px #0003`.
+The interface is mostly flat. Theme-colored sheets meet the illustrated scene without floating-card effects. Depth comes from the glass rim and wall highlights, condensation or dimples, the beer gradient, dense microfoam and lacing, wood or shoreline layers, and restrained scene lighting. Only the desktop game container and transient toast use CSS shadows: respectively `0 10px 60px #0003` and `0 8px 24px #0003`.
 
 Keep illustrated depth attached to the place and vessel. The result image is the dominant artifact, so the surrounding controls and stats need no added elevation.
 
@@ -207,13 +207,13 @@ The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-n
 
 ### Buttons
 
-Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens it. All keyboard focus outlines use foreground ink (2px, offset 5px).
+Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the primary input across devices; optional phone tilt uses a secondary text action. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens it. All keyboard focus outlines use foreground ink (2px, offset 5px).
 
 Text actions have underlined foreground labels and a minimum height of 38px. The outlined copy action uses a thin theme separator border, foreground ink, and a separator-colored hover fill. Disabled controls reduce opacity to one half. Inline arrow and share icons use the current text color.
 
 ### Intro and live controls
 
-The target and short vessel-feel label form a compact row. Instructions name the input and stop gesture. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status; tilt mode offers upright recalibration before the sip.
+The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status, then a settling state while the glass returns upright. Optional tilt mode offers upright recalibration before the sip.
 
 ### Preview navigation
 
@@ -221,9 +221,15 @@ The bottom preview strip is shown only for hash-based day previews. Pub, Beach, 
 
 ### Vessel and physics
 
-The canvas keeps the actual liquid/foam boundary readable through the target mark. These visual signatures correspond to real input behavior: the pub stops immediately, the bottle drops quickly through its neck and pulses in deterministic glugs through the body, and the heavy stein has a bounded 0.24-second follow-through after release. Motion expresses the sip; it must not invent a separate scoring line.
+The whole vessel lifts and tips during a held sip, carrying its printed mark with it. The base tip targets are 20 degrees for the pint, 24 degrees for the bottle, and 18 degrees for the stein. The stein accelerates more heavily; the bottle's movement pulses on the same deterministic 0.58-second cadence as its body glugs. Releasing the input returns the vessel to exact rest within one second.
 
-Decorative wobble and bubbles are suppressed for reduced motion. Essential drinking progress remains visible. Optional CSS transitions use 160ms ease-out; the result image arrives over 400ms only when reduced motion is not requested.
+The liquid stays near world-horizontal with a small damped response to acceleration. `site/js/liquid.js` adjusts the surface's center to preserve the rendered filled area as the glass rotates, including through the bottle shoulder. Motion and liquid geometry present the amount calculated by the existing drinking model; they do not alter the amount drained or supply a separate scoring line.
+
+The pub's intake stops immediately, the bottle drops quickly through its neck and glugs through its body, and the heavy stein retains its bounded 0.24-second drinking follow-through. Scoring waits until both the drink and vessel movement have settled. The result and share card then show the same upright beer/foam boundary through the target mark.
+
+Material follows the vessel: dense cream microfoam and lacing on the pint; a clear long-necked bottle with a distinct lip and shoulder, condensation, lime, fine fizz, and a larger rising air pocket synchronized to each glug; thick glass, a broad clear handle, recessed dimples, and an irregular foam crest on the stein. Foam responds to the surface and leaves evidence of the sip while the scored boundary remains readable.
+
+Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liquid progress and static foam and material detail. Optional CSS transitions use 160ms ease-out; the result image arrives over 400ms only when reduced motion is not requested.
 
 ### Results and sharing
 
@@ -238,6 +244,7 @@ The image card is 1080 × 1350, with the daily scene and vessel above a strong s
 - **Do** preserve the existing wordmark, Fraunces/Karla pairing, and canvas vessel language when adding a day.
 - **Do** give each new place a coherent palette, recognizable vessel, short target, and matching share treatment.
 - **Do** keep the vessel and mark visible between the heading and controls at both normal and short phone heights.
+- **Do** preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.
 - **Do** show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.
 - **Do** label preview and practice results on both image and text shares.
 - **Do** use foreground ink for focus and active preview text, and retain the reduced-motion treatment.

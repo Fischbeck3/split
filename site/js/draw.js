@@ -1,5 +1,6 @@
 // Canvas drawing: the places, the vessels and the marks.
 import {widthAt, mulberry32} from './core.js';
+import {getLiquidSurface} from './liquid.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -108,46 +109,62 @@ export function makeBackdrop(w, h, G, theme, dpr){
 
 // ---------- vessels ----------
 export function glassPath(c, G){
-  const n = 40, gh = G.bot - G.top, wb = widthAt(G.glass, 1) * G.halfW, r = Math.min(16, wb * 0.3), tEnd = 1 - r / gh;
+  const n = 56, gh = G.bot - G.top, wb = widthAt(G.glass, 1) * G.halfW, r = Math.min(gh * 0.032, wb * 0.22), tEnd = 1 - r / gh;
   c.beginPath();
   for (let i = 0; i <= n; i++){ const t = tEnd * i / n, w = widthAt(G.glass, t) * G.halfW, y = G.top + t * gh; if (i === 0) c.moveTo(G.cx - w, y); else c.lineTo(G.cx - w, y); }
   c.quadraticCurveTo(G.cx - wb, G.bot, G.cx - wb + r, G.bot); c.lineTo(G.cx + wb - r, G.bot); c.quadraticCurveTo(G.cx + wb, G.bot, G.cx + wb, G.bot - r);
   for (let i = n; i >= 0; i--){ const t = tEnd * i / n, w = widthAt(G.glass, t) * G.halfW, y = G.top + t * gh; c.lineTo(G.cx + w, y); }
   c.closePath();
 }
+function contour(c, G, side, from, to, inset = 0){
+  const gh = G.bot - G.top;
+  c.beginPath();
+  for (let i = 0; i <= 24; i++){
+    const t = from + (to - from) * i / 24, x = G.cx + side * (widthAt(G.glass, t) * G.halfW - inset), y = G.top + gh * t;
+    if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+  }
+}
 function drawVesselBehind(c, G, theme){
   if (theme.vessel !== 'mug' && theme.vessel !== 'stein') return;
   const gh = G.bot - G.top, big = theme.vessel === 'stein';
   c.save(); c.lineCap = 'round';
-  c.beginPath(); c.ellipse(G.cx + G.halfW * (big ? 0.89 : 0.95), G.top + gh * 0.5, G.halfW * (big ? 0.49 : 0.42), gh * (big ? 0.255 : 0.22), 0, -Math.PI / 2, Math.PI / 2);
-  c.strokeStyle = big ? 'rgba(88,119,136,0.48)' : 'rgba(255,255,255,0.38)'; c.lineWidth = G.halfW * (big ? 0.27 : 0.2); c.stroke();
-  c.strokeStyle = big ? 'rgba(240,248,246,0.92)' : 'rgba(255,255,255,0.3)'; c.lineWidth = G.halfW * (big ? 0.21 : 0.12); c.stroke();
-  c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = Math.max(1, G.halfW * 0.035); c.stroke();
+  const x = G.cx + G.halfW * (big ? 0.87 : 0.95), cy = G.top + gh * 0.49, rx = G.halfW * (big ? 0.52 : 0.42), ry = gh * (big ? 0.247 : 0.22);
+  c.beginPath(); c.moveTo(x, cy - ry); c.bezierCurveTo(x + rx * 1.05, cy - ry, x + rx * 1.08, cy - ry * 0.72, x + rx, cy); c.bezierCurveTo(x + rx * 1.08, cy + ry * 0.72, x + rx * 1.05, cy + ry, x, cy + ry);
+  c.strokeStyle = big ? 'rgba(87,113,120,0.65)' : 'rgba(255,255,255,0.38)'; c.lineWidth = G.halfW * (big ? 0.29 : 0.2); c.stroke();
+  const glass = c.createLinearGradient(x, cy, x + rx, cy); glass.addColorStop(0, 'rgba(237,246,239,0.88)'); glass.addColorStop(0.5, 'rgba(223,236,224,0.66)'); glass.addColorStop(1, 'rgba(255,255,248,0.96)');
+  c.strokeStyle = big ? glass : 'rgba(255,255,255,0.3)'; c.lineWidth = G.halfW * (big ? 0.23 : 0.12); c.stroke();
+  c.strokeStyle = 'rgba(255,255,255,0.96)'; c.lineWidth = Math.max(1, G.halfW * 0.034); c.stroke();
+  if (big){
+    c.strokeStyle = 'rgba(95,124,130,0.21)'; c.lineWidth = G.halfW * 0.025;
+    c.beginPath(); c.moveTo(x + G.halfW * 0.06, cy - ry * 0.91); c.bezierCurveTo(x + rx * 0.77, cy - ry * 0.86, x + rx * 0.75, cy + ry * 0.84, x + G.halfW * 0.06, cy + ry * 0.9); c.stroke();
+  }
   c.restore();
 }
 function drawVesselFront(c, G, theme){
   const gh = G.bot - G.top;
   if (theme.vessel === 'stein'){
     c.save(); glassPath(c, G); c.clip();
-    const r = Math.min(G.halfW * 0.17, gh * 0.049), cols = 4, rows = Math.max(1, Math.floor(gh * 0.67 / (r * 2.75)));
+    const r = Math.min(G.halfW * 0.17, gh * 0.049), cols = 4, rows = Math.max(1, Math.floor(gh * 0.64 / (r * 2.58)));
     for (let j = 0; j < rows; j++){
       for (let i = 0; i < cols; i++){
-        const x = G.cx + (i - (cols - 1) / 2) * G.halfW * 0.44, y = G.top + gh * 0.19 + j * r * 2.75;
+        const x = G.cx + (i - (cols - 1) / 2) * G.halfW * 0.44, y = G.top + gh * 0.2 + j * r * 2.58;
         const rg = c.createRadialGradient(x - r * 0.4, y - r * 0.4, r * 0.05, x, y, r);
-        rg.addColorStop(0, 'rgba(255,255,255,0.36)'); rg.addColorStop(0.65, 'rgba(255,255,255,0.02)'); rg.addColorStop(1, 'rgba(91,68,34,0.19)');
+        rg.addColorStop(0, 'rgba(255,255,249,0.44)'); rg.addColorStop(0.48, 'rgba(255,255,255,0.03)'); rg.addColorStop(0.78, 'rgba(144,122,77,0.02)'); rg.addColorStop(1, 'rgba(91,68,34,0.24)');
         c.fillStyle = rg; c.beginPath(); c.ellipse(x, y, r * 0.9, r, 0, 0, Math.PI * 2); c.fill();
         c.strokeStyle = 'rgba(255,255,255,0.38)'; c.lineWidth = Math.max(1, gh * 0.004);
         c.beginPath(); c.ellipse(x, y, r * 0.9, r, 0, Math.PI * 1.05, Math.PI * 1.8); c.stroke();
+        c.strokeStyle = 'rgba(94,93,51,0.12)'; c.beginPath(); c.ellipse(x, y, r * 0.81, r * 0.88, 0, 0.05, Math.PI * 0.68); c.stroke();
       }
     }
-    c.fillStyle = 'rgba(228,241,235,0.4)'; c.fillRect(G.cx - G.halfW - 5, G.bot - gh * 0.065, G.halfW * 2 + 10, gh * 0.065 + 5);
-    c.fillStyle = 'rgba(255,255,255,0.78)'; c.fillRect(G.cx - G.halfW, G.bot - gh * 0.021, G.halfW * 2, gh * 0.01);
     c.restore();
   }
   if (theme.vessel === 'bottle'){
     const mw = widthAt('bottle', 0) * G.halfW, rr = gh * 0.046;
     c.strokeStyle = 'rgba(235,250,233,0.8)'; c.lineWidth = Math.max(1.3, gh * 0.009);
-    for (const depth of [0.012, 0.04]){ c.beginPath(); c.moveTo(G.cx - mw * 0.88, G.top + gh * depth); c.lineTo(G.cx + mw * 0.88, G.top + gh * depth); c.stroke(); }
+    for (const depth of [0.015, 0.038]){
+      c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, mw * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
+    }
+    c.fillStyle = 'rgba(56,93,75,0.16)'; c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.004, mw * 0.89, gh * 0.009, 0, 0, Math.PI * 2); c.fill();
     c.save(); c.translate(G.cx + mw * 0.38, G.top + rr * 0.28); c.rotate(-0.34);
     c.fillStyle = '#6b9b43'; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, rr, Math.PI, Math.PI * 2); c.closePath(); c.fill();
     c.fillStyle = '#d6eaa4'; c.beginPath(); c.moveTo(0, -rr * 0.09); c.arc(0, -rr * 0.09, rr * 0.78, Math.PI * 1.05, Math.PI * 1.95); c.closePath(); c.fill();
@@ -172,6 +189,49 @@ function drawVesselFront(c, G, theme){
     c.fillText('1 L', G.cx, G.top + gh * 0.875);
   }
   c.restore();
+}
+function drawGlassMaterial(c, G, theme){
+  const gh = G.bot - G.top, bottle = theme.vessel === 'bottle', stein = theme.vessel === 'stein', rim = widthAt(G.glass, 0) * G.halfW, wb = widthAt(G.glass, 1) * G.halfW;
+  c.save(); glassPath(c, G); c.clip();
+  const glaze = c.createLinearGradient(G.cx - G.halfW, 0, G.cx + G.halfW, 0);
+  glaze.addColorStop(0, 'rgba(132,170,151,0.24)'); glaze.addColorStop(0.06, 'rgba(255,255,243,0.36)'); glaze.addColorStop(0.17, 'rgba(255,255,255,0.04)'); glaze.addColorStop(0.78, 'rgba(255,255,255,0)'); glaze.addColorStop(0.96, 'rgba(235,246,225,0.24)'); glaze.addColorStop(1, 'rgba(79,121,111,0.28)');
+  c.fillStyle = glaze; c.fillRect(G.cx - G.halfW, G.top, G.halfW * 2, gh);
+  c.lineCap = 'round';
+  const shine = c.createLinearGradient(0, G.top, 0, G.bot);
+  shine.addColorStop(0, 'rgba(255,255,249,0.64)'); shine.addColorStop(0.45, 'rgba(255,255,249,0.36)'); shine.addColorStop(1, 'rgba(255,255,249,0.68)');
+  c.strokeStyle = shine; c.lineWidth = G.halfW * (stein ? 0.065 : 0.045);
+  contour(c, G, -1, bottle ? 0.065 : 0.035, 0.95, G.halfW * 0.052); c.stroke();
+  c.strokeStyle = 'rgba(255,255,246,0.73)'; c.lineWidth = Math.max(0.8, G.halfW * 0.012);
+  contour(c, G, -1, bottle ? 0.055 : 0.03, 0.92, G.halfW * 0.03); c.stroke();
+  c.strokeStyle = 'rgba(255,255,246,0.28)'; c.lineWidth = G.halfW * (stein ? 0.046 : 0.028);
+  contour(c, G, 1, bottle ? 0.08 : 0.05, 0.945, G.halfW * 0.057); c.stroke();
+  const baseT = stein ? 0.057 : bottle ? 0.04 : 0.026, baseY = G.bot - gh * baseT;
+  const base = c.createLinearGradient(0, baseY, 0, G.bot);
+  base.addColorStop(0, 'rgba(132,165,140,0.27)'); base.addColorStop(0.55, 'rgba(250,255,235,0.69)'); base.addColorStop(1, 'rgba(106,140,120,0.35)');
+  c.fillStyle = base; c.fillRect(G.cx - wb, baseY, wb * 2, gh * baseT);
+  c.strokeStyle = 'rgba(248,255,241,0.73)'; c.lineWidth = Math.max(1, gh * 0.005);
+  c.beginPath(); c.ellipse(G.cx, baseY + gh * baseT * 0.16, wb * 0.94, gh * baseT * 0.26, 0, 0, Math.PI); c.stroke();
+  c.strokeStyle = 'rgba(255,255,250,0.78)'; c.lineWidth = Math.max(1, gh * 0.004);
+  c.beginPath(); c.ellipse(G.cx, G.bot - gh * baseT * 0.27, wb * 0.89, gh * baseT * 0.18, 0, 0, Math.PI); c.stroke();
+  if (bottle){
+    c.strokeStyle = 'rgba(123,152,108,0.3)'; c.lineWidth = Math.max(1, gh * 0.005);
+    c.beginPath(); c.ellipse(G.cx, G.bot - gh * 0.016, wb * 0.57, gh * 0.01, 0, Math.PI, Math.PI * 2); c.stroke();
+    for (const d of CONDENSATION){
+      const t = 0.39 + d.y * 0.53, x = G.cx + (d.x - 0.5) * 1.57 * widthAt(G.glass, t) * G.halfW, y = G.top + gh * t, r = gh * 0.0035 * d.s;
+      c.fillStyle = 'rgba(242,253,236,0.24)'; c.beginPath(); c.ellipse(x, y, r * 0.8, r * 1.18, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(66,108,88,0.15)'; c.lineWidth = Math.max(0.5, gh * 0.001);
+      c.beginPath(); c.ellipse(x, y, r * 0.8, r * 1.18, 0, 0, Math.PI * 0.85); c.stroke();
+      c.fillStyle = 'rgba(255,255,250,0.65)'; c.beginPath(); c.arc(x - r * 0.21, y - r * 0.43, Math.max(0.4, r * 0.3), 0, Math.PI * 2); c.fill();
+    }
+  }
+  c.restore();
+  glassPath(c, G); c.strokeStyle = theme.scene === 'beach' ? 'rgba(68,109,92,0.53)' : theme.scene === 'munich' ? 'rgba(65,100,112,0.51)' : 'rgba(241,236,216,0.67)'; c.lineWidth = Math.max(1.2, gh * 0.0045); c.stroke();
+  if (!bottle){
+    c.strokeStyle = 'rgba(85,114,108,0.4)'; c.lineWidth = Math.max(1, gh * (stein ? 0.011 : 0.006));
+    c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.007, rim * 0.98, gh * (stein ? 0.015 : 0.011), 0, Math.PI, Math.PI * 2); c.stroke();
+    c.strokeStyle = 'rgba(255,255,247,0.82)'; c.lineWidth = Math.max(1.3, gh * (stein ? 0.013 : 0.005));
+    c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.007, rim * 0.98, gh * (stein ? 0.015 : 0.011), 0, 0, Math.PI); c.stroke();
+  }
 }
 
 // ---------- marks ----------
@@ -220,55 +280,112 @@ export function drawMark(c, theme, cx, cy, h){
 }
 
 // ---------- the whole scene ----------
-const BUBBLES = (() => { const r = mulberry32(7), out = []; for (let i = 0; i < 18; i++) out.push({x: r(), y: r(), s: 0.6 + r() * 0.9, v: 0.4 + r() * 0.8}); return out; })();
-const FOAM = (() => { const r = mulberry32(23), out = []; for (let i = 0; i < 15; i++) out.push({x: r(), y: r(), s: 0.6 + r() * 0.7}); return out; })();
+function seededDetail(seed, count){
+  const r = mulberry32(seed), out = [];
+  for (let i = 0; i < count; i++) out.push({x: r(), y: r(), s: 0.55 + r() * 0.9, v: 0.4 + r() * 0.8});
+  return out;
+}
+const BUBBLES = seededDetail(7, 32);
+const FOAM = seededDetail(23, 112);
+const NITRO = seededDetail(31, 80);
+const CONDENSATION = seededDetail(41, 31);
+const LACE = seededDetail(53, 24);
+
+function drawFoam(c, G, theme, ht, big, activity, elapsed){
+  const gh = G.bot - G.top, stout = theme.id === 'pub', stein = theme.vessel === 'stein', dome = gh * (stout ? 0.014 : stein ? 0.018 : 0.002);
+  const fg = c.createLinearGradient(0, -ht - dome, 0, 0);
+  fg.addColorStop(0, stout ? '#fcf7e7' : theme.head); fg.addColorStop(0.62, theme.head); fg.addColorStop(1, stout ? '#ded3b2' : stein ? '#eadcc0' : theme.head);
+  c.fillStyle = fg; c.beginPath(); c.moveTo(-big, 0); c.lineTo(-big, -ht);
+  for (let i = 0; i <= 36; i++){
+    const x = -G.halfW * 1.5 + G.halfW * 3 * i / 36, u = x / (G.halfW * 1.5);
+    const ripple = (Math.sin(i * 1.7) + Math.sin(i * 0.81 + elapsed * 4) * activity * 0.55) * ht * (stein ? 0.07 : stout ? 0.028 : 0.05);
+    c.lineTo(x, -ht - dome * (1 - u * u) + ripple);
+  }
+  c.lineTo(big, -ht); c.lineTo(big, 0); c.closePath(); c.fill();
+  if (theme.headT > 0.045){
+    for (let i = 0; i < FOAM.length; i++){
+      const f = FOAM[i], x = (f.x - 0.5) * G.halfW * 2.3, y = -ht * (0.08 + f.y * 0.84), r = Math.max(0.4, gh * (stout ? 0.0017 : 0.0029) * f.s);
+      c.fillStyle = i % 4 === 0 ? 'rgba(255,255,249,0.6)' : 'rgba(157,131,87,0.14)';
+      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+      if (stein && i % 5 === 0){ c.strokeStyle = 'rgba(255,255,250,0.5)'; c.lineWidth = Math.max(0.5, gh * 0.001); c.stroke(); }
+    }
+  }
+  c.strokeStyle = stout ? 'rgba(106,86,56,0.28)' : 'rgba(123,99,52,0.24)'; c.lineWidth = Math.max(1, gh * 0.0035);
+  c.beginPath(); c.moveTo(-big, 0); c.lineTo(big, 0); c.stroke();
+}
+function drawLacing(c, G, theme, L){
+  if (theme.id !== 'pub' && theme.vessel !== 'stein') return;
+  const gh = G.bot - G.top, bottom = Math.min(0.9, L - theme.headT - 0.012);
+  c.fillStyle = theme.id === 'pub' ? 'rgba(237,229,200,0.3)' : 'rgba(255,248,225,0.45)';
+  for (let i = 0; i < LACE.length; i++){
+    const f = LACE[i], t = 0.055 + i * 0.034;
+    if (t >= bottom) break;
+    for (const side of [-1, 1]){
+      const x = G.cx + side * (widthAt(G.glass, t) * G.halfW - G.halfW * (0.035 + f.x * 0.06)), y = G.top + t * gh, ww = G.halfW * (0.032 + f.y * 0.045), hh = gh * (0.005 + f.s * 0.007);
+      roundedRect(c, x - ww / 2, y, ww, hh, ww * 0.38); c.fill();
+    }
+  }
+}
 
 /** Draw the place, the vessel, the drink at level L (0 rim, 1 base) and the mark.
  *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place. */
-export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null}){
-  const gh = G.bot - G.top, yL = G.top + L * gh, ht = theme.headT * gh;
+export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0}){
+  const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
+  const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
+  const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
   if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme);
+  // The table and shadow stay put. Everything attached to the vessel tips together.
+  c.save(); c.globalAlpha *= Math.max(0.22, 1 - lift / gh * 2.5);
   c.fillStyle = theme.scene === 'beach' ? 'rgba(87,105,91,0.18)' : theme.scene === 'munich' ? 'rgba(56,60,37,0.22)' : 'rgba(0,0,0,0.3)';
   c.beginPath(); c.ellipse(G.cx + G.halfW * 0.09, G.bot + gh * 0.014, G.halfW * 1.1, gh * 0.025, 0, 0, Math.PI * 2); c.fill();
+  c.restore();
+  const pivotY = G.top + gh * 0.58;
+  c.save(); c.translate(G.cx, pivotY - lift); c.rotate(angle * Math.PI / 180); c.translate(-G.cx, -pivotY);
   drawVesselBehind(c, G, theme);
   c.save(); glassPath(c, G); c.clip();
-  c.fillStyle = 'rgba(255,255,255,0.07)'; c.fillRect(0, 0, w, h);
-  c.save(); c.translate(G.cx, yL); c.rotate(rollDeg * Math.PI / 180);
-  const big = w + h, lg = c.createLinearGradient(0, 0, 0, gh); lg.addColorStop(0, theme.body[0]); lg.addColorStop(0.3, theme.body[1]); lg.addColorStop(1, theme.body[1]);
+  c.fillStyle = theme.vessel === 'bottle' ? 'rgba(246,253,232,0.11)' : 'rgba(255,255,245,0.08)'; c.fillRect(G.cx - G.halfW, G.top, G.halfW * 2, gh);
+  c.save(); c.translate(G.cx, yL); c.rotate(liquidRotation);
+  const big = w + h, lg = c.createLinearGradient(0, 0, 0, gh);
+  lg.addColorStop(0, theme.body[0]); lg.addColorStop(0.42, theme.body[1]); lg.addColorStop(1, theme.id === 'pub' ? '#160d08' : theme.vessel === 'bottle' ? '#dba946' : theme.body[1]);
   c.fillStyle = lg; c.fillRect(-big, 0, big * 2, gh * 2);
-  c.fillStyle = theme.head; c.fillRect(-big, -ht, big * 2, ht);
-  if (theme.headT > 0.05){
-    c.fillStyle = 'rgba(158,122,65,0.1)';
-    for (const f of FOAM){
-      c.beginPath(); c.arc((f.x - 0.5) * G.halfW * 1.7, -ht * (0.2 + f.y * 0.6), Math.max(0.65, gh * 0.004 * f.s), 0, Math.PI * 2); c.fill();
+  c.save(); c.beginPath(); c.rect(-big, 0, big * 2, big * 2); c.clip();
+  const tint = c.createLinearGradient(-G.halfW, 0, G.halfW, 0);
+  tint.addColorStop(0, theme.id === 'pub' ? 'rgba(119,55,30,0.34)' : 'rgba(152,115,43,0.12)'); tint.addColorStop(0.24, 'rgba(255,242,193,0.04)'); tint.addColorStop(0.78, 'rgba(255,251,215,0.17)'); tint.addColorStop(1, 'rgba(97,80,23,0.11)');
+  c.fillStyle = tint; c.fillRect(-big, 0, big * 2, big * 2);
+  const distance = gh * Math.max(0.08, 1 - surface.centerLevel);
+  if (theme.id === 'pub'){
+    c.fillStyle = 'rgba(218,191,137,0.12)';
+    for (const b of NITRO){
+      const yy = (((b.y + clock * b.v * 0.018 * activity) % 1) * Math.min(distance, gh * 0.24)), xx = (b.x - 0.5) * G.halfW * 1.76;
+      c.beginPath(); c.arc(xx, yy + gh * 0.005, Math.max(0.35, gh * 0.00115 * b.s), 0, Math.PI * 2); c.fill();
     }
   }
-  c.fillStyle = 'rgba(0,0,0,0.28)'; c.fillRect(-big, -1.2, big * 2, 2.4);
-  c.fillStyle = 'rgba(255,255,255,0.18)'; c.fillRect(-big, -ht, big * 2, Math.max(1, ht * 0.08));
-  c.restore();
-  if (theme.bubbles && bubbles){
-    c.fillStyle = 'rgba(255,255,255,0.22)';
+  if ((theme.bubbles || theme.vessel === 'stein') && bubbles){
+    c.strokeStyle = 'rgba(255,255,233,0.4)'; c.lineWidth = Math.max(0.6, gh * 0.0015);
+    c.fillStyle = 'rgba(255,255,233,0.17)';
     for (const b of BUBBLES){
-      const t = ((now / 1000) * b.v * 0.1 + b.y) % 1, by = G.bot - t * (G.bot - yL), bx = G.cx + (b.x - 0.5) * 2 * G.halfW * 0.8 * widthAt(G.glass, (by - G.top) / gh);
-      if (by > yL + 4){ c.beginPath(); c.arc(bx, by, b.s * gh * 0.006 + 1, 0, Math.PI * 2); c.fill(); }
+      const t = (clock * b.v * (0.07 + activity * 0.045) + b.y) % 1, yy = distance * (1 - t), xx = (b.x - 0.5) * G.halfW * 1.62 + Math.sin(clock * 1.2 + b.y * 7) * G.halfW * 0.022;
+      const r = Math.max(0.6, b.s * gh * (theme.vessel === 'bottle' ? 0.0028 : 0.002));
+      c.beginPath(); c.arc(xx, yy, r, 0, Math.PI * 2); c.fill(); c.stroke();
+    }
+    if (drinking && theme.vessel === 'bottle'){
+      const phase = ((drinkElapsed || clock) % 0.58) / 0.58, r = gh * (0.008 + Math.sin(phase * Math.PI) * 0.012), xx = -G.halfW * 0.18 + Math.sin(phase * Math.PI) * G.halfW * 0.25, yy = distance * (1 - phase) * 0.78;
+      c.fillStyle = 'rgba(249,253,225,0.26)'; c.strokeStyle = 'rgba(255,255,237,0.6)'; c.lineWidth = Math.max(0.8, gh * 0.002);
+      c.beginPath(); c.ellipse(xx, yy, r * (0.8 + phase * 0.2), r * 1.28, phase * 0.2, 0, Math.PI * 2); c.fill(); c.stroke();
     }
   }
+  c.restore();
+  drawFoam(c, G, theme, ht, big, activity, clock);
+  c.restore();
+  drawLacing(c, G, theme, L);
   c.restore();
   drawVesselFront(c, G, theme);
+  drawGlassMaterial(c, G, theme);
   drawMark(c, theme, G.cx, G.top + P.markY * gh, P.markH * gh);
-  glassPath(c, G); c.strokeStyle = theme.scene === 'beach' ? 'rgba(66,115,111,0.48)' : theme.scene === 'munich' ? 'rgba(73,108,129,0.46)' : 'rgba(248,242,217,0.57)'; c.lineWidth = Math.max(1.5, gh * 0.006); c.stroke();
-  const hx = G.cx - widthAt(G.glass, 0.55) * G.halfW * 0.72;
-  c.fillStyle = theme.vessel === 'bottle' ? 'rgba(255,255,244,0.5)' : 'rgba(255,255,255,0.19)';
-  roundedRect(c, hx, G.top + gh * 0.42, G.halfW * 0.065, gh * 0.44, G.halfW * 0.035);
-  c.fill();
-  c.fillStyle = 'rgba(255,255,255,0.13)';
-  roundedRect(c, G.cx + widthAt(G.glass, 0.55) * G.halfW * 0.79, G.top + gh * 0.44, G.halfW * 0.025, gh * 0.37, G.halfW * 0.015); c.fill();
-  const rim = widthAt(G.glass, 0) * G.halfW;
-  c.strokeStyle = 'rgba(255,255,247,0.7)'; c.lineWidth = Math.max(1.2, gh * (theme.vessel === 'stein' ? 0.012 : 0.006));
-  c.beginPath(); c.moveTo(G.cx - rim + 1, G.top + 1); c.lineTo(G.cx + rim - 1, G.top + 1); c.stroke();
   if (guides){
     const my = G.top + P.markY * gh, ww = widthAt(G.glass, P.markY) * G.halfW;
     c.setLineDash([4, 6]); c.strokeStyle = 'rgba(255,255,255,0.7)'; c.lineWidth = 1.5;
     c.beginPath(); c.moveTo(G.cx - ww - 14, my); c.lineTo(G.cx - ww - 3, my); c.moveTo(G.cx + ww + 3, my); c.lineTo(G.cx + ww + 14, my); c.stroke(); c.setLineDash([]);
   }
+  c.restore();
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-09T04:18:52.804061Z",
+  "generatedAt": "2026-10-09T04:35:26.321741Z",
   "title": "Design System: Split",
   "extensions": {
     "colorMeta": {
@@ -421,6 +421,36 @@
         "name": "bottle-glug-period",
         "value": "0.58s",
         "purpose": "Deterministic bottle-body flow pulse."
+      },
+      {
+        "name": "pint-tip-target",
+        "value": "20deg",
+        "purpose": "Whole-pint tip target at full input; lift is 0.025 of vessel height."
+      },
+      {
+        "name": "bottle-tip-target",
+        "value": "24deg",
+        "purpose": "Whole-bottle tip target at full input; lift is 0.035 of vessel height with a 1.8-degree glug kick."
+      },
+      {
+        "name": "stein-tip-target",
+        "value": "18deg",
+        "purpose": "Heavy stein tip target at full input; lift is 0.018 of vessel height."
+      },
+      {
+        "name": "liquid-angle-response",
+        "value": "world-horizontal with damped slosh",
+        "purpose": "Render gravity-responsive liquid while preserving the filled area and existing drink amount."
+      },
+      {
+        "name": "motion-rest",
+        "value": "exact zero within 1s after release",
+        "purpose": "Release returns the vessel upright; scoring waits for both movement and drinking to settle."
+      },
+      {
+        "name": "reduced-motion-sip",
+        "value": "zero spatial motion",
+        "purpose": "Keep tipping, lift, and slosh at zero while showing liquid progress and static material detail."
       }
     ],
     "breakpoints": [
@@ -451,7 +481,7 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Start the daily sip or share the result.",
+      "description": "Start the primary hold-to-sip interaction or share the result.",
       "html": "<button type=\"button\" class=\"ds-primary\">Take today’s sip <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
       "css": ".ds-primary{display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 20px;border:0;border-radius:8px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:17px;font-weight:700;line-height:1.3;cursor:pointer}.ds-primary:hover{filter:brightness(1.06)}.ds-primary:disabled{opacity:.5;cursor:wait}.ds-primary:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-primary{transition:filter 160ms ease-out}}"
     },
@@ -459,8 +489,8 @@
       "name": "Text action",
       "kind": "button",
       "refersTo": "button-text",
-      "description": "Touch fallback, practice, or recalibration.",
-      "html": "<button type=\"button\" class=\"ds-text\">Use touch instead</button>",
+      "description": "Optional phone tilt, practice, or recalibration.",
+      "html": "<button type=\"button\" class=\"ds-text\">Use phone tilt</button>",
       "css": ".ds-text{min-height:38px;border:0;background:none;color:var(--fg,#eee7d6);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:700;padding:6px 8px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;cursor:pointer}.ds-text:hover{text-decoration-thickness:2px}.ds-text:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
     },
     {
@@ -475,7 +505,7 @@
       "name": "Hold control",
       "kind": "button",
       "refersTo": "drink-control",
-      "description": "Hold to drink; release to stop the sip.",
+      "description": "Hold to tip and sip; release to return upright and settle before scoring.",
       "html": "<button type=\"button\" class=\"ds-drink\" aria-pressed=\"false\">Hold to drink</button>",
       "css": ".ds-drink{width:100%;min-height:64px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);border:0;border-radius:8px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:700;touch-action:none;user-select:none;cursor:pointer}.ds-drink:active{filter:brightness(.91)}.ds-drink:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
     },
@@ -506,12 +536,12 @@
   ],
   "narrative": {
     "northStar": "One sip. Three places.",
-    "overview": "Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.",
+    "overview": "Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.",
     "keyCharacteristics": [
       "A large, unobscured vessel is the focal point.",
       "The place changes the palette, backdrop, vessel, and share card together.",
       "Heavy serif titles pair with plain, compact instructions.",
-      "A single stopping position carries the result."
+      "A visible lift and tip explain the sip; a single settled stopping position carries the result."
     ],
     "rules": [
       {
@@ -534,6 +564,7 @@
       "Do preserve the existing wordmark, Fraunces/Karla pairing, and canvas vessel language when adding a day.",
       "Do give each new place a coherent palette, recognizable vessel, short target, and matching share treatment.",
       "Do keep the vessel and mark visible between the heading and controls at both normal and short phone heights.",
+      "Do preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.",
       "Do show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.",
       "Do label preview and practice results on both image and text shares.",
       "Do use foreground ink for focus and active preview text, and retain the reduced-motion treatment."

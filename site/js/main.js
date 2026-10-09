@@ -3,6 +3,7 @@ import {dayNumber, dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSett
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
+import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 
 const $ = id => document.getElementById(id);
 const STORE = 'split.v1';
@@ -10,7 +11,7 @@ const SITE_URL = 'https://fischbeck3.github.io/split/';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const S = {num: 0, key: '', P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
-  result: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drained: false, rollDraw: 0, card: null, drink: null};
+  result: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
 const sensor = {available: false, theta: 0, roll: 0, sign: 1, base: 0, rollBase: 0, raw: null};
 const scene = $('scene'), ctx = scene.getContext('2d');
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
@@ -27,7 +28,9 @@ function layout(){
 }
 function glassBox(w, h, theme){
   const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665);
-  return {cx: w / 2, top, bot, halfW: Math.min(w * b.w, (bot - top) * b.h), glass: theme.vessel};
+  const stein = theme.vessel === 'stein', halfW = Math.min(w * (stein ? .27 : b.w), (bot - top) * b.h);
+  // Center the stein's full silhouette, leaving room for its handle during a sip.
+  return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: theme.vessel};
 }
 function currentBackdrop(G){
   const key = S.theme.id + ':' + W + 'x' + H + ':' + DPR;
@@ -35,11 +38,10 @@ function currentBackdrop(G){
   return backdrop;
 }
 function draw(now){
-  const G = glassBox(W, H, S.theme), live = S.state === 'ready' || S.state === 'drinking';
-  const wob = !reducedMotion && S.state === 'drinking' && S.P.wobble ? S.P.wobble * Math.sin(now / 140) : 0;
-  const roll = S.mode === 'tilt' && live ? Math.max(-12, Math.min(12, sensor.roll - sensor.rollBase)) : 0;
-  S.rollDraw += (roll + wob - S.rollDraw) * 0.25;
-  drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, rollDeg: S.rollDraw, now, guides: true, bubbles: !reducedMotion, backdrop: currentBackdrop(G)});
+  const G = glassBox(W, H, S.theme);
+  drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
+    drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
+    guides: true, bubbles: !reducedMotion, backdrop: currentBackdrop(G)});
 }
 
 // ---------- the tilt sensor ----------
@@ -87,10 +89,13 @@ async function enableTilt(){
 function begin(){
   S.state = 'ready'; S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
+  S.motion = makeMotionState();
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
   $('hudMode').hidden = false; $('hudMode').textContent = (S.practice ? 'Practice · ' : S.preview ? 'Preview · ' : 'Today’s sip · ') + S.theme.feel;
   $('drinkControl').hidden = S.mode === 'tilt';
+  $('drinkControl').disabled = false;
+  $('drinkControl').textContent = 'Hold to drink';
   $('recalibrateBtn').hidden = S.mode !== 'tilt';
   $('recalibrateBtn').disabled = false;
   $('footPill').textContent = S.mode === 'tilt' ? 'Tilt to sip. Upright to stop.' : 'Hold to sip. Release to stop.';
@@ -103,11 +108,13 @@ function rate(now){
   return base;
 }
 function frame(now){
+  if (document.hidden){ S.last = 0; requestAnimationFrame(frame); return; }
   const dt = Math.min(0.05, (now - (S.last || now)) / 1000); S.last = now;
+  const elapsed = S.drink?.elapsed || 0;
   if (S.state === 'ready' && wantsDrink()){
     S.state = 'drinking'; if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
     $('recalibrateBtn').disabled = true;
-    $('footPill').textContent = 'Drinking…';
+    $('footPill').textContent = S.mode === 'hold' ? 'Release to stop. Let it settle.' : 'Come upright to stop. Let it settle.';
   }
   if (S.state === 'drinking'){
     if (wantsStop()) lock(now);
@@ -117,12 +124,19 @@ function frame(now){
   if (S.state === 'locked'){
     S.drink = stepDrink(S.P, S.drink, 0, dt); S.L = S.drink.level;
     if (S.L >= DRAIN_LEVEL) S.drained = true;
-    if (isDrinkSettled(S.drink) && now - S.lockAt > 350) finish();
   }
+  S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
+    input: S.state === 'drinking' ? Math.min(1, rate(now) / S.P.K) : 0, elapsed, dt, reducedMotion});
+  if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish();
   if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = Math.round(tiltAngle()) + '° · ' + S.theme.feel;
-  draw(now); requestAnimationFrame(frame);
+  if (S.state !== 'result') draw(now);
+  requestAnimationFrame(frame);
 }
-function lock(now){ S.state = 'locked'; S.lockAt = now; $('footPill').textContent = 'Settling…'; }
+function lock(now){
+  S.state = 'locked'; S.lockAt = now; up();
+  $('drinkControl').disabled = true; $('drinkControl').textContent = 'Settling…';
+  $('footPill').textContent = 'Returning upright…';
+}
 function finish(){
   const f = S.drained ? 2 : (S.L - S.P.markY) / S.P.markH, r = scoreFromOffset(f, S.theme.target);
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
@@ -219,16 +233,22 @@ const down = e => {
   if (e.cancelable) e.preventDefault();
   if (e.pointerId != null && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
   $('drinkControl').setAttribute('aria-pressed', 'true');
+  $('drinkControl').textContent = 'Release to stop';
   if (S.mode === 'hold'){ S.holding = true; if (S.state === 'ready') S.holdStart = performance.now(); }
 };
-const up = () => { S.holding = false; $('drinkControl').setAttribute('aria-pressed', 'false'); };
+const up = () => {
+  S.holding = false; $('drinkControl').setAttribute('aria-pressed', 'false');
+  if (S.state === 'ready' || S.state === 'drinking') $('drinkControl').textContent = 'Hold to drink';
+};
 for (const target of [scene, $('drinkControl')]){
   target.addEventListener('pointerdown', down); target.addEventListener('pointerup', up); target.addEventListener('pointercancel', up);
   target.addEventListener('contextmenu', e => e.preventDefault());
 }
 window.addEventListener('pointerup', up);
 window.addEventListener('blur', up);
-document.addEventListener('visibilitychange', () => { if (document.hidden) up(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){ up(); if (S.state === 'drinking') lock(performance.now()); }
+});
 document.addEventListener('keydown', e => {
   if (e.code === 'Space' && !e.repeat && (S.state === 'ready' || S.state === 'drinking')){ e.preventDefault(); down(e); }
 });
@@ -284,10 +304,9 @@ function init(){
   }
 
   const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  $('startHold').textContent = 'Take ' + (S.preview ? 'a preview' : 'today’s') + ' sip';
   if (typeof DeviceMotionEvent === 'undefined' || !coarse){
-    $('startHold').className = 'big'; $('startHold').textContent = 'Take ' + (S.preview ? 'a preview' : 'today’s') + ' sip';
     $('startTilt').hidden = true;
-    $('introLine').textContent = 'Hold to sip. Release to stop.';
   }
 
   layout(); renderStats(); tickClock(); setInterval(tickClock, 1000);

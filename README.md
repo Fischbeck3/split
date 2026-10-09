@@ -1,6 +1,6 @@
 # Split
 
-Hold your phone like a pint. Tilt it back to drink. Come back upright to stop, with the beer line through the middle of the mark. One scored sip a day, the same pour for everyone, and a card for the group chat.
+Hold to lift the glass, tip it, and take a sip. Release to bring it upright, then read the settled beer line through the middle of the mark. One scored sip a day, the same pour for everyone, and a card for the group chat.
 
 **Play:** https://fischbeck3.github.io/split/
 
@@ -8,8 +8,8 @@ Hold your phone like a pint. Tilt it back to drink. Come back upright to stop, w
 
 ## How it plays
 
-- **Tilt.** On a phone, tap “Take today's sip” while holding it upright. Tip the phone either way to drink; tip farther to drink faster. Come back within 15 degrees of upright to stop. iPhones request motion access. If no sensor is available, the game uses hold mode.
-- **Hold.** On touch or desktop, press and hold the glass or the “Hold to drink” button, then release to stop. The space bar works on a keyboard; a focused hold button also supports Enter.
+- **Hold.** Tap “Take today's sip”, then press and hold the glass or the “Hold to drink” button. The whole vessel lifts and tips while you drink; release to bring it upright and let the line settle. The space bar works on a keyboard; a focused hold button also supports Enter.
+- **Phone tilt.** “Use phone tilt” is an optional secondary action. Start with the phone upright, then tip it either way to drink; tip farther to drink faster. Come back within 15 degrees of upright to stop. iPhones request motion access. If no sensor is available, the game uses hold mode.
 - **The line.** What counts is the bottom of the head, where the foam meets the drink. Within 6% of the mark's height is a perfect split and within 16% is a split. The score is 100 at dead center and falls off quickly from there.
 - **One a day.** The first completed sip each day is saved locally. Later sips are practice and cannot replace it. You can return to the saved score. A new glass arrives at local midnight.
 
@@ -17,11 +17,13 @@ Hold your phone like a pint. Tilt it back to drink. Come back upright to stop, w
 
 | Day | Drink and place | Vessel and mark | Feel |
 |---|---|---|---|
-| 1 · Pub night | Guinness in a dark wood pub | Tulip pint · the G | Smooth pour, immediate stop |
+| 1 · Pub night | Guinness in a dark wood pub | Tulip pint · the G | Smooth lift and tip; drinking stops immediately, then the vessel returns upright |
 | 2 · Beach day | Corona on a white sand beach | Clear bottle with lime · the crown | Fast through the neck, slower deterministic glugs through the body |
 | 3 · Oktoberfest | Festbier at Oktoberfest | Liter stein · Bavarian crest | Slower, heavy pour with a short 0.24-second follow-through after release |
 
-The vessel changes the flow, not just the artwork. The bottle's glug cadence is determined by elapsed sip time, and the stein settles before its final line is scored. After day 3, the game picks from eleven glasses by date and never pours the same glass two days running.
+The vessel changes both the flow and movement. The pint tips toward 20 degrees, the bottle toward 24 degrees with a kick synchronized to each glug, and the stein toward 18 degrees with a slower lift and return. The liquid responds to gravity and damped slosh while preserving the amount in the glass. Your score waits for both the drink and the vessel movement to settle.
+
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion keeps the vessel upright, shows liquid progress, and retains static material detail. After day 3, the game picks from eleven glasses by date and never pours the same glass two days running.
 
 ## Share your sip
 
@@ -33,6 +35,8 @@ The 1080 × 1350 image keeps the day's palette, place, vessel, and mark. It show
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
+Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
+
 Every glass lives in `site/js/themes.js`, and the fields are described at the top of that file. Add an entry to `THEMES`, and put its `id` in `SCHEDULE` to pin it to a day. Run `npm test` to check that its mark can be reached, then preview that day. `LAUNCH` is the local date for day No. 1; move it to restart the planned run on a new date.
 
 The extracted visual system is in [DESIGN.md](DESIGN.md), with component previews and extensions in `.impeccable/design.json`.
@@ -43,13 +47,13 @@ The extracted visual system is in [DESIGN.md](DESIGN.md), with component preview
 npm start
 ```
 
-This serves the game on http://localhost:8000 and the three-day review on http://localhost:8000/design.html. Hold mode works there. Phones require HTTPS for tilt, so try tilt on the live site.
+This serves the game on http://localhost:8000, the three-day review on http://localhost:8000/design.html, and the movement preview on http://localhost:8000/motion.html. Hold mode works there. Phones require HTTPS for tilt, so try tilt on the live site.
 
 ```
 npm test
 ```
 
-The tests cover the schedule, score boundaries, reachable marks, vessel flow and settling across frame rates, and text-share semantics. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
+The tests cover the schedule, score boundaries, reachable marks, vessel flow and movement settling across frame rates, preserved liquid geometry in tilted vessels, reduced motion, and text-share semantics. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
 
 ## Deploy
 
@@ -59,9 +63,12 @@ Every push to `main` runs the tests on GitHub Actions. When they pass, `site/` i
 
 - `site/index.html` and `site/css/style.css`: the game page and shared styles
 - `site/design.html`: the first-three-day review and sample shares
+- `site/motion.html`: sip playback and frozen movement stages, without saved scores
 - `site/js/themes.js`: the glasses, palettes, and calendar
 - `site/js/core.js`: the daily seed, vessel shapes, drink physics, and scoring, with no page code so tests run in Node
-- `site/js/draw.js`: the places, vessels, printed names, and marks, drawn on a canvas
+- `site/js/motion.js`: deterministic vessel lift, tipping, glug movement, slosh, and return to rest
+- `site/js/liquid.js`: the liquid surface that preserves the filled area while a vessel tilts
+- `site/js/draw.js`: the places, glass material, beer, foam, printed names, and marks, drawn on a canvas
 - `site/js/share.js`: the themed image card and plain-text result
 - `site/js/main.js`: input, the tilt sensor, results, local daily records, and sharing
 - `site/fonts/`: local fonts and license files
