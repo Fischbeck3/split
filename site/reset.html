@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#142b24">
+  <title>Reset your daily · Split</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/reset.css">
+</head>
+<body>
+  <main class="reset-page">
+    <a class="wordmark" href="./" aria-label="Split, today's glass">Split<span class="split-dot">.</span></a>
+    <h1>Reset your daily.</h1>
+    <p class="reset-intro">Open this in the same browser where you played. Reset just today's saved sip, then try the glass again.</p>
+    <p class="reset-day" id="resetDay">Checking today's glass…</p>
+    <p class="reset-record" id="resetRecord">Your saved sip is kept until you choose to reset it.</p>
+    <p class="reset-status" id="resetStatus" role="status" aria-live="polite" hidden></p>
+    <div class="reset-actions">
+      <button class="big" id="resetDaily" type="button" disabled>Reset my daily</button>
+      <a class="outline reset-open" id="openDaily" href="./">Open fresh daily</a>
+      <button class="text-button" id="undoReset" type="button" hidden>Undo reset</button>
+    </div>
+    <p class="reset-note">Other days, your glass-motion setting, and everyone else's scores stay as they are. You can undo a reset until you take another scored sip.</p>
+    <noscript><p>Enable JavaScript in this browser to reset your saved sip.</p></noscript>
+  </main>
+  <script type="module" src="js/reset-daily.js"></script>
+</body>
+</html>

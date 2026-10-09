@@ -23,6 +23,8 @@ If midnight passes during a sip, that glass becomes an archive and the finished 
 
 The friends soft launch starts on the existing Day 1, October 9. `RECORD_RUN` is fixed at `friends-2026-10-09`, giving returning test browsers a fresh first sip and empty stats after refreshing. Earlier attempts remain untouched under their old storage key; motion preferences and analytics history remain intact. The calendar, seeded pours, and existing challenge links keep their original meaning. Keep this run fixed when inviting a wider audience so friends retain their scores and streaks.
 
+For a personal test reset, open `/reset.html` in the same phone browser where you played and choose “Reset my daily.” It backs up and clears only today's entry, leaving the public run, other dates, and preferences intact. “Undo reset” restores that sip while today is still empty; it cannot replace a newly played attempt. “Open fresh daily” reloads the game after resetting. Visiting the page alone changes no records.
+
 ## The first six days
 
 | Day | Drink and place | Vessel and mark | Feel |
