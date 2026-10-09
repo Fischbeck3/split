@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {shareResultText, copyResultText} from '../site/js/share-actions.js';
 
 const text = 'Split #001 · 🍺 Guinness · Old Irish pub\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nOne sip. Your turn.\nhttps://dailysplit.us/?day=2026-10-09';
+const nativeResult = {text:'Split #001 · 🍺 Guinness · Old Irish pub\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nOne sip. Your turn.', url:'https://dailysplit.us/?day=2026-10-09'};
 const deferred = () => {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
@@ -17,7 +18,7 @@ test('native text sharing starts synchronously and never waits for a postcard or
     get clipboard(){ throw new Error('Successful sharing must not copy'); }
   };
   const operation = shareResultText(text, platform);
-  assert.deepEqual(calls, [{text}], 'the native sheet must open before the helper returns its promise');
+  assert.deepEqual(calls, [nativeResult], 'the native sheet must open before the helper returns its promise');
   sheet.resolve();
   assert.equal(await operation, 'shared');
 });
@@ -27,8 +28,33 @@ test('text sharing works when canShare is missing or rejects file sharing', asyn
     const calls = [];
     const platform = {...extra, share: async data => calls.push(data)};
     assert.equal(await shareResultText(text, platform), 'shared');
-    assert.deepEqual(calls, [{text}]);
+    assert.deepEqual(calls, [nativeResult]);
   }
+});
+
+test('a final standalone web link becomes an explicit native URL without changing its date or fragment', async () => {
+  for (const link of ['https://dailysplit.us/?day=2026-10-09', 'https://dailysplit.us/#day3', 'http://localhost:8000/?day=2026-10-09#result']){
+    const calls = [], body = 'Split #003\n⬜⬜🟩⬜⬜\nOne sip. Your turn.';
+    assert.equal(await shareResultText(body + '\n' + link, {share: async data => calls.push(data)}), 'shared');
+    assert.deepEqual(calls, [{text:body, url:link}]);
+  }
+  const calls = [];
+  await shareResultText('Split\r\n  https://dailysplit.us/#day2  ', {share: async data => calls.push(data)});
+  assert.deepEqual(calls, [{text:'Split', url:'https://dailysplit.us/#day2'}]);
+});
+
+test('ordinary text, inline links and invalid final links retain the unchanged text-only payload', async () => {
+  for (const value of ['Split #001\n⬜⬜🟩⬜⬜', 'Play https://dailysplit.us/', 'Split\nhttps://dailysplit.us/\nYour turn.', 'Split\nhttps://', 'Split\njavascript:alert(1)', 'Split\nhttps://dailysplit.us/a b', 'Split\nhttps://dailysplit.us:99999/']){
+    const calls = [];
+    assert.equal(await shareResultText(value, {share: async data => calls.push(data)}), 'shared');
+    assert.deepEqual(calls, [{text:value}], value);
+  }
+});
+
+test('a link by itself is shared as a native URL without duplicating it in text', async () => {
+  const calls = [];
+  await shareResultText('https://dailysplit.us/', {share: async data => calls.push(data)});
+  assert.deepEqual(calls, [{text:'', url:'https://dailysplit.us/'}]);
 });
 
 test('cancelling the native sheet does not copy or trigger a manual fallback', async () => {
