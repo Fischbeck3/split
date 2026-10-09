@@ -3,6 +3,7 @@ import {widthAt, mulberry32} from './core.js';
 import {getLiquidSurface} from './liquid.js';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
+import {targetGeometry} from './target.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -398,30 +399,47 @@ function drawGlassMaterial(c, G, theme){
 
 // ---------- marks ----------
 export function drawMark(c, theme, cx, cy, h){
-  c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = Math.max(2, h * 0.07); c.strokeStyle = theme.markStroke; c.fillStyle = theme.markFill;
+  c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = Math.max(2, h * 0.08); c.strokeStyle = theme.markStroke; c.fillStyle = theme.markFill;
   if (theme.markFrame === 'shield'){
     // An open souvenir shield keeps the actual stopping line visible through H.
-    c.lineWidth = Math.max(1, h * .035); c.strokeStyle = theme.markFill;
+    c.lineWidth = Math.max(2, h * .075); c.strokeStyle = theme.markStroke;
     c.beginPath(); c.moveTo(cx - h * .57, cy - h * .64); c.lineTo(cx + h * .57, cy - h * .64);
     c.lineTo(cx + h * .57, cy + h * .12); c.quadraticCurveTo(cx + h * .51, cy + h * .58, cx, cy + h * .74);
     c.quadraticCurveTo(cx - h * .51, cy + h * .58, cx - h * .57, cy + h * .12); c.closePath(); c.stroke();
-    c.lineWidth = Math.max(2, h * .07); c.strokeStyle = theme.markStroke;
+    c.lineWidth = Math.max(1, h * .035); c.strokeStyle = theme.markFill; c.stroke();
+    c.lineWidth = Math.max(2, h * .08); c.strokeStyle = theme.markStroke;
   }
-  if (theme.mark === 'letter'){
+  if (theme.mark === 'letter' && theme.letter === 'G'){
+    // Leave the crossbar's top unoutlined: its painted edge, not a stroke center,
+    // must meet the scored height. Butt caps keep the endpoints below that edge.
+    const path = outline => {
+      c.beginPath(); c.moveTo(cx + h * .39, cy - h * .32);
+      c.bezierCurveTo(cx + h * .22, cy - h * .57, cx - h * .25, cy - h * .62, cx - h * .44, cy - h * .31);
+      c.bezierCurveTo(cx - h * .62, cy - h * .02, cx - h * .46, cy + h * .53, cx - h * .05, cy + h * .53);
+      c.bezierCurveTo(cx + h * .17, cy + h * .53, cx + h * .35, cy + h * .42, cx + h * .45, cy + h * .3);
+      c.lineTo(cx + h * .45, cy);
+      if (outline) c.moveTo(cx + h * .01, cy); else c.lineTo(cx + h * .01, cy);
+      c.lineTo(cx + h * .01, cy + h * .15); c.lineTo(cx + h * .23, cy + h * .15);
+      c.lineTo(cx + h * .23, cy + h * .28);
+      c.bezierCurveTo(cx + h * .06, cy + h * .43, cx - h * .23, cy + h * .32, cx - h * .24, cy + h * .04);
+      c.bezierCurveTo(cx - h * .28, cy - h * .28, cx + h * .03, cy - h * .47, cx + h * .26, cy - h * .23);
+      c.lineTo(cx + h * .39, cy - h * .32);
+      if (!outline) c.closePath();
+    };
+    c.lineCap = 'butt'; path(true); c.stroke(); path(false); c.fill();
+  } else if (theme.mark === 'letter'){
     const probe = 100; c.font = '900 ' + probe + 'px ' + SERIF; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     const m = c.measureText(theme.letter), gh0 = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) || probe * 0.7;
     c.font = '900 ' + (probe * h / gh0) + 'px ' + SERIF;
     const m2 = c.measureText(theme.letter), base = cy + (m2.actualBoundingBoxAscent - m2.actualBoundingBoxDescent) / 2;
     c.strokeText(theme.letter, cx, base); c.fillText(theme.letter, cx, base);
   } else if (theme.mark === 'crown'){
-    c.lineWidth = Math.max(1.5, h * 0.045);
+    c.lineWidth = Math.max(2, h * 0.065);
     c.beginPath(); c.moveTo(cx - h * 0.49, cy + h * 0.5); c.lineTo(cx - h * 0.6, cy - h * 0.32); c.lineTo(cx - h * 0.25, cy + h * 0.035); c.lineTo(cx, cy - h * 0.5); c.lineTo(cx + h * 0.25, cy + h * 0.035); c.lineTo(cx + h * 0.6, cy - h * 0.32); c.lineTo(cx + h * 0.49, cy + h * 0.5); c.closePath(); c.fill(); c.stroke();
-    c.strokeStyle = theme.markStroke; c.lineWidth = Math.max(1, h * 0.032);
-    c.beginPath(); c.moveTo(cx - h * 0.39, cy + h * 0.3); c.lineTo(cx + h * 0.39, cy + h * 0.3); c.stroke();
   } else if (theme.mark === 'crest'){
     const sw = h * 0.84, shield = () => { c.beginPath(); c.moveTo(cx - sw / 2, cy - h / 2); c.lineTo(cx + sw / 2, cy - h / 2); c.lineTo(cx + sw / 2, cy + h * 0.1); c.quadraticCurveTo(cx + sw / 2, cy + h * 0.46, cx, cy + h / 2); c.quadraticCurveTo(cx - sw / 2, cy + h * 0.46, cx - sw / 2, cy + h * 0.1); c.closePath(); };
-    c.save(); shield(); c.clip(); c.fillStyle = 'rgba(255,255,249,0.4)'; c.fillRect(cx - sw, cy - h, sw * 2, h * 2);
-    c.globalAlpha *= 0.78; c.fillStyle = theme.markFill; const d = h * 0.3;
+    c.save(); shield(); c.clip(); c.fillStyle = '#fffaf0'; c.fillRect(cx - sw, cy - h, sw * 2, h * 2);
+    c.fillStyle = theme.markFill; const d = h * 0.36;
     for (let j = -3; j <= 3; j++){ for (let i = -2; i <= 2; i++){ const x = cx + i * d, y = cy + j * d; c.beginPath(); c.moveTo(x, y - d * 0.5); c.lineTo(x + d * 0.5, y); c.lineTo(x, y + d * 0.5); c.lineTo(x - d * 0.5, y); c.closePath(); c.fill(); } }
     c.restore(); shield(); c.strokeStyle = theme.markStroke; c.lineWidth = Math.max(2.5, h * 0.06); c.stroke();
   } else if (theme.mark === 'star'){
@@ -445,6 +463,26 @@ export function drawMark(c, theme, cx, cy, h){
   } else if (theme.mark === 'leaf'){
     c.beginPath(); c.moveTo(cx, cy - h * 0.5); c.quadraticCurveTo(cx + h * 0.5, cy - h * 0.1, cx, cy + h * 0.5); c.quadraticCurveTo(cx - h * 0.5, cy - h * 0.1, cx, cy - h * 0.5); c.closePath(); c.stroke(); c.fill();
     c.strokeStyle = theme.markStroke; c.lineWidth = Math.max(1.5, h * 0.045); c.beginPath(); c.moveTo(cx, cy - h * 0.42); c.lineTo(cx, cy + h * 0.42); c.stroke();
+  }
+  c.restore();
+}
+
+export function drawTarget(c, G, P, theme){
+  const aim = targetGeometry(G, P, theme);
+  if (aim.markHeight <= 0) return;
+  drawMark(c, theme, G.cx, aim.y, aim.markHeight);
+  if (aim.notchSize <= 0) return;
+  // These printed sights tip with the glass. The open center exposes the real beer line.
+  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+  for (const side of [-1, 1]){
+    const tip = G.cx + side * aim.notchInner, outer = G.cx + side * aim.notchOuter;
+    const back = tip + side * aim.notchSize;
+    c.beginPath(); c.moveTo(outer, aim.y); c.lineTo(back, aim.y);
+    c.strokeStyle = '#17221b'; c.lineWidth = aim.railWidth; c.stroke();
+    c.strokeStyle = '#fffaf0'; c.lineWidth = aim.railWidth * .45; c.stroke();
+    c.beginPath(); c.moveTo(tip, aim.y); c.lineTo(back, aim.y - aim.notchSize * .7);
+    c.lineTo(back, aim.y + aim.notchSize * .7); c.closePath();
+    c.fillStyle = '#fffaf0'; c.strokeStyle = '#17221b'; c.lineWidth = Math.min(aim.railWidth / 2, Math.max(1, aim.markHeight * .035)); c.stroke(); c.fill();
   }
   c.restore();
 }
@@ -500,7 +538,7 @@ function drawLacing(c, G, theme, L){
 /** Draw the place, the vessel, the drink at level L (0 rim, 1 base) and the mark.
  *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place.
  *  Ambient is opt-in; leave it false for reduced motion and stable postcard exports. */
-export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false}){
+export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false}){
   const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
   const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
   const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
@@ -553,11 +591,6 @@ export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides
   c.restore();
   drawVesselFront(c, G, theme);
   drawGlassMaterial(c, G, theme);
-  drawMark(c, theme, G.cx, G.top + P.markY * gh, P.markH * gh);
-  if (guides){
-    const my = G.top + P.markY * gh, ww = widthAt(G.glass, P.markY) * G.halfW;
-    c.setLineDash([4, 6]); c.strokeStyle = 'rgba(255,255,255,0.7)'; c.lineWidth = 1.5;
-    c.beginPath(); c.moveTo(G.cx - ww - 14, my); c.lineTo(G.cx - ww - 3, my); c.moveTo(G.cx + ww + 3, my); c.lineTo(G.cx + ww + 14, my); c.stroke(); c.setLineDash([]);
-  }
+  drawTarget(c, G, P, theme);
   c.restore();
 }

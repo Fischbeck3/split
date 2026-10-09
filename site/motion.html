@@ -76,7 +76,7 @@ function render(progress,released=false){
     const duration=d.releaseAt+1,time=released?d.releaseAt+.07:Math.min(duration,progress*duration);
     const {drink,motion,t,drinking}=d.frames[Math.min(d.frames.length-1,Math.round(time*120))];
     drawScene(d.ctx,{G:d.G,w:d.w,h:d.h,L:drink.level,theme:d.P.theme,P:d.P,motion,
-      drinking,drinkElapsed:drink.elapsed,now:t*1000,guides:true,
+      drinking,drinkElapsed:drink.elapsed,now:t*1000,
       bubbles:!reducedMotion,backdrop:d.backdrop});
   }
 }
