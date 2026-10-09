@@ -84,7 +84,7 @@ function draw(now){
   const G = glassBox(W, H, S.theme);
   drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
-    guides: true, bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
+    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
 }
 
 // ---------- the tilt sensor ----------
@@ -144,7 +144,7 @@ function begin(){
   $('drinkControl').textContent = 'Hold to drink';
   $('recalibrateBtn').hidden = S.mode !== 'tilt';
   $('recalibrateBtn').disabled = false;
-  $('footPill').textContent = S.mode === 'tilt' ? 'Tilt to sip. Upright to stop.' : 'Hold to sip. Release to stop.';
+  $('footPill').textContent = S.mode === 'tilt' ? 'Tilt to sip. Upright at the notches.' : 'Hold to sip. Release at the notches.';
   if (S.mode === 'hold') $('drinkControl').focus({preventScroll: true});
 }
 const wantsDrink = () => S.mode === 'tilt' ? tiltAngle() > TILT_START : S.holding;
@@ -429,7 +429,7 @@ async function init(){
   $('introFeel').textContent = S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour');
   $('vesselHint').textContent = S.theme.line;
   document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
-  scene.setAttribute('aria-label', S.theme.name + '. Stop the beer line through ' + S.theme.target + '.');
+  scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the two aiming notches beside ' + S.theme.target + '.');
   if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
     const active = $('previewNav').querySelector('a[href="#day' + S.num + '"]');

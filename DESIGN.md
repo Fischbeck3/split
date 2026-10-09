@@ -207,6 +207,8 @@ Controls use softly curved corners from the control token; result images use the
 
 The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-necked bottle with lime, and a broad handled liter stein. Marks are readable at the center of the glass; simplified printed brand names sit below the scored mark. The painted scenery reserves a quiet central foreground, with architecture, bunting, and people providing context around the vessel.
 
+**The Aim Rule.** Every logo carries two bold, inward-facing cream sights with dark edges at the exact scored height. Their open center exposes the beer/foam boundary. The sights and logo are printed on the vessel and move with it; the same artwork appears in postcards and concepts. Mark artwork is enlarged independently of the seeded scoring tolerance and capped by the glass width. A custom G anchors the top of its crossbar to the scored line. The crown has no competing decorative stripe; the Bavarian crest has opaque blue and white diamonds. Preserve released `markY`, `markH`, scores, and links when refining these marks.
+
 ## Components
 
 ### Buttons
