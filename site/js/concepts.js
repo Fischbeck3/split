@@ -45,15 +45,15 @@ export const CONCEPT_CHAPTERS = [
     brief:'Cold beer, warm stone, and a P to split. The same Roman holiday can look very different from a rooftop or a pavement table.',
     options:[
       {id:'trastevere-sunset', name:'Trastevere sunset', panel:0, memory:'Dinner runs late. Nobody checks the time.',
-        glass:'Proposed souvenir glass · tall blue-P glass', feel:'Light lager. A clean stop.',
+        glass:'Proposed souvenir glass · tall Peroni-label glass', feel:'Light lager. A clean stop.',
         theme:theme('trastevere-sunset','Peroni','Trastevere sunset','tall',{palette:italy, body:['#f1cf72','#d5a544'], head:'#fff8e7', headT:.065,
           markFill:'#245b9b', markStroke:'#fbf2d9', brandColor:'#245b9b', brandSubline:'ROMA'})},
       {id:'rooftop-rome', name:'Rooftop Rome', panel:1, memory:'The city lights come on. Stay for the next story.',
-        glass:'Proposed souvenir glass · green bottle, white P', feel:'A quick neck, then a slower glug.',
+        glass:'Proposed souvenir glass · green bottle, Peroni label', feel:'A quick neck, then a slower glug.',
         theme:theme('rooftop-rome','Peroni','Rooftop Rome','bottle',{palette:italy, body:['#ebd17b','#ccab4b'], head:'#fff8e7', headT:.02,
           markFill:'#fff9e9', markStroke:'#215b32', brandColor:'#fff9e9', glassTint:'rgba(42,105,38,.24)', brandSubline:'ROMA', box:{top:.06,bot:.84,w:.26,h:.19}})},
       {id:'piazza-lunch', name:'Piazza lunch', panel:2, memory:'A table in the shade. The afternoon can wait.',
-        glass:'Proposed souvenir glass · red-P tumbler', feel:'An easy tumbler. A clean stop.',
+        glass:'Proposed souvenir glass · Peroni-label tumbler', feel:'An easy tumbler. A clean stop.',
         theme:theme('piazza-lunch','Peroni','Piazza lunch','tumbler',{palette:italy, body:['#f1cf72','#d5a544'], head:'#fff8e7', headT:.065,
           markFill:'#ab3e31', markStroke:'#fbf2d9', brandColor:'#ab3e31', brandSubline:'ROMA'})}
     ]}
