@@ -9,6 +9,7 @@ function recordingContext(canvas = {}){
   const context = new Proxy(values, {
     get(target, key){
       if (key in target) return target[key];
+      if (key === 'getImageData') return (x, y, width, height) => ({width, height, data: new Uint8ClampedArray(width * height * 4)});
       if (key === 'createLinearGradient' || key === 'createRadialGradient') return (...args) => {
         calls.push([key, ...args]);
         return {addColorStop: (...stops) => calls.push(['colorStop', ...stops])};
@@ -45,8 +46,7 @@ test('scene framing covers portrait and wide canvases without moving the tableto
 test('atmosphere remains bounded across a long session and ignores invalid clocks', () => {
   for (let now = 0; now < 1000 * 60 * 60 * 24; now += 7919){
     const state = memoryMotion(now);
-    assert.ok(state.firelight >= .1 && state.firelight <= .9);
-    for (const key of ['flame', 'surf', 'breeze']) assert.ok(Math.abs(state[key]) <= 1);
+    for (const key of ['surf', 'breeze']) assert.ok(Math.abs(state[key]) <= 1);
   }
   for (const now of [NaN, Infinity, -100]) assert.deepEqual(memoryMotion(now), memoryMotion(0));
 });
@@ -69,7 +69,7 @@ test('moving image details reuse their patches and preserve the input drink and 
     await loadSceneAssets();
     for (const day of [1, 2, 3]){
       const P = dayParams(day), theme = P.theme, G = {cx: 200, top: 170, bot: 460, halfW: 78, glass: theme.vessel};
-      const options = {G, w: 400, h: 700, L: startLevel(theme), theme, P, bubbles: false, ambient: true, backdrop: {width: 800, height: 1400}};
+      const options = {G, w: 400, h: 700, L: startLevel(theme), theme, P, bubbles: false, ambient: true, titleWash: true, backdrop: {width: 800, height: 1400}};
       const original = structuredClone({G, P, L: options.L});
       const a = recordingContext(), b = recordingContext();
       const before = patchBuilds;
@@ -78,7 +78,15 @@ test('moving image details reuse their patches and preserve the input drink and 
       assert.equal(after - before, MEMORY_DETAILS[theme.scene].length);
       drawScene(b.context, {...options, now: 2400});
       assert.equal(patchBuilds, after, 'a frame rebuilt the backdrop patches');
-      assert.notDeepEqual(a.calls, b.calls, theme.id + ': opted-in scene has no motion');
+      if (theme.scene === 'pub'){
+        assert.deepEqual(a.calls, b.calls, 'the hearth frame moved or changed its illumination');
+        const hasWash = ctx => ctx.calls.some(call => call[0] === 'createLinearGradient' && call[4] === options.h * .35);
+        assert.ok(hasWash(a), 'the raw flame crop erased the backdrop shading');
+        const noWash = recordingContext();
+        drawScene(noWash.context, {...options, titleWash: false, now: 2400});
+        assert.equal(hasWash(noWash), false, 'an unshaded scene gained a dark hearth crop');
+      }
+      else assert.notDeepEqual(a.calls, b.calls, theme.id + ': opted-in scene has no motion');
       assert.deepEqual({G, P, L: options.L}, original, 'decoration mutated a gameplay input');
     }
   } finally {

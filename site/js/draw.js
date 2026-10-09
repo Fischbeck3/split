@@ -2,6 +2,7 @@
 import {widthAt, mulberry32} from './core.js';
 import {getLiquidSurface} from './liquid.js';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
+import {createHearthMotion, updateHearthMotion} from './hearth.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -40,13 +41,16 @@ function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
   const {x, y, scale} = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
   c.drawImage(image, x, y, iw * scale, ih * scale);
   if (!titleWash) return true;
+  drawTitleWash(c, w, h, theme.scene === 'pub');
+  return true;
+}
+function drawTitleWash(c, w, h, dark){
   // The title lives on a quiet area of the place, while the vessel retains full contrast.
-  const dark = theme.scene === 'pub', wash = c.createLinearGradient(0, 0, 0, h * .35);
+  const wash = c.createLinearGradient(0, 0, 0, h * .35);
   wash.addColorStop(0, dark ? 'rgba(16,27,23,.94)' : 'rgba(246,240,227,.96)');
   wash.addColorStop(.42, dark ? 'rgba(16,27,23,.68)' : 'rgba(246,240,227,.78)');
   wash.addColorStop(1, dark ? 'rgba(16,27,23,0)' : 'rgba(246,240,227,0)');
   c.fillStyle = wash; c.fillRect(0, 0, w, h * .35);
-  return true;
 }
 
 function roundedRect(c, x, y, w, h, r){
@@ -165,6 +169,15 @@ function makeMemoryPatches(backdrop, w, h, G, theme){
   for (const detail of details){
     const [x, y] = point(detail.box), width = detail.box[2] * iw * placement.scale, height = detail.box[3] * ih * placement.scale;
     if (x + width < 0 || x > w || y + height < 0 || y > h) continue;
+    if (detail.kind === 'fire'){
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(detail.box[2] * iw); cv.height = Math.round(detail.box[3] * ih);
+      const p = cv.getContext('2d', {willReadFrequently: true});
+      p.drawImage(image, detail.box[0] * iw, detail.box[1] * ih, cv.width, cv.height, 0, 0, cv.width, cv.height);
+      const hearth = createHearthMotion(p.getImageData(0, 0, cv.width, cv.height), Math.round((detail.base - detail.box[1]) * ih));
+      patches.push({canvas: cv, context: p, hearth, x, y, width, height, kind: detail.kind});
+      continue;
+    }
     const cv = document.createElement('canvas'); cv.width = Math.ceil(width * dpr); cv.height = Math.ceil(height * dpr);
     const p = cv.getContext('2d'); p.setTransform(dpr, 0, 0, dpr, 0, 0);
     p.save(); p.beginPath();
@@ -207,7 +220,11 @@ function drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash}){
     const {canvas, x, y, width, height, kind} = patch;
     c.save(); c.beginPath(); c.rect(x, y, width, height); c.clip();
     if (kind === 'fire'){
-      c.drawImage(canvas, x + motion.flame * scale, y - motion.flame * 3 * scale, width, height * (1 + motion.flame * .025));
+      if (updateHearthMotion(patch.hearth, now)) patch.context.putImageData(patch.hearth.frame, 0, 0);
+      c.drawImage(canvas, x, y, width, height);
+      // The heat matte needs raw luminous paint. Reapply the same global wash
+      // inside this clip so the animated crop blends into the cached backdrop.
+      if (titleWash) drawTitleWash(c, w, h, true);
     } else {
       const strips = kind === 'cloth' ? 7 : kind === 'surf' ? 11 : 5;
       for (let i = 0; i < strips; i++){
@@ -221,18 +238,6 @@ function drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash}){
       }
     }
     c.restore();
-  }
-  if (theme.scene === 'pub'){
-    // The glow belongs to the fireplace, rather than to a flashing whole scene.
-    const {x, y, scale} = data.placement;
-    c.translate(x + data.iw * .814 * scale, y + data.ih * .401 * scale);
-    c.scale(data.iw * .145 * scale, data.ih * .095 * scale);
-    const glow = c.createRadialGradient(0, 0, 0, 0, 0, 1);
-    glow.addColorStop(0, 'rgba(255,167,65,' + (.055 + motion.firelight * .12) + ')');
-    glow.addColorStop(.4, 'rgba(255,146,54,' + (.015 + motion.firelight * .045) + ')');
-    glow.addColorStop(1, 'rgba(255,146,54,0)');
-    c.globalCompositeOperation = 'screen'; c.fillStyle = glow;
-    c.beginPath(); c.arc(0, 0, 1, 0, Math.PI * 2); c.fill();
   }
   c.restore();
 }
