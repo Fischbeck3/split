@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-09T04:51:50.622808Z",
+  "generatedAt": "2026-10-09T12:23:11.974Z",
   "title": "Design System: Split",
   "extensions": {
     "colorMeta": {
@@ -516,7 +516,7 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Start the primary hold-to-sip interaction or share the destination postcard; sharing exposes a busy state and confirms completion.",
+      "description": "Start today’s scored sip, try a labeled preview or archived glass, or share the date-specific destination postcard; sharing exposes a busy state and confirms completion.",
       "html": "<button type=\"button\" class=\"ds-primary\">Take today’s sip <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
       "css": ".ds-primary{display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 20px;border:0;border-radius:8px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:17px;font-weight:700;line-height:1.3;cursor:pointer}.ds-primary:hover{filter:brightness(1.06)}.ds-primary:disabled{opacity:.5;cursor:wait}.ds-primary:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-primary{transition:filter 140ms ease-out,background-color 140ms ease-out,color 140ms ease-out}}"
     },
@@ -524,7 +524,7 @@
       "name": "Text action",
       "kind": "button",
       "refersTo": "button-text",
-      "description": "Optional phone tilt, practice, or recalibration.",
+      "description": "Optional phone tilt, another sip, recalibration, or a return from an archive to today’s glass.",
       "html": "<button type=\"button\" class=\"ds-text\">Use phone tilt</button>",
       "css": ".ds-text{min-height:38px;border:0;background:none;color:var(--fg,#eee7d6);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:700;padding:6px 8px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;cursor:pointer}.ds-text:hover{text-decoration-thickness:2px}.ds-text:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
     },
@@ -564,7 +564,7 @@
       "name": "Score and position strip",
       "kind": "custom",
       "refersTo": "result-score",
-      "description": "A truthful score with one stopping position, not attempt history.",
+      "description": "A truthful score with one stopping position. Today, practice, archive, and preview status describe whether the sip counts; saved archive results retain their saved status.",
       "html": "<div class=\"ds-score\" aria-label=\"Score\"><strong>100</strong><span>/100</span><span class=\"ds-strip\" aria-label=\"Position of the stopping line\">⬜⬜🟩⬜⬜</span></div>",
       "css": ".ds-score{display:flex;align-items:baseline;gap:3px;font-variant-numeric:tabular-nums;color:var(--fg,#eee7d6);font-family:Karla,'Helvetica Neue',Arial,sans-serif;}.ds-score strong{font:900 40px/1 Fraunces,Georgia,serif;letter-spacing:-.035em}.ds-score>span:nth-child(2){color:var(--muted,#aaa797);font-size:15px}.ds-strip{margin-left:auto;font-size:19px;letter-spacing:2px}"
     }
@@ -577,7 +577,8 @@
       "The place changes the palette, painted backdrop, vessel, and postcard together.",
       "Heavy serif titles pair with plain, compact instructions.",
       "A visible lift and tip explain the sip; a single settled stopping position carries the result.",
-      "The postcard carries the destination and a social invitation into the group chat."
+      "The postcard carries the destination and a social invitation into the group chat.",
+      "Date-specific shares preserve the same glass; archive and preview states clearly explain whether a sip is saved."
     ],
     "rules": [
       {
@@ -594,6 +595,11 @@
         "name": "The One Identity Rule",
         "body": "Keep Fraunces for the Split wordmark, day titles, goals, verdicts, and scores. Keep Karla for instructions, controls, and supporting information.",
         "section": "typography"
+      },
+      {
+        "name": "The Same Challenge Rule",
+        "body": "Image and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain #dayN and never count toward the daily record. Use the centralized public address from site/js/config.js; the planned https://dailysplit.us/ is not yet connected. Freeze the launch date once the public run starts, because changing it would renumber existing challenges.",
+        "section": "components"
       }
     ],
     "dos": [
@@ -602,7 +608,8 @@
       "Do keep the vessel and mark visible between the heading and controls at both normal and short phone heights.",
       "Do preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.",
       "Do show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.",
-      "Do label preview and practice results on both image and text shares.",
+      "Do label preview, archive, and practice results on both image and text shares, preserving whether an archived result was previously saved.",
+      "Do preserve the challenge date in shares and offer a clear route back to today’s glass from an archive.",
       "Do keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.",
       "Do use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails."
     ],
@@ -611,6 +618,7 @@
       "Don't represent the five-cell position strip as attempts or a multi-row guessing history.",
       "Don't express a score as an accuracy percentage; offset percentages measure mark height.",
       "Don't replace a player's first daily score with a later practice sip.",
+      "Don't save archive or preview sips, or renumber shared challenges by moving the launch date after release.",
       "Don't introduce external font requests when the shipped font files already provide the required weights."
     ]
   }

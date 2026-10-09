@@ -1,5 +1,7 @@
 // The same daily vessel and stopping position, ready for a group chat.
-import {bandEmoji, widthAt} from './core.js';
+import {bandEmoji, widthAt, keyForDay} from './core.js';
+import {isCalendarDateKey} from './challenge.js';
+import {SITE_URL} from './config.js';
 import {drawScene} from './draw.js';
 
 const DISPLAY = 'Fraunces, "Playfair Display", Georgia, serif';
@@ -7,26 +9,33 @@ const BODY = 'Karla, "Helvetica Neue", Arial, sans-serif';
 const CARD_W = 1080, CARD_H = 1350;
 const PHOTO = {x: 40, y: 246, w: 1000, h: 750};
 
-function statusLabel(result, preview){
-  return preview ? 'Preview' : result.counts === false ? 'Practice' : '';
+function statusLabel(result, preview, archive){
+  return preview ? 'Preview' : archive ? 'Archive' : result.counts === false ? 'Practice' : '';
 }
 
 function canonicalUrl(url){
   try {
     const parsed = new URL(url);
+    if (!['https:', 'http:'].includes(parsed.protocol) || !parsed.hostname) throw new Error('Not a web address');
     return parsed.origin + parsed.pathname;
   } catch {
-    return String(url || '').split(/[?#]/)[0];
+    return SITE_URL;
   }
 }
 
-function cardUrl(url){
-  try {
-    const parsed = new URL(canonicalUrl(url));
-    return parsed.host + (parsed.pathname === '/' ? '' : parsed.pathname.replace(/\/$/, ''));
-  } catch {
-    return canonicalUrl(url);
-  }
+function challengeUrl({url, key, num, preview}){
+  const parsed = new URL(canonicalUrl(url));
+  const day = Number.isInteger(num) && num >= 1 && isCalendarDateKey(keyForDay(num)) ? num : 1;
+  if (preview) parsed.hash = 'day' + (day <= 9999 ? day : 1);
+  else parsed.searchParams.set('day', isCalendarDateKey(key) ? key : keyForDay(day));
+  return parsed.href;
+}
+
+function cardUrl(url, num){
+  const parsed = new URL(url);
+  const compact = parsed.host + (parsed.pathname === '/' ? '' : parsed.pathname.replace(/\/$/, '')) + parsed.search + parsed.hash;
+  // Very long custom base paths still leave a readable day cue on the postcard.
+  return compact.length > 48 ? parsed.host + ' · #' + String(num).padStart(3, '0') : compact;
 }
 
 function offsetLabel(result){
@@ -36,15 +45,15 @@ function offsetLabel(result){
 }
 
 /** Pure text sharing. The strip is one stopping position, never a grid of attempts. */
-export function buildShareText({num, theme, result, url, preview = false}){
-  const status = statusLabel(result, preview);
+export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false}){
+  const status = statusLabel(result, preview, archive);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
   return [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
     result.score + '/100 · ' + result.label,
     bandEmoji(result.f),
     'One sip. Your turn.',
-    canonicalUrl(url)
+    challengeUrl({url, key, num, preview})
   ].join('\n');
 }
 
@@ -112,7 +121,7 @@ function drawBand(c, f, x, y, ink){
 }
 
 /** Draw synchronously after the caller has loaded the fonts and shared place assets. */
-export function drawShareCard(canvas, {num, theme, P, result, url, preview = false}){
+export function drawShareCard(canvas, {num, key, theme, P, result, url = SITE_URL, preview = false, archive = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
   const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
   const doc = canvas.ownerDocument || document;
@@ -132,8 +141,11 @@ export function drawShareCard(canvas, {num, theme, P, result, url, preview = fal
   fitText(c, place.line, 64, 221, 952, 30, BODY, 600);
   c.textAlign = 'right'; c.font = '700 30px ' + BODY;
   c.fillText('#' + String(num).padStart(3, '0'), 1016, 82);
-  const status = statusLabel(result, preview);
-  if (status){ c.font = '700 23px ' + BODY; c.fillText(status + ' · not saved', 1016, 117); }
+  const status = statusLabel(result, preview, archive);
+  if (status){
+    c.font = '700 23px ' + BODY;
+    c.fillText(status + (archive && !preview && result.counts ? ' · saved sip' : ' · not saved'), 1016, 117);
+  }
 
   // Score and error use different units: a score is /100, an offset is mark height.
   c.textAlign = 'left'; c.font = '900 178px ' + DISPLAY;
@@ -146,7 +158,7 @@ export function drawShareCard(canvas, {num, theme, P, result, url, preview = fal
   c.font = '600 22px ' + BODY; c.fillText('One stopping point', 536, 1240);
   c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
-  fitText(c, cardUrl(url), 64, 1313, 450, 27, BODY, 700);
+  fitText(c, cardUrl(challengeUrl({url, key, num, preview}), num), 64, 1313, 450, 27, BODY, 700);
   c.textAlign = 'right'; c.font = '700 31px ' + BODY; c.fillText('One sip. Your turn.', 1016, 1313);
   return canvas;
 }

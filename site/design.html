@@ -16,12 +16,13 @@ html,body{height:auto;overflow:auto;overscroll-behavior:auto}body{background:#f6
 import {dayParams,scoreFromOffset} from './js/core.js';
 import {drawShareCard,buildShareText} from './js/share.js';
 import {loadSceneAssets} from './js/draw.js';
+import {SITE_URL} from './js/config.js';
 await Promise.all([loadSceneAssets(),document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla'),document.fonts.load('600 16px Karla')]);
 for(let num=1;num<=3;num++){
  const P=dayParams(num),f=[0.02,-0.1,0.22][num-1], r={...scoreFromOffset(f,P.theme.target),f,L:P.markY+f*P.markH,mode:'tilt',counts:false,drained:false};
- drawShareCard(document.getElementById('card'+num),{num,theme:P.theme,P,result:r,url:'https://fischbeck3.github.io/split/',preview:true});
+ drawShareCard(document.getElementById('card'+num),{num,theme:P.theme,P,result:r,url:SITE_URL,preview:true});
  document.getElementById('save'+num).href=document.getElementById('card'+num).toDataURL('image/png');
- document.getElementById('text'+num).textContent=buildShareText({num,theme:P.theme,result:r,url:'https://fischbeck3.github.io/split/',preview:true});
+ document.getElementById('text'+num).textContent=buildShareText({num,theme:P.theme,result:r,url:SITE_URL,preview:true});
 }
 </script>
 </body></html>

@@ -1,22 +1,49 @@
 // The app: input, the tilt sensor, the drink, results, sharing and the record.
-import {dayNumber, dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRate, TILT_START, TILT_STOP, DRAIN_LEVEL,
+import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRate, TILT_START, TILT_STOP, DRAIN_LEVEL,
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
+import {resolveChallenge, canRecordChallenge} from './challenge.js';
+import {SITE_URL} from './config.js';
 
 const $ = id => document.getElementById(id);
 const STORE = 'split.v1';
-const SITE_URL = 'https://fischbeck3.github.io/split/';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const S = {num: 0, key: '', P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
+const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
   result: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
 const sensor = {available: false, theta: 0, roll: 0, sign: 1, base: 0, rollBase: 0, raw: null};
 const scene = $('scene'), ctx = scene.getContext('2d');
 $('startHold').disabled = true; $('startTilt').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
 function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
+
+function sipKind(){ return S.preview ? 'Preview' : S.kind === 'archive' ? 'Archive' : S.practice ? 'Practice' : 'Today’s sip'; }
+function challengeDate(){
+  const [year, month, date] = S.key.split('-').map(Number);
+  return new Intl.DateTimeFormat(undefined, {month:'short', day:'numeric', year:'numeric'}).format(new Date(year, month - 1, date, 12));
+}
+function renderChallengeStatus(now = new Date()){
+  const todayAvailable = S.kind === 'archive' || (S.preview && !S.designPreview && resolveChallenge({now}).kind === 'today');
+  for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).hidden = !todayAvailable;
+  $('intro').setAttribute('aria-label', S.kind === 'archive' ? 'Try an archived glass' : S.preview ? 'Try a preview glass' : 'Start today’s sip');
+  $('startHold').textContent = S.kind === 'archive' ? 'Try this glass' : S.preview ? 'Take a preview sip' : 'Take today’s sip';
+  $('introNote').textContent = S.kind === 'archive'
+    ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
+    : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
+    : (S.notice ? S.notice + ' ' : '') + 'One scored sip. Same pour for everyone.';
+  if (S.state === 'ready' || S.state === 'drinking') $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
+  $('practiceBtn').textContent = 'Another sip · ' + (S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
+}
+function refreshDayStatus(now = new Date()){
+  if (S.kind === 'today' && !canRecordChallenge({key:S.key, kind:S.kind, now})){
+    S.kind = 'archive'; S.notice = '';
+    renderChallengeStatus(now);
+    if (S.state === 'result'){ renderResult(); renderStats(); }
+    else toast('A new glass is up. This sip is now an archive and will not be saved.');
+  } else renderChallengeStatus(now);
+}
 
 // ---------- storage ----------
 function load(){ try { const v = JSON.parse(localStorage.getItem(STORE)); return v && v.days ? v : {days: {}}; } catch { return {days: {}}; } }
@@ -89,12 +116,13 @@ async function enableTilt(){
 
 // ---------- the drink ----------
 function begin(){
+  refreshDayStatus();
   setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
   S.motion = makeMotionState();
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
-  $('hudMode').hidden = false; $('hudMode').textContent = (S.practice ? 'Practice · ' : S.preview ? 'Preview · ' : 'Today’s sip · ') + S.theme.feel;
+  $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
   $('drinkControl').hidden = S.mode === 'tilt';
   $('drinkControl').disabled = false;
   $('drinkControl').textContent = 'Hold to drink';
@@ -130,7 +158,7 @@ function frame(now){
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
     input: S.state === 'drinking' ? Math.min(1, rate(now) / S.P.K) : 0, elapsed, dt, reducedMotion});
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
-  if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = Math.round(tiltAngle()) + '° · ' + S.theme.feel;
+  if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = sipKind() + ' · ' + Math.round(tiltAngle()) + '° · ' + S.theme.feel;
   if (S.state !== 'result') draw(now);
   requestAnimationFrame(frame);
 }
@@ -140,10 +168,11 @@ function lock(now){
   $('footPill').textContent = 'Returning upright…';
 }
 function finish(now){
+  const finishedAt = new Date(); refreshDayStatus(finishedAt);
   const f = S.drained ? 2 : (S.L - S.P.markY) / S.P.markH, r = scoreFromOffset(f, S.theme.target);
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
-  const counts = !S.practice && !S.preview;
-  S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: new Date().toISOString()};
+  const counts = !S.practice && canRecordChallenge({key:S.key, kind:S.kind, now:finishedAt});
+  S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: finishedAt.toISOString()};
   if (counts){
     const st = load();
     const recorded = st.days[S.key];
@@ -163,15 +192,15 @@ function finish(now){
 
 // ---------- results and sharing ----------
 function shareText(){
-  return buildShareText({num:S.num, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview});
+  return buildShareText({num:S.num, key:S.key, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
 }
 function renderResult(){
   const r = S.result;
   $('resScore').textContent = r.score; $('resScore').className = 'tone-' + r.tone;
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
-  $('resKind').textContent = r.counts ? 'Today’s sip' : S.preview ? 'Preview · not saved' : 'Practice · not saved';
-  $('officialBtn').hidden = r.counts || S.preview || !load().days[S.key]?.done;
+  $('resKind').textContent = S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
+  $('officialBtn').hidden = r.counts || S.kind !== 'today' || !load().days[S.key]?.done;
   $('resStrip').textContent = bandEmoji(r.f);
   $('shareText').textContent = shareText(); $('shareText').closest('details').open = false;
   resetAction($('shareBtn')); resetAction($('copyBtn')); $('copyBtn').textContent = 'Copy text';
@@ -184,7 +213,7 @@ function renderResult(){
   $('result').scrollTop = 0;
 }
 function drawCard(){
-  return drawShareCard($('card'), {num:S.num, theme:S.theme, P:S.P, result:S.result, url:SITE_URL, preview:S.preview});
+  return drawShareCard($('card'), {num:S.num, key:S.key, theme:S.theme, P:S.P, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
 }
 async function share(){
   const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
@@ -242,7 +271,7 @@ function msToMidnight(){ const n = new Date(); return new Date(n.getFullYear(), 
 function tickClock(){
   const s = Math.max(0, Math.floor(msToMidnight() / 1000));
   $('countdown').textContent = pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
-  if (!S.preview && dayKey(new Date()) !== S.key) $('newDayBtn').hidden = false;
+  refreshDayStatus();
 }
 let toastTimer = 0;
 function toast(msg){
@@ -254,6 +283,7 @@ function toast(msg){
 // ---------- input ----------
 const down = e => {
   if (S.state !== 'ready' && S.state !== 'drinking') return;
+  refreshDayStatus();
   if (e.cancelable) e.preventDefault();
   if (e.pointerId != null && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
   $('drinkControl').setAttribute('aria-pressed', 'true');
@@ -272,6 +302,7 @@ window.addEventListener('pointerup', up);
 window.addEventListener('blur', up);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden){ up(); if (S.state === 'drinking') lock(performance.now()); }
+  else if (S.P) tickClock();
 });
 document.addEventListener('keydown', e => {
   if (e.code === 'Space' && !e.repeat && (S.state === 'ready' || S.state === 'drinking')){ e.preventDefault(); down(e); }
@@ -290,8 +321,10 @@ $('practiceBtn').addEventListener('click', () => {
   else if (sensor.available){ calibrate(); begin(); }
   else enableTilt();
 });
-$('newDayBtn').addEventListener('click', () => location.reload());
+for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventListener('click', () => location.assign('./'));
 $('officialBtn').addEventListener('click', () => {
+  refreshDayStatus();
+  if (!canRecordChallenge({key:S.key, kind:S.kind})) return;
   const rec = load().days[S.key]; if (!rec || !rec.done) return;
   S.practice = false; S.mode = rec.mode; S.L = rec.L;
   S.result = {...rec, counts:true}; setPhase('result'); renderResult();
@@ -301,10 +334,11 @@ window.addEventListener('resize', layout);
 
 // ---------- start ----------
 async function init(){
-  const now = new Date(), m = /^#day(\d{1,4})$/.exec(location.hash || '');
-  S.num = dayNumber(now);
-  if (m){ S.num = parseInt(m[1], 10); S.preview = true; }
-  S.P = dayParams(S.num); S.theme = S.P.theme; S.key = S.P.key;
+  const now = new Date(), challenge = resolveChallenge({now, search:location.search, hash:location.hash});
+  S.num = challenge.num; S.key = challenge.key; S.kind = challenge.kind; S.notice = challenge.notice;
+  const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
+  S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
+  S.P = dayParams(S.num); S.theme = S.P.theme;
   await loadSceneAssets(S.theme);
   S.L0 = startLevel(S.theme); S.L = S.L0;
   const palette = S.theme.palette || {bg:'#17110d', fg:'#f5ecdc', muted:'#b3a48e', sheet:'#221a14', line:'#3a2d23', accent:'#e9b949', accentFg:'#17110d'};
@@ -321,15 +355,13 @@ async function init(){
   $('vesselHint').textContent = S.theme.line;
   document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
   scene.setAttribute('aria-label', S.theme.name + '. Stop the beer line through ' + S.theme.target + '.');
-  if (S.preview){
-    $('introNote').textContent = 'Design preview. Your score will not be saved.';
+  if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
     const active = $('previewNav').querySelector('a[href="#day' + S.num + '"]');
     if (active) active.setAttribute('aria-current', 'page');
   }
 
   const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  $('startHold').textContent = 'Take ' + (S.preview ? 'a preview' : 'today’s') + ' sip';
   if (typeof DeviceMotionEvent === 'undefined' || !coarse){
     $('startTilt').hidden = true;
   }
@@ -337,7 +369,7 @@ async function init(){
   setPhase('intro'); layout(); draw(performance.now()); $('app').classList.add('scene-ready');
   $('startHold').disabled = false; $('startTilt').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
-  const rec = S.preview ? null : load().days[S.key];
+  const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
   if (rec && rec.done && rec.theme === S.theme.id){
     S.L = rec.L; setPhase('result'); S.mode = rec.mode || 'hold';
     S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString()};

@@ -142,6 +142,7 @@ The scenery is illustrative travel art, not a photograph or a claim about a spec
 - Heavy serif titles pair with plain, compact instructions.
 - A visible lift and tip explain the sip; a single settled stopping position carries the result.
 - The postcard carries the destination and a social invitation into the group chat.
+- Date-specific shares preserve the same glass; archive and preview states clearly explain whether a sip is saved.
 
 ## Colors
 
@@ -218,6 +219,8 @@ Text actions have underlined foreground labels and a minimum height of 38px. The
 
 The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status, then a settling state while the glass returns upright. Optional tilt mode offers upright recalibration before the sip.
 
+Public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Today's local date offers one scored sip; an earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. Before launch, the root route offers a preview. If midnight passes during play, the older glass becomes an archive before any record is written.
+
 ### Preview navigation
 
 The bottom preview strip is shown only for hash-based day previews. Pub, Beach, and Fest links use foreground ink. The active link adds bold weight and a stronger accent underline, with `aria-current` preserving its meaning. Preview layouts reserve room for this strip.
@@ -238,9 +241,11 @@ Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liqui
 
 ### Results and sharing
 
-The result surface leads with a verdict, practice/preview status when needed, the destination postcard, and the score. Sharing offers the image or text; practice is an explicit secondary action. The first daily score is retained separately from later practice. The share action exposes a busy state and briefly confirms successful sharing or download; copying confirms the completed action as well. If automatic copying fails, the text disclosure opens, focuses and selects the result, and scrolls it into view for manual copying; the next result closes that disclosure again.
+The result surface leads with a verdict, practice/archive/preview status when needed, the destination postcard, and the score. Sharing offers the image or text; another sip is an explicit secondary action. The first daily score is retained separately from later practice. A previously saved result that crosses midnight says “Archive · saved sip”; an unfinished sip that crosses midnight finishes as an unsaved archive. The share action exposes a busy state and briefly confirms successful sharing or download; copying confirms the completed action as well. If automatic copying fails, the text disclosure opens, focuses and selects the result, and scrolls it into view for manual copying; the next result closes that disclosure again.
 
-The image postcard is 1080 × 1350, with a paper border framing the same painted scene and vessel used in play. A large destination title and drink cue sit above it; the actual score and verdict sit below it. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the canonical game URL. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. “One sip. Your turn.” makes the social action clear without promising a result. The same destination, invitation, and one-row position appear in plain text. Preview and practice labels travel with both formats; sample review postcards are explicitly previews.
+The image postcard is 1080 × 1350, with a paper border framing the same painted scene and vessel used in play. A large destination title and drink cue sit above it; the actual score and verdict sit below it. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the public challenge address. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. “One sip. Your turn.” makes the social action clear without promising a result. The same destination, invitation, and one-row position appear in plain text. Preview, archive, and practice labels travel with both formats; saved archive cards distinguish a retained daily result from an unsaved archive sip. Sample review postcards are explicitly previews.
+
+**The Same Challenge Rule.** Image and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain `#dayN` and never count toward the daily record. Use the centralized public address from `site/js/config.js`; the planned `https://dailysplit.us/` is not yet connected. Freeze the launch date once the public run starts, because changing it would renumber existing challenges.
 
 ## Do's and Don'ts
 
@@ -251,7 +256,8 @@ The image postcard is 1080 × 1350, with a paper border framing the same painted
 - **Do** keep the vessel and mark visible between the heading and controls at both normal and short phone heights.
 - **Do** preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.
 - **Do** show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.
-- **Do** label preview and practice results on both image and text shares.
+- **Do** label preview, archive, and practice results on both image and text shares, preserving whether an archived result was previously saved.
+- **Do** preserve the challenge date in shares and offer a clear route back to today's glass from an archive.
 - **Do** keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.
 - **Do** use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails.
 
@@ -261,4 +267,5 @@ The image postcard is 1080 × 1350, with a paper border framing the same painted
 - **Don't** represent the five-cell position strip as attempts or a multi-row guessing history.
 - **Don't** express a score as an accuracy percentage; offset percentages measure mark height.
 - **Don't** replace a player's first daily score with a later practice sip.
+- **Don't** save archive or preview sips, or renumber shared challenges by moving the launch date after release.
 - **Don't** introduce external font requests when the shipped font files already provide the required weights.

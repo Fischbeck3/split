@@ -9,8 +9,9 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Split · One sip. Your turn.">
 <meta property="og:description" content="Hold to sip. Release to stop. A different glass every day.">
-<meta property="og:url" content="https://fischbeck3.github.io/split/">
-<meta property="og:image" content="https://fischbeck3.github.io/split/og.png">
+<link rel="canonical" href="https://dailysplit.us/">
+<meta property="og:url" content="https://dailysplit.us/">
+<meta property="og:image" content="https://dailysplit.us/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="A stout in a pub, a lime-topped bottle on white sand, and an Oktoberfest stein.">
@@ -41,6 +42,7 @@
     <p class="live-goal" id="liveGoal">Split the G.</p>
     <p class="live-status" id="footPill" role="status" aria-live="polite"></p>
     <button class="drink-control" id="drinkControl" type="button">Hold to drink</button>
+    <button class="text-button" id="liveTodayBtn" type="button" hidden>Play today’s glass</button>
     <button class="text-button" id="recalibrateBtn" type="button" hidden>Reset upright position</button>
   </div>
 
@@ -50,10 +52,11 @@
       <p class="instructions" id="introLine">Hold to tip and sip. Release to settle.</p>
       <div class="start-actions">
         <button class="big" id="startHold" type="button">Take today's sip <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="text-button" id="introTodayBtn" type="button" hidden>Play today’s glass</button>
         <button class="text-button" id="startTilt" type="button">Use phone tilt</button>
       </div>
       <p class="daily-note" id="introNote">One scored sip. Same pour for everyone.</p>
-      <details class="rules"><summary>How to play</summary><p>Hold the glass, button, or space bar to tip and sip. Release to bring it upright. Your score comes from the settled line where the beer meets the foam through the center of the mark. With phone tilt, tip farther to sip faster and come upright to stop.</p><p id="vesselHint">A smooth pour with a clean stop.</p></details>
+      <details class="rules"><summary>How to play</summary><p>Hold the glass, button, or space bar to tip and sip. Release to bring it upright. Your score comes from the settled line where the beer meets the foam through the center of the mark. With phone tilt, tip farther to sip faster and come upright to stop.</p><p id="vesselHint">A smooth pour with a clean stop.</p><p>New glasses arrive at midnight in your local time. Your first sip counts; repeats are practice. Scores and streaks stay in this browser. Shared links open that date’s glass; past glasses are archives and do not count toward your record.</p></details>
     </div>
   </section>
 
@@ -68,7 +71,7 @@
         <button class="outline" id="copyBtn" type="button">Copy text</button>
       </div>
       <details class="share-copy"><summary>See text card</summary><pre id="shareText" tabindex="-1"></pre></details>
-      <div class="result-bottom"><button class="text-button" id="practiceBtn" type="button">Another sip · practice</button><p class="next">Next glass in <span id="countdown">--:--:--</span><button class="text-button" id="newDayBtn" type="button" hidden>New glass is up</button></p></div>
+      <div class="result-bottom"><button class="text-button" id="practiceBtn" type="button">Another sip · practice</button><p class="next">Next local midnight in <span id="countdown">--:--:--</span><button class="text-button" id="newDayBtn" type="button" hidden>Play today’s glass</button></p></div>
       <button class="text-button" id="officialBtn" type="button" hidden>Back to today's score</button>
       <div class="stats"><span><strong id="stDays">0</strong> days</span><span><strong id="stStreak">0</strong> streak</span><span>best <strong id="stBest">—</strong></span><span><strong id="stPerfect">0</strong> perfect</span></div>
     </div>

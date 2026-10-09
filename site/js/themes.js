@@ -2,7 +2,7 @@
 //
 // Day No. 1 falls on LAUNCH, a local calendar date. The first days follow SCHEDULE in order.
 // After that the game picks a glass by date and never serves the same glass two days running.
-export const LAUNCH = '2026-10-08';
+export {LAUNCH} from './config.js';
 export const SCHEDULE = ['pub', 'beach', 'munich'];
 
 // Fields
