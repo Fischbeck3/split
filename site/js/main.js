@@ -412,7 +412,7 @@ async function init(){
   S.L0 = startLevel(S.theme); S.L = S.L0;
   const palette = S.theme.palette || {bg:'#17110d', fg:'#f5ecdc', muted:'#b3a48e', sheet:'#221a14', line:'#3a2d23', accent:'#e9b949', accentFg:'#17110d'};
   for (const [name, value] of Object.entries(palette)) document.documentElement.style.setProperty('--' + (name === 'accentFg' ? 'accent-fg' : name), value);
-  const light = S.theme.scene === 'beach' || S.theme.scene === 'munich';
+  const light = S.theme.colorScheme ? S.theme.colorScheme === 'light' : S.theme.scene === 'beach' || S.theme.scene === 'munich';
   document.documentElement.style.colorScheme = light ? 'light' : 'dark';
   for (const [name,value] of Object.entries(light ? {good:'#267347',warn:'#936210',miss:'#b64037'} : {good:'#91dda8',warn:'#d9b874',miss:'#ffaaa0'})) document.documentElement.style.setProperty('--'+name,value);
   document.querySelector('meta[name="theme-color"]').content = palette.bg;

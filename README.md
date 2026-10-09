@@ -4,7 +4,7 @@ Hold to lift the glass, tip it, and take a sip. Release to bring it upright, the
 
 **GitHub Pages address:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
-The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and HTTPS is valid and enforced. The root returns the game and `www` redirects to the HTTPS root. The release calendar is fixed: October 9, 2026 is day No. 1 in the old Irish pub, October 10 is Cabo, and October 11 is Oktoberfest. The release configuration opens official daily recording for root and date links; `#dayN` previews remain unsaved. The versioned module graph keeps each deployment's HTML and game code together.
+The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and HTTPS is valid and enforced. The root returns the game and `www` redirects to the HTTPS root. The release calendar is fixed: October 9, 2026 is day No. 1 in the old Irish pub, October 10 is Cabo, and October 11 is Oktoberfest. The chosen next three are Tokyo izakaya on October 12, snowy Hogsmeade on October 13, and Trastevere sunset on October 14. The release configuration opens official daily recording for root and date links; `#dayN` previews remain unsaved. The versioned module graph keeps each deployment's HTML and game code together.
 
 ![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.jpg)
 
@@ -20,21 +20,26 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 
 If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar, so older prototype scores do not carry into the public run.
 
-## The first three days
+## The first six days
 
 | Day | Drink and place | Vessel and mark | Feel |
 |---|---|---|---|
 | 1 · Oct 9, 2026 · Old Irish pub | Guinness in an old Irish pub | Tulip pint · the G | Smooth lift and tip; drinking stops immediately, then the vessel returns upright |
 | 2 · Oct 10, 2026 · Cabo beach | Corona at a beach palapa in Cabo, Mexico | Clear bottle with lime · the crown | Fast through the neck, slower deterministic glugs through the body |
 | 3 · Oct 11, 2026 · Oktoberfest | Festbier in a Munich beer tent | Liter stein · Bavarian crest | Slower, heavy pour with a short 0.24-second follow-through after release |
+| 4 · Oct 12, 2026 · Tokyo izakaya | Sapporo at a rain-lit counter | Tall star glass · gold star | Crisp lager, steady sip, clean stop |
+| 5 · Oct 13, 2026 · Snowy Hogsmeade | Butterbeer beneath snowy rooftops | Tulip glass · H shield | Creamy head, slower steady sip, clean stop |
+| 6 · Oct 14, 2026 · Trastevere sunset | Peroni at a Roman café table | Tall glass · blue P | Light lager, steady sip, clean stop |
 
 The vessel changes both the flow and movement. The pint tips toward 20 degrees, the bottle toward 24 degrees with a kick synchronized to each glug, and the stein toward 18 degrees with a slower lift and return. The liquid responds to gravity and damped slosh while preserving the amount in the glass. Your score waits for both the drink and the vessel movement to settle.
 
-The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion keeps the vessel upright, shows liquid progress, and retains static material detail. After day 3, the game picks from eleven glasses by date and never pours the same glass two days running.
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion keeps the vessel upright, shows liquid progress, and retains static material detail. After day 6, the game picks from fourteen glasses by date and never pours the same glass two days running.
 
 The opening places use painted travel illustrations: aged oak, amber lamps, and a fireplace in the pub; a shaded palapa, turquoise water, and the Cabo headland at the beach; timber roof ribs, Bavarian bunting, and communal tables in Munich. Small distant figures suggest friends without competing with the glass or the scoring mark. The table stays anchored beneath the vessel in the game, movement preview, and exported postcard.
 
 The first three places carry a short memory cue and subtle environmental motion around the vessel. The live game curls the painted pub flames above a fixed grate, moves Cabo surf, and stirs Munich canopy cloth without altering the glass or its physics. Reduced motion and exported postcards retain the static scene. A brief highlight follows the real stopping line as the result appears, with a stronger line flash for perfect splits; controls and the recorded score are available immediately.
+
+The next three scenes reuse the chosen panels from the concept illustrations: Tokyo option 1, snowy Hogsmeade option 3, and Trastevere option 1. The renderer crops each triptych with a two-pixel inset and preserves the same tabletop anchor in the game and postcard. Scene assets load only for the selected daily place. These scenes remain static around the moving vessel.
 
 These are illustrative scenes, not photographs of a specific venue. The three compressed WebP assets are self-hosted in `site/assets/scenes/`; their generation prompts and framing metadata are recorded in `generation.json`. The game loads and decodes only the selected place once, then caches its painted backdrop. The review routes load all three. A missing scene image falls back to the existing canvas illustration. There is no runtime image generation or external image service.
 
@@ -52,7 +57,7 @@ The place gently brightens when it is ready. Holding visibly depresses the drink
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
-Open `/next-days.html` for nine unscheduled, playable scene-and-glass concepts: Sapporo in Japan, Butterbeer in Hogsmeade, and Peroni in Rome. Each drink has three painted places, vessel-specific flow, a real stopping-line postcard, and an in-memory shortlist. Six later-place pitches broaden the options. The catalog lives separately in `site/js/concepts.js`; it does not join `THEMES`, set official dates, save results, or alter the daily seed. Choose the next lineup before scheduling it.
+Open `/next-days.html` for nine unscheduled, playable scene-and-glass concepts: Sapporo in Japan, Butterbeer in Hogsmeade, and Peroni in Rome. Each drink has three painted places, vessel-specific flow, a real stopping-line postcard, and an in-memory shortlist. Six later-place pitches broaden the options. The catalog lives separately in `site/js/concepts.js`; it does not join `THEMES`, set official dates, save results, or alter the daily seed. The selected Tokyo, snowy Hogsmeade, and Trastevere pairings are now scheduled as days 4–6; studio seeds and shortlist stay separate from daily play. Open `/next-three.html` for their playable hash previews and sample postcards.
 
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
@@ -155,6 +160,7 @@ Rerunning updates the tagged Daily Split dashboard and insights, including after
 
 - `site/index.html` and `site/css/style.css`: the game page and shared styles
 - `site/design.html`: the first-three-day review and sample shares
+- `site/next-three.html`: the chosen days 4–6, playable unsaved previews and sample postcards
 - `site/next-days.html`, `site/css/next-days.css`, and `site/js/next-days.js`: the unscheduled next-places studio
 - `site/js/concepts.js` and `site/assets/concepts/`: independent concept pairings and nine painted place options
 - `site/motion.html`: sip playback and frozen movement stages, without saved scores

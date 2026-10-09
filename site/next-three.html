@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Split · Next three days</title><meta name="robots" content="noindex"><link rel="stylesheet" href="css/style.css">
+<style>
+html,body{height:auto;overflow:auto;overscroll-behavior:auto}body{background:#f6f0e3;color:#153e4d;padding:36px max(24px,calc((100vw - 1420px)/2));user-select:auto}header{display:flex;justify-content:space-between;gap:28px;align-items:flex-end;margin-bottom:30px}h1{font:900 clamp(32px,4vw,52px)/1.1 var(--display);letter-spacing:-.03em;margin:0}header p{margin:10px 0 0;max-width:55ch;color:#556c73}header a{color:#153e4d;font-weight:700;text-underline-offset:4px;white-space:nowrap}.days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}article{min-width:0}article>h2{font:900 26px/1.2 var(--display);letter-spacing:-.025em;margin:0 0 8px}article>p{font-size:14px;color:#556c73;min-height:42px;margin:0 0 16px}iframe{width:100%;height:844px;border:0;border-radius:10px;background:#142b24}article h3{font:900 23px/1.2 var(--display);letter-spacing:-.025em;margin:28px 0 7px}.sample{font-size:12px;color:#556c73;margin:0 0 14px;min-height:0}article canvas{width:100%;height:auto;display:block;border-radius:6px}pre{white-space:pre-wrap;font:13px/1.6 var(--body);color:#153e4d;margin:20px 0 0}footer{margin:36px 0 0;border-top:1px solid #d7e0d8;padding-top:20px;color:#556c73;font-size:13px}.sample a{color:#153e4d;cursor:pointer;text-underline-offset:3px}footer a{color:#153e4d;text-underline-offset:3px}@media(max-width:900px){.days{grid-template-columns:1fr;max-width:450px;margin:auto}header{display:block;max-width:450px;margin:0 auto 28px}header a{display:inline-block;margin-top:16px}iframe{height:844px}.days article{margin-bottom:30px}}
+</style></head>
+<body>
+<header><div><h1>Wish you were here.</h1><p>Your chosen next three: Tokyo, snowy Hogsmeade, and Trastevere. October 12–14. Try their preview sips and see the matching postcards.</p></div><a href="./">Play today’s glass</a></header>
+<section class="days" aria-label="Chosen days four to six">
+<article><h2>4. Tokyo izakaya</h2><p>October 12 · Sapporo. A rain-lit counter, a tall glass, and a gold star.</p><iframe src="./#day4" title="Preview day 4: Tokyo izakaya"></iframe><h3>One more before the last train.</h3><p class="sample">Sample preview result · 100/100</p><canvas id="card4" role="img" aria-label="Sample Tokyo share postcard"></canvas><p class="sample"><a id="save4" download="split-share-day4.png">Save sample card</a></p><pre id="text4"></pre></article>
+<article><h2>5. Snowy Hogsmeade</h2><p>October 13 · Butterbeer. Caramel gold, a thick head, and the H shield.</p><iframe src="./#day5" title="Preview day 5: Snowy Hogsmeade"></iframe><h3>Something warm before the walk.</h3><p class="sample">Sample preview result · 89/100</p><canvas id="card5" role="img" aria-label="Sample Hogsmeade share postcard"></canvas><p class="sample"><a id="save5" download="split-share-day5.png">Save sample card</a></p><pre id="text5"></pre></article>
+<article><h2>6. Trastevere sunset</h2><p>October 14 · Peroni. A café table at sunset, a golden lager, and the blue P.</p><iframe src="./#day6" title="Preview day 6: Trastevere sunset"></iframe><h3>Dinner runs late.</h3><p class="sample">Sample preview result · 58/100</p><canvas id="card6" role="img" aria-label="Sample Rome share postcard"></canvas><p class="sample"><a id="save6" download="split-share-day6.png">Save sample card</a></p><pre id="text6"></pre></article>
+</section>
+<footer>Days 4–6 are in the daily lineup. These playable previews never save a daily score. Sample cards use illustrative stopping positions. <a href="./next-days.html">Explore the other concepts</a>. <a href="https://github.com/Fischbeck3/split">Split on GitHub</a></footer>
+<script type="module">
+import {dayParams,scoreFromOffset} from './js/core.js';
+import {drawShareCard,buildShareText} from './js/share.js';
+import {loadSceneAssets} from './js/draw.js';
+import {SITE_URL} from './js/config.js';
+await Promise.all([...([4,5,6].map(num=>loadSceneAssets(dayParams(num).theme))),document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla'),document.fonts.load('600 16px Karla')]);
+for(let num=4;num<=6;num++){
+ const P=dayParams(num),f=[0.02,-0.1,0.22][num-4], r={...scoreFromOffset(f,P.theme.target),f,L:P.markY+f*P.markH,mode:'tilt',counts:false,drained:false};
+ drawShareCard(document.getElementById('card'+num),{num,theme:P.theme,P,result:r,url:SITE_URL,preview:true});
+ document.getElementById('save'+num).href=document.getElementById('card'+num).toDataURL('image/png');
+ document.getElementById('text'+num).textContent=buildShareText({num,theme:P.theme,result:r,url:SITE_URL,preview:true});
+}
+</script>
+</body></html>
