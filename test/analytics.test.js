@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {analyticsAllowed, attemptKind, gameProperties, cleanUrl, sanitizeEvent, createAnalytics, trackedResultAction} from '../site/js/analytics.js';
+import {analyticsAllowed, attemptKind, gameProperties, resultProperties, cleanUrl, sanitizeEvent, createAnalytics, trackedResultAction} from '../site/js/analytics.js';
 import {dayParams, scoreFromOffset, dayKey} from '../site/js/core.js';
 
 const projectKey = 'phc_test_public_token';
@@ -18,6 +18,28 @@ const deferred = () => {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
   return {promise, resolve, reject};
 };
+
+test('calendar attribution distinguishes the glass, place, and published run', () => {
+  const P = dayParams(1), properties = gameProperties({...state(), theme:P.theme, P}, new Date(2026, 9, 9));
+  assert.equal(properties.glass_id, 'pub');
+  assert.equal(properties.vessel, 'tulip');
+  assert.equal(properties.scene, 'pub');
+  assert.equal(properties.visual_theme, 'pub');
+  assert.equal(properties.campaign_id, 'opening-2026');
+  assert.equal(properties.campaign_day, 1);
+  assert.equal(typeof properties.schedule_version, 'number');
+});
+
+test('restored results retain their recorded campaign and artwork attribution', () => {
+  const recorded = {glass_id:'pub', vessel:'tulip', scene:'pub', visual_theme:'halloween-pub', campaign_id:'halloween-2026', campaign_day:4, schedule_version:3};
+  const s = {...state(), P:dayParams(1), result:{score:91, drained:false, counts:true, attribution:{...recorded, $current_url:'https://bad.example/'}}};
+  const properties = resultProperties(s, new Date(2026, 9, 9));
+  for (const [key, value] of Object.entries(recorded)) assert.equal(properties[key], value);
+  assert.equal(properties.challenge_date, '2026-10-09');
+  assert.equal(properties.attempt_kind, 'daily');
+  assert.equal(properties.counts, true);
+  assert.equal(properties.$current_url, undefined);
+});
 
 test('only the configured HTTPS production hosts and a public project key enable capture', () => {
   assert.equal(analyticsAllowed({projectKey, location}), true);
@@ -111,8 +133,11 @@ test('daily, practice, archive, and preview classification follows game recordin
   assert.equal(attemptKind({...state(), practice:true, kind:'archive', result:{counts:true}}), 'archive');
   assert.equal(attemptKind({...state(), practice:true, kind:'preview'}), 'preview');
   const context = gameProperties({...state(), key:'2026-10-08', kind:'archive', mode:'tilt', friend:{score:90}}, new Date(2026, 9, 9, 1));
-  assert.deepEqual(context, {local_play_date:'2026-10-09', challenge_date:'2026-10-08', challenge_number:1,
+  const {glass_id, vessel, scene, visual_theme, campaign_id, campaign_day, schedule_version, ...eventContext} = context;
+  assert.deepEqual(eventContext, {local_play_date:'2026-10-09', challenge_date:'2026-10-08', challenge_number:1,
     theme:'pub', input_mode:'tilt', attempt_kind:'archive', friend_link:true});
+  assert.equal(campaign_id, 'none');
+  assert.equal(campaign_day, 0);
 });
 
 test('native sharing starts before telemetry, and attributes its later handoff to the clicked result', async () => {

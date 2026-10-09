@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f0e3">
+  <meta name="robots" content="noindex">
+  <title>The daily calendar · Split</title>
+  <meta name="description" content="See the daily Split lineup, plan future glasses and holiday runs, and subscribe to the calendar.">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/calendar.css">
+  <script type="module" src="js/calendar.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <a class="wordmark" href="./" aria-label="Split, play today’s glass">Split<span>.</span></a>
+    <nav aria-label="Calendar navigation"><a href="./next-days.html">The concept studio</a><a href="./">Play today’s glass</a></nav>
+  </header>
+  <main>
+    <section class="page-intro" aria-labelledby="pageTitle">
+      <div><h1 id="pageTitle">A glass for<br>every day.</h1><p>See what’s pouring. Leave room for the next place,<br class="desktop-break"> a holiday week, or a whole new season.</p></div>
+      <div class="intro-note"><p>Plan here. Publish after review.</p><p>The daily lineup is live. Your changes are drafts saved in this browser. Export a plan for review before it changes anyone’s glass.</p><a id="dashboardLink" href="#performance">See how the glasses perform <span aria-hidden="true">↗</span></a></div>
+    </section>
+    <p id="pageStatus" class="page-status" role="status" aria-live="polite">Loading the calendar…</p>
+    <div class="planner">
+      <section class="calendar-area" aria-labelledby="monthTitle">
+        <div class="calendar-toolbar"><h2 id="monthTitle">October 2026</h2><div class="month-controls"><button id="previousMonth" class="icon-button" type="button" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><button id="todayButton" class="quiet-button" type="button">Today</button><button id="nextMonth" class="icon-button" type="button" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7"/></svg></button></div></div>
+        <div class="view-controls" role="group" aria-label="Calendar view"><button id="monthView" type="button" aria-pressed="true">Month</button><button id="weekView" type="button" aria-pressed="false">Week</button></div>
+        <div class="calendar-legend" aria-label="Calendar key"><span><i class="legend-mark live-mark" aria-hidden="true"></i>Daily lineup</span><span><i class="legend-mark draft-mark" aria-hidden="true"></i>Draft proposal</span><span class="calendar-version" id="calendarVersion"></span></div>
+        <div class="calendar-scroll"><div id="monthGrid" class="month-grid" role="grid" aria-label="Daily glass calendar"></div></div>
+        <div id="monthRuns" class="month-runs" aria-label="Runs this month"></div>
+        <p class="calendar-help">Select a day to see its glass or plan a future one. Arrow keys move between days.</p>
+      </section>
+      <aside id="dayInspector" class="day-inspector" aria-labelledby="selectedDate">
+        <div class="selected-heading"><h2 id="selectedDate">Choose a day</h2><p id="selectedStatus" class="entry-status"></p></div>
+        <div class="live-details"><h3 id="selectedDrink"></h3><p id="selectedPlace"></p><dl><div><dt>Glass</dt><dd id="selectedVessel"></dd></div><div><dt>Daily challenge</dt><dd id="selectedNumber"></dd></div><div><dt>Published run</dt><dd id="selectedRun"></dd></div></dl><a id="previewLink" class="text-link" href="./">Preview the current lineup <span aria-hidden="true">↗</span></a><p id="previewNote" class="small-note">Preview sips never save a daily result.</p></div>
+        <form id="draftForm" class="draft-form">
+          <h3>Your proposal.</h3><p id="draftBoundary" class="small-note">Drafts change this plan, then go to review.</p>
+          <fieldset id="draftFields"><label for="draftTheme">Drink and place</label><select id="draftTheme" required></select><label for="draftCampaign">Holiday or theme run</label><select id="draftCampaign"><option value="none">A standalone day</option></select><label for="draftNotes">Notes for review</label><textarea id="draftNotes" rows="3" maxlength="2000" placeholder="The scene, the souvenir glass, the feeling."></textarea><button id="saveDraft" class="primary-button" type="submit">Save draft for this day</button></fieldset>
+        </form>
+        <details id="selectedReview" class="selected-review"><summary>Review this day’s draft</summary><p id="reviewText"></p><p id="reviewNotes"></p><button id="clearDraft" class="text-button" type="button">Remove this draft</button></details>
+        <div class="day-performance"><h3>How did it travel?</h3><p>Players, finishes, and sharing stay in your authenticated PostHog project.</p><a id="dayAnalytics" href="#performance" target="_blank" rel="noopener">See this day’s performance <span aria-hidden="true">↗</span></a></div>
+      </aside>
+    </div>
+    <section class="run-section" aria-labelledby="runTitle">
+      <div class="section-lead"><h2 id="runTitle">Give a week<br>its own story.</h2><p>A few days in one place. A Halloween week. A run that carries through the holidays. Dates reserve space in your plan; artwork and glasses still need review.</p></div>
+      <div class="run-workspace"><div id="campaignList" class="campaign-list"></div><details class="run-editor"><summary>Create a holiday or theme run</summary><form id="campaignForm"><div class="form-pair"><div><label for="campaignName">Run name</label><input id="campaignName" required maxlength="100" placeholder="Winter at the long table"></div><div><label for="campaignId">Run ID</label><input id="campaignId" required maxlength="64" pattern="[a-z][a-z0-9-]{0,63}" placeholder="winter-2026" spellcheck="false"><p class="small-note">Start with a letter. Use lowercase letters, numbers, and hyphens.</p></div></div><div class="form-pair"><div><label for="campaignStart">First day</label><input id="campaignStart" type="date" required></div><div><label for="campaignEnd">Last day</label><input id="campaignEnd" type="date" required></div></div><label for="campaignNotes">The idea</label><textarea id="campaignNotes" rows="2" maxlength="2000" placeholder="What holds these days together?"></textarea><button class="primary-button" type="submit">Save run as a draft</button></form></details></div>
+    </section>
+    <section class="plan-section" aria-labelledby="planTitle"><div class="section-lead"><h2 id="planTitle">Keep the plan.<br>Then pass it on.</h2><p id="planSummary">No browser changes yet.</p></div><div class="plan-actions"><button id="exportPlan" class="primary-button" type="button">Export plan for review</button><label class="file-button" for="importPlan">Import a plan<input id="importPlan" type="file" accept="application/json,.json"></label><button id="downloadLocalFeed" class="quiet-button" type="button">Download this planning calendar</button><p class="small-note">Exported JSON includes the published baseline and your draft proposals. Ask Codex to review and publish it. The game and subscription feeds update after release.</p><details><summary id="reviewSummary">Review all draft dates</summary><div id="allDrafts" class="all-drafts"></div></details></div></section>
+    <section class="feed-section" aria-labelledby="feedTitle"><div class="section-lead"><h2 id="feedTitle">Take the dates<br>with you.</h2><p>All-day entries follow the glass’s calendar date. A subscription refreshes from the published feed; a download is a snapshot.</p></div><div class="feed-options"><article><h3>The daily lineup</h3><p>The current published glasses, including the automatic rotation.</p><div class="link-row"><a id="subscribeLive" href="calendar.ics">Subscribe to the lineup</a><a id="downloadLive" href="calendar.ics" download="split-calendar.ics">Download .ics</a></div><input id="liveFeedUrl" aria-label="Published calendar subscription URL" readonly></article><article><h3>The planning calendar</h3><p>Published dates plus shared draft runs. Browser-only changes join after review and release.</p><div class="link-row"><a id="subscribePlanning" href="calendar-planning.ics">Subscribe to the plan</a><a id="downloadPlanning" href="calendar-planning.ics" download="split-calendar-planning.ics">Download .ics</a></div><input id="planningFeedUrl" aria-label="Planning calendar subscription URL" readonly></article></div></section>
+    <section id="performance" class="performance-section" aria-labelledby="performanceTitle"><h2 id="performanceTitle">Which glasses get shared?</h2><p>Compare daily players, completed sips, and unique sharers by glass, place, or published run. Results live in PostHog; future plans have no performance yet.</p><div class="link-row"><a id="themeAnalytics" href="#" target="_blank" rel="noopener">Compare glasses and runs <span aria-hidden="true">↗</span></a><a id="performanceDashboard" href="#" target="_blank" rel="noopener">Open the daily dashboard <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="page-footer"><a class="wordmark" href="./">Split<span>.</span></a><p>One glass. One sip. A new place to remember.</p><a href="./next-days.html">Back to the concepts</a></footer>
+  <noscript><p class="no-script">Turn on JavaScript to see the calendar and save browser drafts. <a href="calendar.ics">Download the published calendar</a>.</p></noscript>
+</body>
+</html>

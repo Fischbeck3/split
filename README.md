@@ -40,7 +40,7 @@ The pint begins around 20 degrees, the bottle around 24 degrees with a kick sync
 
 A thin dashed line briefly shows the exact target before each sip, then fades. Opening How to play shows it again. Reduced motion keeps the cue static until it clears; beginning the drink clears it immediately. Match the settled beer line beneath the foam to that height, or the top of Guinness's G crossbar. Compact brand artwork replaces the permanent aiming notches: Corona's crown, Sapporo's gold star, Peroni's red-and-blue label, and Butterbeer's quartered Hogwarts-style crest. Postcards retain their MARK/STOP guides and use the same logos. Artwork remains separate from the seeded score tolerance, so daily pours and saved scores stay intact.
 
-The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 6, the game picks from fourteen glasses by date and never pours the same glass two days running.
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 6, unpinned dates use the frozen fourteen-glass rotation, which avoids consecutive repeats. Reviewed future date pins can choose a different lineup without rerolling old challenges.
 
 The opening places use painted travel illustrations: aged oak, amber lamps, and a fireplace in the pub; warm Roman stone and a café table at sunset; rain-lit lanterns and a little counter in Tokyo. Small distant figures suggest friends without competing with the glass or the scoring mark. The table stays anchored beneath the vessel in the game, movement preview, and exported postcard.
 
@@ -68,9 +68,45 @@ Open `/next-days.html` for nine playable scene-and-glass concepts: Sapporo in Ja
 
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
-Every glass lives in `site/js/themes.js`, and the fields are described at the top of that file. Add an entry to `THEMES`, and put its `id` in `SCHEDULE` to pin it to a day. Run `npm test` to check that its mark can be reached, then preview that day. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
+Every glass lives in `site/js/themes.js`, and the fields are described at the top of that file. Add a new entry to `THEMES`, then propose its `id` for an explicit future date through the calendar plan below. Keep `LEGACY_OPENING_IDS`, `LEGACY_ROTATION_IDS`, released dates, and existing theme definitions fixed; appending a catalog entry must not reroll old automatic challenges. `SCHEDULE` remains the frozen opening list, not a place to schedule new days. Run `npm test` to check that the new glass's mark can be reached, then preview its reviewed date. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
 
 The extracted visual system is in [DESIGN.md](DESIGN.md), with component previews and extensions in `.impeccable/design.json`.
+
+## Plan the daily calendar
+
+Open `/calendar.html` for the month/week lineup and a day inspector with the current drink, place, vessel, published run, and unsaved `#dayN` preview. Released, scheduled, and automatic-rotation dates describe the game lineup. Draft badges describe proposals and never change that lineup. Halloween week, October 25–31, starts as an unapproved draft using existing glasses as placeholders; holiday artwork has not been approved.
+
+Choose a future date to propose a catalog glass, run, and review note, or create a named run with inclusive start/end dates. A new run fills its dates with existing-glass placeholders for further editing. Browser edits are allowed only after the date already live in UTC+14, protecting a challenge that has opened anywhere in the world. Published days and published runs cannot be changed from this page. Source proposals remain visible when they become past dates, but their live portions are locked.
+
+Drafts persist in this browser's local storage. They do not sync to another browser or update the game or subscription feeds. Invalid saved data falls back to the source plan and leaves the saved copy untouched; unavailable storage still allows editing in memory, with an export prompt. JSON import validates catalog IDs, real dates, run spans and overlaps, and rejects changes to the published baseline. Review a selected draft or all draft dates before choosing **Export plan for review**.
+
+The export contains the full versioned plan: `days` are the published baseline, `drafts` hold proposed dates and notes, and `campaigns` hold named run spans with `draft` or `published` status. Review the JSON with Codex, including the artwork and playable glass. The CLI prints the exact proposed changes and never deploys the site:
+
+```sh
+# Review draft changes without writing anything.
+node scripts/content-calendar.js --check /path/to/split-calendar-plan.json
+
+# Save reviewed proposals into calendar-data.js; keep them as drafts.
+node scripts/content-calendar.js --apply /path/to/split-calendar-plan.json
+
+# Review promotion of every draft in this export, without writing.
+node scripts/content-calendar.js --publish /path/to/split-calendar-plan.json --check
+
+# Promote the reviewed future drafts locally.
+node scripts/content-calendar.js --publish /path/to/split-calendar-plan.json
+
+# Or review and promote one particular draft date.
+node scripts/content-calendar.js --publish /path/to/split-calendar-plan.json --date YYYY-MM-DD --check
+node scripts/content-calendar.js --publish /path/to/split-calendar-plan.json --date YYYY-MM-DD
+```
+
+Use either `--apply` or `--publish`; adding `--check` makes either operation read-only. Promotion must be explicitly reviewed: `--publish` without `--date` includes **all** drafts in the export, including placeholder runs. A promoted date becomes a published pin; its named draft run becomes published. Publishing one date does not automatically approve its other draft dates. The CLI rejects a different exported baseline version; promotion also rejects dates already live globally and draft runs that have started. An applied change increments the source version, so reload the current calendar and export again before a later promotion rather than reusing the stale export. Run `npm test`, review the source diff, and release through the normal Pages workflow. The live game and feeds change only after that release.
+
+Subscribe to [the daily lineup](https://dailysplit.us/calendar.ics) or [the planning calendar](https://dailysplit.us/calendar-planning.ics) from the page, or copy either HTTPS feed URL into a calendar client's subscription field. Entries are all-day dates. The daily feed includes published pins and automatic rotation; the planning feed overlays source draft glasses and marks draft runs tentative. Browser-only changes are included only in **Download this planning calendar**, a local snapshot. An imported `.ics` download does not become a subscription.
+
+Each Pages build creates a rolling 90-day feed beginning seven UTC days before the build date, clamped to launch. The window moves when a new build is released; it does not advance on its own between deployments. Calendar clients refresh subscriptions on their own schedules, so reviewed changes may appear after the site release. Per-date event IDs stay stable across builds.
+
+The calendar links to authenticated PostHog views for a selected challenge and comparisons by glass, vessel, visual theme, and published campaign. The public calendar displays no private performance totals. The conversion definition is documented below.
 
 ## Run it locally
 
@@ -85,6 +121,15 @@ npm test
 ```
 
 The tests cover the schedule, date links and recording eligibility, score boundaries, reachable marks, cross-sectional flow and momentum settling across frame rates, round-vessel volume conservation in tilted vessels, explicit motion preferences and reduced motion, share semantics, and launch preparation. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
+
+To preview the production HTML, revision-stamped module graph, and generated feeds locally, build with a real Git revision and serve `.pages/`:
+
+```sh
+npm run build -- "$(git rev-parse HEAD)"
+npm start -- --pages
+```
+
+Open http://localhost:8000/calendar.html. Ordinary `npm start` serves `site/`, where the build-generated `.ics` files do not exist. Local previews do not send production analytics.
 
 ## Deploy
 
@@ -122,7 +167,7 @@ npm test
 
 `--check` prints the plan without editing files. Preparation sets day No. 1, sets `LAUNCH_READY = true`, freezes the date, and synchronizes the canonical URL and social metadata. It refuses a different launch date once frozen. Review and commit the resulting diff, then release to `main`; the script itself does not deploy or change DNS. After release, preserve existing dates, seeds, and scheduled themes so shared links continue to identify the same glass.
 
-Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Analytics is prepared below and starts collecting after its public project token is configured and deployed. No backend, daily job, or runtime image service is required for the game itself.
+Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Production analytics is live as described below. No backend, daily job, or runtime image service is required for the game itself.
 
 ## Daily users and sharing
 
@@ -134,7 +179,7 @@ The browser keeps an anonymous analytics ID in local storage. Counts represent b
 |---|---|
 | `game_opened` | Unique browsers opening the game, including returning players viewing their saved result |
 | `sip_started` | A sip actually begins drinking; opening the controls alone does not count |
-| `sip_completed` | A settled result; `counts = true` identifies a new official daily completion |
+| `sip_completed` | A settled result; `attempt_kind = daily`, `counts = true`, and `new_record = true` identify a newly saved official daily completion |
 | `result_share_attempted` | A share or explicit copy action starts |
 | `result_shared` | The native share API reports a handoff |
 | `result_copied` | Clipboard writing succeeds, including the share button's fallback |
@@ -143,9 +188,15 @@ The browser keeps an anonymous analytics ID in local storage. Counts represent b
 
 Cancellation, manual-copy fallback, and share or download errors have separate events. A native handoff does not prove a message was sent, a copy does not prove it was pasted, and a download request does not prove the file was saved. Friend-link arrivals measure visits caused by shared challenge links without identifying a sender or recipient.
 
-Every event includes `local_play_date`, `challenge_date`, `challenge_number`, `theme`, `input_mode`, `attempt_kind`, and `friend_link`. `attempt_kind` distinguishes `daily`, `practice`, `archive`, and `preview`. Official completion charts require `counts = true`; restoring a saved result does not emit another completion. Result actions include the score and recording status of the result clicked, even if another sip starts before the share sheet closes.
+Every event includes `local_play_date`, `challenge_date`, `challenge_number`, `theme`, `input_mode`, `attempt_kind`, and `friend_link`. `attempt_kind` distinguishes `daily`, `practice`, `archive`, and `preview`. Official completion charts require `counts = true` and `new_record = true`; restoring a saved result does not emit another completion. Result actions include the score and recording status of the result clicked, even if another sip starts before the share sheet closes.
 
-The configured live PostHog project uses its default UTC reporting clock. These dashboard definitions group timestamps by that same UTC calendar; the two date properties preserve the player's local calendar and the linked glass's date. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Sharing rate divides these sharers by official daily finishers. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back.
+The existing users-and-shares dashboard measures daily activity by event timestamp in the project's UTC reporting clock. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Its share-rate chart divides these active sharers by official daily finishers in that reporting day. This activity ratio does not require each sharer to have finished that same challenge first; keep it distinct from the calendar's completion-to-share conversion. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back. The date properties preserve the player's local calendar and the linked glass's date.
+
+Calendar conversion tables group by **browser × challenge date**. Each group needs a first daily `counts = true`, `new_record = true` completion, then a successful native handoff or copy after that completion and within 24 hours, with `local_play_date = challenge_date`. Repeat shares contribute once. Practice, archive, preview, cancellation, manual copying, postcard downloads, and share attempts do not count as conversions. A native handoff or clipboard success remains an observed action, not proof that a message reached anyone.
+
+Attribution comes from the completion event: `theme`, `glass_id`, `vessel`, `scene`, `visual_theme`, `campaign_id`, `campaign_day`, and `schedule_version`. Only published date entries confer campaign attribution; a draft run's span alone does not. Historical events with no new fields use the known released glass/vessel/scene mapping, and cannot infer a holiday campaign or artwork revision. Glass, visual-theme, and campaign rates divide total converted browser-challenge groups by total finishing groups, weighting by finisher count rather than averaging daily percentages. Counts are browsers completing challenges, not distinct identified people across the whole comparison. `partial_finishers` identifies cohorts whose 24-hour window is still open. The default event scan covers the last 90 days.
+
+Calendar conversion dashboard: [Daily Split · content calendar and sharing](https://us.posthog.com/project/655684/dashboard/2192211). Reproducible query definitions are in `site/js/calendar-analytics.js` and `scripts/calendar-analytics-insights.json`; day links select the exact `challenge_date` with a widened UTC scan for timezone coverage.
 
 To activate collection, copy the selected PostHog project's public `phc_...` token into `POSTHOG_PROJECT_KEY`, then release the change through the normal Pages workflow. The dashboard uses the existing project's UTC timezone. For an EU project, also change `POSTHOG_API_HOST` to `https://eu.i.posthog.com` and the SDK's `ui_host` to `https://eu.posthog.com`.
 
@@ -171,9 +222,12 @@ Tracking is live as of October 9, 2026. Open [Daily Split users and shares](http
 - `site/design.html`: the first-three-day review and sample shares
 - `site/next-three.html`: the chosen days 4–6, playable unsaved previews and sample postcards
 - `site/next-days.html`, `site/css/next-days.css`, and `site/js/next-days.js`: the unscheduled next-places studio
+- `site/calendar.html`, `site/css/calendar.css`, and `site/js/calendar.js`: month/week lineup and local future draft planning
+- `site/js/calendar-data.js` and `site/js/content-calendar.js`: versioned published/draft plan, frozen rotation IDs, validation, attribution, and iCalendar formatting
+- `site/js/calendar-analytics.js`: authenticated day links and completion-attributed conversion queries
 - `site/js/concepts.js` and `site/assets/concepts/`: independent concept pairings and nine painted place options
 - `site/motion.html`: sip playback and frozen movement stages, without saved scores
-- `site/js/themes.js`: the glasses, palettes, and calendar
+- `site/js/themes.js`: the glass catalog, palettes, and frozen opening schedule
 - `site/js/config.js`: planned public address and fixed release date
 - `site/js/challenge.js`: local-day links, preview/archive states, and recording eligibility
 - `site/js/friend.js`: validation and comparison of self-reported shared sips, without changing the seeded challenge
@@ -193,6 +247,8 @@ Tracking is live as of October 9, 2026. Open [Daily Split users and shares](http
 - `scripts/serve.js`: the local server
 - `scripts/build-pages.js`: versioned Pages output in `.pages/`, using the deployment's Git commit SHA
 - `scripts/prepare-launch.js`: reviewed launch-date and metadata preparation, without deployment or DNS changes
+- `scripts/content-calendar.js`: exported-plan review, draft import, and explicit future-only promotion
+- `scripts/build-calendar-feed.js`: rolling 90-day published and planning feeds in the Pages output
 - `scripts/provision-posthog-dashboard.js` and `scripts/posthog-dashboard.json`: reproducible Daily Split dashboard setup
 
 Split is not affiliated with any brewer or brand. The vessels use simplified shapes, brand names, and marks drawn on canvas, layered over illustrative travel scenes.

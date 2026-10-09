@@ -2,6 +2,7 @@
 import {cp, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {resolve, relative, sep, extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {buildCalendarFeeds} from './build-calendar-feed.js';
 
 const SOURCE = fileURLToPath(new URL('../site/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../.pages/', import.meta.url));
@@ -140,6 +141,7 @@ export async function buildPages({revision = process.env.GITHUB_SHA, source = SO
     }
   }
   await visit(output);
+  if (input === resolve(SOURCE)) await buildCalendarFeeds(output);
   return {revision:version, destination:output};
 }
 
