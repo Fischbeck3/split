@@ -180,9 +180,17 @@ function hogwarts(c){
     c.fillRect(x-.024,-.155,.098,.03); c.fillRect(x-.024,.125,.098,.03);
   }
   // The top banner names the school; the bottom parchment echoes the familiar crest.
-  polygon(c,[[-.62,-.60],[-.54,-.66],[0,-.61],[.54,-.66],[.62,-.60],[.54,-.50],[0,-.54],[-.54,-.50]]);
+  polygon(c,[[-.62,-.60],[-.54,-.68],[0,-.65],[.54,-.68],[.62,-.60],[.54,-.49],[0,-.50],[-.54,-.49]]);
   c.fillStyle = parchment; c.fill(); c.strokeStyle = border; c.lineWidth = .023; c.stroke();
-  word(c,'HOGWARTS',-.575,.112,.95,border,'Georgia, serif',700);
+  // Lay out at a normal font size, then center the visible ink in the banner.
+  // Subpixel font metrics at the crest's unit scale can lift the caption off it.
+  c.save(); c.scale(.01,.01);
+  c.fillStyle = border; c.font = '700 11.2px Georgia, serif';
+  c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  const caption = c.measureText('HOGWARTS');
+  const x = (caption.actualBoundingBoxLeft - caption.actualBoundingBoxRight) / 2;
+  const y = -57.5 + (caption.actualBoundingBoxAscent - caption.actualBoundingBoxDescent) / 2;
+  c.fillText('HOGWARTS',x,y,95); c.restore();
   polygon(c,[[-.57,.50],[-.42,.47],[0,.56],[.42,.47],[.57,.50],[.50,.64],[0,.69],[-.50,.64]]);
   c.fillStyle = parchment; c.fill(); c.stroke();
   c.strokeStyle = border; c.lineWidth = .015;
