@@ -81,8 +81,9 @@ function fitText(c, value, x, y, maxW, size, family, weight = 700){
 
 function paletteFor(theme){
   const p = theme.palette || {bg: '#101b17', fg: '#eee7d6', sheet: '#1d2a23', accent: '#d9b874', accentFg: '#17221b'};
-  return {...p, paper: theme.scene === 'pub' ? p.fg : p.sheet, ink: theme.scene === 'pub' ? p.accentFg : p.fg,
-    guidePaper: theme.scene === 'pub' ? p.bg : p.sheet};
+  const paperCard = theme.scene === 'pub' || theme.colorScheme === 'dark';
+  return {...p, paper: paperCard ? p.fg : p.sheet, ink: paperCard ? p.accentFg : p.fg,
+    guidePaper: paperCard ? p.bg : p.sheet};
 }
 
 function placeCopy(theme){

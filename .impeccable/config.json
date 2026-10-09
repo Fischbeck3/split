@@ -10,7 +10,7 @@
           "site/index.html"
         ],
         "createdAt": "2026-10-09T04:15:02.418Z",
-        "reason": "Codex: the sole cardImg is intentionally hidden until renderResult assigns the generated canvas PNG; no empty image is displayed."
+        "reason": "Agent verified cardImg remains hidden until renderResult assigns its generated canvas PNG; the static missing src is intentional and does not display a broken image."
       },
       {
         "rule": "overused-font",

@@ -9,7 +9,42 @@ import {SCENES, MARKS} from '../site/js/draw.js';
 const DAYS = Array.from({length: 400}, (_, i) => i + 1);
 
 test('the first days follow the plan: pub, beach, Munich', () => {
-  assert.deepEqual(SCHEDULE.map((_, i) => themeForDay(i + 1).id), ['pub', 'beach', 'munich']);
+  assert.deepEqual(SCHEDULE.slice(0, 3).map((_, i) => themeForDay(i + 1).id), ['pub', 'beach', 'munich']);
+});
+
+test('the selected destinations follow the opening three on their pinned dates', () => {
+  assert.deepEqual(SCHEDULE, ['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni']);
+  assert.deepEqual([4, 5, 6].map(n => [keyForDay(n), themeForDay(n).id]), [
+    ['2026-10-12', 'sapporo'], ['2026-10-13', 'butterbeer'], ['2026-10-14', 'peroni']
+  ]);
+});
+
+test('adding destinations preserves the released opening-three glass parameters', () => {
+  assert.deepEqual([1, 2, 3].map(n => {
+    const {theme, ...params} = dayParams(n);
+    return {...params, themeId: theme.id};
+  }), [
+    {num: 1, key: '2026-10-09', markY: 0.6336473895981908, markH: 0.10183376568136737, K: 0.16028254496864974, wobble: 0, choppy: false, themeId: 'pub'},
+    {num: 2, key: '2026-10-10', markY: 0.5912583994492888, markH: 0.07670936007518321, K: 0.1561537075182423, wobble: 0, choppy: false, themeId: 'beach'},
+    {num: 3, key: '2026-10-11', markY: 0.5049501990433782, markH: 0.16297386521473528, K: 0.1159373656474054, wobble: 0, choppy: false, themeId: 'munich'}
+  ]);
+});
+
+test('the selected glasses carry the chosen place, vessel and mark', () => {
+  assert.deepEqual([4, 5, 6].map(n => {
+    const t = themeForDay(n);
+    return [t.id, t.label, t.scene, t.vessel, t.mark, t.letter || null, t.markFrame || null, t.speed, t.headT];
+  }), [
+    ['sapporo', 'Tokyo izakaya', 'tokyo', 'tall', 'star', null, null, 1, 0.09],
+    ['butterbeer', 'Snowy Hogsmeade', 'hogsmeade', 'tulip', 'letter', 'H', 'shield', 0.8, 0.17],
+    ['peroni', 'Trastevere sunset', 'rome', 'tall', 'letter', 'P', null, 1, 0.065]
+  ]);
+  for (const n of [4, 5, 6]){
+    const P = dayParams(n), top = P.markY - P.markH / 2;
+    assert.ok(top > startLevel(P.theme) + 0.05, P.theme.id + ': the mark must start below the foam');
+    assert.ok(secondsToMark(P) > 1.2 && secondsToMark(P) < 8, P.theme.id + ': the selected mark must be reachable in one real sip');
+    assert.ok(P.theme.memory && P.theme.brandText && P.theme.brandSubline, P.theme.id + ': missing selected identity');
+  }
 });
 
 test('day No. 1 is the launch date', () => {
@@ -200,9 +235,9 @@ test('a paused tab cannot skip a whole drink and the level never passes the drai
   assert.deepEqual(stepDrink(P, initial, P.K, NaN), initial);
 });
 
-test('the launch days carry their identity into text shares and cards', () => {
-  assert.deepEqual([1, 2, 3].map(n => themeForDay(n).name), ['Guinness', 'Corona', 'Festbier']);
-  for (const n of [1, 2, 3]){
+test('the scheduled days carry their identity into text shares and cards', () => {
+  assert.deepEqual([1, 2, 3, 4, 5, 6].map(n => themeForDay(n).name), ['Guinness', 'Corona', 'Festbier', 'Sapporo', 'Butterbeer', 'Peroni']);
+  for (const n of [1, 2, 3, 4, 5, 6]){
     const t = themeForDay(n);
     assert.ok(t.location && t.feel && t.emoji, t.id + ': missing share identity');
     assert.deepEqual(Object.keys(t.palette), ['bg', 'fg', 'muted', 'sheet', 'line', 'accent', 'accentFg']);

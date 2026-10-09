@@ -3,7 +3,7 @@ import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRa
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
-import {shareResultText, copyResultText} from './share-actions.js';
+import {createAnalytics, gameProperties, trackedResultAction} from './analytics.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
@@ -41,6 +41,10 @@ renderMotionPreference();
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
   result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
+const analytics = createAnalytics();
+function resultProperties(){
+  return {...gameProperties(S), score:S.result.score, drained:S.result.drained, counts:!!S.result.counts};
+}
 function renderSound(enabled){
   $('soundBtn').setAttribute('aria-pressed', String(enabled));
   $('soundBtn').setAttribute('aria-label', 'Turn sip sounds ' + (enabled ? 'off' : 'on'));
@@ -104,7 +108,7 @@ function draw(now){
   const G = glassBox(W, H, S.theme);
   drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
-    guides: true, bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
+    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
 }
 
 // ---------- the tilt sensor ----------
@@ -164,7 +168,7 @@ function begin(){
   $('drinkControl').textContent = 'Hold to drink';
   $('recalibrateBtn').hidden = S.mode !== 'tilt';
   $('recalibrateBtn').disabled = false;
-  $('footPill').textContent = S.mode === 'tilt' ? 'Tilt to sip. Come upright a little early.' : 'Hold to sip. Release a little early.';
+  $('footPill').textContent = S.mode === 'tilt' ? 'Come upright early; settle at the notches.' : 'Release early; settle at the notches.';
   if (S.mode === 'hold') $('drinkControl').focus({preventScroll: true});
 }
 const wantsDrink = () => S.mode === 'tilt' ? tiltAngle() > TILT_START : S.holding;
@@ -176,8 +180,10 @@ function frame(now){
   const elapsed = S.drink?.elapsed || 0;
   let drinkDt = dt;
   if (S.state === 'ready' && wantsDrink()){
+    refreshDayStatus();
     setPhase('drinking'); if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
     if (S.mode === 'hold') drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
+    analytics.capture('sip_started', {...gameProperties(S), counts:!S.practice && canRecordChallenge({key:S.key, kind:S.kind})});
     sound.start(S.theme);
     $('recalibrateBtn').disabled = true;
     $('footPill').textContent = S.mode === 'hold' ? 'Release early. Let the sip settle.' : 'Come upright early. Let the sip settle.';
@@ -212,7 +218,9 @@ function finish(now){
   const f = S.drained ? 2 : (S.L - S.P.markY) / S.P.markH, r = scoreFromOffset(f, S.theme.target);
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
   const counts = !S.practice && canRecordChallenge({key:S.key, kind:S.kind, now:finishedAt});
+  let newRecord = false;
   S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: finishedAt.toISOString()};
+  const completedProperties = {...gameProperties(S, finishedAt), score:r.score, drained:S.drained};
   if (counts){
     const st = load();
     const recorded = st.days[S.key];
@@ -222,8 +230,11 @@ function finish(now){
     } else {
       st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f, L:S.L, mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true};
       save(st);
+      newRecord = true;
     }
   }
+  // A restored record or a second tab's already saved sip is not another daily completion.
+  analytics.capture('sip_completed', {...completedProperties, counts:counts && newRecord, new_record:newRecord}, finishedAt);
   // Paint the true upright stopping line before the postcard reveals over it.
   draw(now);
   setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
@@ -271,7 +282,7 @@ function drawCard(){
 async function share(){
   const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
   try {
-    const outcome = await shareResultText(shareText(), navigator);
+    const outcome = await trackedResultAction({text:shareText(), platform:navigator, tracker:analytics, properties:resultProperties()});
     if (outcome === 'shared') confirmAction(btn, 'Shared');
     else if (outcome === 'copied'){
       confirmAction(btn, 'Copied'); toast('Result copied. Paste it into your group chat.');
@@ -280,14 +291,18 @@ async function share(){
 }
 async function savePostcard(){
   const btn = $('saveCardBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
+  const properties = resultProperties();
+  analytics.capture('postcard_save_attempted', properties);
   try {
     const {blob} = await S.card, name = 'split-no-' + S.num + '.png';
     if (!blob) throw new Error('Postcard encoding failed');
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+    // Browser download initiation is observable; saving to the user's filesystem is not.
+    analytics.capture('postcard_saved', {...properties, outcome:'download_initiated'});
     confirmAction(btn, 'Card saved');
     toast('Postcard saved. Send it with your result link.');
-  } catch { toast('Could not save the postcard. Try again.'); }
+  } catch { analytics.capture('postcard_save_failed', properties); toast('Could not save the postcard. Try again.'); }
   finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
 }
 const actionFeedback = new WeakMap();
@@ -312,7 +327,8 @@ function showManualText(btn){
   toast('Copy the selected result into your group chat.');
 }
 async function copyText(){
-  const btn = $('copyBtn'), outcome = await copyResultText(shareText(), navigator);
+  const btn = $('copyBtn'), outcome = await trackedResultAction({text:shareText(), platform:navigator, tracker:analytics,
+    properties:resultProperties(), source:'copy_button'});
   if (outcome === 'copied') confirmAction(btn, 'Copied');
   else showManualText(btn);
 }
@@ -427,11 +443,13 @@ async function init(){
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
   S.P = dayParams(S.num); S.theme = S.P.theme;
   S.friend = readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
+  analytics.capture('game_opened', gameProperties(S, now), now);
+  if (S.friend) analytics.capture('friend_link_opened', {...gameProperties(S, now), friend_sip_kind:S.friend.kind}, now);
   await loadSceneAssets(S.theme);
   S.L0 = startLevel(S.theme); S.L = S.L0;
   const palette = S.theme.palette || {bg:'#17110d', fg:'#f5ecdc', muted:'#b3a48e', sheet:'#221a14', line:'#3a2d23', accent:'#e9b949', accentFg:'#17110d'};
   for (const [name, value] of Object.entries(palette)) document.documentElement.style.setProperty('--' + (name === 'accentFg' ? 'accent-fg' : name), value);
-  const light = S.theme.scene === 'beach' || S.theme.scene === 'munich';
+  const light = S.theme.colorScheme ? S.theme.colorScheme === 'light' : S.theme.scene === 'beach' || S.theme.scene === 'munich';
   document.documentElement.style.colorScheme = light ? 'light' : 'dark';
   for (const [name,value] of Object.entries(light ? {good:'#267347',warn:'#936210',miss:'#b64037'} : {good:'#91dda8',warn:'#d9b874',miss:'#ffaaa0'})) document.documentElement.style.setProperty('--'+name,value);
   document.querySelector('meta[name="theme-color"]').content = palette.bg;
@@ -455,7 +473,7 @@ async function init(){
         : 'As the glass narrows, the beer line falls faster. Release before the mark and let the sip settle.';
   renderMotionPreference();
   document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
-  scene.setAttribute('aria-label', S.theme.name + '. Stop the beer line through ' + S.theme.target + '.');
+  scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the two aiming notches beside ' + S.theme.target + '.');
   if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
     const active = $('previewNav').querySelector('a[href="#day' + S.num + '"]');

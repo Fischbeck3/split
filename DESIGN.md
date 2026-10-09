@@ -207,6 +207,8 @@ Controls use softly curved corners from the control token; result images use the
 
 The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-necked bottle with lime, and a broad handled liter stein. Marks are readable at the center of the glass; simplified printed brand names sit below the scored mark. The painted scenery reserves a quiet central foreground, with architecture, bunting, and people providing context around the vessel.
 
+**The Aim Rule.** Every logo carries two bold, inward-facing cream sights with dark edges at the exact scored height. Their open center exposes the beer/foam boundary. The sights and logo are printed on the vessel and move with it; the same artwork appears in postcards and concepts. Mark artwork is enlarged independently of the seeded scoring tolerance and capped by the glass width. A custom G anchors the top of its crossbar to the scored line. The crown has no competing decorative stripe; the Bavarian crest has opaque blue and white diamonds. Preserve released `markY`, `markH`, scores, and links when refining these marks.
+
 ## Components
 
 ### Buttons
@@ -256,6 +258,12 @@ Another sip is an explicit secondary action. The first daily score is retained s
 The image postcard is 1080 × 1350, with a paper border framing the same painted scene and vessel used in play. A large destination title and drink cue sit above it; the actual score and verdict sit below it. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the public challenge address. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. “One sip. Your turn.” makes the social action clear without promising a result. The same destination, invitation, and one-row position appear in plain text. Preview, archive, and practice labels travel with both formats; saved archive cards distinguish a retained daily result from an unsaved archive sip. Sample review postcards are explicitly previews.
 
 **The Same Challenge Rule.** Postcards and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain `#dayN` and never count toward the daily record. Use the centralized public address from `site/js/config.js`. The launch date is fixed at `2026-10-09`; changing it later would renumber existing challenges.
+
+## Selected days 4–6
+
+The chosen next places are pinned after the opening three, without changing the fixed launch date or opening-three seeds. Day 4 (October 12, 2026) is Sapporo at the Tokyo izakaya: a tall golden lager glass, single gold star, rain-lit lanterns, and the dark green palette. Day 5 (October 13) is Butterbeer in snowy Hogsmeade: caramel drink, generous cream head, tulip glass, and a clear H inside an open shield. Score the liquid boundary beneath the foam. Day 6 (October 14) is Peroni at Trastevere sunset: a tall lager glass, blue P, warm stone, and a light paper palette.
+
+Use the approved panels from the nine-option studio with the same table anchors in play and export. These three static paintings frame the vessel motion. The exported postcard retains light paper, destination, drink, actual stopping line, score, and date-specific invitation. `/next-three.html` is a review of the chosen upcoming days; hash previews and sample cards stay explicitly unsaved. The broader concept studio remains available for future choices.
 
 ## Do's and Don'ts
 

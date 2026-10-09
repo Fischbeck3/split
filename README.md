@@ -4,7 +4,7 @@ Hold to lift the glass, tip it, and take a sip. Release a little early to bring 
 
 **GitHub Pages address:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
-The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and HTTPS is valid and enforced. The root returns the game and `www` redirects to the HTTPS root. The release calendar is fixed: October 9, 2026 is day No. 1 in the old Irish pub, October 10 is Cabo, and October 11 is Oktoberfest. The release configuration opens official daily recording for root and date links; `#dayN` previews remain unsaved. The versioned module graph keeps each deployment's HTML and game code together.
+The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and HTTPS is valid and enforced. The root returns the game and `www` redirects to the HTTPS root. The release calendar is fixed: October 9, 2026 is day No. 1 in the old Irish pub, October 10 is Cabo, and October 11 is Oktoberfest. The chosen next three are Tokyo izakaya on October 12, snowy Hogsmeade on October 13, and Trastevere sunset on October 14. The release configuration opens official daily recording for root and date links; `#dayN` previews remain unsaved. The versioned module graph keeps each deployment's HTML and game code together.
 
 ![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.jpg)
 
@@ -21,23 +21,30 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 
 If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar, so older prototype scores do not carry into the public run.
 
-## The first three days
+## The first six days
 
 | Day | Drink and place | Vessel and mark | Feel |
 |---|---|---|---|
 | 1 · Oct 9, 2026 · Old Irish pub | Guinness in an old Irish pub | Tulip pint · the G | Smooth lift and progressively deeper tip; tapered cross-section accelerates the line and a brief release tail rewards anticipation |
 | 2 · Oct 10, 2026 · Cabo beach | Corona at a beach palapa in Cabo, Mexico | Clear bottle with lime · the crown | Fast through the neck, slower deterministic glugs through the body |
 | 3 · Oct 11, 2026 · Oktoberfest | Festbier in a Munich beer tent | Liter stein · Bavarian crest | Slower, heavy pour with a short 0.24-second follow-through after release |
+| 4 · Oct 12, 2026 · Tokyo izakaya | Sapporo at a rain-lit counter | Tall star glass · gold star | Crisp lager, accelerating sip, brief afterflow |
+| 5 · Oct 13, 2026 · Snowy Hogsmeade | Butterbeer beneath snowy rooftops | Tulip glass · H shield | Creamy head, slower sip, brief afterflow |
+| 6 · Oct 14, 2026 · Trastevere sunset | Peroni at a Roman café table | Tall glass · blue P | Light lager, accelerating sip, brief afterflow |
 
 The vessel changes both the flow and movement. A round glass’s cross-sectional area is proportional to its radius squared: for the same volume removed per second, the line falls faster toward the narrow bottom of a pint and slower after a bottle’s shoulder. Momentum is integrated as volume flow, with smooth startup and short release tails: at most 0.42 seconds for the tulip pint, 0.21 seconds for the bottle, and 0.24 seconds for the stein. The line continues moving during that tail, so release before the target rather than at it. Bottle glugs remain deterministic.
 
 The pint begins around 20 degrees, the bottle around 24 degrees with a kick synchronized to each glug, and the stein around 18 degrees with a slower lift and return. Each tips farther as it empties. The liquid stays near gravity-horizontal with damped slosh, preserving actual round-vessel volume through the tilt and bottle shoulder. Your score waits for both the drink and the vessel movement to settle. This is a bounded gameplay approximation of continuity and momentum, not a turbulence or spill simulation.
 
-The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 3, the game picks from eleven glasses by date and never pours the same glass two days running.
+Every logo has two bold aiming notches at the exact scoring height. Match the settled beer line beneath the foam to those notches; on Guinness they align with the top of the G's crossbar. Larger mark artwork, stronger outlines, and opaque crest diamonds make targets recognizable on phones and postcards. The artwork size is separate from the original seeded score tolerance, so the daily pours and existing scores stay intact.
+
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 6, the game picks from fourteen glasses by date and never pours the same glass two days running.
 
 The opening places use painted travel illustrations: aged oak, amber lamps, and a fireplace in the pub; a shaded palapa, turquoise water, and the Cabo headland at the beach; timber roof ribs, Bavarian bunting, and communal tables in Munich. Small distant figures suggest friends without competing with the glass or the scoring mark. The table stays anchored beneath the vessel in the game, movement preview, and exported postcard.
 
 The first three places carry a short memory cue and subtle environmental motion around the vessel. The live game curls the painted pub flames above a fixed grate, moves Cabo surf, and stirs Munich canopy cloth without altering the glass or its physics. Reduced motion and exported postcards retain the static scene. A brief highlight follows the real stopping line as the result appears, with a stronger line flash for perfect splits; controls and the recorded score are available immediately.
+
+The next three scenes reuse the chosen panels from the concept illustrations: Tokyo option 1, snowy Hogsmeade option 3, and Trastevere option 1. The renderer crops each triptych with a two-pixel inset and preserves the same tabletop anchor in the game and postcard. Scene assets load only for the selected daily place. These scenes remain static around the moving vessel.
 
 These are illustrative scenes, not photographs of a specific venue. The three compressed WebP assets are self-hosted in `site/assets/scenes/`; their generation prompts and framing metadata are recorded in `generation.json`. The game loads and decodes only the selected place once, then caches its painted backdrop. The review routes load all three. A missing scene image falls back to the existing canvas illustration. There is no runtime image generation or external image service.
 
@@ -55,7 +62,7 @@ The place gently brightens when it is ready. Holding visibly depresses the drink
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
-Open `/next-days.html` for nine unscheduled, playable scene-and-glass concepts: Sapporo in Japan, Butterbeer in Hogsmeade, and Peroni in Rome. Each drink has three painted places, vessel-specific flow, a real stopping-line postcard, and an in-memory shortlist. Six later-place pitches broaden the options. The catalog lives separately in `site/js/concepts.js`; it does not join `THEMES`, set official dates, save results, or alter the daily seed. Choose the next lineup before scheduling it.
+Open `/next-days.html` for nine unscheduled, playable scene-and-glass concepts: Sapporo in Japan, Butterbeer in Hogsmeade, and Peroni in Rome. Each drink has three painted places, vessel-specific flow, a real stopping-line postcard, and an in-memory shortlist. Six later-place pitches broaden the options. The catalog lives separately in `site/js/concepts.js`; it does not join `THEMES`, set official dates, save results, or alter the daily seed. The selected Tokyo, snowy Hogsmeade, and Trastevere pairings are now scheduled as days 4–6; studio seeds and shortlist stay separate from daily play. Open `/next-three.html` for their playable hash previews and sample postcards.
 
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
@@ -113,12 +120,54 @@ npm test
 
 `--check` prints the plan without editing files. Preparation sets day No. 1, sets `LAUNCH_READY = true`, freezes the date, and synchronizes the canonical URL and social metadata. It refuses a different launch date once frozen. Review and commit the resulting diff, then release to `main`; the script itself does not deploy or change DNS. After release, preserve existing dates, seeds, and scheduled themes so shared links continue to identify the same glass.
 
-Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Choose an analytics project and add starts, finishes, share actions, friend-link arrivals, and next-day returns; analytics is not integrated in this branch. No backend, daily job, or runtime image service is required for the game itself.
+Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Analytics is prepared below and starts collecting after its public project token is configured and deployed. No backend, daily job, or runtime image service is required for the game itself.
+
+## Daily users and sharing
+
+The game is configured to report explicit events to PostHog on the HTTPS public domain. `POSTHOG_PROJECT_KEY` in `site/js/config.js` holds the project's public `phc_...` token; an empty value leaves analytics disabled. Tracking starts when that token is configured and deployed. `POSTHOG_API_HOST` defaults to the US ingestion host. Localhost, GitHub previews, and other domains do not load the analytics SDK or send events. Analytics failures leave the game and native sharing available.
+
+The browser keeps an anonymous analytics ID in local storage. Counts represent browsers, not identified people; clearing storage or using another device creates a new ID. Session recording, automatic click capture, surveys, and other unrelated PostHog features are disabled. Events strip query strings and fragments from URL properties so a friend's score and stopping offset are not copied into analytics URLs.
+
+| Event | Measurement |
+|---|---|
+| `game_opened` | Unique browsers opening the game, including returning players viewing their saved result |
+| `sip_started` | A sip actually begins drinking; opening the controls alone does not count |
+| `sip_completed` | A settled result; `counts = true` identifies a new official daily completion |
+| `result_share_attempted` | A share or explicit copy action starts |
+| `result_shared` | The native share API reports a handoff |
+| `result_copied` | Clipboard writing succeeds, including the share button's fallback |
+| `friend_link_opened` | A valid shared benchmark opens the corresponding challenge |
+| `postcard_saved` | A postcard download is initiated |
+
+Cancellation, manual-copy fallback, and share or download errors have separate events. A native handoff does not prove a message was sent, a copy does not prove it was pasted, and a download request does not prove the file was saved. Friend-link arrivals measure visits caused by shared challenge links without identifying a sender or recipient.
+
+Every event includes `local_play_date`, `challenge_date`, `challenge_number`, `theme`, `input_mode`, `attempt_kind`, and `friend_link`. `attempt_kind` distinguishes `daily`, `practice`, `archive`, and `preview`. Official completion charts require `counts = true`; restoring a saved result does not emit another completion. Result actions include the score and recording status of the result clicked, even if another sip starts before the share sheet closes.
+
+The configured live PostHog project uses its default UTC reporting clock. These dashboard definitions group timestamps by that same UTC calendar; the two date properties preserve the player's local calendar and the linked glass's date. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Sharing rate divides these sharers by official daily finishers. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back.
+
+To activate collection, copy the selected PostHog project's public `phc_...` token into `POSTHOG_PROJECT_KEY`, then release the change through the normal Pages workflow. The dashboard uses the existing project's UTC timezone. For an EU project, also change `POSTHOG_API_HOST` to `https://eu.i.posthog.com` and the SDK's `ui_host` to `https://eu.posthog.com`.
+
+`scripts/posthog-dashboard.json` contains seven saved-insight API definitions for audience, share actions, unique sharers and share rate, friend arrivals, friend conversion, next-day retention, and postcard downloads. Preview the payloads without credentials or network access:
+
+```
+node scripts/provision-posthog-dashboard.js --dry-run
+```
+
+Provisioning reads `POSTHOG_PROJECT_ID` and `POSTHOG_PERSONAL_API_KEY` from the environment. The personal key requires `dashboard:read`, `dashboard:write`, `insight:read`, and `insight:write` scopes and belongs only in the provisioning environment; the browser configuration uses the public token. `POSTHOG_APP_HOST` defaults to `https://us.posthog.com`; use `https://eu.posthog.com` for an EU project.
+
+```
+node scripts/provision-posthog-dashboard.js --apply
+```
+
+Rerunning updates the tagged Daily Split dashboard and insights, including after a partial setup; other dashboards are preserved. The JSON is an API definition, not a PostHog UI import file.
+
+Tracking is live as of October 9, 2026. Open [Daily Split users and shares](https://us.posthog.com/project/655684/dashboard/2191648) in PostHog. Live visits, clipboard copies, friend arrivals, practice completions, and postcard download initiations were verified; all seven saved queries execute successfully, and practice is excluded from daily gameplay totals. Native handoffs populate when visitors use native sharing, and next-day retention needs subsequent daily play. Earlier traffic cannot be recovered from these new events.
 
 ## Layout
 
 - `site/index.html` and `site/css/style.css`: the game page and shared styles
 - `site/design.html`: the first-three-day review and sample shares
+- `site/next-three.html`: the chosen days 4–6, playable unsaved previews and sample postcards
 - `site/next-days.html`, `site/css/next-days.css`, and `site/js/next-days.js`: the unscheduled next-places studio
 - `site/js/concepts.js` and `site/assets/concepts/`: independent concept pairings and nine painted place options
 - `site/motion.html`: sip playback and frozen movement stages, without saved scores
@@ -135,11 +184,13 @@ Follow-up playtest checks are still open: iPhone and Android hold/release, optio
 - `site/js/draw.js`: shared place assets and canvas fallback, glass material, beer, foam, printed names, and marks
 - `site/js/share.js`: the destination postcard and plain-text result
 - `site/js/main.js`: input, the tilt sensor, results, local daily records, and sharing
+- `site/js/analytics.js`: optional production analytics and observed share/copy outcomes
 - `site/assets/scenes/`: compressed place illustrations and their generation/framing metadata
 - `site/fonts/`: local fonts and license files
 - `test/`: the tests
 - `scripts/serve.js`: the local server
 - `scripts/build-pages.js`: versioned Pages output in `.pages/`, using the deployment's Git commit SHA
 - `scripts/prepare-launch.js`: reviewed launch-date and metadata preparation, without deployment or DNS changes
+- `scripts/provision-posthog-dashboard.js` and `scripts/posthog-dashboard.json`: reproducible Daily Split dashboard setup
 
 Split is not affiliated with any brewer or brand. The vessels use simplified shapes, brand names, and marks drawn on canvas, layered over illustrative travel scenes.
