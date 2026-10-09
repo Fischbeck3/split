@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.js",
+    "build": "node scripts/build-pages.js",
     "test": "node --test",
     "prepare-launch": "node scripts/prepare-launch.js"
   },

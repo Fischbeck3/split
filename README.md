@@ -4,7 +4,7 @@ Hold to lift the glass, tip it, and take a sip. Release to bring it upright, the
 
 **GitHub Pages address:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
-The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and the registrar has the GitHub DNS records saved. The updated preview is prepared for deployment while HTTPS provisioning is pending. It keeps the official calendar closed: the root and date links show an unsaved opening pub preview, and `#dayN` links preserve individual design previews. The opening daily run should start as soon as the domain is serving the game over HTTPS and the release date is fixed; day No. 1 has not been released.
+The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and the registrar has the GitHub DNS records saved. The updated preview is published; public browser verification remains pending after a check found new HTML loading older cached JavaScript. The HTTPS certificate is still `Requested`. The release configuration keeps the official calendar closed: the root and date links show an unsaved opening pub preview, and `#dayN` links preserve individual design previews. The opening daily run should start as soon as the domain is serving the game over HTTPS and the release date is fixed; day No. 1 has not been released.
 
 ![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.png)
 
@@ -68,7 +68,7 @@ The tests cover the schedule, date links and recording eligibility, score bounda
 
 ## Deploy
 
-Every push to `main` runs the tests on GitHub Actions. When they pass, `site/` is published to GitHub Pages.
+Every push to `main` runs the tests on GitHub Actions. When they pass, `npm run build` copies `site/` into the ignored `.pages/` directory. The build applies the same Git commit SHA as a query version to local JavaScript imports and HTML script/CSS references, keeping each deployment's module graph together when browsers cache assets. The workflow uploads `.pages/` to GitHub Pages; source files remain in `site/`.
 
 ### Connect dailysplit.us
 
@@ -122,6 +122,7 @@ Follow-up playtest checks are still open: iPhone and Android hold/release, optio
 - `site/fonts/`: local fonts and license files
 - `test/`: the tests
 - `scripts/serve.js`: the local server
+- `scripts/build-pages.js`: versioned Pages output in `.pages/`, using the deployment's Git commit SHA
 - `scripts/prepare-launch.js`: reviewed launch-date and metadata preparation, without deployment or DNS changes
 
 Split is not affiliated with any brewer or brand. The vessels use simplified shapes, brand names, and marks drawn on canvas, layered over illustrative travel scenes.
