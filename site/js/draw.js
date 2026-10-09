@@ -300,13 +300,15 @@ function drawVesselFront(c, G, theme){
       c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, mw * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
     }
     c.fillStyle = 'rgba(56,93,75,0.16)'; c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.004, mw * 0.89, gh * 0.009, 0, 0, Math.PI * 2); c.fill();
-    c.save(); c.translate(G.cx + mw * 0.38, G.top + rr * 0.28); c.rotate(-0.34);
-    c.fillStyle = '#6b9b43'; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, rr, Math.PI, Math.PI * 2); c.closePath(); c.fill();
-    c.fillStyle = '#d6eaa4'; c.beginPath(); c.moveTo(0, -rr * 0.09); c.arc(0, -rr * 0.09, rr * 0.78, Math.PI * 1.05, Math.PI * 1.95); c.closePath(); c.fill();
-    c.strokeStyle = '#56783a'; c.lineWidth = Math.max(1, rr * 0.07); c.beginPath(); c.arc(0, 0, rr, Math.PI, Math.PI * 2); c.stroke();
-    c.strokeStyle = 'rgba(106,144,63,0.65)'; c.lineWidth = Math.max(0.75, rr * 0.04);
-    for (let k = -2; k <= 2; k++){ c.beginPath(); c.moveTo(0, -rr * 0.06); c.lineTo(Math.cos(Math.PI * (1.5 + k * 0.2)) * rr * 0.7, -rr * 0.06 + Math.sin(Math.PI * (1.5 + k * 0.2)) * rr * 0.7); c.stroke(); }
-    c.restore();
+    if (theme.garnish !== 'none'){
+      c.save(); c.translate(G.cx + mw * 0.38, G.top + rr * 0.28); c.rotate(-0.34);
+      c.fillStyle = '#6b9b43'; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, rr, Math.PI, Math.PI * 2); c.closePath(); c.fill();
+      c.fillStyle = '#d6eaa4'; c.beginPath(); c.moveTo(0, -rr * 0.09); c.arc(0, -rr * 0.09, rr * 0.78, Math.PI * 1.05, Math.PI * 1.95); c.closePath(); c.fill();
+      c.strokeStyle = '#56783a'; c.lineWidth = Math.max(1, rr * 0.07); c.beginPath(); c.arc(0, 0, rr, Math.PI, Math.PI * 2); c.stroke();
+      c.strokeStyle = 'rgba(106,144,63,0.65)'; c.lineWidth = Math.max(0.75, rr * 0.04);
+      for (let k = -2; k <= 2; k++){ c.beginPath(); c.moveTo(0, -rr * 0.06); c.lineTo(Math.cos(Math.PI * (1.5 + k * 0.2)) * rr * 0.7, -rr * 0.06 + Math.sin(Math.PI * (1.5 + k * 0.2)) * rr * 0.7); c.stroke(); }
+      c.restore();
+    }
   }
   // The printed brand sits below the scored mark, so the liquid line stays legible.
   c.save(); c.textAlign = 'center'; c.textBaseline = 'middle';
@@ -322,6 +324,14 @@ function drawVesselFront(c, G, theme){
   } else if (theme.id === 'munich'){
     c.fillStyle = 'rgba(53,74,81,0.68)'; c.font = '700 ' + gh * 0.028 + 'px ' + SANS;
     c.fillText('1 L', G.cx, G.top + gh * 0.875);
+  } else if (theme.brandText){
+    c.fillStyle = theme.brandColor || theme.markFill;
+    c.font = '700 ' + Math.min(gh * 0.043, G.halfW * .19) + 'px ' + SERIF;
+    c.fillText(theme.brandText, G.cx, G.top + gh * .82);
+    if (theme.brandSubline){
+      c.font = '700 ' + gh * .019 + 'px ' + SANS;
+      c.fillText(theme.brandSubline, G.cx, G.top + gh * .87);
+    }
   }
   c.restore();
 }
@@ -331,6 +341,7 @@ function drawGlassMaterial(c, G, theme){
   const glaze = c.createLinearGradient(G.cx - G.halfW, 0, G.cx + G.halfW, 0);
   glaze.addColorStop(0, 'rgba(132,170,151,0.24)'); glaze.addColorStop(0.06, 'rgba(255,255,243,0.36)'); glaze.addColorStop(0.17, 'rgba(255,255,255,0.04)'); glaze.addColorStop(0.78, 'rgba(255,255,255,0)'); glaze.addColorStop(0.96, 'rgba(235,246,225,0.24)'); glaze.addColorStop(1, 'rgba(79,121,111,0.28)');
   c.fillStyle = glaze; c.fillRect(G.cx - G.halfW, G.top, G.halfW * 2, gh);
+  if (theme.glassTint){ c.fillStyle = theme.glassTint; c.fillRect(G.cx - G.halfW, G.top, G.halfW * 2, gh); }
   c.lineCap = 'round';
   const shine = c.createLinearGradient(0, G.top, 0, G.bot);
   shine.addColorStop(0, 'rgba(255,255,249,0.64)'); shine.addColorStop(0.45, 'rgba(255,255,249,0.36)'); shine.addColorStop(1, 'rgba(255,255,249,0.68)');
@@ -372,6 +383,14 @@ function drawGlassMaterial(c, G, theme){
 // ---------- marks ----------
 export function drawMark(c, theme, cx, cy, h){
   c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = Math.max(2, h * 0.07); c.strokeStyle = theme.markStroke; c.fillStyle = theme.markFill;
+  if (theme.markFrame === 'shield'){
+    // An open souvenir shield keeps the actual stopping line visible through H.
+    c.lineWidth = Math.max(1, h * .035); c.strokeStyle = theme.markFill;
+    c.beginPath(); c.moveTo(cx - h * .57, cy - h * .64); c.lineTo(cx + h * .57, cy - h * .64);
+    c.lineTo(cx + h * .57, cy + h * .12); c.quadraticCurveTo(cx + h * .51, cy + h * .58, cx, cy + h * .74);
+    c.quadraticCurveTo(cx - h * .51, cy + h * .58, cx - h * .57, cy + h * .12); c.closePath(); c.stroke();
+    c.lineWidth = Math.max(2, h * .07); c.strokeStyle = theme.markStroke;
+  }
   if (theme.mark === 'letter'){
     const probe = 100; c.font = '900 ' + probe + 'px ' + SERIF; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     const m = c.measureText(theme.letter), gh0 = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) || probe * 0.7;
