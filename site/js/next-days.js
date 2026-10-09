@@ -2,6 +2,7 @@ import {CONCEPT_CHAPTERS, MORE_PLACES, conceptParams} from './concepts.js';
 import {makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL, scoreFromOffset, bandEmoji} from './core.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {drawScene} from './draw.js';
+import {TARGET_HINT_MS, targetHintOpacity} from './target.js';
 import {memoryScenePlacement} from './ambient.js';
 
 const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -98,7 +99,7 @@ class ConceptGlass {
   constructor(chapter){
     this.chapter = chapter; this.option = chapter.options[0]; this.P = conceptParams(this.option);
     this.drink = makeDrinkState(this.P); this.motion = makeMotionState(); this.phase = 'ready';
-    this.last = 0; this.lastPaint = 0; this.visible = false; this.image = null; this.result = null; this.backdrop = null;
+    this.last = 0; this.lastPaint = 0; this.targetAt = null; this.visible = false; this.image = null; this.result = null; this.backdrop = null;
     this.pointer = null; this.keyHeld = false;
     this.build(); this.applyOption();
   }
@@ -109,7 +110,7 @@ class ConceptGlass {
     heading.id = this.chapter.id + 'Title'; header.append(heading,element('p','',this.chapter.brief));
     const grid = element('div','chapter-grid'); this.game = element('div','game-preview');
     this.stage = element('div','game-stage'); this.canvas = element('canvas','game-canvas');
-    this.canvas.setAttribute('role','img'); this.canvas.setAttribute('aria-label',this.chapter.drink + ' concept glass. Match the beer line beneath the foam to the two aiming notches beside the logo.');
+    this.canvas.setAttribute('role','img'); this.canvas.setAttribute('aria-label',this.chapter.drink + ' concept glass. Match the beer line beneath the foam to the brief dashed target line across the logo.');
     const hud = element('div','preview-hud'); hud.append(element('span','preview-wordmark','Split.'),element('span','concept-label','Concept · not saved'));
     const place = element('div','preview-place'); this.placeName = element('h3'); this.placeLine = element('p'); place.append(this.placeName,this.placeLine);
     this.stage.append(this.canvas,hud,place);
@@ -217,16 +218,18 @@ class ConceptGlass {
   }
   paint(now){
     if (!this.image || !this.ctx || !this.G) return;
+    if (this.phase === 'ready' && this.visible && this.targetAt === null) this.targetAt = now;
     if (!this.backdrop) this.backdrop = optionBackdrop(this.image,this.option.panel,this.w,this.h,this.G,this.option.theme,this.chapter.table,this.dpr);
     drawScene(this.ctx,{G:this.G,w:this.w,h:this.h,L:this.drink.level,theme:this.option.theme,P:this.P,
       motion:this.motion,drinking:this.phase === 'drinking',drinkElapsed:this.drink.elapsed,now,
-      bubbles:!reducedMotion && this.phase !== 'result',ambient:false,backdrop:this.backdrop});
+      bubbles:!reducedMotion && this.phase !== 'result',ambient:false,backdrop:this.backdrop,
+      targetHint:this.phase === 'ready' && this.targetAt !== null ? targetHintOpacity(now - this.targetAt,reducedMotion) : 0});
     this.lastPaint = now;
   }
   begin(){
     if (!this.image || document.hidden || this.phase !== 'ready') return;
     this.phase = 'drinking'; this.last = performance.now();
-    this.hold.setAttribute('aria-pressed','true'); this.hold.textContent = 'Release to stop'; this.status.textContent = 'Match the beer line to the notches.'; startLoop();
+    this.hold.setAttribute('aria-pressed','true'); this.hold.textContent = 'Release to stop'; this.status.textContent = 'Release at the mark. Let the beer settle.'; startLoop();
   }
   release(){
     if (this.phase !== 'drinking') return;
@@ -258,8 +261,8 @@ class ConceptGlass {
       this.result.score + '/100 · ' + this.result.label,bandEmoji(f),'One sip. Your turn.','Concept preview · not scheduled'].join('\n');
     this.paint(performance.now());
   }
-  resetSip(message = 'Hold to sip. Release with the beer line at the notches.'){
-    this.pointer = null; this.keyHeld = false; this.phase = 'ready'; this.drink = makeDrinkState(this.P); this.motion = makeMotionState();
+  resetSip(message = 'Watch the line. Hold to sip, release to split.'){
+    this.pointer = null; this.keyHeld = false; this.phase = 'ready'; this.targetAt = null; this.drink = makeDrinkState(this.P); this.motion = makeMotionState();
     this.result = null; this.last = 0; this.hold.setAttribute('aria-pressed','false'); this.hold.disabled = !this.image;
     this.hold.textContent = this.image ? 'Hold to sip' : 'Loading the scene…'; this.status.textContent = this.image ? message : 'Scene loading.';
     this.empty.hidden = false; this.resultBlock.hidden = true; this.paint(performance.now()); startLoop();
@@ -286,8 +289,12 @@ function frame(now){
     if (!controller.visible || !controller.image) continue;
     const moving = controller.phase === 'drinking' || controller.phase === 'settling';
     if (moving) controller.advance(now);
-    if (moving || (controller.phase === 'ready' && !reducedMotion && now - controller.lastPaint >= 33)) controller.paint(now);
-    if (controller.phase === 'drinking' || controller.phase === 'settling' || (controller.phase === 'ready' && !reducedMotion)) needsFrame = true;
+    const ready = controller.phase === 'ready';
+    const hintEndsAt = controller.targetAt === null ? 0 : controller.targetAt + TARGET_HINT_MS;
+    // Reduced-motion canvases still need one final repaint to clear the cue.
+    const hintNeedsPaint = ready && hintEndsAt > 0 && (now < hintEndsAt || controller.lastPaint < hintEndsAt);
+    if (moving || (ready && (!reducedMotion || hintNeedsPaint) && now - controller.lastPaint >= 33)) controller.paint(now);
+    if (controller.phase === 'drinking' || controller.phase === 'settling' || (ready && (!reducedMotion || now < hintEndsAt || hintNeedsPaint))) needsFrame = true;
   }
   if (needsFrame) frameId = requestAnimationFrame(frame);
 }
@@ -298,7 +305,7 @@ const visibility = new IntersectionObserver(entries => {
   for (const entry of entries){
     const controller = controllers.find(item => item.game === entry.target); if (!controller) continue;
     controller.visible = entry.isIntersecting; controller.last = 0;
-    if (!controller.visible) controller.interrupt('Sip reset while the glass was offscreen. Try again.');
+    if (!controller.visible){ controller.targetAt = null; controller.interrupt('Sip reset while the glass was offscreen. Try again.'); }
     else controller.paint(performance.now());
   }
   startLoop();
