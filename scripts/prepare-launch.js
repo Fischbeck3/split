@@ -28,6 +28,10 @@ export function planLaunch(date, config, html){
     throw new Error('The launch date is already fixed at ' + originalDate + '. Changing it would renumber existing challenges.');
   }
   const address = /export const SITE_URL = ['"]([^'"]+)['"];/.exec(config)?.[1];
+  const socialImage = /export const SOCIAL_IMAGE = ['"]([^'"]+)['"];/.exec(config)?.[1] || 'og.jpg?v=memories1';
+  if (!/^[a-zA-Z0-9_-]+\.(?:jpg|png|webp)(?:\?v=[a-zA-Z0-9_-]+)?$/.test(socialImage)){
+    throw new Error('SOCIAL_IMAGE must name a local image asset, optionally with a version.');
+  }
   const url = new URL(address);
   if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash){
     throw new Error('SITE_URL must be a public HTTPS address without credentials, query, or hash.');
@@ -42,7 +46,11 @@ export function planLaunch(date, config, html){
   html = replaceOne(html, /<meta property="og:url" content="[^"]*">/,
     '<meta property="og:url" content="' + url.href + '">', 'social URL');
   html = replaceOne(html, /<meta property="og:image" content="[^"]*">/,
-    '<meta property="og:image" content="' + new URL('og.jpg?v=memories1', url).href + '">', 'social image');
+    '<meta property="og:image" content="' + new URL(socialImage, url).href + '">', 'social image');
+  if (/<meta name="twitter:image" content="[^"]*">/.test(html)){
+    html = replaceOne(html, /<meta name="twitter:image" content="[^"]*">/,
+      '<meta name="twitter:image" content="' + new URL(socialImage, url).href + '">', 'Twitter image');
+  }
   return {config, html, date, url: url.href};
 }
 

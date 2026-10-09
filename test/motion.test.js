@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {dayParams, makeDrinkState, stepDrink} from '../site/js/core.js';
 import {makeMotionState, stepMotion, isMotionSettled} from '../site/js/motion.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 function moveFor(P, state, seconds, {drinking = true, input = 1, elapsed = 0, frames = [1 / 60], reducedMotion = false} = {}){
   let done = 0, frame = 0;
@@ -14,8 +15,8 @@ function moveFor(P, state, seconds, {drinking = true, input = 1, elapsed = 0, fr
 }
 
 test('vessel motion is pure, deterministic, and consistent across frame rates', () => {
-  for (const day of [1, 2, 3]){
-    const P = dayParams(day), initial = makeMotionState(), copy = {...initial};
+  for (const id of ['pub', 'beach', 'munich']){
+    const P = physicalGlassParams(id), initial = makeMotionState(), copy = {...initial};
     const reference = moveFor(P, initial, 0.73, {frames: [1 / 120]});
     assert.deepEqual(moveFor(P, initial, 0.73, {frames: [1 / 120]}), reference);
     for (const frames of [[1 / 24], [1 / 30], [1 / 60], [0.011, 0.022, 0.033]]){
@@ -29,7 +30,7 @@ test('vessel motion is pure, deterministic, and consistent across frame rates', 
 });
 
 test('the glass tips visibly, the bottle kicks, and the stein lifts more slowly', () => {
-  const pub = dayParams(1), bottle = dayParams(2), stein = dayParams(3);
+  const pub = physicalGlassParams('pub'), bottle = physicalGlassParams('beach'), stein = physicalGlassParams('munich');
   const pubEarly = moveFor(pub, makeMotionState(), 0.15);
   const steinEarly = moveFor(stein, makeMotionState(), 0.15);
   assert.ok(pubEarly.angle > steinEarly.angle + 3, 'heavy stein should react more slowly');
@@ -47,8 +48,8 @@ test('the glass tips visibly, the bottle kicks, and the stein lifts more slowly'
 });
 
 test('releasing puts every vessel down within a second and snaps it to rest', () => {
-  for (const day of [1, 2, 3]){
-    const P = dayParams(day);
+  for (const id of ['pub', 'beach', 'munich']){
+    const P = physicalGlassParams(id);
     for (const sipSeconds of [0.1, 0.3, 1.5]){
       const held = moveFor(P, makeMotionState(), sipSeconds);
       const shortlyAfter = moveFor(P, held, 0.08, {drinking: false, elapsed: sipSeconds});
@@ -61,7 +62,7 @@ test('releasing puts every vessel down within a second and snaps it to rest', ()
 });
 
 test('reduced motion keeps input feedback but cannot affect the scored drink amount', () => {
-  const P = dayParams(3), initial = makeDrinkState(P);
+  const P = physicalGlassParams('munich'), initial = makeDrinkState(P);
   let fullDrink = initial, reducedDrink = initial, full = makeMotionState(), reduced = makeMotionState();
   for (let i = 0; i < 150; i++){
     const drinking = i < 120, dt = 1 / 60, elapsed = i * dt;
@@ -88,8 +89,8 @@ test('invalid motion inputs remain finite and long background gaps are bounded',
 });
 
 test('an emptier glass tips farther and still returns promptly without changing the sip', () => {
-  for (const day of [1, 2, 3]){
-    const P = dayParams(day);
+  for (const id of ['pub', 'beach', 'munich']){
+    const P = physicalGlassParams(id);
     const atLevel = level => {
       let state = makeMotionState();
       for (let i = 0; i < 120; i++) state = stepMotion(P, state, {drinking:true, input:1, level, elapsed:i / 120, dt:1 / 120});

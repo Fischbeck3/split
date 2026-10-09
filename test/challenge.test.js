@@ -49,7 +49,7 @@ test('today is official with or without an exact-date link', () => {
 test('an older shared date keeps its exact pour and cannot record a daily score', () => {
   const key = keyForDay(2), challenge = resolveChallenge({launchReady:true, now, search: '?day=' + key});
   assert.deepEqual(challenge, {num: 2, key, kind: 'archive', notice: ''});
-  assert.equal(dayParams(challenge.num).theme.id, 'beach');
+  assert.equal(dayParams(challenge.num).theme.id, 'peroni');
   assert.equal(canRecordChallenge({launchReady:true, ...challenge, now}), false);
 });
 

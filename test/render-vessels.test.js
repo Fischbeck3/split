@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {PROFILES, THEMES, themeById, widthAt, makeDrinkState, stepDrink} from '../site/js/core.js';
 import {CONCEPT_CHAPTERS} from '../site/js/concepts.js';
 import {RENDER_PROFILES, renderVessel, renderWidthAt} from '../site/js/render-vessels.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 test('only Corona receives a new display outline; other drinks retain their physical outline', () => {
   const before = structuredClone(PROFILES), corona = themeById('beach');
@@ -46,8 +47,7 @@ test('Corona has a continuous rounded shoulder, slender neck, and straight body'
 
 test('Corona display lookups preserve the calibrated bottle momentum pour', () => {
   // Keep this physical calibration independent of the authored day schedule.
-  const P = {num:2, key:'2026-10-10', theme:themeById('beach'),
-    markY:0.5912583994492888, markH:0.07670936007518321, K:0.1561537075182423, wobble:0, choppy:false};
+  const P = physicalGlassParams('beach');
   const before = structuredClone(P), profilesBefore = structuredClone(PROFILES);
   // Calibrated levels for the authorized round-section momentum model at
   // constant K and 120 Hz: neck, shoulder, and two regular body glugs.

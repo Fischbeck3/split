@@ -27,7 +27,7 @@ footer{margin:26px 0 0;color:#556c73;font-size:13px}
 </style>
 </head>
 <body>
-<header><div><h1>Wish you were here.</h1><p>An old Irish pub. A beach in Cabo. One long table in Munich. Three places to return to, one sip at a time.</p></div><a href="./design.html">Play the first three days</a></header>
+<header><div><h1>Wish you were here.</h1><p>An old Irish pub. A café table in Rome. A rain-lit counter in Tokyo. Three places to return to, one sip at a time.</p></div><a href="./design.html">Play the first three days</a></header>
 <div class="controls" aria-label="Preview sip movement">
   <button id="play" type="button" disabled>Play the sip</button>
   <button id="ready" type="button" aria-pressed="true" disabled>Ready</button>
@@ -38,8 +38,8 @@ footer{margin:26px 0 0;color:#556c73;font-size:13px}
 </div>
 <section class="vessels" aria-label="Vessel movement previews">
   <article><h2>The old Irish pub.</h2><p>Guinness, dark oak, and one more story. A faster line as the pint narrows; release a little early.</p><canvas id="scene1" aria-label="Guinness in an old Irish pub motion preview"></canvas></article>
-  <article><h2>Back in Cabo.</h2><p>A cold Corona under the palapa. Clear glass, fine fizz, and a pulsing glug.</p><canvas id="scene2" aria-label="Corona on a Cabo beach motion preview"></canvas></article>
-  <article><h2>Meet me in Munich.</h2><p>A liter stein at the long table. Generous foam and a heavy return.</p><canvas id="scene3" aria-label="Stein in a Munich Oktoberfest tent motion preview"></canvas></article>
+  <article><h2>Dinner runs late.</h2><p>A Peroni in Trastevere at sunset. Golden lager and a light, quick sip.</p><canvas id="scene2" aria-label="Peroni in Rome motion preview"></canvas></article>
+  <article><h2>Before the last train.</h2><p>A Sapporo at the izakaya counter. A crisp sip, lanterns, and rain outside.</p><canvas id="scene3" aria-label="Sapporo in Tokyo motion preview"></canvas></article>
 </section>
 <footer>Illustrative motion preview. No daily scores are saved. The game and share cards use these same vessels and liquid geometry.</footer>
 <script type="module">
@@ -48,7 +48,7 @@ import {makeMotionState,stepMotion} from './js/motion.js';
 import {drawScene,makeBackdrop,loadSceneAssets} from './js/draw.js';
 import {renderVessel} from './js/render-vessels.js';
 
-await loadSceneAssets();
+await Promise.all([1,2,3].map(num=>loadSceneAssets(dayParams(num).theme)));
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const demos=[1,2,3].map(num=>{
   const P=dayParams(num),canvas=document.getElementById('scene'+num),w=390,h=600;
@@ -91,7 +91,7 @@ document.getElementById('drinking').onclick=()=>setStage('drinking',.55,'The mar
 document.getElementById('released').onclick=()=>{
   cancelAnimationFrame(playback);
   for(const name of ['ready','drinking','released','settled'])document.getElementById(name).setAttribute('aria-pressed',String(name==='released'));
-  status.textContent='The sip stops. The stein has a little follow-through.';
+  status.textContent='The sip keeps moving briefly as the glasses return upright.';
   render(0,true);
 };
 document.getElementById('settled').onclick=()=>setStage('settled',1,'Upright and settled. This is the line that gets scored.');

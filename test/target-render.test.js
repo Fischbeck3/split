@@ -5,6 +5,7 @@ import {renderVessel, renderWidthAt} from '../site/js/render-vessels.js';
 import {getLiquidSurface} from '../site/js/liquid.js';
 import {drawMark, drawTarget, drawTargetLine, drawScene} from '../site/js/draw.js';
 import {targetGeometry} from '../site/js/target.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 function recordingContext(){
   const calls = [], values = {};
@@ -37,7 +38,7 @@ test('the Guinness G crossbar starts at the scored line without relying on font 
 });
 
 test('Corona clipping, lip and tilted beer surface use the same display outline', () => {
-  const P = dayParams(2), G = {cx:187.5,top:170,bot:417,halfW:65,glass:renderVessel(P.theme)};
+  const P = physicalGlassParams('beach'), G = {cx:187.5,top:170,bot:417,halfW:65,glass:renderVessel(P.theme)};
   const before = structuredClone({P,G}), motion = {angle:24,liquidAngle:0,lift:.025,activity:0};
   const L = .36, gh = G.bot - G.top;
   const surface = getLiquidSurface({vessel:G.glass,level:L,aspect:G.halfW / gh,vesselAngle:motion.angle,liquidAngle:motion.liquidAngle});
