@@ -1,6 +1,12 @@
 // Compact glass-print artwork. The incoming origin is always the scored height:
 // the top of Guinness's G crossbar, or the center of the other five emblems.
-// Coordinates below are fractions of h; no font or image download is required.
+// Coordinates below are fractions of h. Guinness uses a decoded self-hosted
+// print; the other emblems and the asset fallback use canvas geometry.
+import {guinnessPrintImage} from './brand-assets.js';
+
+// Coordinates in the source SVG, whose top edge is cropped to y=14.
+// This is the filled top of the G's crossbar, not the wordmark's midpoint.
+export const GUINNESS_PRINT = Object.freeze({width:85, height:58, top:14, barY:64.336});
 const INK = '#183d50', GOLD = '#c4a254', PAPER = '#fff5d9';
 
 function polygon(c, points){
@@ -20,6 +26,12 @@ function word(c, text, y, size, maxWidth, color, family = 'Georgia, serif', weig
 }
 
 function guinness(c, theme){
+  const image = guinnessPrintImage();
+  if (image){
+    const {width, height, top, barY} = GUINNESS_PRINT;
+    c.drawImage(image, -width / height / 2, -(barY - top) / height, width / height, 1);
+    return;
+  }
   const path = outline => {
     c.beginPath(); c.moveTo(.43, -.35);
     c.bezierCurveTo(.23, -.61, -.25, -.64, -.45, -.32);

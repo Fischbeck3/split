@@ -4,6 +4,7 @@ import {THEMES, dayParams, scoreFromOffset} from '../site/js/core.js';
 import {renderVessel, renderWidthAt as widthAt} from '../site/js/render-vessels.js';
 import {CONCEPT_CHAPTERS, conceptParams} from '../site/js/concepts.js';
 import {TARGET_HINT_MS, targetGeometry, targetHintOpacity} from '../site/js/target.js';
+import {GUINNESS_PRINT} from '../site/js/brand-marks.js';
 
 const conceptOptions = CONCEPT_CHAPTERS.flatMap(chapter => chapter.options);
 // Include each catalog theme's extreme seeded mark positions and heights, the
@@ -55,10 +56,18 @@ test('all catalog and concept artwork and dashed hints fit small-phone, phone, d
       const target = targetGeometry(G, P, P.theme), label = P.theme.id + ' at ' + Math.round(G.bot - G.top) + 'px';
       for (const value of Object.values(target)) assert.ok(Number.isFinite(value), label + ': non-finite geometry');
       assert.ok(target.markHeight >= P.markH * (G.bot - G.top), label + ': logo became too small');
-      // Conservative bounds include each brand badge and its outline/ribbon.
-      for (const t of [P.markY - target.markHeight * .75 / (G.bot - G.top), P.markY + target.markHeight * .75 / (G.bot - G.top)]){
+      // The complete Guinness print extends farther above the scored G than below it.
+      // Other badges retain their conservative symmetric outline/ribbon bounds.
+      const pub = P.theme.id === 'pub', {width, height, top, barY} = GUINNESS_PRINT;
+      const above = pub ? (barY - top) / height : .75;
+      const below = pub ? 1 - above : .75;
+      const halfWidth = target.markHeight * (pub ? width / height / 2 : .65);
+      const topT = P.markY - target.markHeight * above / (G.bot - G.top);
+      const bottomT = P.markY + target.markHeight * below / (G.bot - G.top);
+      const depths = pub ? Array.from({length:21}, (_, i) => topT + (bottomT - topT) * i / 20) : [topT,bottomT];
+      for (const t of depths){
         assert.ok(t > 0 && t < 1, label + ': artwork escapes above the rim or below the base');
-        assert.ok(target.markHeight * .65 < widthAt(G.glass, t) * G.halfW, label + ': artwork crosses the tapered wall');
+        assert.ok(halfWidth < widthAt(G.glass, t) * G.halfW, label + ': artwork crosses the tapered wall');
       }
       assert.ok(target.lineWidth > 0 && target.lineWidth <= target.vesselHalfWidth * .12);
       assert.ok(target.lineHalfWidth > 0 && target.lineHalfWidth < target.vesselHalfWidth);
