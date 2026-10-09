@@ -8,8 +8,8 @@ html,body{height:auto;overflow:auto;overscroll-behavior:auto}body{background:#f6
 <header><div><h1>Wish you were here.</h1><p>Three places, three beers, and a reason to send something to the friends who were there. <a href="./motion.html">See the sip in motion</a></p></div><a href="./#day1">Open the game</a></header>
 <section class="days" aria-label="First three day designs">
 <article><h2>1. The old Irish pub</h2><p>A stout by the fire. Dark oak, warm lamps, and the G.</p><iframe src="./#day1" title="Play day 1: Old Irish pub"></iframe><h3>Remember that pub?</h3><p class="sample">Sample preview result · 100/100</p><canvas id="card1" aria-label="Sample pub share card"></canvas><p class="sample"><a id="save1" download="split-share-day1.png">Save sample card</a></p><pre id="text1"></pre></article>
-<article><h2>2. Back in Cabo</h2><p>A cold Corona under the palapa. White sand, turquoise water, and a pulsing glug.</p><iframe src="./#day2" title="Play day 2: Cabo beach"></iframe><h3>Send a little Cabo.</h3><p class="sample">Sample preview result · 89/100</p><canvas id="card2" aria-label="Sample beach share card"></canvas><p class="sample"><a id="save2" download="split-share-day2.png">Save sample card</a></p><pre id="text2"></pre></article>
-<article><h2>3. Meet me in Munich</h2><p>A liter stein, blue-white bunting, and one long table. Let the heavy glass settle.</p><iframe src="./#day3" title="Play day 3: Oktoberfest"></iframe><h3>Same table. Your turn.</h3><p class="sample">Sample preview result · 58/100</p><canvas id="card3" aria-label="Sample Oktoberfest share card"></canvas><p class="sample"><a id="save3" download="split-share-day3.png">Save sample card</a></p><pre id="text3"></pre></article>
+<article><h2>2. Trastevere sunset</h2><p>October 10 · Peroni. A café table at sunset, golden lager, and the red-and-blue Peroni label.</p><iframe src="./#day2" title="Play day 2: Trastevere sunset"></iframe><h3>Dinner runs late.</h3><p class="sample">Sample preview result · 89/100</p><canvas id="card2" aria-label="Sample Rome share card"></canvas><p class="sample"><a id="save2" download="split-share-day2.png">Save sample card</a></p><pre id="text2"></pre></article>
+<article><h2>3. Tokyo izakaya</h2><p>October 11 · Sapporo. A rain-lit counter, a tall glass, and a gold star.</p><iframe src="./#day3" title="Play day 3: Tokyo izakaya"></iframe><h3>One more before the last train.</h3><p class="sample">Sample preview result · 58/100</p><canvas id="card3" aria-label="Sample Tokyo share card"></canvas><p class="sample"><a id="save3" download="split-share-day3.png">Save sample card</a></p><pre id="text3"></pre></article>
 </section>
 <footer>Design preview. Sample cards use illustrative stopping positions; no daily scores are saved. <a href="https://github.com/Fischbeck3/split">Split on GitHub</a></footer>
 <script type="module">
@@ -17,7 +17,7 @@ import {dayParams,scoreFromOffset} from './js/core.js';
 import {drawShareCard,buildShareText} from './js/share.js';
 import {loadSceneAssets} from './js/draw.js';
 import {SITE_URL} from './js/config.js';
-await Promise.all([loadSceneAssets(),document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla'),document.fonts.load('600 16px Karla')]);
+await Promise.all([...([1,2,3].map(num=>loadSceneAssets(dayParams(num).theme))),document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla'),document.fonts.load('600 16px Karla')]);
 for(let num=1;num<=3;num++){
  const P=dayParams(num),f=[0.02,-0.1,0.22][num-1], r={...scoreFromOffset(f,P.theme.target),f,L:P.markY+f*P.markH,mode:'tilt',counts:false,drained:false};
  drawShareCard(document.getElementById('card'+num),{num,theme:P.theme,P,result:r,url:SITE_URL,preview:true});

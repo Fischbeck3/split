@@ -1,8 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {PROFILES, THEMES, themeById, dayParams, widthAt, makeDrinkState, stepDrink} from '../site/js/core.js';
+import {PROFILES, THEMES, themeById, widthAt, makeDrinkState, stepDrink} from '../site/js/core.js';
 import {CONCEPT_CHAPTERS} from '../site/js/concepts.js';
 import {RENDER_PROFILES, renderVessel, renderWidthAt} from '../site/js/render-vessels.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 test('only Corona receives a new display outline; other drinks retain their physical outline', () => {
   const before = structuredClone(PROFILES), corona = themeById('beach');
@@ -44,8 +45,8 @@ test('Corona has a continuous rounded shoulder, slender neck, and straight body'
   assert.equal(renderWidthAt('corona', 2), renderWidthAt('corona', 1));
 });
 
-test('the slimmer Corona display preserves the frozen Day 2 neck, shoulder, and body timing', () => {
-  const P = dayParams(2), before = structuredClone(P);
+test('the slimmer Corona display preserves the frozen Corona neck, shoulder, and body timing', () => {
+  const P = physicalGlassParams('beach'), before = structuredClone(P);
   // Reference levels from the published pour at constant K and 120 Hz. These
   // span the quick neck, shoulder transition, and the body’s regular glug.
   const checkpoints = new Map([[60, 0.30453750085829956], [120, 0.40356184638546005], [240, 0.5687516396459574]]);

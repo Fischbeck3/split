@@ -9,6 +9,27 @@ colors:
   pub-line: "#3c4a40"
   pub-accent: "#d9b874"
   pub-accent-ink: "#17221b"
+  rome-background: "#efe8d9"
+  rome-ink: "#23483b"
+  rome-muted: "#547162"
+  rome-sheet: "#fffaf0"
+  rome-line: "#bfc8b5"
+  rome-accent: "#285c44"
+  rome-accent-ink: "#fff8e8"
+  tokyo-background: "#14221f"
+  tokyo-ink: "#f2ead7"
+  tokyo-muted: "#b4bcae"
+  tokyo-sheet: "#20332b"
+  tokyo-line: "#4a5b4e"
+  tokyo-accent: "#dcb66b"
+  tokyo-accent-ink: "#18251d"
+  hogsmeade-background: "#25201b"
+  hogsmeade-ink: "#f6ebd5"
+  hogsmeade-muted: "#c5b49d"
+  hogsmeade-sheet: "#342c23"
+  hogsmeade-line: "#685642"
+  hogsmeade-accent: "#e5bb71"
+  hogsmeade-accent-ink: "#302218"
   beach-background: "#f6f0e3"
   beach-ink: "#153e4d"
   beach-muted: "#556c73"
@@ -129,11 +150,11 @@ components:
 
 **Creative North Star: "One sip. A place you remember."**
 
-Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place: an old Irish pub, a beach palapa in Cabo, or an Oktoberfest tent in Munich. The interface gives it a short destination, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
+Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place. The opening three travel from an old Irish pub to a Roman café table and a Tokyo izakaya. The interface gives each glass a short destination, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
 
-The pub carries aged oak, a fireplace, and amber light; Cabo carries palapa shade, turquoise water, and a distant rocky headland; Munich carries timber roof ribs, warm lamps, blue and white bunting, and communal tables. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn.
+The pub carries aged oak, a fireplace, and amber light; Rome carries warm stone and café tables at sunset; Tokyo carries rain-lit lanterns and a little wooden counter. Later days visit Munich's timber roof ribs and communal tables, snowy Hogsmeade's warm shop windows, and Cabo's palapa shade and turquoise water. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn.
 
-The scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed WebP assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.
+The scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed scene assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.
 
 **Key Characteristics:**
 
@@ -146,17 +167,23 @@ The scenery is illustrative travel art, not a photograph or a claim about a spec
 
 ## Colors
 
-The three opening themes share semantic roles while changing the atmosphere. The frontmatter records the implemented values from `site/js/themes.js` and the light/dark result colors in `site/js/main.js`; illustration-only gradients and details remain in `site/js/draw.js` and `site/js/share.js`.
+The six scheduled themes share semantic roles while changing the atmosphere. The frontmatter records the implemented values from `site/js/themes.js` and the light/dark result colors in `site/js/main.js`; illustration-only gradients and details remain in `site/js/draw.js` and `site/js/share.js`.
 
 ### Primary
 
 - **Pub gold** (`pub-accent`): the start/hold/share control. Deep green ink keeps the gold surface readable; the exported pub postcard uses warm cream paper with the same dark ink.
+- **Roman green** (`rome-accent`): the café control, paired with cream ink on a light paper surface.
+- **Lantern gold** (`tokyo-accent`): the izakaya control, paired with deep green ink.
+- **Butterbeer honey** (`hogsmeade-accent`): the snowy-village control, paired with dark brown ink.
 - **Sea teal** (`beach-accent`): the beach control, paired with cream ink.
 - **Festival gold** (`fest-accent`): the stein control, paired with deep blue ink.
 
 ### Neutral
 
 - **Pub green and cream**: dark background and sheet, warm foreground, subdued supporting copy, and restrained green separators.
+- **Roman paper and green**: warm paper background, cream sheet, deep green foreground, and muted green support.
+- **Tokyo green and gold**: dark green background and sheet, cream foreground, and subdued green support.
+- **Hogsmeade walnut and cream**: brown background and sheet, cream foreground, and warm supporting copy.
 - **Sand and sea ink**: pale sand background, cream sheet, deep blue foreground, slate supporting copy, and a quiet pale separator.
 - **Festival paper and blue**: cool near-white background, white sheet, deep blue foreground, slate supporting copy, and pale blue separators.
 
@@ -223,7 +250,7 @@ Text actions have underlined foreground labels and a minimum height of 38px. The
 
 The target and short vessel-feel label form a compact row. Instructions name the hold-to-tip gesture and release-to-settle behavior. A details disclosure keeps the longer rules available without competing with the vessel. The live control shows the target and current status, then a settling state while the glass returns upright. Optional tilt mode offers upright recalibration before the sip.
 
-The release calendar is fixed at October 9, 2026 for the old Irish pub, October 10 for Cabo, and October 11 for Oktoberfest. HTTPS is valid and enforced, and `LAUNCH_READY` is true. Public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Root visits open today's official glass; today's local date offers one scored sip. An earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. Hash-based `#dayN` previews remain unsaved. If midnight passes during official play, the older glass becomes an archive before any record is written.
+The fixed launch date is October 9, 2026 for the old Irish pub. The opening lineup continues with Peroni at Trastevere sunset on October 10 and Sapporo at the Tokyo izakaya on October 11. HTTPS is valid and enforced, and `LAUNCH_READY` is true. Public date links preserve the same seeded glass with `?day=YYYY-MM-DD`. Root visits open today's official glass; today's local date offers one scored sip. An earlier date is explicitly Archive, with its date and “not saved” guidance. Archive starts say “Try this glass,” while a separate “Play today’s glass” action returns to the current challenge and clears the date link. A friend one calendar day ahead opens the same pour as an unsaved preview, with a note explaining its arrival tomorrow. Hash-based `#dayN` previews remain unsaved. If midnight passes during official play, the older glass becomes an archive before any record is written.
 
 ### Preview navigation
 
@@ -247,7 +274,7 @@ Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liqui
 
 The primary invitation is “Beat my sip.” The link carries the current player's self-reported score, exact stopping offset, glass ID, and sip status. The invitation names the friend's shared score before play; the result compares both scores and adds a dashed SHARED line to the same postcard vessel alongside the player's actual solid STOP. A shared line is a supplied benchmark, not a verified identity or leaderboard entry. Date and theme validation must reject malformed or mismatched benchmarks without moving them onto a fallback glass. Practice, preview, archive, and saved-archive status remain visible. Sharing a reply always challenges the next friend with the current player's result.
 
-Each opening place has a single short memory cue beneath its destination on entry; it recedes during the sip to keep the live status clear. Environmental motion belongs to the existing illustration: the pub hearth, Cabo surf, and Munich canopy cloth. The pub animates the actual painted flame texture with independent rising curls, using a soft heat matte derived from its luminous pixels. The grate and surrounding illumination stay fixed; no pulsing glow is added. The cached place stays intact; localized layers move around the vessel. Static exports and reduced motion omit those layers. Resting scenes repaint at no more than 30 fps, and hidden pages stop updating. The result crops the postcard to its scene and vessel so both lines can be compared; Save postcard retains the complete paper design and score.
+Each scheduled place has a single short memory cue beneath its destination on entry; it recedes during the sip to keep the live status clear. Environmental motion belongs to the existing illustration: the pub hearth, Cabo surf, and Munich canopy cloth. The pub animates the actual painted flame texture with independent rising curls, using a soft heat matte derived from its luminous pixels. The grate and surrounding illumination stay fixed; no pulsing glow is added. The cached place stays intact; localized layers move around the vessel. Static exports and reduced motion omit those layers. Resting scenes repaint at no more than 30 fps, and hidden pages stop updating. The result crops the postcard to its scene and vessel so both lines can be compared; Save postcard retains the complete paper design and score.
 
 The sound control lives beside the day number in the HUD and defaults off on every visit. An explicit click initializes and resumes audio; unsupported audio leaves the gesture working. Bottle glugs follow the same 0.58-second flow cadence. Pint and stein land with distinct subdued material cues, and a perfect split adds one quiet rim click. The result's stopping line briefly shines at its actual position as the verdict comes into focus, with a stronger bounded flash for perfect splits. This does not defer recording, controls, or the score. Returning to an existing score does not replay the fresh-sip celebration. Reduced motion keeps the static line and verdict without the flourish.
 
@@ -263,7 +290,7 @@ The image postcard is 1080 × 1350, with a paper border framing the same painted
 
 ## Selected days 4–6
 
-The chosen next places are pinned after the opening three, without changing the fixed launch date or opening-three seeds. Day 4 (October 12, 2026) is Sapporo at the Tokyo izakaya: a tall golden lager glass, single gold star, rain-lit lanterns, and the dark green palette. Day 5 (October 13) is Butterbeer in snowy Hogsmeade: caramel drink, generous cream head, tulip glass, and a clear H inside an open shield. Score the liquid boundary beneath the foam. Day 6 (October 14) is Peroni at Trastevere sunset: a tall lager glass, blue P, warm stone, and a light paper palette.
+The six-day lineup is pinned without changing the fixed launch date or released Day 1 seed. Day 2 (October 10, 2026) is Peroni at Trastevere sunset: a tall lager glass, red-and-blue Peroni label, warm stone, and a light paper palette. Day 3 (October 11) is Sapporo at the Tokyo izakaya: a tall golden lager glass, single gold star, rain-lit lanterns, and the dark green palette. Day 4 (October 12) is Festbier at Oktoberfest in Munich, with a heavy dimpled stein and a Bavarian crest. Day 5 (October 13) is Butterbeer in snowy Hogsmeade: caramel drink, generous cream head, tulip glass, and a quartered Hogwarts-style crest with a central H. Score the liquid boundary beneath the foam. Day 6 (October 14) is Corona at Cabo beach, with a clear long-neck bottle, lime, and crown.
 
 Use the approved panels from the nine-option studio with the same table anchors in play and export. These three static paintings frame the vessel motion. The exported postcard retains light paper, destination, drink, actual stopping line, score, and date-specific invitation. `/next-three.html` is a review of the chosen upcoming days; hash previews and sample cards stay explicitly unsaved. The broader concept studio remains available for future choices.
 

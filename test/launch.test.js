@@ -26,6 +26,18 @@ test('invalid dates and ambiguous metadata cannot produce a launch plan', () => 
   assert.throws(() => planLaunch('2026-10-12', config, html + '\n' + html), /no launch files were changed/);
 });
 
+test('same-date launch preparation preserves the configured fresh share image', () => {
+  const withImage = config + "export const SOCIAL_IMAGE = 'og-opening-v2.jpg';\n";
+  const socialHtml = html + '\n<meta name="twitter:image" content="https://old.example/og.png">';
+  const plan = planLaunch('2026-10-09', withImage, socialHtml);
+  assert.match(plan.html, /content="https:\/\/dailysplit\.us\/og-opening-v2\.jpg"/);
+  assert.doesNotMatch(plan.html, /old\.example/);
+  assert.deepEqual(planLaunch('2026-10-09', plan.config, plan.html), plan);
+  for (const asset of ['https://other.example/image.jpg', '../image.jpg', 'missing', 'image.jpg?token=secret']){
+    assert.throws(() => planLaunch('2026-10-09', config + `export const SOCIAL_IMAGE = '${asset}';\n`, html), /local image asset/);
+  }
+});
+
 test('the check command validates a release without changing the development calendar', () => {
   const configPath = new URL('../site/js/config.js', import.meta.url);
   const before = readFileSync(configPath, 'utf8');

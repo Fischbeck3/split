@@ -5,33 +5,31 @@ import {THEMES, PROFILES, themeById, themeForDay, dayParams, dayNumber, keyForDa
   makeDrinkState, stepDrink, isDrinkSettled, STEIN_SETTLE_SECONDS, secondsToMark,
   scoreFromOffset, bandEmoji, detailText, DRAIN_LEVEL, PERFECT, SPLIT} from '../site/js/core.js';
 import {SCENES, MARKS} from '../site/js/draw.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 const DAYS = Array.from({length: 400}, (_, i) => i + 1);
 
-test('the first days follow the plan: pub, beach, Munich', () => {
-  assert.deepEqual(SCHEDULE.slice(0, 3).map((_, i) => themeForDay(i + 1).id), ['pub', 'beach', 'munich']);
+test('the first days follow the chosen plan: pub, Rome, Tokyo', () => {
+  assert.deepEqual(SCHEDULE.slice(0, 3).map((_, i) => themeForDay(i + 1).id), ['pub', 'peroni', 'sapporo']);
 });
 
-test('the selected destinations follow the opening three on their pinned dates', () => {
-  assert.deepEqual(SCHEDULE, ['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni']);
-  assert.deepEqual([4, 5, 6].map(n => [keyForDay(n), themeForDay(n).id]), [
-    ['2026-10-12', 'sapporo'], ['2026-10-13', 'butterbeer'], ['2026-10-14', 'peroni']
+test('the selected destinations occupy their pinned dates without moving the launch', () => {
+  assert.deepEqual(SCHEDULE, ['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach']);
+  assert.equal(LAUNCH, '2026-10-09');
+  assert.deepEqual([1, 2, 3, 4, 5, 6].map(n => [keyForDay(n), themeForDay(n).id]), [
+    ['2026-10-09', 'pub'], ['2026-10-10', 'peroni'], ['2026-10-11', 'sapporo'],
+    ['2026-10-12', 'munich'], ['2026-10-13', 'butterbeer'], ['2026-10-14', 'beach']
   ]);
 });
 
-test('adding destinations preserves the released opening-three glass parameters', () => {
-  assert.deepEqual([1, 2, 3].map(n => {
-    const {theme, ...params} = dayParams(n);
-    return {...params, themeId: theme.id};
-  }), [
-    {num: 1, key: '2026-10-09', markY: 0.6336473895981908, markH: 0.10183376568136737, K: 0.16028254496864974, wobble: 0, choppy: false, themeId: 'pub'},
-    {num: 2, key: '2026-10-10', markY: 0.5912583994492888, markH: 0.07670936007518321, K: 0.1561537075182423, wobble: 0, choppy: false, themeId: 'beach'},
-    {num: 3, key: '2026-10-11', markY: 0.5049501990433782, markH: 0.16297386521473528, K: 0.1159373656474054, wobble: 0, choppy: false, themeId: 'munich'}
-  ]);
+test('the chosen lineup preserves the released Day 1 glass parameters', () => {
+  const {theme, ...params} = dayParams(1);
+  assert.deepEqual({...params, themeId:theme.id},
+    {num:1, key:'2026-10-09', markY:0.6336473895981908, markH:0.10183376568136737, K:0.16028254496864974, wobble:0, choppy:false, themeId:'pub'});
 });
 
 test('the selected glasses carry the chosen place, vessel and mark', () => {
-  assert.deepEqual([4, 5, 6].map(n => {
+  assert.deepEqual([3, 5, 2].map(n => {
     const t = themeForDay(n);
     return [t.id, t.label, t.scene, t.vessel, t.mark, t.letter || null, t.markFrame || null, t.speed, t.headT];
   }), [
@@ -39,7 +37,7 @@ test('the selected glasses carry the chosen place, vessel and mark', () => {
     ['butterbeer', 'Snowy Hogsmeade', 'hogsmeade', 'tulip', 'letter', 'H', 'shield', 0.8, 0.17],
     ['peroni', 'Trastevere sunset', 'rome', 'tall', 'letter', 'P', null, 1, 0.065]
   ]);
-  for (const n of [4, 5, 6]){
+  for (const n of [3, 5, 2]){
     const P = dayParams(n), top = P.markY - P.markH / 2;
     assert.ok(top > startLevel(P.theme) + 0.05, P.theme.id + ': the mark must start below the foam');
     assert.ok(secondsToMark(P) > 1.2 && secondsToMark(P) < 8, P.theme.id + ': the selected mark must be reachable in one real sip');
@@ -115,8 +113,8 @@ function drinkFor(P, state, rate, seconds, frameSteps = [1 / 60]){
 }
 
 test('a sip is deterministic, pure, and comparable at different frame rates', () => {
-  for (const day of [1, 2, 3]){
-    const P = dayParams(day), initial = makeDrinkState(P), before = {...initial};
+  for (const id of ['pub', 'beach', 'munich']){
+    const P = physicalGlassParams(id), initial = makeDrinkState(P), before = {...initial};
     const simulate = steps => {
       const held = drinkFor(P, initial, P.K, 2.2, steps);
       return drinkFor(P, held, 0, 0.4, steps);
@@ -133,7 +131,7 @@ test('a sip is deterministic, pure, and comparable at different frame rates', ()
 });
 
 test('the bottle has a free-running neck and a strong, regular glug in its body', () => {
-  const P = dayParams(2), rate = P.K;
+  const P = physicalGlassParams('beach'), rate = P.K;
   const at = (level, elapsed) => stepDrink(P, {level, elapsed, velocity: 0}, rate, 1 / 120);
   const neckFast = at(0.12, 0.145), neckSlow = at(0.12, 0.435);
   assert.ok(Math.abs(neckFast.velocity - neckSlow.velocity) < 1e-9, 'neck should not pulse');
@@ -144,7 +142,7 @@ test('the bottle has a free-running neck and a strong, regular glug in its body'
 });
 
 test('the pub stops on release while the stein has a small, bounded follow-through', () => {
-  const pub = dayParams(1), stein = dayParams(3);
+  const pub = physicalGlassParams('pub'), stein = physicalGlassParams('munich');
   const pubHeld = drinkFor(pub, makeDrinkState(pub), pub.K, 1);
   const pubReleased = stepDrink(pub, pubHeld, 0, 1 / 60);
   assert.equal(pubReleased.level, pubHeld.level);
@@ -171,7 +169,7 @@ test('a paused tab cannot skip a whole drink and the level never passes the drai
 });
 
 test('the scheduled days carry their identity into text shares and cards', () => {
-  assert.deepEqual([1, 2, 3, 4, 5, 6].map(n => themeForDay(n).name), ['Guinness', 'Corona', 'Festbier', 'Sapporo', 'Butterbeer', 'Peroni']);
+  assert.deepEqual([1, 2, 3, 4, 5, 6].map(n => themeForDay(n).name), ['Guinness', 'Peroni', 'Sapporo', 'Festbier', 'Butterbeer', 'Corona']);
   for (const n of [1, 2, 3, 4, 5, 6]){
     const t = themeForDay(n);
     assert.ok(t.location && t.feel && t.emoji, t.id + ': missing share identity');

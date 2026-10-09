@@ -15,7 +15,7 @@ function changed(input, changes){
 }
 
 test('a shared sip resolves to the same seeded glass and physical stopping line', () => {
-  for (const num of [1, 2, 3, 12]){
+  for (const num of [1, 2, 3, 4, 5, 6, 12]){
     const P = dayParams(num), input = challenge(num);
     const before = dayParams(num);
     assert.deepEqual(readFriendChallenge(input), {score:78, f:0.15, L:P.markY + 0.15 * P.markH, drained:false, kind:'daily'});
@@ -28,6 +28,11 @@ test('old shared links and partial benchmarks remain ordinary challenge links', 
   assert.equal(readFriendChallenge({...input, search:'?day=' + input.key}), null);
   assert.equal(readFriendChallenge({...input, search:''}), null);
   for (const field of ['vs', 'f', 'glass', 'sip', 'empty']) assert.equal(readFriendChallenge(changed(input, {[field]:null})), null, field);
+});
+
+test('old unsaved preview benchmarks cannot attach a different glass to the updated opening lineup', () => {
+  assert.equal(readFriendChallenge(changed(challenge(2), {glass:'beach'})), null);
+  assert.equal(readFriendChallenge(changed(challenge(3), {glass:'munich'})), null);
 });
 
 test('the benchmark needs an explicit matching date and cannot contaminate a fallback date', () => {

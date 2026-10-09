@@ -28,18 +28,18 @@ test('an official sip shares a /100 score, one truthful strip, and the exact cha
 test('a day preview is explicitly identified without adding fake attempts', () => {
   const P = dayParams(2);
   const text = buildShareText({num: 2, theme: P.theme,
-    result: {score: 42, label: 'High in the crown', f: -0.28, counts: false},
+    result: {score: 42, label: 'High in the P', f: -0.28, counts: false},
     url: 'https://split.example/?day=2', preview: true});
-  assert.equal(text, 'Split #002 · 🍾 Corona · Cabo beach · Preview\n42/100 · High in the crown\n⬜🟨⬜⬜⬜\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:2, score:42, f:-0.28, kind:'preview', preview:true}));
+  assert.equal(text, 'Split #002 · 🍺 Peroni · Trastevere sunset · Preview\n42/100 · High in the P\n⬜🟨⬜⬜⬜\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:2, score:42, f:-0.28, kind:'preview', preview:true}));
   assert.equal(text.split('\n').filter(line => line.includes('⬜')).length, 1);
 });
 
 test('a practice sip is labeled and an overshoot keeps the outside-band arrow', () => {
   const P = dayParams(3);
   const text = buildShareText({num: 3, theme: P.theme,
-    result: {score: 0, label: 'Below the crest', f: 0.8, counts: false},
+    result: {score: 0, label: 'Below the star', f: 0.8, counts: false},
     url: 'https://split.example/'});
-  assert.equal(text, 'Split #003 · 🍻 Festbier · Oktoberfest · Practice\n0/100 · Below the crest\n⬜⬜⬜⬜⬜⬇️\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:3, score:0, f:0.8, kind:'practice'}));
+  assert.equal(text, 'Split #003 · 🍺 Sapporo · Tokyo izakaya · Practice\n0/100 · Below the star\n⬜⬜⬜⬜⬜⬇️\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:3, score:0, f:0.8, kind:'practice'}));
 });
 
 const result = {score: 100, label: 'Perfect split', f: 0, counts: true};
@@ -136,7 +136,7 @@ function recordingCanvas(){
 }
 
 test('comparison postcards keep both true stopping lines and distinct readable labels on the displayed vessel', () => {
-  for (const num of [1, 2, 3]){
+  for (const num of [1, 2, 3, 4, 5, 6]){
     const P = dayParams(num), f = 0.08, result = {...scoreFromOffset(f, P.theme.target), f, L:P.markY + f * P.markH, counts:true};
     for (const sharedOffset of [0, 2]){
       const friend = sharedOffset === 2 ? {score:0, f:2, L:DRAIN_LEVEL, drained:true, kind:'daily'} : {score:100, f:0, L:P.markY, drained:false, kind:'daily'};

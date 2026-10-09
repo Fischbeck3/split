@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from '../site/js/ambient.js';
 import {drawScene, loadSceneAssets} from '../site/js/draw.js';
 import {dayParams, startLevel} from '../site/js/core.js';
+import {physicalGlassParams} from './fixtures/physical-glasses.js';
 
 function recordingContext(canvas = {}){
   const calls = [], values = {canvas, globalAlpha: 1};
@@ -21,8 +22,8 @@ function recordingContext(canvas = {}){
   return {context, calls};
 }
 
-test('all three static postcard scenes ignore the decorative wall clock', () => {
-  for (const day of [1, 2, 3]){
+test('all six static postcard scenes ignore the decorative wall clock', () => {
+  for (const day of [1, 2, 3, 4, 5, 6]){
     const P = dayParams(day), theme = P.theme, G = {cx: 200, top: 170, bot: 460, halfW: 78, glass: theme.vessel};
     const options = {G, w: 400, h: 700, L: startLevel(theme), theme, P, bubbles: false, titleWash: false};
     const still = recordingContext(), later = recordingContext();
@@ -67,8 +68,8 @@ test('moving image details reuse their patches and preserve the input drink and 
   }};
   try {
     await loadSceneAssets();
-    for (const day of [1, 2, 3]){
-      const P = dayParams(day), theme = P.theme, G = {cx: 200, top: 170, bot: 460, halfW: 78, glass: theme.vessel};
+    for (const id of ['pub', 'beach', 'munich']){
+      const P = physicalGlassParams(id), theme = P.theme, G = {cx: 200, top: 170, bot: 460, halfW: 78, glass: theme.vessel};
       const options = {G, w: 400, h: 700, L: startLevel(theme), theme, P, bubbles: false, ambient: true, titleWash: true, backdrop: {width: 800, height: 1400}};
       const original = structuredClone({G, P, L: options.L});
       const a = recordingContext(), b = recordingContext();
