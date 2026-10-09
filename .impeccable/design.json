@@ -1,0 +1,549 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T04:18:52.804061Z",
+  "title": "Design System: Split",
+  "extensions": {
+    "colorMeta": {
+      "pub-background": {
+        "role": "neutral",
+        "displayName": "Pub Background",
+        "tonalRamp": [
+          "oklch(15.00% 0.0177 170.00)",
+          "oklch(26.43% 0.0177 170.00)",
+          "oklch(37.86% 0.0177 170.00)",
+          "oklch(49.29% 0.0177 170.00)",
+          "oklch(60.71% 0.0177 170.00)",
+          "oklch(72.14% 0.0177 170.00)",
+          "oklch(83.57% 0.0177 170.00)",
+          "oklch(95.00% 0.0177 170.00)"
+        ]
+      },
+      "pub-ink": {
+        "role": "neutral",
+        "displayName": "Pub Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0238 88.24)",
+          "oklch(26.43% 0.0238 88.24)",
+          "oklch(37.86% 0.0238 88.24)",
+          "oklch(49.29% 0.0238 88.24)",
+          "oklch(60.71% 0.0238 88.24)",
+          "oklch(72.14% 0.0238 88.24)",
+          "oklch(83.57% 0.0238 88.24)",
+          "oklch(95.00% 0.0238 88.24)"
+        ]
+      },
+      "pub-muted": {
+        "role": "neutral",
+        "displayName": "Pub Muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0228 98.23)",
+          "oklch(26.43% 0.0228 98.23)",
+          "oklch(37.86% 0.0228 98.23)",
+          "oklch(49.29% 0.0228 98.23)",
+          "oklch(60.71% 0.0228 98.23)",
+          "oklch(72.14% 0.0228 98.23)",
+          "oklch(83.57% 0.0228 98.23)",
+          "oklch(95.00% 0.0228 98.23)"
+        ]
+      },
+      "pub-sheet": {
+        "role": "neutral",
+        "displayName": "Pub Sheet",
+        "tonalRamp": [
+          "oklch(15.00% 0.0221 160.94)",
+          "oklch(26.43% 0.0221 160.94)",
+          "oklch(37.86% 0.0221 160.94)",
+          "oklch(49.29% 0.0221 160.94)",
+          "oklch(60.71% 0.0221 160.94)",
+          "oklch(72.14% 0.0221 160.94)",
+          "oklch(83.57% 0.0221 160.94)",
+          "oklch(95.00% 0.0221 160.94)"
+        ]
+      },
+      "pub-line": {
+        "role": "neutral",
+        "displayName": "Pub Line",
+        "tonalRamp": [
+          "oklch(15.00% 0.0245 154.08)",
+          "oklch(26.43% 0.0245 154.08)",
+          "oklch(37.86% 0.0245 154.08)",
+          "oklch(49.29% 0.0245 154.08)",
+          "oklch(60.71% 0.0245 154.08)",
+          "oklch(72.14% 0.0245 154.08)",
+          "oklch(83.57% 0.0245 154.08)",
+          "oklch(95.00% 0.0245 154.08)"
+        ]
+      },
+      "pub-accent": {
+        "role": "primary",
+        "displayName": "Pub Accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0945 84.48)",
+          "oklch(26.43% 0.0945 84.48)",
+          "oklch(37.86% 0.0945 84.48)",
+          "oklch(49.29% 0.0945 84.48)",
+          "oklch(60.71% 0.0945 84.48)",
+          "oklch(72.14% 0.0945 84.48)",
+          "oklch(83.57% 0.0945 84.48)",
+          "oklch(95.00% 0.0945 84.48)"
+        ]
+      },
+      "pub-accent-ink": {
+        "role": "neutral",
+        "displayName": "Pub Accent Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0205 156.57)",
+          "oklch(26.43% 0.0205 156.57)",
+          "oklch(37.86% 0.0205 156.57)",
+          "oklch(49.29% 0.0205 156.57)",
+          "oklch(60.71% 0.0205 156.57)",
+          "oklch(72.14% 0.0205 156.57)",
+          "oklch(83.57% 0.0205 156.57)",
+          "oklch(95.00% 0.0205 156.57)"
+        ]
+      },
+      "beach-background": {
+        "role": "neutral",
+        "displayName": "Beach Background",
+        "tonalRamp": [
+          "oklch(15.00% 0.0184 86.15)",
+          "oklch(26.43% 0.0184 86.15)",
+          "oklch(37.86% 0.0184 86.15)",
+          "oklch(49.29% 0.0184 86.15)",
+          "oklch(60.71% 0.0184 86.15)",
+          "oklch(72.14% 0.0184 86.15)",
+          "oklch(83.57% 0.0184 86.15)",
+          "oklch(95.00% 0.0184 86.15)"
+        ]
+      },
+      "beach-ink": {
+        "role": "neutral",
+        "displayName": "Beach Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0520 225.65)",
+          "oklch(26.43% 0.0520 225.65)",
+          "oklch(37.86% 0.0520 225.65)",
+          "oklch(49.29% 0.0520 225.65)",
+          "oklch(60.71% 0.0520 225.65)",
+          "oklch(72.14% 0.0520 225.65)",
+          "oklch(83.57% 0.0520 225.65)",
+          "oklch(95.00% 0.0520 225.65)"
+        ]
+      },
+      "beach-muted": {
+        "role": "neutral",
+        "displayName": "Beach Muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0294 218.29)",
+          "oklch(26.43% 0.0294 218.29)",
+          "oklch(37.86% 0.0294 218.29)",
+          "oklch(49.29% 0.0294 218.29)",
+          "oklch(60.71% 0.0294 218.29)",
+          "oklch(72.14% 0.0294 218.29)",
+          "oklch(83.57% 0.0294 218.29)",
+          "oklch(95.00% 0.0294 218.29)"
+        ]
+      },
+      "beach-sheet": {
+        "role": "neutral",
+        "displayName": "Beach Sheet",
+        "tonalRamp": [
+          "oklch(15.00% 0.0142 84.58)",
+          "oklch(26.43% 0.0142 84.58)",
+          "oklch(37.86% 0.0142 84.58)",
+          "oklch(49.29% 0.0142 84.58)",
+          "oklch(60.71% 0.0142 84.58)",
+          "oklch(72.14% 0.0142 84.58)",
+          "oklch(83.57% 0.0142 84.58)",
+          "oklch(95.00% 0.0142 84.58)"
+        ]
+      },
+      "beach-line": {
+        "role": "neutral",
+        "displayName": "Beach Line",
+        "tonalRamp": [
+          "oklch(15.00% 0.0145 148.76)",
+          "oklch(26.43% 0.0145 148.76)",
+          "oklch(37.86% 0.0145 148.76)",
+          "oklch(49.29% 0.0145 148.76)",
+          "oklch(60.71% 0.0145 148.76)",
+          "oklch(72.14% 0.0145 148.76)",
+          "oklch(83.57% 0.0145 148.76)",
+          "oklch(95.00% 0.0145 148.76)"
+        ]
+      },
+      "beach-accent": {
+        "role": "primary",
+        "displayName": "Beach Accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0824 201.52)",
+          "oklch(26.43% 0.0824 201.52)",
+          "oklch(37.86% 0.0824 201.52)",
+          "oklch(49.29% 0.0824 201.52)",
+          "oklch(60.71% 0.0824 201.52)",
+          "oklch(72.14% 0.0824 201.52)",
+          "oklch(83.57% 0.0824 201.52)",
+          "oklch(95.00% 0.0824 201.52)"
+        ]
+      },
+      "fest-background": {
+        "role": "neutral",
+        "displayName": "Fest Background",
+        "tonalRamp": [
+          "oklch(15.00% 0.0060 223.46)",
+          "oklch(26.43% 0.0060 223.46)",
+          "oklch(37.86% 0.0060 223.46)",
+          "oklch(49.29% 0.0060 223.46)",
+          "oklch(60.71% 0.0060 223.46)",
+          "oklch(72.14% 0.0060 223.46)",
+          "oklch(83.57% 0.0060 223.46)",
+          "oklch(95.00% 0.0060 223.46)"
+        ]
+      },
+      "fest-ink": {
+        "role": "neutral",
+        "displayName": "Fest Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0553 250.56)",
+          "oklch(26.43% 0.0553 250.56)",
+          "oklch(37.86% 0.0553 250.56)",
+          "oklch(49.29% 0.0553 250.56)",
+          "oklch(60.71% 0.0553 250.56)",
+          "oklch(72.14% 0.0553 250.56)",
+          "oklch(83.57% 0.0553 250.56)",
+          "oklch(95.00% 0.0553 250.56)"
+        ]
+      },
+      "fest-muted": {
+        "role": "neutral",
+        "displayName": "Fest Muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0397 244.70)",
+          "oklch(26.43% 0.0397 244.70)",
+          "oklch(37.86% 0.0397 244.70)",
+          "oklch(49.29% 0.0397 244.70)",
+          "oklch(60.71% 0.0397 244.70)",
+          "oklch(72.14% 0.0397 244.70)",
+          "oklch(83.57% 0.0397 244.70)",
+          "oklch(95.00% 0.0397 244.70)"
+        ]
+      },
+      "fest-sheet": {
+        "role": "neutral",
+        "displayName": "Fest Sheet",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 0.00)",
+          "oklch(26.43% 0.0000 0.00)",
+          "oklch(37.86% 0.0000 0.00)",
+          "oklch(49.29% 0.0000 0.00)",
+          "oklch(60.71% 0.0000 0.00)",
+          "oklch(72.14% 0.0000 0.00)",
+          "oklch(83.57% 0.0000 0.00)",
+          "oklch(95.00% 0.0000 0.00)"
+        ]
+      },
+      "fest-line": {
+        "role": "neutral",
+        "displayName": "Fest Line",
+        "tonalRamp": [
+          "oklch(15.00% 0.0221 235.02)",
+          "oklch(26.43% 0.0221 235.02)",
+          "oklch(37.86% 0.0221 235.02)",
+          "oklch(49.29% 0.0221 235.02)",
+          "oklch(60.71% 0.0221 235.02)",
+          "oklch(72.14% 0.0221 235.02)",
+          "oklch(83.57% 0.0221 235.02)",
+          "oklch(95.00% 0.0221 235.02)"
+        ]
+      },
+      "fest-accent": {
+        "role": "primary",
+        "displayName": "Fest Accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.1244 81.21)",
+          "oklch(26.43% 0.1244 81.21)",
+          "oklch(37.86% 0.1244 81.21)",
+          "oklch(49.29% 0.1244 81.21)",
+          "oklch(60.71% 0.1244 81.21)",
+          "oklch(72.14% 0.1244 81.21)",
+          "oklch(83.57% 0.1244 81.21)",
+          "oklch(95.00% 0.1244 81.21)"
+        ]
+      },
+      "fest-accent-ink": {
+        "role": "neutral",
+        "displayName": "Fest Accent Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0455 255.23)",
+          "oklch(26.43% 0.0455 255.23)",
+          "oklch(37.86% 0.0455 255.23)",
+          "oklch(49.29% 0.0455 255.23)",
+          "oklch(60.71% 0.0455 255.23)",
+          "oklch(72.14% 0.0455 255.23)",
+          "oklch(83.57% 0.0455 255.23)",
+          "oklch(95.00% 0.0455 255.23)"
+        ]
+      },
+      "dark-good": {
+        "role": "secondary",
+        "displayName": "Dark Good",
+        "tonalRamp": [
+          "oklch(15.00% 0.1062 153.21)",
+          "oklch(26.43% 0.1062 153.21)",
+          "oklch(37.86% 0.1062 153.21)",
+          "oklch(49.29% 0.1062 153.21)",
+          "oklch(60.71% 0.1062 153.21)",
+          "oklch(72.14% 0.1062 153.21)",
+          "oklch(83.57% 0.1062 153.21)",
+          "oklch(95.00% 0.1062 153.21)"
+        ]
+      },
+      "dark-miss": {
+        "role": "secondary",
+        "displayName": "Dark Miss",
+        "tonalRamp": [
+          "oklch(15.00% 0.1020 26.88)",
+          "oklch(26.43% 0.1020 26.88)",
+          "oklch(37.86% 0.1020 26.88)",
+          "oklch(49.29% 0.1020 26.88)",
+          "oklch(60.71% 0.1020 26.88)",
+          "oklch(72.14% 0.1020 26.88)",
+          "oklch(83.57% 0.1020 26.88)",
+          "oklch(95.00% 0.1020 26.88)"
+        ]
+      },
+      "light-good": {
+        "role": "secondary",
+        "displayName": "Light Good",
+        "tonalRamp": [
+          "oklch(15.00% 0.1031 154.61)",
+          "oklch(26.43% 0.1031 154.61)",
+          "oklch(37.86% 0.1031 154.61)",
+          "oklch(49.29% 0.1031 154.61)",
+          "oklch(60.71% 0.1031 154.61)",
+          "oklch(72.14% 0.1031 154.61)",
+          "oklch(83.57% 0.1031 154.61)",
+          "oklch(95.00% 0.1031 154.61)"
+        ]
+      },
+      "light-warn": {
+        "role": "secondary",
+        "displayName": "Light Warn",
+        "tonalRamp": [
+          "oklch(15.00% 0.1087 73.16)",
+          "oklch(26.43% 0.1087 73.16)",
+          "oklch(37.86% 0.1087 73.16)",
+          "oklch(49.29% 0.1087 73.16)",
+          "oklch(60.71% 0.1087 73.16)",
+          "oklch(72.14% 0.1087 73.16)",
+          "oklch(83.57% 0.1087 73.16)",
+          "oklch(95.00% 0.1087 73.16)"
+        ]
+      },
+      "light-miss": {
+        "role": "secondary",
+        "displayName": "Light Miss",
+        "tonalRamp": [
+          "oklch(15.00% 0.1547 27.80)",
+          "oklch(26.43% 0.1547 27.80)",
+          "oklch(37.86% 0.1547 27.80)",
+          "oklch(49.29% 0.1547 27.80)",
+          "oklch(60.71% 0.1547 27.80)",
+          "oklch(72.14% 0.1547 27.80)",
+          "oklch(83.57% 0.1547 27.80)",
+          "oklch(95.00% 0.1547 27.80)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Day title."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Split identity."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Target and nearby compact headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text."
+      },
+      "support": {
+        "displayName": "Support",
+        "purpose": "Instructions and day description."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Mode, status, navigation, and daily notes."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Primary actions."
+      },
+      "score": {
+        "displayName": "Score",
+        "purpose": "DOM result score."
+      }
+    },
+    "shadows": [
+      {
+        "name": "desktop-game",
+        "value": "0 10px 60px #0003",
+        "purpose": "Center the viewport against the desktop background."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 24px #0003",
+        "purpose": "Separate transient feedback from the game scene."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "160ms ease-out",
+        "purpose": "Optional filter and background state transitions."
+      },
+      {
+        "name": "card-arrive",
+        "value": "400ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Optional result-card opacity and clip reveal."
+      },
+      {
+        "name": "stein-follow-through",
+        "value": "0.24s",
+        "purpose": "Bounded physics settle after the heavy stein is released."
+      },
+      {
+        "name": "bottle-glug-period",
+        "value": "0.58s",
+        "purpose": "Deterministic bottle-body flow pulse."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop-game",
+        "value": "min-width: 700px"
+      },
+      {
+        "name": "short-viewport",
+        "value": "max-height: 740px"
+      },
+      {
+        "name": "review-single-column",
+        "value": "max-width: 900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Split wordmark",
+      "kind": "custom",
+      "refersTo": "wordmark",
+      "description": "The incumbent identity across every place.",
+      "html": "<a class=\"ds-wordmark\" href=\"#\">Split<span class=\"ds-dot\">.</span></a>",
+      "css": ".ds-wordmark{font:900 36px/1 Fraunces,Georgia,serif;letter-spacing:-.035em;color:var(--fg,#eee7d6);text-decoration:none}.ds-dot{color:var(--accent,#d9b874)}.ds-wordmark:hover{text-decoration:underline;text-underline-offset:5px}.ds-wordmark:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
+    },
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Start the daily sip or share the result.",
+      "html": "<button type=\"button\" class=\"ds-primary\">Take today’s sip <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
+      "css": ".ds-primary{display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 20px;border:0;border-radius:8px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:17px;font-weight:700;line-height:1.3;cursor:pointer}.ds-primary:hover{filter:brightness(1.06)}.ds-primary:disabled{opacity:.5;cursor:wait}.ds-primary:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-primary{transition:filter 160ms ease-out}}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Touch fallback, practice, or recalibration.",
+      "html": "<button type=\"button\" class=\"ds-text\">Use touch instead</button>",
+      "css": ".ds-text{min-height:38px;border:0;background:none;color:var(--fg,#eee7d6);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:700;padding:6px 8px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;cursor:pointer}.ds-text:hover{text-decoration-thickness:2px}.ds-text:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
+    },
+    {
+      "name": "Outlined action",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Copy the plain-text share.",
+      "html": "<button type=\"button\" class=\"ds-outline\">Copy text</button>",
+      "css": ".ds-outline{min-height:54px;border:1px solid var(--line,#3c4a40);border-radius:8px;background:transparent;color:var(--fg,#eee7d6);padding:8px 14px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:14px;cursor:pointer}.ds-outline:hover{background:var(--line,#3c4a40)}.ds-outline:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-outline{transition:background 160ms ease-out}}"
+    },
+    {
+      "name": "Hold control",
+      "kind": "button",
+      "refersTo": "drink-control",
+      "description": "Hold to drink; release to stop the sip.",
+      "html": "<button type=\"button\" class=\"ds-drink\" aria-pressed=\"false\">Hold to drink</button>",
+      "css": ".ds-drink{width:100%;min-height:64px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);border:0;border-radius:8px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:700;touch-action:none;user-select:none;cursor:pointer}.ds-drink:active{filter:brightness(.91)}.ds-drink:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
+    },
+    {
+      "name": "Preview navigation",
+      "kind": "nav",
+      "refersTo": "preview-nav",
+      "description": "Explore the first three days without saving a score.",
+      "html": "<nav class=\"ds-preview\" aria-label=\"Preview the first three days\"><span>Design preview</span><a href=\"#day1\" aria-current=\"page\">Pub</a><a href=\"#day2\">Beach</a><a href=\"#day3\">Fest</a></nav>",
+      "css": ".ds-preview{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--sheet,#1d2a23);min-height:32px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:12px;color:var(--muted,#aaa797)}.ds-preview a{color:var(--fg,#eee7d6);padding:5px 0;text-decoration-thickness:1px;text-underline-offset:3px}.ds-preview a:hover{text-decoration-thickness:2px}.ds-preview a[aria-current]{color:var(--fg,#eee7d6);font-weight:700;text-decoration-color:var(--accent,#d9b874);text-decoration-thickness:2px}.ds-preview a:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
+    },
+    {
+      "name": "Goal and vessel cue",
+      "kind": "custom",
+      "refersTo": "goal-row",
+      "description": "A short target and the daily vessel’s feel.",
+      "html": "<div class=\"ds-goal\"><h2>Split the G.</h2><span>smooth pour</span></div>",
+      "css": ".ds-goal{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--fg,#eee7d6)}.ds-goal h2{margin:0;font:900 24px/1.15 Fraunces,Georgia,serif;letter-spacing:-.025em}.ds-goal span{font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:700;color:var(--muted,#aaa797)}"
+    },
+    {
+      "name": "Score and position strip",
+      "kind": "custom",
+      "refersTo": "result-score",
+      "description": "A truthful score with one stopping position, not attempt history.",
+      "html": "<div class=\"ds-score\" aria-label=\"Score\"><strong>100</strong><span>/100</span><span class=\"ds-strip\" aria-label=\"Position of the stopping line\">⬜⬜🟩⬜⬜</span></div>",
+      "css": ".ds-score{display:flex;align-items:baseline;gap:3px;font-variant-numeric:tabular-nums;color:var(--fg,#eee7d6);font-family:Karla,'Helvetica Neue',Arial,sans-serif;}.ds-score strong{font:900 40px/1 Fraunces,Georgia,serif;letter-spacing:-.035em}.ds-score>span:nth-child(2){color:var(--muted,#aaa797);font-size:15px}.ds-strip{margin-left:auto;font-size:19px;letter-spacing:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "One sip. Three places.",
+    "overview": "Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.",
+    "keyCharacteristics": [
+      "A large, unobscured vessel is the focal point.",
+      "The place changes the palette, backdrop, vessel, and share card together.",
+      "Heavy serif titles pair with plain, compact instructions.",
+      "A single stopping position carries the result."
+    ],
+    "rules": [
+      {
+        "name": "The Same Place Rule",
+        "body": "The game and its exported card use the same daily theme. Keep scene, vessel, mark, and palette coherent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Readable State Rule",
+        "body": "Use foreground ink for focus outlines and active preview labels. Accent color may underline a selection; it does not replace readable text.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Identity Rule",
+        "body": "Keep Fraunces for the Split wordmark, day titles, goals, verdicts, and scores. Keep Karla for instructions, controls, and supporting information.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do preserve the existing wordmark, Fraunces/Karla pairing, and canvas vessel language when adding a day.",
+      "Do give each new place a coherent palette, recognizable vessel, short target, and matching share treatment.",
+      "Do keep the vessel and mark visible between the heading and controls at both normal and short phone heights.",
+      "Do show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.",
+      "Do label preview and practice results on both image and text shares.",
+      "Do use foreground ink for focus and active preview text, and retain the reduced-motion treatment."
+    ],
+    "donts": [
+      "Don't let scenery, printed brand names, bunting, headings, or controls obscure the scoring mark.",
+      "Don't represent the five-cell position strip as attempts or a multi-row guessing history.",
+      "Don't express a score as an accuracy percentage; offset percentages measure mark height.",
+      "Don't replace a player's first daily score with a later practice sip.",
+      "Don't introduce external font requests when the shipped font files already provide the required weights."
+    ]
+  }
+}

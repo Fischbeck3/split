@@ -104,10 +104,86 @@ export function tiltRate(K, deg){
   const u = Math.max(0, Math.min(1.6, (deg - 15) / 25));
   return K * Math.pow(u, 1.3);
 }
+
+/** The state of one sip. Rates and velocity are in vessel-heights per second. */
+export function makeDrinkState(P){
+  return {level: startLevel(P.theme), velocity: 0, elapsed: 0, releaseElapsed: 0};
+}
+
+export const STEIN_SETTLE_SECONDS = 0.24;
+const STEIN_RISE_SECONDS = 0.18, STEIN_FALL_SECONDS = 0.09;
+const MAX_DRINK_STEP = 0.25, INTEGRATION_STEP = 1 / 120;
+
+function vesselRate(P, level, elapsed, inputRate){
+  let cadence = 1;
+  if (P.theme.vessel === 'bottle'){
+    // Air enters freely through the empty neck, then arrives in regular glugs in the body.
+    // The same elapsed time gives everyone the same pulse, independent of animation FPS.
+    const body = Math.max(0, Math.min(1, (level - 0.32) / 0.12));
+    cadence += body * 0.65 * Math.sin(elapsed * Math.PI * 2 / 0.58);
+  }
+  return inputRate * flowFactor(P.theme, P.markY, level) * cadence;
+}
+
+/** Advance one sip without mutating its state.
+ * inputRate is the BASE rate (K for a held sip, or tiltRate(K, angle)); 0 releases it.
+ * The pub stops immediately, the bottle pulses below its shoulder, and a heavy stein
+ * has a small, bounded follow-through. dt is seconds, capped to ignore background gaps.
+ * RK4 substeps keep variable frame rates comparable even in the bottle's narrow neck. */
+export function stepDrink(P, state, inputRate, dt){
+  const next = {
+    level: Math.max(0, Math.min(DRAIN_LEVEL, Number.isFinite(state.level) ? state.level : startLevel(P.theme))),
+    velocity: Math.max(0, Number.isFinite(state.velocity) ? state.velocity : 0),
+    elapsed: Math.max(0, Number.isFinite(state.elapsed) ? state.elapsed : 0),
+    releaseElapsed: Math.max(0, Number.isFinite(state.releaseElapsed) ? state.releaseElapsed : 0)
+  };
+  const seconds = Number.isFinite(dt) ? Math.max(0, Math.min(MAX_DRINK_STEP, dt)) : 0;
+  const rate = Number.isFinite(inputRate) ? Math.max(0, Math.min(P.K * Math.pow(1.6, 1.3), inputRate)) : 0;
+  const heavy = P.theme.vessel === 'stein';
+  if (!seconds) return next;
+  if (next.level >= DRAIN_LEVEL){ next.velocity = 0; next.elapsed += seconds; return next; }
+
+  if (rate === 0){
+    if (heavy && next.velocity > 0){
+      const tail = Math.max(0, Math.min(seconds, STEIN_SETTLE_SECONDS - next.releaseElapsed));
+      const decay = Math.exp(-tail / STEIN_FALL_SECONDS);
+      next.level += next.velocity * STEIN_FALL_SECONDS * (1 - decay);
+      next.velocity *= decay;
+      next.releaseElapsed += seconds;
+      if (next.releaseElapsed >= STEIN_SETTLE_SECONDS - 1e-9) next.velocity = 0;
+    } else next.velocity = 0;
+    next.elapsed += seconds;
+  } else {
+    next.releaseElapsed = 0;
+    const steps = Math.ceil(seconds / INTEGRATION_STEP), h = seconds / steps;
+    const derivative = (level, velocity, elapsed) => {
+      const desired = vesselRate(P, level, elapsed, rate);
+      return heavy ? [velocity, (desired - velocity) / STEIN_RISE_SECONDS] : [desired, 0];
+    };
+    for (let i = 0; i < steps && next.level < DRAIN_LEVEL; i++){
+      const {level: l, velocity: v, elapsed: t} = next;
+      const a = derivative(l, v, t);
+      const b = derivative(l + a[0] * h / 2, v + a[1] * h / 2, t + h / 2);
+      const c = derivative(l + b[0] * h / 2, v + b[1] * h / 2, t + h / 2);
+      const d = derivative(l + c[0] * h, v + c[1] * h, t + h);
+      next.level += h * (a[0] + 2 * b[0] + 2 * c[0] + d[0]) / 6;
+      next.velocity += h * (a[1] + 2 * b[1] + 2 * c[1] + d[1]) / 6;
+      next.elapsed += h;
+    }
+    if (!heavy) next.velocity = vesselRate(P, next.level, next.elapsed, rate);
+  }
+  if (next.level >= DRAIN_LEVEL){ next.level = DRAIN_LEVEL; next.velocity = 0; }
+  return next;
+}
+
+/** A released sip can be scored when this is true. */
+export const isDrinkSettled = state => state.velocity === 0;
+
 /** Seconds of steady drinking from the start line down to the mark. */
 export function secondsToMark(P, dt = 1 / 120){
-  let L = startLevel(P.theme), t = 0;
-  while (L < P.markY && t < 60){ L += P.K * flowFactor(P.theme, P.markY, L) * dt; t += dt; }
+  let state = makeDrinkState(P), t = 0;
+  const step = Math.max(1 / 1000, Math.min(MAX_DRINK_STEP, Number.isFinite(dt) ? dt : 1 / 120));
+  while (state.level < P.markY && t < 60){ state = stepDrink(P, state, P.K, step); t += step; }
   return t;
 }
 

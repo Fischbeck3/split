@@ -2,7 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {LAUNCH, SCHEDULE} from '../site/js/themes.js';
 import {THEMES, PROFILES, themeById, themeForDay, dayParams, dayNumber, keyForDay, startLevel, flowFactor, tiltRate,
-  secondsToMark, scoreFromOffset, bandEmoji, detailText, DRAIN_LEVEL, PERFECT, SPLIT} from '../site/js/core.js';
+  makeDrinkState, stepDrink, isDrinkSettled, STEIN_SETTLE_SECONDS, secondsToMark,
+  scoreFromOffset, bandEmoji, detailText, DRAIN_LEVEL, PERFECT, SPLIT} from '../site/js/core.js';
 import {SCENES, MARKS} from '../site/js/draw.js';
 
 const DAYS = Array.from({length: 400}, (_, i) => i + 1);
@@ -67,6 +68,81 @@ test('a bottle neck drains fast and a stein drinks slow', () => {
   const beach = themeById('beach'), pub = themeById('pub'), munich = themeById('munich');
   assert.ok(flowFactor(beach, 0.57, 0.1) > 2.5 * flowFactor(beach, 0.57, 0.57));
   assert.ok(flowFactor(munich, 0.56, 0.56) < flowFactor(pub, 0.56, 0.56));
+});
+
+function drinkFor(P, state, rate, seconds, frameSteps = [1 / 60]){
+  let left = seconds, frame = 0;
+  while (left > 1e-10){
+    const dt = Math.min(left, frameSteps[frame++ % frameSteps.length]);
+    state = stepDrink(P, state, rate, dt); left -= dt;
+  }
+  return state;
+}
+
+test('a sip is deterministic, pure, and comparable at different frame rates', () => {
+  for (const day of [1, 2, 3]){
+    const P = dayParams(day), initial = makeDrinkState(P), before = {...initial};
+    const simulate = steps => {
+      const held = drinkFor(P, initial, P.K, 2.2, steps);
+      return drinkFor(P, held, 0, 0.4, steps);
+    };
+    const reference = simulate([1 / 120]);
+    assert.deepEqual(simulate([1 / 120]), reference, P.theme.id + ': deterministic');
+    for (const steps of [[1 / 24], [1 / 30], [1 / 60], [0.011, 0.022, 0.033]]){
+      const actual = simulate(steps);
+      assert.ok(Math.abs(actual.level - reference.level) < 0.00001, P.theme.id + ': frame rate changed the landing');
+      assert.equal(actual.velocity, 0, P.theme.id + ': released sip did not settle');
+    }
+    assert.deepEqual(initial, before, P.theme.id + ': input state was mutated');
+  }
+});
+
+test('the bottle has a free-running neck and a strong, regular glug in its body', () => {
+  const P = dayParams(2), rate = P.K;
+  const at = (level, elapsed) => stepDrink(P, {level, elapsed, velocity: 0}, rate, 1 / 120);
+  const neckFast = at(0.12, 0.145), neckSlow = at(0.12, 0.435);
+  assert.ok(Math.abs(neckFast.velocity - neckSlow.velocity) < 1e-9, 'neck should not pulse');
+  const bodyFast = at(0.6, 0.145), bodySlow = at(0.6, 0.435);
+  assert.ok(bodyFast.velocity > bodySlow.velocity * 3, 'body should visibly pulse');
+  assert.ok(neckFast.velocity > bodyFast.velocity, 'neck still drains faster than the strongest body glug');
+  assert.ok(bodySlow.velocity > 0, 'a glug should not reverse the line');
+});
+
+test('the pub stops on release while the stein has a small, bounded follow-through', () => {
+  const pub = dayParams(1), stein = dayParams(3);
+  const pubHeld = drinkFor(pub, makeDrinkState(pub), pub.K, 1);
+  const pubReleased = stepDrink(pub, pubHeld, 0, 1 / 60);
+  assert.equal(pubReleased.level, pubHeld.level);
+  assert.ok(isDrinkSettled(pubReleased));
+  const steinHeld = drinkFor(stein, makeDrinkState(stein), stein.K, 1);
+  assert.ok(steinHeld.level - startLevel(stein.theme) < pubHeld.level - startLevel(pub.theme), 'stein should drink more slowly');
+  const steinReleased = stepDrink(stein, steinHeld, 0, 1 / 60);
+  assert.ok(steinReleased.level > steinHeld.level);
+  assert.ok(!isDrinkSettled(steinReleased));
+  const settled = drinkFor(stein, steinHeld, 0, STEIN_SETTLE_SECONDS);
+  assert.ok(isDrinkSettled(settled));
+  assert.ok(settled.level - steinHeld.level > 0.002 && settled.level - steinHeld.level < 0.02, 'tail should be learnable and brief');
+  assert.equal(drinkFor(stein, settled, 0, 1).level, settled.level, 'line moved after settling');
+});
+
+test('a paused tab cannot skip a whole drink and the level never passes the drain', () => {
+  const P = dayParams(1), initial = makeDrinkState(P);
+  assert.deepEqual(stepDrink(P, initial, P.K, 100), stepDrink(P, initial, P.K, 0.25));
+  const drained = stepDrink(P, {...initial, level: DRAIN_LEVEL - 0.001}, P.K * 100, 0.25);
+  assert.equal(drained.level, DRAIN_LEVEL);
+  assert.ok(isDrinkSettled(drained));
+  assert.equal(stepDrink(P, initial, -P.K, 0.1).level, initial.level);
+  assert.deepEqual(stepDrink(P, initial, P.K, NaN), initial);
+});
+
+test('the launch days carry their identity into text shares and cards', () => {
+  assert.deepEqual([1, 2, 3].map(n => themeForDay(n).name), ['Guinness', 'Corona', 'Festbier']);
+  for (const n of [1, 2, 3]){
+    const t = themeForDay(n);
+    assert.ok(t.location && t.feel && t.emoji, t.id + ': missing share identity');
+    assert.deepEqual(Object.keys(t.palette), ['bg', 'fg', 'muted', 'sheet', 'line', 'accent', 'accentFg']);
+    for (const color of Object.values(t.palette)) assert.match(color, /^#[0-9a-f]{6}$/i);
+  }
 });
 
 test('tilt: nothing until 15 degrees, full rate at 40, capped beyond', () => {

@@ -1,0 +1,32 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-09T04:15:02.418Z",
+        "reason": "Codex verified: result image is hidden initially; drawShareCard generates its real PNG src synchronously before it is unhidden."
+      },
+      {
+        "rule": "overused-font",
+        "value": "fraunces",
+        "createdAt": "2026-10-09T04:18:14.511Z",
+        "reason": "Codex preserved Fraunces from the incumbent Split interface during this scoped three-theme extension; verified source and screenshots."
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "site/design.html"
+        ],
+        "createdAt": "2026-10-09T04:18:14.532Z",
+        "reason": "Codex verified the design review page body is explicitly cream #f6f0e3 with secondary ink #556c73; detector inherited the game CSS dark root background and missed the page override."
+      }
+    ]
+  }
+}
