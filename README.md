@@ -52,6 +52,8 @@ The place gently brightens when it is ready. Holding visibly depresses the drink
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
+Open `/next-days.html` for nine unscheduled, playable scene-and-glass concepts: Sapporo in Japan, Butterbeer in Hogsmeade, and Peroni in Rome. Each drink has three painted places, vessel-specific flow, a real stopping-line postcard, and an in-memory shortlist. Six later-place pitches broaden the options. The catalog lives separately in `site/js/concepts.js`; it does not join `THEMES`, set official dates, save results, or alter the daily seed. Choose the next lineup before scheduling it.
+
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
 Every glass lives in `site/js/themes.js`, and the fields are described at the top of that file. Add an entry to `THEMES`, and put its `id` in `SCHEDULE` to pin it to a day. Run `npm test` to check that its mark can be reached, then preview that day. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
@@ -114,6 +116,8 @@ Follow-up playtest checks are still open: iPhone and Android hold/release, optio
 
 - `site/index.html` and `site/css/style.css`: the game page and shared styles
 - `site/design.html`: the first-three-day review and sample shares
+- `site/next-days.html`, `site/css/next-days.css`, and `site/js/next-days.js`: the unscheduled next-places studio
+- `site/js/concepts.js` and `site/assets/concepts/`: independent concept pairings and nine painted place options
 - `site/motion.html`: sip playback and frozen movement stages, without saved scores
 - `site/js/themes.js`: the glasses, palettes, and calendar
 - `site/js/config.js`: planned public address and fixed release date
