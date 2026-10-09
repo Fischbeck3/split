@@ -1,0 +1,11 @@
+{
+  "purpose": "Nine candidate places for the next-days studio; concept previews, not a release schedule.",
+  "generator": "image_gen",
+  "style": "Painterly travel illustration with convincing materials, seated table perspective, quiet central space for a live vessel, and tiny distant friends. Three equal portrait panels in each landscape triptych, with no text or drinks baked into the art.",
+  "encoding": "Generated opaque PNG converted to JPEG at quality 90; no visual editing.",
+  "assets": [
+    {"file": "japan-options.jpg", "size": [1619, 971], "table": 0.57, "panels": ["Tokyo izakaya after rain, red lantern and wet alley", "Warm timber bar in snowy Sapporo", "Red-brick Sapporo beer hall, copper and communal tables"]},
+    {"file": "hogsmeade-options.jpg", "size": [1619, 971], "table": 0.664, "panels": ["Hog's Head, firelight, crooked beams and mounted hog", "Three Broomsticks, shared table and snowy window", "Snowy Hogsmeade at blue hour, glowing windows and distant Hogwarts"]},
+    {"file": "rome-options.jpg", "size": [1619, 971], "table": 0.66, "panels": ["Trastevere cafe at golden hour", "Roman rooftop and domes at blue hour", "Piazza lunch under a cream and red awning"]}
+  ]
+}
