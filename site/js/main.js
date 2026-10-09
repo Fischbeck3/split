@@ -1,6 +1,6 @@
 // The app: hold input, the drink, results, sharing and the record.
 import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL,
-  scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
+  scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey, THEMES} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {createAnalytics, gameProperties, resultProperties as analyticsResultProperties, trackedResultAction} from './analytics.js';
@@ -12,10 +12,12 @@ import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
+import {readThemeReview, reviewHash, adjacentReviewTheme} from './theme-review.js';
 
 const $ = id => document.getElementById(id);
 // Separate the friends run from earlier test attempts without moving the calendar.
 const STORE = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
+const themeReview = readThemeReview(location.hash);
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reducedMotion = motionQuery.matches;
 // The removed glass button's saved choice must not silently disable tipping.
@@ -34,9 +36,9 @@ if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotio
 else if (motionQuery.addListener) motionQuery.addListener(onMotionPreferenceChange);
 renderMotionPreference();
 
-const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
+const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, review:!!themeReview, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
   result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState()};
-const analytics = createAnalytics();
+const analytics = createAnalytics(themeReview ? {projectKey:''} : {});
 function resultProperties(){
   return analyticsResultProperties(S);
 }
@@ -51,22 +53,23 @@ $('startHold').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
 function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
 
-function sipKind(){ return S.preview ? 'Preview' : S.kind === 'archive' ? 'Archive' : S.practice ? 'Practice' : 'Today’s sip'; }
+function sipKind(){ return S.review ? 'Review · not saved' : S.preview ? 'Preview' : S.kind === 'archive' ? 'Archive' : S.practice ? 'Practice' : 'Today’s sip'; }
+function pourFeel(){ return S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour'); }
 function challengeDate(){
   const [year, month, date] = S.key.split('-').map(Number);
   return new Intl.DateTimeFormat(undefined, {month:'short', day:'numeric', year:'numeric'}).format(new Date(year, month - 1, date, 12));
 }
 function renderChallengeStatus(now = new Date()){
-  const todayAvailable = S.kind === 'archive' || (S.preview && !S.designPreview && resolveChallenge({now}).kind === 'today');
+  const todayAvailable = !S.review && (S.kind === 'archive' || (S.preview && !S.designPreview && resolveChallenge({now}).kind === 'today'));
   for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).hidden = !todayAvailable;
   $('intro').setAttribute('aria-label', S.kind === 'archive' ? 'Try an archived glass' : S.preview ? 'Try a preview glass' : 'Start today’s sip');
-  $('startHold').textContent = S.kind === 'archive' ? 'Try this glass' : S.preview ? 'Take a preview sip' : 'Take today’s sip';
-  $('introNote').textContent = S.kind === 'archive'
+  $('startHold').textContent = S.review ? 'Try this glass' : S.kind === 'archive' ? 'Try this glass' : S.preview ? 'Take a preview sip' : 'Take today’s sip';
+  $('introNote').textContent = S.review ? (S.notice ? S.notice + ' ' : '') + 'Unlimited review sips. Scores are not saved.' : S.kind === 'archive'
     ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
     : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
     : (S.notice ? S.notice + ' ' : '') + 'One scored sip. Same pour for everyone.';
-  if (S.state === 'ready' || S.state === 'drinking') $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
-  $('practiceBtn').textContent = 'Another sip · ' + (S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
+  if (S.state === 'ready' || S.state === 'drinking') $('hudMode').textContent = sipKind() + ' · ' + pourFeel();
+  $('practiceBtn').textContent = 'Another sip · ' + (S.review ? 'review' : S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
 }
 function refreshDayStatus(now = new Date()){
   if (S.kind === 'today' && !canRecordChallenge({key:S.key, kind:S.kind, now})){
@@ -88,7 +91,7 @@ function layout(){
   scene.width = Math.round(W * DPR); scene.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 }
 function glassBox(w, h, theme){
-  const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665);
+  const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665) - (S.review ? 52 : 0);
   const stein = theme.vessel === 'stein', halfW = Math.min(w * (stein ? .27 : b.w), (bot - top) * b.h);
   // Center the stein's full silhouette, leaving room for its handle during a sip.
   return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: renderVessel(theme)};
@@ -118,9 +121,10 @@ function begin(){
   S.targetAt = performance.now();
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
-  $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
+  $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + pourFeel();
   $('drinkControl').hidden = false;
   $('drinkControl').disabled = false;
+  $('drinkControl').setAttribute('aria-pressed', 'false');
   $('drinkControl').textContent = 'Hold to drink';
   $('footPill').textContent = 'Release early; settle at the mark.';
   $('drinkControl').focus({preventScroll: true});
@@ -198,14 +202,14 @@ function finish(now){
 
 // ---------- results and sharing ----------
 function shareText(){
-  return buildShareText({num:S.num, key:S.key, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
+  return buildShareText({num:S.num, key:S.key, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive', review:S.review});
 }
 function renderResult(){
   const r = S.result;
   $('resScore').textContent = r.score; $('resScore').className = 'tone-' + r.tone;
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
-  $('resKind').textContent = S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
+  $('resKind').textContent = S.review ? 'Review · not saved' : S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
   const saved = load().days[S.key];
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
@@ -231,7 +235,7 @@ function renderResult(){
   $('result').scrollTop = 0;
 }
 function drawCard(){
-  return drawShareCard($('card'), {num:S.num, key:S.key, theme:S.theme, P:S.P, result:S.result, friend:S.friend, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
+  return drawShareCard($('card'), {num:S.num, key:S.key, theme:S.theme, P:S.P, result:S.result, friend:S.friend, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive', review:S.review});
 }
 async function share(){
   const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
@@ -368,6 +372,8 @@ $('practiceBtn').addEventListener('click', () => {
   S.practice = true;
   begin();
 });
+$('reviewTheme').addEventListener('change', event => { location.hash = reviewHash(event.target.value); });
+$('reviewRefill').addEventListener('click', () => { if (S.review && S.P){ S.practice = true; begin(); } });
 for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventListener('click', () => location.assign('./'));
 $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
@@ -388,13 +394,13 @@ document.querySelector('.rules').addEventListener('toggle', event => {
 
 // ---------- start ----------
 async function init(){
-  const now = new Date(), challenge = resolveChallenge({now, search:location.search, hash:location.hash});
+  const now = new Date(), challenge = themeReview || resolveChallenge({now, search:location.search, hash:location.hash});
   S.num = challenge.num; S.key = challenge.key; S.kind = challenge.kind; S.notice = challenge.notice;
   const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
-  S.P = dayParams(S.num); S.theme = S.P.theme;
+  S.P = themeReview?.P || dayParams(S.num); S.theme = S.P.theme;
   S.attribution = getCalendarAttribution(S.key, S.theme);
-  S.friend = readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
+  S.friend = S.review ? null : readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
   analytics.capture('game_opened', gameProperties(S, now), now);
   if (S.friend) analytics.capture('friend_link_opened', {...gameProperties(S, now), friend_sip_kind:S.friend.kind}, now);
   await loadSceneAssets(S.theme);
@@ -406,7 +412,7 @@ async function init(){
   for (const [name,value] of Object.entries(light ? {good:'#267347',warn:'#936210',miss:'#b64037'} : {good:'#91dda8',warn:'#d9b874',miss:'#ffaaa0'})) document.documentElement.style.setProperty('--'+name,value);
   document.querySelector('meta[name="theme-color"]').content = palette.bg;
   $('hudSub').textContent = S.theme.name + (S.theme.id === 'pub' ? ' · Ireland' : S.theme.id === 'beach' ? ' · Cabo, Mexico' : S.theme.id === 'munich' ? ' · Munich, Germany' : ' · ' + S.theme.label);
-  $('introNo').textContent = 'No. ' + String(S.num).padStart(3, '0');
+  $('introNo').textContent = S.review ? 'Review ' + S.num + '/' + THEMES.length : 'No. ' + String(S.num).padStart(3, '0');
   $('introName').textContent = S.theme.label;
   $('memoryLine').textContent = S.theme.memory || ''; $('memoryLine').hidden = !S.theme.memory;
   $('friendInvite').hidden = !S.friend;
@@ -424,12 +430,25 @@ async function init(){
         ? 'The sip keeps moving briefly after release. Release before the mark and let it settle.'
         : 'As the glass narrows, the beer line falls faster. Release before the mark and let the sip settle.';
   renderMotionPreference();
-  document.title = 'Split No. ' + S.num + ' · ' + S.theme.label;
+  document.title = S.review ? 'Split theme review · ' + S.theme.name : 'Split No. ' + S.num + ' · ' + S.theme.label;
   scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the brief dashed target line across ' + S.theme.target + '.');
   if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
     const active = $('previewNav').querySelector('a[href="#day' + S.num + '"]');
     if (active) active.setAttribute('aria-current', 'page');
+  }
+  if (S.review){
+    document.body.classList.add('preview', 'theme-review');
+    $('reviewNav').hidden = false;
+    for (const theme of THEMES){
+      const option = document.createElement('option'); option.value = theme.id; option.textContent = theme.name;
+      $('reviewTheme').appendChild(option);
+    }
+    $('reviewTheme').value = S.theme.id;
+    $('reviewPrev').href = reviewHash(adjacentReviewTheme(S.theme.id, -1));
+    $('reviewNext').href = reviewHash(adjacentReviewTheme(S.theme.id, 1));
+    document.querySelector('.stats').hidden = true;
+    document.querySelector('.next').hidden = true;
   }
 
   setPhase('intro'); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');

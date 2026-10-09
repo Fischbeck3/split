@@ -11,8 +11,8 @@ const BODY = 'Karla, "Helvetica Neue", Arial, sans-serif';
 const CARD_W = 1080, CARD_H = 1350;
 const PHOTO = {x: 40, y: 246, w: 1000, h: 750};
 
-function statusLabel(result, preview, archive){
-  return preview ? 'Preview' : archive ? 'Archive' : result.counts === false ? 'Practice' : '';
+function statusLabel(result, preview, archive, review){
+  return review ? 'Review' : preview ? 'Preview' : archive ? 'Archive' : result.counts === false ? 'Practice' : '';
 }
 
 function canonicalUrl(url){
@@ -25,8 +25,9 @@ function canonicalUrl(url){
   }
 }
 
-function challengeUrl({url, key, num, preview, archive, theme, result}){
+function challengeUrl({url, key, num, preview, archive, theme, result, review}){
   const parsed = new URL(canonicalUrl(url));
+  if (review){ parsed.hash = 'admin/' + theme.id; return parsed.href; }
   const day = Number.isInteger(num) && num >= 1 && isCalendarDateKey(keyForDay(num)) ? num : 1;
   if (preview) parsed.hash = 'day' + (day <= 9999 ? day : 1);
   else parsed.searchParams.set('day', isCalendarDateKey(key) ? key : keyForDay(day));
@@ -56,15 +57,15 @@ function offsetLabel(result){
 }
 
 /** Pure text sharing. The strip is one stopping position, never a grid of attempts. */
-export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false}){
-  const status = statusLabel(result, preview, archive);
+export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false}){
+  const status = statusLabel(result, preview, archive, review);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
   return [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
     result.score + '/100 · ' + result.label,
     bandEmoji(result.f),
     'Beat my sip. One sip. Your turn.',
-    challengeUrl({url, key, num, preview, archive, theme, result})
+    challengeUrl({url, key, num, preview, archive, theme, result, review})
   ].join('\n');
 }
 
@@ -149,7 +150,7 @@ function drawBand(c, f, x, y, ink){
 }
 
 /** Draw synchronously after the caller has loaded the fonts and shared place assets. */
-export function drawShareCard(canvas, {num, key, theme, P, result, friend = null, url = SITE_URL, preview = false, archive = false}){
+export function drawShareCard(canvas, {num, key, theme, P, result, friend = null, url = SITE_URL, preview = false, archive = false, review = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
   const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
   const doc = canvas.ownerDocument || document;
@@ -169,7 +170,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   fitText(c, place.line, 64, 221, 952, 30, BODY, 600);
   c.textAlign = 'right'; c.font = '700 30px ' + BODY;
   c.fillText('#' + String(num).padStart(3, '0'), 1016, 82);
-  const status = statusLabel(result, preview, archive);
+  const status = statusLabel(result, preview, archive, review);
   if (status){
     c.font = '700 23px ' + BODY;
     c.fillText(status + (archive && !preview && result.counts ? ' · saved sip' : ' · not saved'), 1016, 117);
@@ -189,7 +190,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
   // Keep the printed address short; the benchmark travels in the text link, not an unreadable query on paper.
-  fitText(c, cardUrl(challengeUrl({url, key, num, preview}), num), 64, 1313, 450, 27, BODY, 700);
+  fitText(c, cardUrl(challengeUrl({url, key, num, preview, review, theme}), num), 64, 1313, 450, 27, BODY, 700);
   c.textAlign = 'right'; fitText(c, 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
   return canvas;
 }

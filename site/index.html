@@ -81,6 +81,14 @@
     </div>
   </section>
   <nav class="preview-nav" id="previewNav" aria-label="Preview the first three days" hidden><span>Design preview</span><a href="#day1">Pub</a><a href="#day2">Rome</a><a href="#day3">Tokyo</a></nav>
+  <nav class="review-nav" id="reviewNav" aria-label="Review every theme" hidden>
+    <div class="review-meta"><span>Theme review · not saved</span><div><button id="reviewRefill" type="button">Refill</button><a href="./">Exit</a></div></div>
+    <div class="review-switcher">
+      <a id="reviewPrev" aria-label="Previous theme"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m14 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <label class="review-picker">Glass<select id="reviewTheme" aria-label="Choose a theme"></select></label>
+      <a id="reviewNext" aria-label="Next theme"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m10 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </nav>
   <canvas id="card" width="1080" height="1350" hidden></canvas>
   <noscript><p class="noscript">Split needs JavaScript to pour.</p></noscript>
 </main>
