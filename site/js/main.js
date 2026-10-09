@@ -63,7 +63,7 @@ function renderChallengeStatus(now = new Date()){
   const todayAvailable = !S.review && (S.kind === 'archive' || (S.preview && !S.designPreview && resolveChallenge({now}).kind === 'today'));
   for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).hidden = !todayAvailable;
   $('intro').setAttribute('aria-label', S.kind === 'archive' ? 'Try an archived glass' : S.preview ? 'Try a preview glass' : 'Start today’s sip');
-  $('startHold').textContent = S.review ? 'Try this glass' : S.kind === 'archive' ? 'Try this glass' : S.preview ? 'Take a preview sip' : 'Take today’s sip';
+  $('startLabel').textContent = S.review || S.kind === 'archive' ? 'Start this glass' : S.preview ? 'Start preview' : 'Start today’s glass';
   $('introNote').textContent = S.review ? (S.notice ? S.notice + ' ' : '') + 'Unlimited review sips. Scores are not saved.' : S.kind === 'archive'
     ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
     : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
@@ -89,9 +89,19 @@ function layout(){
   const app = $('app'); W = Math.max(280, app.clientWidth); H = Math.max(400, app.clientHeight);
   DPR = Math.min(2.5, window.devicePixelRatio || 1);
   scene.width = Math.round(W * DPR); scene.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  // Measure the closed entry tray on resize, including wrapped notes and the
+  // review footer. Keep this same vessel box after Start so it never jumps.
+  const intro = $('intro'), rules = intro.querySelector('.rules');
+  const wasHidden = intro.hidden, wasOpen = rules.open;
+  intro.hidden = false; rules.open = false;
+  S.glassFloor = intro.querySelector('.sheet').getBoundingClientRect().top - 12;
+  rules.open = wasOpen; intro.hidden = wasHidden;
 }
 function glassBox(w, h, theme){
-  const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665) - (S.review ? 52 : 0);
+  const b = theme.box, short = h < 740;
+  const top = h * (h < 650 ? .24 : theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26);
+  const preferredBottom = h * (short ? .625 : .665) - (S.review ? 52 : 0);
+  const bot = Math.max(top + 80, Math.min(preferredBottom, S.glassFloor ?? Infinity));
   const stein = theme.vessel === 'stein', halfW = Math.min(w * (stein ? .27 : b.w), (bot - top) * b.h);
   // Center the stein's full silhouette, leaving room for its handle during a sip.
   return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: renderVessel(theme)};
@@ -451,7 +461,7 @@ async function init(){
     document.querySelector('.next').hidden = true;
   }
 
-  setPhase('intro'); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
+  setPhase('intro'); renderChallengeStatus(now); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
   $('startHold').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
