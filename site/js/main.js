@@ -5,10 +5,11 @@ import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
-import {SITE_URL} from './config.js';
+import {SITE_URL, LAUNCH} from './config.js';
 
 const $ = id => document.getElementById(id);
-const STORE = 'split.v1';
+// A fixed release calendar keeps prototype scores out of the public run.
+const STORE = 'split.v1:' + LAUNCH;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,

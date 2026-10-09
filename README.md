@@ -2,9 +2,9 @@
 
 Hold to lift the glass, tip it, and take a sip. Release to bring it upright, then read the settled beer line through the middle of the mark. One scored sip a day, the same pour for everyone, and a postcard for the group chat: a beer, a place, and the memory of being there with friends.
 
-**Published build:** https://fischbeck3.github.io/split/ · **Planned public address:** https://dailysplit.us/
+**Published build:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
-The domain has not been registered or connected. The updated game and launch preparation are on [draft PR #1](https://github.com/Fischbeck3/split/pull/1); the published build is older. The opening run will start on the day the domain is connected and the phone checks below pass.
+The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and the registrar has the GitHub DNS records saved. DNS propagation and the HTTPS certificate are still pending: the last authoritative root lookup returned the old address `74.91.138.135`. The updated game and launch preparation remain on [draft PR #1](https://github.com/Fischbeck3/split/pull/1); the release has not been merged and the launch date is not frozen. The opening run should start as soon as the domain is serving the game over HTTPS.
 
 ![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.png)
 
@@ -16,7 +16,7 @@ The domain has not been registered or connected. The updated game and launch pre
 - **One a day.** The first completed sip for today's local date is saved in this browser. Later sips are practice and cannot replace it. You can return to the saved score. A new glass arrives at local midnight.
 - **Same glass for a friend.** Public shares carry `?day=YYYY-MM-DD`, so a friend opens the same seeded pour. Today's challenge can count once; earlier dates open as Archive and new archive sips never write a daily record. A friend one calendar day ahead shares an unsaved preview of that exact pour. Later future dates, malformed dates, and dates before the first sip return to today's glass with an explanation.
 
-If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them.
+If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar, so older prototype scores do not carry into the public run.
 
 ## The first three days
 
@@ -74,9 +74,9 @@ Every push to `main` runs the tests on GitHub Actions. When they pass, `site/` i
 
 The domain is registered at Network Solutions. In its Account Manager, open Domains → dailysplit.us → Advanced Tools → Advanced DNS Records → Manage. [Network Solutions DNS instructions](https://www.networksolutions.com/help/article/manage-dns-adns-records).
 
-1. In the GitHub account's Settings → Pages, add `dailysplit.us`, publish the supplied ownership TXT record at the registrar, then verify it. Keep that TXT record. [GitHub domain verification](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages).
-2. In `Fischbeck3/split` → Settings → Pages, set the custom domain to `dailysplit.us` before adding routing records.
-3. At the DNS provider, add these records:
+1. **Complete:** `dailysplit.us` ownership is verified in the GitHub account's Pages settings using the registrar TXT record. Keep that TXT record. [GitHub domain verification](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages).
+2. **Complete:** `Fischbeck3/split` → Settings → Pages has `dailysplit.us` assigned as its custom domain.
+3. **Saved at Network Solutions:** all four root A records and the `www` CNAME below. Authoritative DNS still needs to propagate to these values:
 
 | Type | Name | Value |
 |---|---|---|
@@ -86,13 +86,13 @@ The domain is registered at Network Solutions. In its Account Manager, open Doma
 | A | `@` | `185.199.111.153` |
 | CNAME | `www` | `fischbeck3.github.io` |
 
-4. Confirm DNS, enable Enforce HTTPS once its certificate is available, and check that `https://www.dailysplit.us/` redirects to `https://dailysplit.us/`. DNS and certificate readiness may take up to 24 hours. The CNAME target has no `/split` path. This custom Actions workflow does not require a repository `CNAME` file. [GitHub custom-domain setup](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
+4. **Pending:** confirm propagated DNS, wait for the HTTPS certificate, enable Enforce HTTPS, and check that `https://www.dailysplit.us/` redirects to `https://dailysplit.us/`. DNS and certificate readiness may take up to 24 hours. The CNAME target has no `/split` path. This custom Actions workflow does not require a repository `CNAME` file. [GitHub custom-domain setup](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
 
 ### Set the opening date and release
 
-`site/js/config.js` centralizes `SITE_URL`, `LAUNCH`, and `LAUNCH_READY`. It currently contains the planned domain, the development date `2026-10-08`, and `LAUNCH_READY = false`. The flag records whether the release calendar has been frozen; it does not register a domain or publish a build.
+`site/js/config.js` centralizes `SITE_URL`, `LAUNCH`, and `LAUNCH_READY`. It currently contains the configured domain, the development date `2026-10-08`, and `LAUNCH_READY = false`. The flag records whether the release calendar has been frozen; it does not register a domain or publish a build.
 
-When the domain is connected and phone checks pass, use that day's local date in place of `YYYY-MM-DD`:
+When DNS and HTTPS are ready for release, use that day's local date in place of `YYYY-MM-DD`:
 
 ```
 npm run prepare-launch -- YYYY-MM-DD --check
@@ -102,7 +102,7 @@ npm test
 
 `--check` prints the plan without editing files. Preparation sets day No. 1, freezes the launch flag, and synchronizes the canonical URL and social metadata. It refuses a different launch date once frozen. Review and commit the resulting diff, then release to `main`; the script itself does not deploy or change DNS. After release, preserve existing dates, seeds, and scheduled themes so shared links continue to identify the same glass.
 
-Before the seven-day friends playtest, check iPhone and Android hold/release, optional sensor permission, image sharing, download, copied links, and midnight rollover on the HTTPS domain. Choose an analytics project and add starts, finishes, share actions, friend-link arrivals, and next-day returns; analytics is not integrated in this branch. No backend, daily job, or runtime image service is required for the game itself.
+Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, image sharing, download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native image sharing have not been tested. Choose an analytics project and add starts, finishes, share actions, friend-link arrivals, and next-day returns; analytics is not integrated in this branch. No backend, daily job, or runtime image service is required for the game itself.
 
 ## Layout
 
