@@ -4,9 +4,9 @@ Hold to lift the glass, tip it, and take a sip. Release to bring it upright, the
 
 **GitHub Pages address:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
-The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and the registrar has the GitHub DNS records saved. The updated preview is published; public browser verification remains pending after a check found new HTML loading older cached JavaScript. The HTTPS certificate is still `Requested`. The release configuration keeps the official calendar closed: the root and date links show an unsaved opening pub preview, and `#dayN` links preserve individual design previews. The opening daily run should start as soon as the domain is serving the game over HTTPS and the release date is fixed; day No. 1 has not been released.
+The domain is registered at Network Solutions. GitHub ownership is verified, the repository's Pages custom domain is assigned, and the registrar has the GitHub DNS records saved. The updated preview is published and verified in a returning browser; the versioned module graph prevents new HTML from loading older game code. GitHub is still provisioning the HTTPS certificate. The release configuration keeps the official calendar closed: the root and date links show an unsaved opening pub preview, and `#dayN` links preserve individual design previews. The opening daily run should start as soon as the domain is serving the game over HTTPS and the release date is fixed; day No. 1 has not been released.
 
-![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.png)
+![Three glasses: a stout in a pub, a lager bottle on a beach, a stein at Oktoberfest](site/og.jpg)
 
 ## How it plays
 
@@ -36,7 +36,9 @@ These are illustrative scenes, not photographs of a specific venue. The three co
 
 ## Share your sip
 
-“Share your sip” immediately opens the native share sheet with the text result: the score, Wordle-like position strip, and exact-day or preview link. It does not wait for a postcard image. If native text sharing is unavailable or fails, it copies the result; if copying is denied, “See text card” opens with the text focused and selected for manual copying. “Copy text” is inside that disclosure, and the next result closes it again. “Save postcard” is the explicit PNG download action; sharing never silently downloads an image.
+“Share your sip” immediately opens the native share sheet with the text result: the score and Wordle-like position strip as text, plus the exact-day or preview link as a native URL item. It does not wait for a postcard image. If native text sharing is unavailable or fails, it copies the result; if copying is denied, “See text card” opens with the text focused and selected for manual copying. “Copy text” is inside that disclosure, and the next result closes it again. “Save postcard” is the explicit PNG download action; sharing never silently downloads an image.
+
+Messages can build a website link preview from the static Open Graph metadata. Its 1200 × 630 image uses the current Irish pub, Cabo beach, and Munich scenes with the hold-to-sip instruction. The versioned image address avoids reusing the old vector-art preview and is preserved by launch preparation. This is a shared website card; each player’s result remains in the message text. Both the page and preview image must be publicly reachable over HTTPS. Actual iPhone Messages rendering still needs a device check after the certificate is ready.
 
 The 1080 × 1350 image frames the same place and vessel as a paper postcard, with a destination title and drink above the scene. It shows your actual settled beer line, MARK and STOP guides, score out of 100, verdict, and a five-cell position strip. The strip is one stopping position from high to low, with a green center; an arrow shows a stop beyond its range. It is not a history of attempts. “One sip. Your turn.” invites a friend to play. Text shares use the same one-row strip, the daily drink and destination, and a date-specific game link. The postcard prints that same address. Both formats label practice, archive, and preview sips; preview links retain `#dayN` and never become scored challenges.
 

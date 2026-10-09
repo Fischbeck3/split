@@ -42,7 +42,7 @@ export function planLaunch(date, config, html){
   html = replaceOne(html, /<meta property="og:url" content="[^"]*">/,
     '<meta property="og:url" content="' + url.href + '">', 'social URL');
   html = replaceOne(html, /<meta property="og:image" content="[^"]*">/,
-    '<meta property="og:image" content="' + new URL('og.png', url).href + '">', 'social image');
+    '<meta property="og:image" content="' + new URL('og.jpg?v=memories1', url).href + '">', 'social image');
   return {config, html, date, url: url.href};
 }
 

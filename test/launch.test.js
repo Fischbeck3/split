@@ -13,7 +13,7 @@ test('launch preparation fixes one real date and synchronizes static share metad
   assert.match(plan.config, /LAUNCH = '2026-10-12'/);
   assert.match(plan.config, /LAUNCH_READY = true/);
   assert.doesNotMatch(plan.html, /old\.example/);
-  assert.match(plan.html, /content="https:\/\/dailysplit\.us\/og\.png"/);
+  assert.match(plan.html, /content="https:\/\/dailysplit\.us\/og\.jpg\?v=memories1"/);
   assert.deepEqual(planLaunch('2026-10-12', plan.config, plan.html), plan, 'same-day rerun is idempotent');
   assert.throws(() => planLaunch('2026-10-13', plan.config, plan.html), /renumber existing challenges/);
 });
