@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {LAUNCH, SCHEDULE} from '../site/js/themes.js';
-import {THEMES, PROFILES, themeById, themeForDay, dayParams, dayNumber, keyForDay, startLevel, flowFactor, tiltRate,
+import {THEMES, PROFILES, widthAt, themeById, themeForDay, dayParams, dayNumber, keyForDay, startLevel, flowFactor, tiltRate,
   makeDrinkState, stepDrink, isDrinkSettled, STEIN_SETTLE_SECONDS, secondsToMark,
   scoreFromOffset, bandEmoji, detailText, DRAIN_LEVEL, PERFECT, SPLIT} from '../site/js/core.js';
 import {SCENES, MARKS} from '../site/js/draw.js';
@@ -70,6 +70,17 @@ test('a bottle neck drains fast and a stein drinks slow', () => {
   assert.ok(flowFactor(munich, 0.56, 0.56) < flowFactor(pub, 0.56, 0.56));
 });
 
+test('line speed follows cross-sectional area, so a tapered pint accelerates downward', () => {
+  const pub = themeById('pub'), mark = 0.56, upper = 0.22, lower = 0.8;
+  const measured = flowFactor(pub, mark, lower) / flowFactor(pub, mark, upper);
+  const radiusRatio = widthAt(pub.vessel, upper) / widthAt(pub.vessel, lower);
+  assert.ok(Math.abs(measured - radiusRatio * radiusRatio) < 1e-12);
+  assert.ok(measured > 1.65, 'the narrower lower pint should fall distinctly faster');
+  for (const theme of THEMES) assert.equal(flowFactor(theme, mark, mark), theme.speed, theme.id + ': changed speed at the mark');
+  const mug = themeById('choc');
+  assert.equal(flowFactor(mug, mark, upper), flowFactor(mug, mark, lower), 'a straight mug should not accelerate from geometry');
+});
+
 function drinkFor(P, state, rate, seconds, frameSteps = [1 / 60]){
   let left = seconds, frame = 0;
   while (left > 1e-10){
@@ -80,11 +91,11 @@ function drinkFor(P, state, rate, seconds, frameSteps = [1 / 60]){
 }
 
 test('a sip is deterministic, pure, and comparable at different frame rates', () => {
-  for (const day of [1, 2, 3]){
-    const P = dayParams(day), initial = makeDrinkState(P), before = {...initial};
+  for (const theme of THEMES){
+    const P = {...dayParams(1), theme}, initial = makeDrinkState(P), before = {...initial};
     const simulate = steps => {
       const held = drinkFor(P, initial, P.K, 2.2, steps);
-      return drinkFor(P, held, 0, 0.4, steps);
+      return drinkFor(P, held, 0, 0.6, steps);
     };
     const reference = simulate([1 / 120]);
     assert.deepEqual(simulate([1 / 120]), reference, P.theme.id + ': deterministic');
@@ -108,12 +119,16 @@ test('the bottle has a free-running neck and a strong, regular glug in its body'
   assert.ok(bodySlow.velocity > 0, 'a glug should not reverse the line');
 });
 
-test('the pub stops on release while the stein has a small, bounded follow-through', () => {
+test('the pint requires release anticipation and the stein retains bounded follow-through', () => {
   const pub = dayParams(1), stein = dayParams(3);
   const pubHeld = drinkFor(pub, makeDrinkState(pub), pub.K, 1);
   const pubReleased = stepDrink(pub, pubHeld, 0, 1 / 60);
-  assert.equal(pubReleased.level, pubHeld.level);
-  assert.ok(isDrinkSettled(pubReleased));
+  assert.ok(pubReleased.level > pubHeld.level);
+  assert.ok(!isDrinkSettled(pubReleased));
+  const pubSettled = drinkFor(pub, pubHeld, 0, 0.5);
+  assert.ok(isDrinkSettled(pubSettled));
+  assert.ok(pubSettled.level - pubHeld.level > 0.01 && pubSettled.level - pubHeld.level < 0.03, 'pint tail should require anticipation without swallowing the mark');
+  assert.equal(drinkFor(pub, pubSettled, 0, 1).level, pubSettled.level, 'pint moved after settling');
   const steinHeld = drinkFor(stein, makeDrinkState(stein), stein.K, 1);
   assert.ok(steinHeld.level - startLevel(stein.theme) < pubHeld.level - startLevel(pub.theme), 'stein should drink more slowly');
   const steinReleased = stepDrink(stein, steinHeld, 0, 1 / 60);
@@ -123,6 +138,56 @@ test('the pub stops on release while the stein has a small, bounded follow-throu
   assert.ok(isDrinkSettled(settled));
   assert.ok(settled.level - steinHeld.level > 0.002 && settled.level - steinHeld.level < 0.02, 'tail should be learnable and brief');
   assert.equal(drinkFor(stein, settled, 0, 1).level, settled.level, 'line moved after settling');
+});
+
+test('sip momentum ramps up smoothly and preserves volume through a taper', () => {
+  const P = dayParams(1), initial = makeDrinkState(P);
+  const starting = stepDrink(P, initial, P.K, 1 / 60);
+  assert.ok(starting.velocity > 0 && starting.velocity < P.K * flowFactor(P.theme, P.markY, starting.level) * 0.15, 'pint should ease into the sip');
+  const steady = {...initial, velocity: P.K * flowFactor(P.theme, P.markY, initial.level)};
+  const advanced = drinkFor(P, steady, P.K, 4);
+  // Integrate the swept section, not the distance: equal volume flow must remove
+  // equal volume even while the free surface drops faster through a narrower part.
+  const slices = 2048, h = (advanced.level - steady.level) / slices;
+  let volume = 0;
+  for (let i = 0; i <= slices; i++){
+    const weight = i === 0 || i === slices ? 1 : i % 2 ? 4 : 2;
+    volume += weight / flowFactor(P.theme, P.markY, steady.level + i * h);
+  }
+  volume *= h / 3;
+  assert.ok(Math.abs(volume - P.K * 4) < 1e-8, 'taper must conserve volume flow');
+  assert.ok(advanced.velocity > steady.velocity * 1.4, 'steady throughput should accelerate the surface as it reaches the taper');
+});
+
+test('every vessel has a finite, brief release and can still be landed on its mark', () => {
+  for (const theme of THEMES){
+    const seeded = dayParams(1), P = {...seeded, theme, markY: (theme.markRange[0] + theme.markRange[1]) / 2};
+    const finalAt = seconds => drinkFor(P, drinkFor(P, makeDrinkState(P), P.K, seconds), 0, 0.6);
+    let low = 0, high = secondsToMark(P);
+    for (let i = 0; i < 24; i++){
+      const mid = (low + high) / 2;
+      if (finalAt(mid).level < P.markY) low = mid; else high = mid;
+    }
+    const landed = finalAt((low + high) / 2);
+    assert.ok(isDrinkSettled(landed), theme.id + ': tail did not settle');
+    assert.ok(Math.abs(landed.level - P.markY) < 1e-6, theme.id + ': mark is unreachable');
+    assert.equal(scoreFromOffset((landed.level - P.markY) / P.markH, theme.target).score, 100, theme.id + ': anticipation should remain learnable');
+  }
+});
+
+test('invalid rates, times and state values cannot reverse or corrupt the drink', () => {
+  for (const day of [1, 2, 3]){
+    const P = dayParams(day), initial = makeDrinkState(P);
+    for (const invalid of [NaN, Infinity, -Infinity]){
+      const state = stepDrink(P, {level: invalid, velocity: invalid, elapsed: invalid, releaseElapsed: invalid}, invalid, 1 / 60);
+      for (const value of Object.values(state)) assert.ok(Number.isFinite(value), P.theme.id + ': invalid state escaped');
+      assert.equal(state.level, initial.level);
+      assert.ok(isDrinkSettled(state));
+    }
+    const excessive = stepDrink(P, {...initial, velocity: Number.MAX_VALUE}, P.K, 0.25);
+    for (const value of Object.values(excessive)) assert.ok(Number.isFinite(value), P.theme.id + ': excessive momentum escaped');
+    assert.ok(excessive.level <= DRAIN_LEVEL);
+  }
 });
 
 test('a paused tab cannot skip a whole drink and the level never passes the drain', () => {

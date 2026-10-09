@@ -31,7 +31,7 @@
   <canvas id="scene" width="400" height="800" aria-label="Today's glass. Stop the beer line through the middle of the mark."></canvas>
   <header class="hud">
     <a class="wordmark" href="./" aria-label="Split, today's glass">Split<span class="split-dot" aria-hidden="true">.</span></a>
-    <div class="hud-tools"><span class="day-number" id="introNo">No. 001</span><button class="sound-button" id="soundBtn" type="button" aria-pressed="false" aria-label="Turn sip sounds on" title="Sound off"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path class="sound-waves" d="M16 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sound-slash" d="m16 10 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <div class="hud-tools"><span class="day-number" id="introNo">No. 001</span><button class="motion-button" id="motionBtn" type="button" aria-pressed="false" aria-label="Turn glass motion on" title="Glass motion"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="m6 7 2 13h8l2-13Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path class="motion-arrow" d="M6 4h12m-3-3 3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path class="motion-slash" d="m4 4 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button class="sound-button" id="soundBtn" type="button" aria-pressed="false" aria-label="Turn sip sounds on" title="Sound off"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path class="sound-waves" d="M16 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sound-slash" d="m16 10 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
   </header>
   <div class="day-heading" id="dayHeading">
     <h1 id="introName">Old Irish pub</h1>
@@ -51,14 +51,15 @@
     <div class="sheet">
       <p class="friend-invite" id="friendInvite" hidden></p>
       <div class="goal-row"><h2 id="introGoal">Split the G.</h2><span class="feel" id="introFeel">Smooth pour</span></div>
-      <p class="instructions" id="introLine">Hold to tip and sip. Release to settle.</p>
+      <p class="instructions" id="introLine">Hold to tip and sip. Release early; let it settle.</p>
+      <p class="motion-note" id="motionNote" hidden></p>
       <div class="start-actions">
         <button class="big" id="startHold" type="button">Take today's sip <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="text-button" id="introTodayBtn" type="button" hidden>Play today’s glass</button>
         <button class="text-button" id="startTilt" type="button">Use phone tilt</button>
       </div>
       <p class="daily-note" id="introNote">One scored sip. Same pour for everyone.</p>
-      <details class="rules"><summary>How to play</summary><p>Hold the glass, button, or space bar to tip and sip. Release to bring it upright. Your score comes from the settled line where the beer meets the foam through the center of the mark. With phone tilt, tip farther to sip faster and come upright to stop.</p><p id="vesselHint">A smooth pour with a clean stop.</p><p>New glasses arrive at midnight in your local time. Your first sip counts; repeats are practice. Scores and streaks stay in this browser. Shared links open that date’s glass; past glasses are archives and do not count toward your record.</p></details>
+      <details class="rules"><summary>How to play</summary><p>Hold the glass, button, or space bar to tip and sip. Release a little early to bring it upright; the sip keeps flowing briefly. Your score comes from the settled line where the beer meets the foam through the center of the mark. With phone tilt, tip farther to sip faster and come upright early. The glass button beside the day number turns tipping on or off. It follows your device’s reduced-motion setting until you choose; fluid behavior and scoring stay the same.</p><p id="vesselHint">The line falls faster as the glass narrows. Release before the mark.</p><p>New glasses arrive at midnight in your local time. Your first sip counts; repeats are practice. Scores and streaks stay in this browser. Shared links open that date’s glass; past glasses are archives and do not count toward your record.</p></details>
     </div>
   </section>
 

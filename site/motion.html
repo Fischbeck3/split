@@ -37,7 +37,7 @@ footer{margin:26px 0 0;color:#556c73;font-size:13px}
   <p id="status" role="status">Ready to sip.</p>
 </div>
 <section class="vessels" aria-label="Vessel movement previews">
-  <article><h2>The old Irish pub.</h2><p>Guinness, dark oak, and one more story. A smooth sip and a clean stop.</p><canvas id="scene1" aria-label="Guinness in an old Irish pub motion preview"></canvas></article>
+  <article><h2>The old Irish pub.</h2><p>Guinness, dark oak, and one more story. A faster line as the pint narrows; release a little early.</p><canvas id="scene1" aria-label="Guinness in an old Irish pub motion preview"></canvas></article>
   <article><h2>Back in Cabo.</h2><p>A cold Corona under the palapa. Clear glass, fine fizz, and a pulsing glug.</p><canvas id="scene2" aria-label="Corona on a Cabo beach motion preview"></canvas></article>
   <article><h2>Meet me in Munich.</h2><p>A liter stein at the long table. Generous foam and a heavy return.</p><canvas id="scene3" aria-label="Stein in a Munich Oktoberfest tent motion preview"></canvas></article>
 </section>
@@ -62,8 +62,8 @@ const demos=[1,2,3].map(num=>{
   for(let frame=0;frame<=Math.ceil((releaseAt+1)*120);frame++){
     const elapsed=frame/120,drinking=elapsed<releaseAt&&frame>0;
     frames.push({drink,motion,t:elapsed,drinking});
-    const input=elapsed<releaseAt?Math.min(1,elapsed/.6):0;
-    motion=stepMotion(P,motion,{drinking:elapsed<releaseAt,input,elapsed:drink.elapsed,dt:1/120,reducedMotion});
+    const input=elapsed<releaseAt?1:0;
+    motion=stepMotion(P,motion,{drinking:elapsed<releaseAt,input,level:drink.level,elapsed:drink.elapsed,dt:1/120,reducedMotion});
     drink=stepDrink(P,drink,P.K*input,1/120);
   }
   return {P,ctx,G,w,h,releaseAt,frames,backdrop:makeBackdrop(w,h,G,P.theme,2,{titleWash:false})};

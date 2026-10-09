@@ -425,7 +425,7 @@
       {
         "name": "stein-follow-through",
         "value": "0.24s",
-        "purpose": "Bounded physics settle after the heavy stein is released."
+        "purpose": "Bounded volume-flow momentum after release: tulip pint 0.42s, bottle 0.21s, stein 0.24s."
       },
       {
         "name": "bottle-glug-period",
@@ -450,7 +450,7 @@
       {
         "name": "liquid-angle-response",
         "value": "world-horizontal with damped slosh",
-        "purpose": "Render gravity-responsive liquid while preserving the filled area and existing drink amount."
+        "purpose": "Render gravity-responsive liquid while preserving round-vessel liquid volume and existing drink amount."
       },
       {
         "name": "motion-rest",
@@ -459,7 +459,7 @@
       },
       {
         "name": "reduced-motion-sip",
-        "value": "zero spatial motion",
+        "value": "zero spatial motion by default; explicit local full/still glass choice",
         "purpose": "Keep tipping, lift, and slosh at zero; omit scene, result, postcard, and sending reveals while showing liquid progress and static material detail."
       },
       {

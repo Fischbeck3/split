@@ -34,7 +34,7 @@
           "site/motion.html"
         ],
         "createdAt": "2026-10-09T04:39:47.815Z",
-        "reason": "Codex verified rendered body background rgb(246, 240, 227) and secondary ink rgb(85, 108, 115). Detector inherits the game CSS dark root background and misses the cream preview override."
+        "reason": "Agent verified browser computed body background #f6f0e3 and secondary text #556c73 at 4.89:1; inline light-theme overrides prevent the reported dark fallback pairing."
       },
       {
         "rule": "design-system-color",
