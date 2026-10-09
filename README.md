@@ -112,7 +112,7 @@ Follow-up playtest checks are still open: iPhone and Android hold/release, optio
 
 ## Daily users and sharing
 
-The game reports explicit events to PostHog on the HTTPS public domain. `POSTHOG_PROJECT_KEY` in `site/js/config.js` holds the project's public `phc_...` token; an empty value leaves analytics disabled. `POSTHOG_API_HOST` defaults to the US ingestion host. Localhost, GitHub previews, and other domains do not load the analytics SDK or send events. Analytics failures leave the game and native sharing available.
+The game is configured to report explicit events to PostHog on the HTTPS public domain. `POSTHOG_PROJECT_KEY` in `site/js/config.js` holds the project's public `phc_...` token; an empty value leaves analytics disabled. Tracking starts when that token is configured and deployed. `POSTHOG_API_HOST` defaults to the US ingestion host. Localhost, GitHub previews, and other domains do not load the analytics SDK or send events. Analytics failures leave the game and native sharing available.
 
 The browser keeps an anonymous analytics ID in local storage. Counts represent browsers, not identified people; clearing storage or using another device creates a new ID. Session recording, automatic click capture, surveys, and other unrelated PostHog features are disabled. Events strip query strings and fragments from URL properties so a friend's score and stopping offset are not copied into analytics URLs.
 
@@ -131,9 +131,9 @@ Cancellation, manual-copy fallback, and share or download errors have separate e
 
 Every event includes `local_play_date`, `challenge_date`, `challenge_number`, `theme`, `input_mode`, `attempt_kind`, and `friend_link`. `attempt_kind` distinguishes `daily`, `practice`, `archive`, and `preview`. Official completion charts require `counts = true`; restoring a saved result does not emit another completion. Result actions include the score and recording status of the result clicked, even if another sip starts before the share sheet closes.
 
-The dashboard groups timestamps by America/Phoenix; the two date properties preserve the player's local calendar and the linked glass's date. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Sharing rate divides these sharers by official daily finishers. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back.
+The configured live PostHog project uses its default UTC reporting clock. These dashboard definitions group timestamps by that same UTC calendar; the two date properties preserve the player's local calendar and the linked glass's date. Unique sharers are the union of successful native handoffs and copies, counted once per browser per reporting day. Sharing rate divides these sharers by official daily finishers. Separate native/copy counts, friend arrivals, and next-day retention show whether playing and sharing bring people back.
 
-To activate collection, create or select a PostHog project and copy its public project token into `POSTHOG_PROJECT_KEY`, then release the change through the normal Pages workflow. Set the PostHog project timezone to America/Phoenix. For an EU project, also change `POSTHOG_API_HOST` to `https://eu.i.posthog.com`.
+To activate collection, copy the selected PostHog project's public `phc_...` token into `POSTHOG_PROJECT_KEY`, then release the change through the normal Pages workflow. The dashboard uses the existing project's UTC timezone. For an EU project, also change `POSTHOG_API_HOST` to `https://eu.i.posthog.com` and the SDK's `ui_host` to `https://eu.posthog.com`.
 
 `scripts/posthog-dashboard.json` contains seven saved-insight API definitions for audience, share actions, unique sharers and share rate, friend arrivals, friend conversion, next-day retention, and postcard downloads. Preview the payloads without credentials or network access:
 

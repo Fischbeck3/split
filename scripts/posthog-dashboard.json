@@ -1,8 +1,8 @@
 {
-  "timezone": "America/Phoenix",
+  "timezone": "UTC",
   "dashboard": {
     "name": "Daily Split · daily users and shares",
-    "description": "Daily browser activity, daily game play, native share handoffs, copies, unique sharers, friend arrivals and next-day retention. Days use America/Phoenix; challenge_date and local_play_date track the player local day separately. Users are browsers/devices. Practice, archive and preview activity are excluded from gameplay/share metrics. Tracking starts at deployment.",
+    "description": "Daily browser activity, daily game play, native share handoffs, copies, unique sharers, friend arrivals and next-day retention. Days use UTC; challenge_date and local_play_date track the player local day separately. Users are browsers/devices. Practice, archive and preview activity are excluded from gameplay/share metrics. Tracking starts at deployment.",
     "pinned": true,
     "tags": [
       "dailysplit:dashboard-v1"
@@ -11,7 +11,7 @@
   "insights": [
     {
       "name": "Daily Split · browsers, players, finishers",
-      "description": "Unique browsers opening the game; unique browsers starting a daily sip; unique browsers saving their first eligible daily result. Reporting days use the PostHog project timezone America/Phoenix.",
+      "description": "Unique browsers opening the game; unique browsers starting a daily sip; unique browsers saving their first eligible daily result. Reporting days use the PostHog project timezone UTC.",
       "tags": [
         "dailysplit:audience"
       ],
@@ -161,7 +161,7 @@
     },
     {
       "name": "Daily Split · unique sharers and share rate",
-      "description": "Each browser counts once per Phoenix reporting day across native handoffs and clipboard copies combined. Share rate = unique daily sharers / daily finishers; blank when no finishers. Shares can concern a saved result from an earlier reporting day, so this is a same-day activity ratio, not a cohort conversion rate. Browser-local challenge_date and local_play_date remain available as event filters.",
+      "description": "Each browser counts once per UTC reporting day across native handoffs and clipboard copies combined. Share rate = unique daily sharers / daily finishers; blank when no finishers. Shares can concern a saved result from an earlier reporting day, so this is a same-day activity ratio, not a cohort conversion rate. Browser-local challenge_date and local_play_date remain available as event filters.",
       "tags": [
         "dailysplit:share-rate"
       ],
@@ -169,7 +169,7 @@
         "kind": "DataVisualizationNode",
         "source": {
           "kind": "HogQLQuery",
-          "query": "SELECT day, unique_sharers, daily_finishers,\n    1.0 * unique_sharers / nullIf(daily_finishers, 0) AS share_rate\nFROM (\n    SELECT toDate(toTimeZone(timestamp, 'America/Phoenix')) AS day,\n        uniqExactIf(distinct_id, event IN ('result_shared', 'result_copied')) AS unique_sharers,\n        uniqExactIf(distinct_id, event = 'sip_completed') AS daily_finishers\n    FROM events\n    WHERE event IN ('result_shared', 'result_copied', 'sip_completed')\n        AND properties.attempt_kind = 'daily'\n        AND properties.counts = true\n        AND {filters}\n    GROUP BY day\n)\nORDER BY day DESC\nLIMIT 1000",
+          "query": "SELECT day, unique_sharers, daily_finishers,\n    1.0 * unique_sharers / nullIf(daily_finishers, 0) AS share_rate\nFROM (\n    SELECT toDate(toTimeZone(timestamp, 'UTC')) AS day,\n        uniqExactIf(distinct_id, event IN ('result_shared', 'result_copied')) AS unique_sharers,\n        uniqExactIf(distinct_id, event = 'sip_completed') AS daily_finishers\n    FROM events\n    WHERE event IN ('result_shared', 'result_copied', 'sip_completed')\n        AND properties.attempt_kind = 'daily'\n        AND properties.counts = true\n        AND {filters}\n    GROUP BY day\n)\nORDER BY day DESC\nLIMIT 1000",
           "filters": {
             "dateRange": {
               "date_from": "-30d",
@@ -421,7 +421,7 @@
     },
     {
       "name": "Daily Split · next-day player retention",
-      "description": "Recurring cohorts of browsers starting a daily sip. Day 1 shows who starts another daily sip on the next Phoenix calendar date. The latest cohort remains incomplete until that date ends. Uses reporting dates rather than visitor local challenge dates.",
+      "description": "Recurring cohorts of browsers starting a daily sip. Day 1 shows who starts another daily sip on the next UTC calendar date. The latest cohort remains incomplete until that date ends. Uses reporting dates rather than visitor local challenge dates.",
       "tags": [
         "dailysplit:next-day"
       ],

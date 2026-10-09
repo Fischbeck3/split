@@ -8,6 +8,6 @@ export const LAUNCH_READY = true;
 
 // Public PostHog project token (phc_...), never a personal API key.
 // A blank token disables analytics; local and preview hosts never send events.
-export const POSTHOG_PROJECT_KEY = '';
+export const POSTHOG_PROJECT_KEY = 'phc_w7WRMP8LjdnPSWqkLF7qZjhSmyqfh3fVZXVkNWMA4A3S';
 export const POSTHOG_API_HOST = 'https://us.i.posthog.com';
 export const ANALYTICS_HOSTNAMES = ['dailysplit.us', 'www.dailysplit.us'];

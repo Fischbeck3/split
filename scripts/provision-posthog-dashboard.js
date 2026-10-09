@@ -76,7 +76,7 @@ Apply:   node scripts/provision-posthog-dashboard.js --apply
 Apply reads POSTHOG_PROJECT_ID and POSTHOG_PERSONAL_API_KEY from the environment.
 POSTHOG_APP_HOST defaults to https://us.posthog.com; use https://eu.posthog.com for EU.
 Personal key scopes: dashboard:read, dashboard:write, insight:read, insight:write.
-Set the project timezone to America/Phoenix before reading daily charts.
+The dashboard uses the project's existing UTC reporting clock.
 The phc_ public capture key belongs in site configuration, never here.
 Reruns update only the dashboard and insights marked dailysplit:* and resume partial setup.
 The JSON contains API payloads, not a documented PostHog UI import format.`);

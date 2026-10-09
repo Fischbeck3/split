@@ -87,7 +87,7 @@ test('duplicate managed dashboards stop provisioning before a write', async () =
   assert.ok(api.calls.every(call=>call.method === 'GET'));
 });
 
-test('share SQL deduplicates native plus copy per browser and Phoenix day, excludes uncounted modes, and handles no finishers', async t => {
+test('share SQL deduplicates native plus copy per browser and UTC day, excludes uncounted modes, and handles no finishers', async t => {
   let DatabaseSync;
   try { ({DatabaseSync} = await import('node:sqlite')); } catch { return t.skip('SQL fixture requires Node 22.16+; provisioning supports Node 20.'); }
   if (!DatabaseSync?.prototype.aggregate) return t.skip('SQL fixture requires Node 22.16+.');
@@ -105,7 +105,7 @@ test('share SQL deduplicates native plus copy per browser and Phoenix day, exclu
     db.function('toDate', value=>value.slice(0,10));
     db.exec('CREATE TABLE events (timestamp TEXT, event TEXT, distinct_id TEXT, attempt_kind TEXT, counts INTEGER)');
     const insert = db.prepare('INSERT INTO events VALUES (?, ?, ?, ?, ?)');
-    const beforeMidnight = '2026-10-09T06:50:00Z', afterMidnight = '2026-10-09T07:05:00Z';
+    const beforeMidnight = '2026-10-08T23:50:00Z', afterMidnight = '2026-10-09T00:05:00Z';
     for (const name of ['sip_completed','result_shared','result_copied','result_shared']) insert.run(beforeMidnight,name,'a','daily',1);
     insert.run(beforeMidnight,'sip_completed','b','daily',1);
     for (const name of ['result_shared','result_copied']) insert.run(afterMidnight,name,'a','daily',1);
@@ -117,8 +117,9 @@ test('share SQL deduplicates native plus copy per browser and Phoenix day, exclu
     insert.run(afterMidnight,'sip_completed','race','daily',0);
     insert.run(afterMidnight,'result_share_attempted','attempt-only','daily',1);
     const plan = await loadDashboard();
+    assert.equal(plan.timezone, 'UTC');
     const stored = plan.insights.find(item=>item.tags.includes('dailysplit:share-rate')).query.source.query;
-    const query = stored.replace('FROM events','FROM events AS properties').replace('{filters}', "timestamp >= '2026-10-08T07:00:00Z' AND timestamp < '2026-10-10T07:00:00Z'");
+    const query = stored.replace('FROM events','FROM events AS properties').replace('{filters}', "timestamp >= '2026-10-08T00:00:00Z' AND timestamp < '2026-10-10T00:00:00Z'");
     const rows = db.prepare(query).all().map(row=>({...row}));
     assert.deepEqual(rows, [
       {day:'2026-10-09',unique_sharers:1,daily_finishers:0,share_rate:null},
