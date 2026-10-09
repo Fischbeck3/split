@@ -10,7 +10,7 @@
           "site/index.html"
         ],
         "createdAt": "2026-10-09T04:15:02.418Z",
-        "reason": "Codex verified: result image is hidden initially; drawShareCard generates its real PNG src synchronously before it is unhidden."
+        "reason": "Codex: the sole cardImg is intentionally hidden until renderResult assigns the generated canvas PNG; no empty image is displayed."
       },
       {
         "rule": "overused-font",
@@ -35,6 +35,24 @@
         ],
         "createdAt": "2026-10-09T04:39:47.815Z",
         "reason": "Codex verified rendered body background rgb(246, 240, 227) and secondary ink rgb(85, 108, 115). Detector inherits the game CSS dark root background and misses the cream preview override."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgb(20, 43, 36)",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-09T15:31:13.419Z",
+        "reason": "Codex: unchanged pre-theme startup background in style.css; init replaces it with the daily palette before enabling play."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgb(234, 210, 154)",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-09T15:31:13.521Z",
+        "reason": "Codex: unchanged pre-theme startup accent in style.css; init replaces it with the daily palette before enabling play."
       }
     ]
   }

@@ -31,11 +31,12 @@
   <canvas id="scene" width="400" height="800" aria-label="Today's glass. Stop the beer line through the middle of the mark."></canvas>
   <header class="hud">
     <a class="wordmark" href="./" aria-label="Split, today's glass">Split<span class="split-dot" aria-hidden="true">.</span></a>
-    <span class="day-number" id="introNo">No. 001</span>
+    <div class="hud-tools"><span class="day-number" id="introNo">No. 001</span><button class="sound-button" id="soundBtn" type="button" aria-pressed="false" aria-label="Turn sip sounds on" title="Sound off"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path class="sound-waves" d="M16 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sound-slash" d="m16 10 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
   </header>
   <div class="day-heading" id="dayHeading">
     <h1 id="introName">Old Irish pub</h1>
     <p id="hudSub">Guinness at the pub</p>
+    <p class="memory-line" id="memoryLine" hidden></p>
   </div>
   <div class="mode" id="hudMode" hidden></div>
   <div class="live-controls" id="liveControls" hidden>
@@ -48,6 +49,7 @@
 
   <section class="overlay intro" id="intro" aria-label="Start today's sip">
     <div class="sheet">
+      <p class="friend-invite" id="friendInvite" hidden></p>
       <div class="goal-row"><h2 id="introGoal">Split the G.</h2><span class="feel" id="introFeel">Smooth pour</span></div>
       <p class="instructions" id="introLine">Hold to tip and sip. Release to settle.</p>
       <div class="start-actions">
@@ -64,10 +66,11 @@
     <div class="result-sheet">
       <div class="result-top"><h2 id="resLabel">Perfect split</h2><span class="result-kind" id="resKind">Today's sip</span></div>
       <p class="result-detail" id="resDetail"></p>
-      <img class="cardimg" id="cardImg" alt="Your themed Split result card, showing the vessel, score, and stopping line" hidden>
+      <div class="postcard-stage"><img class="cardimg" id="cardImg" alt="Your themed Split result card, showing the vessel, score, and stopping line" hidden><span class="line-shine" aria-hidden="true"></span></div>
+      <p class="friend-comparison" id="friendComparison" role="status" hidden></p>
       <div class="result-score" aria-label="Score"><span id="resScore">0</span><span>/100</span><span id="resStrip" class="strip" aria-label="Position of the stopping line"></span></div>
       <div class="row share-actions">
-        <button class="big" id="shareBtn" type="button">Share your sip <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="big" id="shareBtn" type="button">Beat my sip <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="outline" id="saveCardBtn" type="button">Save postcard</button>
       </div>
       <details class="share-copy"><summary>See text card</summary><pre id="shareText" tabindex="-1"></pre><button class="text-button" id="copyBtn" type="button">Copy text</button></details>

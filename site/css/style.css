@@ -18,16 +18,25 @@ button,a,summary{outline-offset:5px}
 canvas#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;-webkit-touch-callout:none}
 .hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 26px 0;z-index:3;pointer-events:none}
 .hud a{pointer-events:auto}
+.hud-tools{display:flex;align-items:center;gap:12px;pointer-events:auto}
+.sound-button{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:8px;color:var(--fg);background:transparent}
+.sound-button:hover{background:var(--sheet)}
+.sound-button .sound-waves{display:none}
+.sound-button[aria-pressed=true] .sound-waves{display:block}
+.sound-button[aria-pressed=true] .sound-slash{display:none}
 .wordmark{font:900 36px/1 var(--display);letter-spacing:-.035em;color:var(--fg);text-decoration:none}
 .split-dot{color:var(--accent)}
 .day-number{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.035em}
 .day-heading{position:absolute;top:calc(87px + env(safe-area-inset-top,0px));left:24px;right:24px;text-align:center;pointer-events:none}
 .day-heading h1{font:900 clamp(34px,8vw,43px)/1.08 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance}
 .day-heading p{margin:7px 0 0;font-size:15px;font-weight:600;color:var(--muted)}
+.day-heading .memory-line{margin:10px auto 0;font-size:13px;font-weight:400;line-height:1.35;color:var(--fg);text-wrap:balance}
+.app:not([data-phase=intro]) .memory-line{display:none}
 .mode{position:absolute;top:166px;left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
 .overlay{position:absolute;inset:0;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;justify-content:flex-end;padding:0 26px calc(18px + env(safe-area-inset-bottom,0px))}
 .intro{pointer-events:none}
 .sheet{pointer-events:auto;width:100%;max-width:450px;margin:0 auto;background:var(--sheet);padding:17px 0 0;display:grid;gap:9px}
+.friend-invite{margin:0 0 7px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:15px;font-weight:700;text-wrap:balance}
 .goal-row{display:flex;justify-content:space-between;gap:12px;align-items:center}
 .goal-row h2{margin:0;font:900 24px/1.15 var(--display);letter-spacing:-.025em}
 .feel{font-size:12px;font-weight:700;color:var(--muted)}
@@ -55,6 +64,12 @@ summary::-webkit-details-marker{display:none}
 .result-kind{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
 .result-detail{margin:0;font-size:14px;color:var(--muted)}
 .cardimg{display:block;width:100%;max-height:min(42dvh,390px);object-fit:contain;object-position:center;border-radius:6px;-webkit-touch-callout:default}
+.postcard-stage{position:relative;width:min(100%,48dvh,400px);aspect-ratio:4/3;margin:auto;overflow:hidden;border-radius:6px}
+.postcard-stage .cardimg{position:absolute;width:108%;left:-4%;top:-32.8%;height:auto;max-height:none;border-radius:0}
+.line-shine{position:absolute;top:var(--stop-line,50%);left:36%;right:36%;height:2px;background:#fff9e9;opacity:0;pointer-events:none}
+.friend-comparison{margin:0;padding-block:9px;border-block:1px solid var(--line);font-size:15px;font-weight:700;line-height:1.4;text-wrap:balance}
+.friend-comparison[data-outcome=win]{color:var(--good)}
+.result[data-perfect=true] .result-top h2{color:var(--good)}
 .result-score{display:flex;align-items:baseline;gap:3px;font-variant-numeric:tabular-nums}
 .result-score #resScore{font:900 40px/1 var(--display);letter-spacing:-.035em}
 .result-score>span:nth-child(2){color:var(--muted);font-size:15px}
@@ -82,6 +97,7 @@ body.preview .live-controls{bottom:calc(56px + env(safe-area-inset-bottom,0px))}
 .noscript{position:absolute;inset:auto 24px 50px;text-align:center}
 @media(min-width:700px){.app{box-shadow:0 10px 60px #0003}.hud{padding-inline:32px}.overlay{padding-inline:36px}.day-heading{top:94px}.sheet{gap:11px}}
 @media(max-height:740px){.hud{padding-top:14px}.wordmark{font-size:30px}.day-heading{top:66px}.day-heading h1{font-size:33px}.day-heading p{font-size:13px}.mode{top:133px}.sheet{gap:5px;padding-top:10px}.big{min-height:48px}.start-actions{margin-top:5px}.goal-row h2{font-size:22px}.result{padding-top:68px}.result-sheet{gap:8px}.cardimg{max-height:34dvh}.result-top h2{font-size:24px}}
+@media(max-height:740px){.day-heading{top:60px}.day-heading h1{font-size:30px}.day-heading .memory-line{font-size:12px;margin-top:6px}.postcard-stage{width:min(100%,42dvh)}.friend-invite{font-size:13px;line-height:1.3;padding:0;margin:0;border:0}.hud-tools{gap:8px}}
 @media(prefers-reduced-motion:no-preference){
   .big,.outline{transition:filter 140ms ease-out,background-color 140ms ease-out,color 140ms ease-out}
   .drink-control{transition:filter 110ms ease-out,box-shadow 110ms ease-out,transform 110ms ease-out}
@@ -89,10 +105,16 @@ body.preview .live-controls{bottom:calc(56px + env(safe-area-inset-bottom,0px))}
   .app.scene-ready[data-phase=intro] canvas#scene{animation:scene-light 650ms cubic-bezier(.16,1,.3,1)}
   .result:not([hidden]){animation:result-reveal 220ms ease-out}
   .result:not([hidden]) .cardimg{animation:postcard-focus 420ms cubic-bezier(.16,1,.3,1)}
+  .result.fresh-sip .line-shine{animation:stop-line 540ms cubic-bezier(.16,1,.3,1)}
+  .result.fresh-sip .result-top h2{animation:verdict-land 480ms cubic-bezier(.16,1,.3,1)}
+  .result.fresh-sip[data-perfect=true] .line-shine{height:3px;animation:perfect-line 720ms cubic-bezier(.16,1,.3,1)}
   .share-actions .big[aria-busy=true] svg{animation:send-card 220ms cubic-bezier(.16,1,.3,1)}
   @keyframes scene-light{from{opacity:.55}to{opacity:1}}
   @keyframes result-reveal{from{opacity:0}to{opacity:1}}
   @keyframes postcard-focus{from{clip-path:inset(0 0 4% 0);opacity:.72}to{clip-path:inset(0);opacity:1}}
   @keyframes send-card{from{transform:translateY(2px)}to{transform:translateY(0)}}
+  @keyframes stop-line{0%{opacity:0;transform:scaleX(.35)}25%,60%{opacity:.9;transform:scaleX(1)}100%{opacity:0;transform:scaleX(1.12)}}
+  @keyframes perfect-line{0%{opacity:0;transform:scaleX(.25)}25%{opacity:1;transform:scaleX(1)}55%{opacity:.9;transform:scaleX(1.15)}100%{opacity:0;transform:scaleX(1.25)}}
+  @keyframes verdict-land{from{opacity:.45;filter:blur(2px)}to{opacity:1;filter:blur(0)}}
 }
 @media(prefers-reduced-motion:reduce){.big,.outline,.drink-control{transition:background-color 100ms ease-out,color 100ms ease-out}}
