@@ -1,0 +1,14 @@
+{
+  "name": "split",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tilt your phone to drink. Stop with the line through the mark. One sip a day.",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

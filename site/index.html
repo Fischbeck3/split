@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Split</title>
+<meta name="description" content="Hold your phone like a pint, tilt back to drink, stop with the line through the mark. One sip a day, a new glass and a new place every day.">
+<meta name="theme-color" content="#17110d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Split">
+<meta property="og:description" content="Tilt your phone to drink. Stop with the line through the mark. One sip a day.">
+<meta property="og:url" content="https://fischbeck3.github.io/split/">
+<meta property="og:image" content="https://fischbeck3.github.io/split/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Three glasses: a stout in a pub, a lager bottle on a beach, a stein in Munich.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Split">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=Karla:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <canvas id="scene" width="400" height="700" aria-label="Today's glass in today's place. Tilt your phone back to drink."></canvas>
+  <div class="hud">
+    <div><div class="t" id="hudTitle">Split</div><div class="s" id="hudSub"></div></div>
+    <span class="pill" id="hudMode" hidden></span>
+  </div>
+  <div class="foot"><span class="pill" id="footPill" hidden></span></div>
+
+  <div class="overlay" id="intro">
+    <div class="sheet">
+      <div><span class="muted" id="introNo">No. 1</span><h2 id="introName">Pub night</h2><p class="muted" id="introLine"></p></div>
+      <ol class="steps">
+        <li><b>1</b><span>Hold your phone upright, like the glass in your hand.</span></li>
+        <li><b>2</b><span>Tilt it back as if you are drinking. The further you tilt, the faster it goes down.</span></li>
+        <li><b>3</b><span>Bring it back upright to stop. The line that counts is the bottom of the head. Put it through the middle of the mark.</span></li>
+      </ol>
+      <p class="muted" id="introNote">One sip a day counts. Everyone gets the same glass in the same place today.</p>
+      <button class="big" id="startTilt" type="button">Start · tilt to drink</button>
+      <button class="ghost" id="startHold" type="button">Start · hold to drink instead</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="result" hidden>
+    <div class="sheet">
+      <div class="score">
+        <div class="n" id="resScore">0</div>
+        <div><h2 id="resLabel"></h2><p class="muted" id="resDetail"></p></div>
+      </div>
+      <div class="strip" id="resStrip"></div>
+      <img class="cardimg" id="cardImg" alt="Your result card">
+      <div class="share"><pre id="shareText"></pre></div>
+      <div class="row">
+        <button class="big" id="shareBtn" type="button">Share card</button>
+        <button class="ghost" id="copyBtn" type="button">Copy text</button>
+      </div>
+      <div class="row">
+        <button class="ghost" id="practiceBtn" type="button">Practice sip</button>
+      </div>
+      <p class="muted next"><span>Next glass in <span id="countdown">--:--:--</span></span><button class="ghost" id="newDayBtn" type="button" hidden>New glass is up</button></p>
+      <div class="stats">
+        <div><span class="k">Days</span><span class="v" id="stDays">0</span></div>
+        <div><span class="k">Streak</span><span class="v" id="stStreak">0</span></div>
+        <div><span class="k">Best</span><span class="v" id="stBest">—</span></div>
+        <div><span class="k">Perfect</span><span class="v" id="stPerfect">0</span></div>
+      </div>
+    </div>
+  </div>
+  <canvas id="card" width="1080" height="1350" hidden></canvas>
+  <noscript><p class="noscript">Split needs JavaScript to pour.</p></noscript>
+</div>
+</body>
+</html>
