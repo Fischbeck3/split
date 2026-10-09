@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS} from '../site/js/calendar-data.js';
 import {THEMES} from '../site/js/themes.js';
 import {latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from '../site/js/content-calendar.js';
+import {checkCalendarContent} from './check-calendar-content.js';
 
 const SOURCE = fileURLToPath(new URL('../site/js/calendar-data.js', import.meta.url));
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -87,6 +88,7 @@ export async function runCalendarCli(args, {now = new Date(), baseline = CALENDA
   if (!inputPath || (!mode && !check)) throw new Error('Provide an exported plan and --check, --apply or --publish.');
   const input = JSON.parse(await read(resolve(inputPath), 'utf8'));
   const review = prepareCalendarChange(input, {baseline, now, publish:mode === 'publish', date});
+  if (mode === 'publish') await checkCalendarContent(review.plan);
   log(JSON.stringify(review, null, 2));
   if (!check && review.changes.length){
     await write(destination, serializeCalendarPlan(review.plan), 'utf8');

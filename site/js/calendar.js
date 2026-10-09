@@ -4,6 +4,7 @@ import {CALENDAR} from './calendar-data.js';
 import {addDateDays, createCalendarFeed, getCampaignForDate, getPublishedEntry, isDateKey,
   keyToDayNumber, latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from './content-calendar.js';
 import {analyticsUrlForDate, ANALYTICS_DASHBOARD_URL, THEME_ANALYTICS_URL} from './calendar-analytics.js';
+import {contentReadiness, isCampaignReady, THEME_READINESS} from './content-readiness.js';
 
 const STORAGE_KEY = 'split.content-calendar.v1';
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -82,8 +83,9 @@ function initCalendar(){
   const actual = date => {
     if (date < LAUNCH) return null;
     const entry = getPublishedEntry(date);
+    const readiness = contentReadiness(entry);
     return {entry, theme:themeById(entry?.themeId) || themeForDay(keyToDayNumber(date)),
-      status:date <= latestLiveDate() ? 'Released' : entry ? 'Scheduled' : 'Automatic rotation'};
+      readiness, status:!entry ? 'Unplanned' : !readiness.ready ? 'Not ready' : date <= latestLiveDate() ? 'Released' : 'Scheduled · ready'};
   };
   const save = (candidate, message) => {
     try {
@@ -107,12 +109,12 @@ function initCalendar(){
 
   function renderDailyCheck(){
     const today = localToday(), first = today < LAUNCH ? LAUNCH : today;
-    const live = actual(first), campaign = getCampaignForDate(first);
+    const live = actual(first), campaign = live.entry ? getCampaignForDate(first) : null;
     $('glanceDate').textContent = longDate(today);
     $('todayDrink').textContent = live.theme.name;
     $('todayPlace').textContent = live.theme.label;
     $('todayContext').textContent = (today < LAUNCH ? 'Opens ' + shortDate(LAUNCH) + ' · ' : 'Today · ') +
-      '#' + String(keyToDayNumber(first)).padStart(3, '0') + ' · ' + (campaign?.name || 'Automatic rotation');
+      '#' + String(keyToDayNumber(first)).padStart(3, '0') + ' · ' + (live.readiness.ready ? 'Built & approved · ' + (campaign?.name || 'Reviewed date') : 'Automatic fallback · theme not planned');
     // Traffic charts use UTC; challenge comparisons use each player’s local
     // challenge date. Label both rather than treating these as the same day.
     const completedReportingDay = addDateDays(new Date().toISOString().slice(0, 10), -1);
@@ -127,25 +129,26 @@ function initCalendar(){
     $('dashboardLink').href = THEME_ANALYTICS_URL;
     $('dashboardLink').target = '_blank'; $('dashboardLink').rel = 'noopener';
     $('upcomingDays').replaceChildren();
-    let drafts = 0, rotations = 0;
+    let readyDates = 0, firstUnplanned = null;
     for (let i = 1; i <= 7; i++){
       const date = addDateDays(first, i), next = actual(date), draft = plan.drafts[date];
       const row = element('li'), button = element('button', 'upcoming-day'); button.type = 'button';
       const dateLabel = element('span', 'upcoming-date', format(date, {weekday:'short'}) + ' ' + shortDate(date));
       const details = element('span', 'upcoming-glass');
-      details.append(element('strong', '', next.theme.name), element('span', 'upcoming-place', next.theme.label));
-      const status = element('span', draft ? 'upcoming-draft' : 'upcoming-status', draft ? 'Draft: ' + themeById(draft.themeId).name :
-        next.status === 'Automatic rotation' ? 'Rotation' : next.status === 'Released' ? 'Live elsewhere' : next.status);
+      details.append(element('strong', '', next.entry ? next.theme.name : draft?.campaignId !== 'none' && plan.campaigns[draft?.campaignId] ? plan.campaigns[draft.campaignId].name : 'Theme needed'),
+        element('span', 'upcoming-place', next.entry ? next.theme.label : 'Game fallback: ' + next.theme.name));
+      const status = element('span', draft || !next.readiness.ready ? 'upcoming-draft' : 'upcoming-status',
+        draft ? contentReadiness(draft).ready ? 'Draft · needs date review' : 'Draft · needs build & review' :
+          next.status === 'Released' ? 'Ready · live elsewhere' : next.status);
       button.append(dateLabel, details, status);
-      button.setAttribute('aria-label', longDate(date) + '. ' + next.theme.name + ', ' + next.theme.label +
-        (draft ? '. Draft proposal: ' + themeById(draft.themeId).name : '') + '. Open day details.');
+      button.setAttribute('aria-label', longDate(date) + '. ' + next.status + '. ' + (next.entry ? next.theme.name + ', ' + next.theme.label : 'Automatic fallback: ' + next.theme.name) +
+        (draft ? '. Draft proposal: ' + contentReadiness(draft).label : '') + '. Open day details.');
       button.addEventListener('click', () => { select(date, {reveal:true}); $('selectedDate').focus({preventScroll:true}); });
       row.append(button); $('upcomingDays').append(row);
-      if (draft) drafts++;
-      if (next.status === 'Automatic rotation') rotations++;
+      if (next.readiness.ready) readyDates++;
+      else firstUnplanned ||= date;
     }
-    $('upcomingSummary').textContent = drafts ? drafts + ' draft ' + (drafts === 1 ? 'proposal' : 'proposals') + ' to review.' :
-      rotations ? rotations + ' ' + (rotations === 1 ? 'day uses' : 'days use') + ' the automatic rotation.' : 'The upcoming lineup is scheduled.';
+    $('upcomingSummary').textContent = firstUnplanned ? readyDates + ' ready dates. First theme needed: ' + shortDate(firstUnplanned) + '.' : 'All seven themes are built, approved, and assigned.';
   }
 
   function renderGrid(){
@@ -181,12 +184,12 @@ function initCalendar(){
       cell.setAttribute('aria-selected', String(date === selected)); cell.tabIndex = date === selected ? 0 : -1;
       cell.dataset.date = date; cell.dataset.outside = String(monthKey(date) !== monthKey(viewDate));
       cell.dataset.today = String(date === localToday());
-      cell.setAttribute('aria-label', longDate(date) + '. ' + live.theme.name + ', ' + live.theme.label + '. ' + live.status +
-        (draft ? '. Draft proposal: ' + themeById(draft.themeId).name + '.' : '.'));
+      cell.setAttribute('aria-label', longDate(date) + '. ' + live.status + '. ' + (live.entry ? live.theme.name + ', ' + live.theme.label : 'Automatic fallback: ' + live.theme.name) +
+        (draft ? '. Draft: ' + contentReadiness(draft).label + '.' : '.'));
       cell.append(element('span', 'day-weekday', format(date, {weekday:'short'})), element('span', 'day-number', String(atNoon(date).getUTCDate())),
-        element('span', 'day-drink', live.theme.name), element('span', 'day-place', live.theme.label));
-      if (draft) cell.append(element('span', 'day-draft', 'Draft: ' + themeById(draft.themeId).name));
-      else cell.append(element('span', 'day-note', live.status === 'Automatic rotation' ? 'Rotation' : live.status));
+        element('span', 'day-drink', live.entry ? live.theme.name : 'Theme needed'), element('span', 'day-place', live.entry ? live.theme.label : 'Fallback: ' + live.theme.name));
+      if (draft) cell.append(element('span', 'day-draft', contentReadiness(draft).ready ? 'Draft · review date' : 'Draft · needs build'));
+      else cell.append(element('span', 'day-note', live.status));
       cell.addEventListener('click', () => select(date));
       cell.addEventListener('keydown', event => {
         let next;
@@ -221,12 +224,13 @@ function initCalendar(){
     const live = actual(selected), draft = plan.drafts[selected], editable = future(selected);
     const campaign = getCampaignForDate(selected);
     $('selectedDate').textContent = longDate(selected);
-    $('selectedStatus').textContent = live.status + (draft ? ' · draft proposal below' : ' · daily lineup');
+    $('selectedStatus').textContent = live.status + (live.entry ? ' · reviewed date' : ' · automatic game fallback') + (draft ? ' · unfinished proposal below' : '');
     $('selectedDrink').textContent = live.theme.name;
     $('selectedPlace').textContent = live.theme.label + (live.theme.location ? ' · ' + live.theme.location : '');
     $('selectedVessel').textContent = live.theme.vessel.charAt(0).toUpperCase() + live.theme.vessel.slice(1);
     $('selectedNumber').textContent = '#' + String(keyToDayNumber(selected)).padStart(3, '0');
     $('selectedRun').textContent = campaign?.name || 'Standalone rotation';
+    $('selectedReadiness').textContent = live.entry ? live.readiness.label : 'Date unplanned';
     $('previewLink').href = SITE_URL + '#day' + keyToDayNumber(selected);
     $('previewNote').textContent = draft ? 'This preview shows the current lineup, before your proposal. Preview sips never save a daily result.' : 'Preview sips never save a daily result.';
     $('draftTheme').value = draft?.themeId || live.theme.id;
@@ -237,11 +241,11 @@ function initCalendar(){
     $('draftCampaign').value = draft?.campaignId || 'none';
     $('draftNotes').value = draft?.notes || '';
     $('draftFields').disabled = !editable;
-    $('draftBoundary').textContent = editable ? 'A browser draft only. The daily game keeps its current lineup until review and release.' :
+    $('draftBoundary').textContent = editable ? 'A proposal only. Scheduling requires a built theme, approved artwork, and a reviewed date.' :
       'This date is already live somewhere in the world. Draft editing starts after ' + latestLiveDate() + ' (UTC+14).';
     $('selectedReview').hidden = !draft;
     $('clearDraft').disabled = !editable;
-    $('reviewText').textContent = draft ? live.theme.name + ' → ' + themeById(draft.themeId).name + '. ' +
+    $('reviewText').textContent = draft ? contentReadiness(draft).label + '. ' + live.theme.name + ' → ' + themeById(draft.themeId).name + '. ' +
       (draft.campaignId === 'none' ? 'Standalone proposal.' : plan.campaigns[draft.campaignId].name + ' proposal.') : '';
     $('reviewNotes').textContent = draft?.notes || 'No notes added.';
     $('dayAnalytics').href = analyticsUrlForDate(selected);
@@ -262,7 +266,8 @@ function initCalendar(){
     for (const [date, draft] of drafts){
       const row = element('div', 'draft-review-row'), button = element('button', 'text-button', shortDate(date) + ', ' + date.slice(0, 4) + ' · ' + themeById(draft.themeId).name);
       button.type = 'button'; button.addEventListener('click', () => select(date, {reveal:true}));
-      row.append(button, element('p', '', 'Current lineup: ' + actual(date).theme.name + '. ' + (draft.campaignId === 'none' ? 'Standalone draft.' : plan.campaigns[draft.campaignId].name + '.')));
+      const current = actual(date);
+      row.append(button, element('p', '', contentReadiness(draft).label + '. ' + (current.entry ? 'Current lineup: ' : 'Automatic fallback: ') + current.theme.name + '. ' + (draft.campaignId === 'none' ? 'Standalone draft.' : plan.campaigns[draft.campaignId].name + '.')));
       if (draft.notes) row.append(element('p', '', draft.notes));
       $('allDrafts').append(row);
     }
@@ -270,7 +275,7 @@ function initCalendar(){
     for (const [id, run] of Object.entries(plan.campaigns)){
       const row = element('article', 'campaign-row');
       row.append(element('h3', '', run.name), element('p', 'run-dates', longDate(run.startDate) + ' – ' + longDate(run.endDate)),
-        element('p', 'run-status', run.status === 'published' ? 'Published lineup' : 'Draft run · not published'));
+        element('p', 'run-status', isCampaignReady(id) ? run.status === 'published' ? 'Built & approved run' : 'Draft run · built, needs date review' : 'Draft run · needs build & review'));
       if (run.notes) row.append(element('p', '', run.notes));
       const open = element('button', 'text-button', 'See these dates'); open.type = 'button'; open.addEventListener('click', () => select(run.startDate, {reveal:true})); row.append(open);
       if (run.status === 'draft' && future(run.startDate)){
@@ -288,7 +293,7 @@ function initCalendar(){
   }
   function render(){ renderDailyCheck(); renderGrid(); renderInspector(); renderPlans(); }
 
-  for (const theme of THEMES) $('draftTheme').append(new Option(theme.name + ' · ' + theme.label, theme.id));
+  for (const theme of THEMES) $('draftTheme').append(new Option(theme.name + ' · ' + theme.label + (Object.hasOwn(THEME_READINESS, theme.id) ? ' · built' : ' · prototype'), theme.id));
   $('previousMonth').addEventListener('click', () => {
     const date = view === 'month' ? shiftedMonth(selected, -1) : addDateDays(selected, -7);
     select(date < LAUNCH ? LAUNCH : date);
