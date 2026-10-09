@@ -10,6 +10,7 @@ import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
 import {targetHintOpacity} from './target.js';
+import {renderVessel} from './render-vessels.js';
 
 const $ = id => document.getElementById(id);
 // A fixed release calendar keeps prototype scores out of the public run.
@@ -74,7 +75,7 @@ function glassBox(w, h, theme){
   const b = theme.box, short = h < 740, top = h * (theme.vessel === 'bottle' ? .235 : theme.vessel === 'stein' ? .29 : .26), bot = h * (short ? .625 : .665);
   const stein = theme.vessel === 'stein', halfW = Math.min(w * (stein ? .27 : b.w), (bot - top) * b.h);
   // Center the stein's full silhouette, leaving room for its handle during a sip.
-  return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: theme.vessel};
+  return {cx: w / 2 - (stein ? halfW * .24 : 0), top, bot, halfW, glass: renderVessel(theme)};
 }
 function currentBackdrop(G){
   const key = S.theme.id + ':' + W + 'x' + H + ':' + DPR;

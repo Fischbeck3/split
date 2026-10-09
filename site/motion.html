@@ -46,6 +46,7 @@ footer{margin:26px 0 0;color:#556c73;font-size:13px}
 import {dayParams,makeDrinkState,stepDrink,secondsToMark} from './js/core.js';
 import {makeMotionState,stepMotion} from './js/motion.js';
 import {drawScene,makeBackdrop,loadSceneAssets} from './js/draw.js';
+import {renderVessel} from './js/render-vessels.js';
 
 await loadSceneAssets();
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -55,7 +56,7 @@ const demos=[1,2,3].map(num=>{
   const ctx=canvas.getContext('2d');ctx.scale(2,2);
   const top=P.theme.vessel==='bottle'?96:P.theme.vessel==='stein'?139:116,bot=464;
   const stein=P.theme.vessel==='stein',halfW=Math.min(w*(stein?.27:P.theme.box.w),(bot-top)*P.theme.box.h);
-  const G={cx:w/2-(stein?halfW*.24:0),top,bot,halfW,glass:P.theme.vessel};
+  const G={cx:w/2-(stein?halfW*.24:0),top,bot,halfW,glass:renderVessel(P.theme)};
   const releaseAt=Math.round((secondsToMark(P)+.3)*120)/120;
   const frames=[];
   let drink=makeDrinkState(P),motion=makeMotionState();

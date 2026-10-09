@@ -1,5 +1,6 @@
 // The same daily vessel and stopping position, ready for a group chat.
-import {bandEmoji, widthAt, keyForDay} from './core.js';
+import {bandEmoji, keyForDay} from './core.js';
+import {renderVessel, renderWidthAt as widthAt} from './render-vessels.js';
 import {isCalendarDateKey} from './challenge.js';
 import {SITE_URL} from './config.js';
 import {drawScene} from './draw.js';
@@ -154,7 +155,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   const doc = canvas.ownerDocument || document;
   const photo = doc.createElement('canvas'); photo.width = PHOTO.w; photo.height = PHOTO.h;
   const scene = photo.getContext('2d');
-  const G = {cx: PHOTO.w / 2, top: 48, bot: 690, halfW: theme.vessel === 'bottle' ? 128 : theme.vessel === 'stein' ? 200 : 190, glass: theme.vessel};
+  const G = {cx: PHOTO.w / 2, top: 48, bot: 690, halfW: theme.vessel === 'bottle' ? 128 : theme.vessel === 'stein' ? 200 : 190, glass: renderVessel(theme)};
   // The same place and exact stopped level travel with the sip. Only the paper changes.
   drawScene(scene, {G, w: PHOTO.w, h: PHOTO.h, L: result.L, theme, P, bubbles: false, titleWash: false});
   drawGuide(scene, G, P, result, palette, friend);

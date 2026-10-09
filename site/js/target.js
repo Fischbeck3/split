@@ -1,6 +1,6 @@
 // Target artwork and the brief line hint share vessel-local coordinates.
 // The painted mark can grow without changing the seeded scoring tolerance.
-import {widthAt} from './core.js';
+import {renderWidthAt as widthAt} from './render-vessels.js';
 
 export const TARGET_HINT_MS = 1900;
 

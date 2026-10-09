@@ -1,5 +1,6 @@
 // Canvas drawing: the places, the vessels and the marks.
-import {widthAt, mulberry32} from './core.js';
+import {mulberry32} from './core.js';
+import {renderWidthAt as widthAt} from './render-vessels.js';
 import {getLiquidSurface} from './liquid.js';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
@@ -312,10 +313,11 @@ function drawVesselFront(c, G, theme){
     c.restore();
   }
   if (theme.vessel === 'bottle'){
-    const mw = widthAt('bottle', 0) * G.halfW, rr = gh * 0.046;
+    const mw = widthAt(G.glass, 0) * G.halfW, rr = gh * 0.046;
     c.strokeStyle = 'rgba(235,250,233,0.8)'; c.lineWidth = Math.max(1.3, gh * 0.009);
     for (const depth of [0.015, 0.038]){
-      c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, mw * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
+      const ringW = G.glass === 'corona' ? widthAt(G.glass, depth) * G.halfW : mw;
+      c.beginPath(); c.ellipse(G.cx, G.top + gh * depth, ringW * 0.93, gh * 0.006, 0, 0, Math.PI * 2); c.stroke();
     }
     c.fillStyle = 'rgba(56,93,75,0.16)'; c.beginPath(); c.ellipse(G.cx, G.top + gh * 0.004, mw * 0.89, gh * 0.009, 0, 0, Math.PI * 2); c.fill();
     if (theme.garnish !== 'none'){
@@ -542,7 +544,7 @@ function drawLacing(c, G, theme, L){
  *  Ambient is opt-in; leave it false for reduced motion and stable postcard exports. */
 export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false, targetHint = 0}){
   const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
-  const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
+  const surface = getLiquidSurface({vessel: G.glass, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
   const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
   if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme, titleWash);
   if (ambient) drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash});
