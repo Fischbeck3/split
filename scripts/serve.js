@@ -5,12 +5,12 @@ import {readFile} from 'node:fs/promises';
 import {extname, join, normalize} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-const ROOT = fileURLToPath(new URL('../site/', import.meta.url));
+const ROOT = fileURLToPath(new URL(process.argv.includes('--pages') ? '../.pages/' : '../site/', import.meta.url));
 const PORT = Number(process.env.PORT) || 8000;
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.png': 'image/png',
-  '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.ttf': 'font/ttf'
+  '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.ttf': 'font/ttf', '.ics':'text/calendar; charset=utf-8'
 };
 
 createServer(async (req, res) => {

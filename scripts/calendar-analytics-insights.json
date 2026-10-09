@@ -1,0 +1,254 @@
+{
+  "timezone": "UTC",
+  "projectId": 655684,
+  "dashboard": {
+    "name": "Daily Split · content calendar and sharing",
+    "description": "First eligible completion to native handoff or copy per browser and challenge. Compare base glasses, named visual themes and holiday campaigns. Same local challenge date, ordered within 24h; partial cohorts are marked. Rates weight browser-challenge counts. The event scan defaults to 90 days in UTC.",
+    "tags": [
+      "dailysplit:content-calendar"
+    ]
+  },
+  "insights": [
+    {
+      "name": "Daily Split · share conversion by challenge",
+      "description": "Browser × challenge conversion: first daily counts=true, new_record=true completion → native handoff or copy after completion, within 24h, on the same local challenge date. Repeat shares count once. Attribution uses completion properties. Rates weight browser-challenge finishers; partial_finishers have an open 24h window. Dates follow challenges; event scan defaults to 90 days.",
+      "tags": [
+        "dailysplit:calendar-challenge-conversion"
+      ],
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT\n    challenge_date AS challenge_date,\n    theme AS theme,\n    glass_id AS glass_id,\n    vessel AS vessel,\n    scene AS scene,\n    visual_theme AS visual_theme,\n    campaign_id AS campaign_id,\n    campaign_day AS campaign_day,\n    schedule_version AS schedule_version,\n    count() AS finishers,\n    countIf(converted) AS converters,\n    1.0 * countIf(converted) / nullIf(count(), 0) AS share_rate,\n    countIf(partial_cohort) AS partial_finishers,\n    24 AS window_hours\nFROM (\n    SELECT\n        browser_id AS browser_id,\n        challenge_date AS challenge_date,\n        theme AS theme,\n        glass_id AS glass_id,\n        vessel AS vessel,\n        scene AS scene,\n        visual_theme AS visual_theme,\n        campaign_id AS campaign_id,\n        campaign_day AS campaign_day,\n        schedule_version AS schedule_version,\n        arrayExists(shared_at -> shared_at > completed_at\n            AND shared_at <= addHours(completed_at, 24), successful_share_times) AS converted,\n        addHours(completed_at, 24) > now() AS partial_cohort\n    FROM (\n        SELECT\n            distinct_id AS browser_id,\n            toString(toDate(properties.challenge_date)) AS challenge_date,\n            countIf(event = 'sip_completed' AND properties.new_record = true) AS eligible_completions,\n            minIf(timestamp, event = 'sip_completed' AND properties.new_record = true) AS completed_at,\n            argMinIf(coalesce(nullIf(toString(properties.theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS theme,\n            argMinIf(coalesce(nullIf(toString(properties.glass_id), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'sapporo'\n                WHEN properties.theme = 'butterbeer' THEN 'butterbeer'\n                WHEN properties.theme = 'peroni' THEN 'peroni'\n                WHEN properties.theme = 'lager' THEN 'lager'\n                WHEN properties.theme = 'pale' THEN 'pale'\n                WHEN properties.theme = 'cider' THEN 'cider'\n                WHEN properties.theme = 'red' THEN 'red'\n                WHEN properties.theme = 'coffee' THEN 'coffee'\n                WHEN properties.theme = 'choc' THEN 'choc'\n                WHEN properties.theme = 'matcha' THEN 'matcha'\n                WHEN properties.theme = 'cola' THEN 'cola'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS glass_id,\n            argMinIf(coalesce(nullIf(toString(properties.vessel), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'tulip'\n                WHEN properties.theme = 'beach' THEN 'bottle'\n                WHEN properties.theme = 'munich' THEN 'stein'\n                WHEN properties.theme = 'sapporo' THEN 'tall'\n                WHEN properties.theme = 'butterbeer' THEN 'tulip'\n                WHEN properties.theme = 'peroni' THEN 'tall'\n                WHEN properties.theme = 'lager' THEN 'nonic'\n                WHEN properties.theme = 'pale' THEN 'tumbler'\n                WHEN properties.theme = 'cider' THEN 'tulip'\n                WHEN properties.theme = 'red' THEN 'nonic'\n                WHEN properties.theme = 'coffee' THEN 'cup'\n                WHEN properties.theme = 'choc' THEN 'mug'\n                WHEN properties.theme = 'matcha' THEN 'tumbler'\n                WHEN properties.theme = 'cola' THEN 'tall'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS vessel,\n            argMinIf(coalesce(nullIf(toString(properties.scene), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'tokyo'\n                WHEN properties.theme = 'butterbeer' THEN 'hogsmeade'\n                WHEN properties.theme = 'peroni' THEN 'rome'\n                WHEN properties.theme = 'lager' THEN 'bar'\n                WHEN properties.theme = 'pale' THEN 'bar'\n                WHEN properties.theme = 'cider' THEN 'bar'\n                WHEN properties.theme = 'red' THEN 'bar'\n                WHEN properties.theme = 'coffee' THEN 'bar'\n                WHEN properties.theme = 'choc' THEN 'bar'\n                WHEN properties.theme = 'matcha' THEN 'bar'\n                WHEN properties.theme = 'cola' THEN 'bar'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS scene,\n            argMinIf(coalesce(nullIf(toString(properties.visual_theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS visual_theme,\n            argMinIf(coalesce(nullIf(toString(properties.campaign_id), ''), 'none'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_id,\n            argMinIf(coalesce(toInt(properties.campaign_day), 0), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_day,\n            argMinIf(coalesce(nullIf(toString(properties.schedule_version), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS schedule_version,\n            groupArrayIf(timestamp,\n                event IN ('result_shared', 'result_copied')\n                AND properties.local_play_date = properties.challenge_date\n            ) AS successful_share_times\n        FROM events\n        WHERE event IN ('sip_completed', 'result_shared', 'result_copied')\n            AND properties.attempt_kind = 'daily'\n            AND properties.counts = true\n            AND properties.challenge_date IS NOT NULL\n            AND toString(properties.challenge_date) != ''\n            AND {filters}\n        GROUP BY browser_id, challenge_date\n    )\n    WHERE eligible_completions > 0\n)\nGROUP BY challenge_date, theme, glass_id, vessel, scene, visual_theme, campaign_id, campaign_day, schedule_version\nORDER BY challenge_date DESC, theme ASC\nLIMIT 500",
+          "filters": {
+            "dateRange": {
+              "date_from": "-90d",
+              "date_to": null
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "challenge_date"
+            },
+            {
+              "column": "theme"
+            },
+            {
+              "column": "glass_id"
+            },
+            {
+              "column": "vessel"
+            },
+            {
+              "column": "scene"
+            },
+            {
+              "column": "visual_theme"
+            },
+            {
+              "column": "campaign_id"
+            },
+            {
+              "column": "campaign_day"
+            },
+            {
+              "column": "schedule_version"
+            },
+            {
+              "column": "finishers"
+            },
+            {
+              "column": "converters"
+            },
+            {
+              "column": "share_rate",
+              "settings": {
+                "formatting": {
+                  "style": "percent",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "partial_finishers"
+            },
+            {
+              "column": "window_hours"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Daily Split · share conversion by glass",
+      "description": "Browser × challenge conversion: first daily counts=true, new_record=true completion → native handoff or copy after completion, within 24h, on the same local challenge date. Repeat shares count once. Attribution uses completion properties. Rates weight browser-challenge finishers; partial_finishers have an open 24h window. Dates follow challenges; event scan defaults to 90 days.",
+      "tags": [
+        "dailysplit:calendar-glass-conversion"
+      ],
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT\n    glass_id AS glass_id,\n    vessel AS vessel,\n    min(challenge_date) AS first_challenge_date,\n    max(challenge_date) AS last_challenge_date,\n    count() AS finishers,\n    countIf(converted) AS converters,\n    1.0 * countIf(converted) / nullIf(count(), 0) AS share_rate,\n    countIf(partial_cohort) AS partial_finishers,\n    24 AS window_hours\nFROM (\n    SELECT\n        browser_id AS browser_id,\n        challenge_date AS challenge_date,\n        theme AS theme,\n        glass_id AS glass_id,\n        vessel AS vessel,\n        scene AS scene,\n        visual_theme AS visual_theme,\n        campaign_id AS campaign_id,\n        campaign_day AS campaign_day,\n        schedule_version AS schedule_version,\n        arrayExists(shared_at -> shared_at > completed_at\n            AND shared_at <= addHours(completed_at, 24), successful_share_times) AS converted,\n        addHours(completed_at, 24) > now() AS partial_cohort\n    FROM (\n        SELECT\n            distinct_id AS browser_id,\n            toString(toDate(properties.challenge_date)) AS challenge_date,\n            countIf(event = 'sip_completed' AND properties.new_record = true) AS eligible_completions,\n            minIf(timestamp, event = 'sip_completed' AND properties.new_record = true) AS completed_at,\n            argMinIf(coalesce(nullIf(toString(properties.theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS theme,\n            argMinIf(coalesce(nullIf(toString(properties.glass_id), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'sapporo'\n                WHEN properties.theme = 'butterbeer' THEN 'butterbeer'\n                WHEN properties.theme = 'peroni' THEN 'peroni'\n                WHEN properties.theme = 'lager' THEN 'lager'\n                WHEN properties.theme = 'pale' THEN 'pale'\n                WHEN properties.theme = 'cider' THEN 'cider'\n                WHEN properties.theme = 'red' THEN 'red'\n                WHEN properties.theme = 'coffee' THEN 'coffee'\n                WHEN properties.theme = 'choc' THEN 'choc'\n                WHEN properties.theme = 'matcha' THEN 'matcha'\n                WHEN properties.theme = 'cola' THEN 'cola'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS glass_id,\n            argMinIf(coalesce(nullIf(toString(properties.vessel), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'tulip'\n                WHEN properties.theme = 'beach' THEN 'bottle'\n                WHEN properties.theme = 'munich' THEN 'stein'\n                WHEN properties.theme = 'sapporo' THEN 'tall'\n                WHEN properties.theme = 'butterbeer' THEN 'tulip'\n                WHEN properties.theme = 'peroni' THEN 'tall'\n                WHEN properties.theme = 'lager' THEN 'nonic'\n                WHEN properties.theme = 'pale' THEN 'tumbler'\n                WHEN properties.theme = 'cider' THEN 'tulip'\n                WHEN properties.theme = 'red' THEN 'nonic'\n                WHEN properties.theme = 'coffee' THEN 'cup'\n                WHEN properties.theme = 'choc' THEN 'mug'\n                WHEN properties.theme = 'matcha' THEN 'tumbler'\n                WHEN properties.theme = 'cola' THEN 'tall'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS vessel,\n            argMinIf(coalesce(nullIf(toString(properties.scene), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'tokyo'\n                WHEN properties.theme = 'butterbeer' THEN 'hogsmeade'\n                WHEN properties.theme = 'peroni' THEN 'rome'\n                WHEN properties.theme = 'lager' THEN 'bar'\n                WHEN properties.theme = 'pale' THEN 'bar'\n                WHEN properties.theme = 'cider' THEN 'bar'\n                WHEN properties.theme = 'red' THEN 'bar'\n                WHEN properties.theme = 'coffee' THEN 'bar'\n                WHEN properties.theme = 'choc' THEN 'bar'\n                WHEN properties.theme = 'matcha' THEN 'bar'\n                WHEN properties.theme = 'cola' THEN 'bar'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS scene,\n            argMinIf(coalesce(nullIf(toString(properties.visual_theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS visual_theme,\n            argMinIf(coalesce(nullIf(toString(properties.campaign_id), ''), 'none'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_id,\n            argMinIf(coalesce(toInt(properties.campaign_day), 0), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_day,\n            argMinIf(coalesce(nullIf(toString(properties.schedule_version), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS schedule_version,\n            groupArrayIf(timestamp,\n                event IN ('result_shared', 'result_copied')\n                AND properties.local_play_date = properties.challenge_date\n            ) AS successful_share_times\n        FROM events\n        WHERE event IN ('sip_completed', 'result_shared', 'result_copied')\n            AND properties.attempt_kind = 'daily'\n            AND properties.counts = true\n            AND properties.challenge_date IS NOT NULL\n            AND toString(properties.challenge_date) != ''\n            AND {filters}\n        GROUP BY browser_id, challenge_date\n    )\n    WHERE eligible_completions > 0\n)\nGROUP BY glass_id, vessel\nORDER BY finishers DESC\nLIMIT 500",
+          "filters": {
+            "dateRange": {
+              "date_from": "-90d",
+              "date_to": null
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "glass_id"
+            },
+            {
+              "column": "vessel"
+            },
+            {
+              "column": "first_challenge_date"
+            },
+            {
+              "column": "last_challenge_date"
+            },
+            {
+              "column": "finishers"
+            },
+            {
+              "column": "converters"
+            },
+            {
+              "column": "share_rate",
+              "settings": {
+                "formatting": {
+                  "style": "percent",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "partial_finishers"
+            },
+            {
+              "column": "window_hours"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Daily Split · share conversion by visual theme",
+      "description": "Browser × challenge conversion: first daily counts=true, new_record=true completion → native handoff or copy after completion, within 24h, on the same local challenge date. Repeat shares count once. Attribution uses completion properties. Rates weight browser-challenge finishers; partial_finishers have an open 24h window. Dates follow challenges; event scan defaults to 90 days.",
+      "tags": [
+        "dailysplit:calendar-theme-conversion"
+      ],
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT\n    visual_theme AS visual_theme,\n    min(challenge_date) AS first_challenge_date,\n    max(challenge_date) AS last_challenge_date,\n    count() AS finishers,\n    countIf(converted) AS converters,\n    1.0 * countIf(converted) / nullIf(count(), 0) AS share_rate,\n    countIf(partial_cohort) AS partial_finishers,\n    24 AS window_hours\nFROM (\n    SELECT\n        browser_id AS browser_id,\n        challenge_date AS challenge_date,\n        theme AS theme,\n        glass_id AS glass_id,\n        vessel AS vessel,\n        scene AS scene,\n        visual_theme AS visual_theme,\n        campaign_id AS campaign_id,\n        campaign_day AS campaign_day,\n        schedule_version AS schedule_version,\n        arrayExists(shared_at -> shared_at > completed_at\n            AND shared_at <= addHours(completed_at, 24), successful_share_times) AS converted,\n        addHours(completed_at, 24) > now() AS partial_cohort\n    FROM (\n        SELECT\n            distinct_id AS browser_id,\n            toString(toDate(properties.challenge_date)) AS challenge_date,\n            countIf(event = 'sip_completed' AND properties.new_record = true) AS eligible_completions,\n            minIf(timestamp, event = 'sip_completed' AND properties.new_record = true) AS completed_at,\n            argMinIf(coalesce(nullIf(toString(properties.theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS theme,\n            argMinIf(coalesce(nullIf(toString(properties.glass_id), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'sapporo'\n                WHEN properties.theme = 'butterbeer' THEN 'butterbeer'\n                WHEN properties.theme = 'peroni' THEN 'peroni'\n                WHEN properties.theme = 'lager' THEN 'lager'\n                WHEN properties.theme = 'pale' THEN 'pale'\n                WHEN properties.theme = 'cider' THEN 'cider'\n                WHEN properties.theme = 'red' THEN 'red'\n                WHEN properties.theme = 'coffee' THEN 'coffee'\n                WHEN properties.theme = 'choc' THEN 'choc'\n                WHEN properties.theme = 'matcha' THEN 'matcha'\n                WHEN properties.theme = 'cola' THEN 'cola'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS glass_id,\n            argMinIf(coalesce(nullIf(toString(properties.vessel), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'tulip'\n                WHEN properties.theme = 'beach' THEN 'bottle'\n                WHEN properties.theme = 'munich' THEN 'stein'\n                WHEN properties.theme = 'sapporo' THEN 'tall'\n                WHEN properties.theme = 'butterbeer' THEN 'tulip'\n                WHEN properties.theme = 'peroni' THEN 'tall'\n                WHEN properties.theme = 'lager' THEN 'nonic'\n                WHEN properties.theme = 'pale' THEN 'tumbler'\n                WHEN properties.theme = 'cider' THEN 'tulip'\n                WHEN properties.theme = 'red' THEN 'nonic'\n                WHEN properties.theme = 'coffee' THEN 'cup'\n                WHEN properties.theme = 'choc' THEN 'mug'\n                WHEN properties.theme = 'matcha' THEN 'tumbler'\n                WHEN properties.theme = 'cola' THEN 'tall'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS vessel,\n            argMinIf(coalesce(nullIf(toString(properties.scene), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'tokyo'\n                WHEN properties.theme = 'butterbeer' THEN 'hogsmeade'\n                WHEN properties.theme = 'peroni' THEN 'rome'\n                WHEN properties.theme = 'lager' THEN 'bar'\n                WHEN properties.theme = 'pale' THEN 'bar'\n                WHEN properties.theme = 'cider' THEN 'bar'\n                WHEN properties.theme = 'red' THEN 'bar'\n                WHEN properties.theme = 'coffee' THEN 'bar'\n                WHEN properties.theme = 'choc' THEN 'bar'\n                WHEN properties.theme = 'matcha' THEN 'bar'\n                WHEN properties.theme = 'cola' THEN 'bar'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS scene,\n            argMinIf(coalesce(nullIf(toString(properties.visual_theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS visual_theme,\n            argMinIf(coalesce(nullIf(toString(properties.campaign_id), ''), 'none'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_id,\n            argMinIf(coalesce(toInt(properties.campaign_day), 0), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_day,\n            argMinIf(coalesce(nullIf(toString(properties.schedule_version), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS schedule_version,\n            groupArrayIf(timestamp,\n                event IN ('result_shared', 'result_copied')\n                AND properties.local_play_date = properties.challenge_date\n            ) AS successful_share_times\n        FROM events\n        WHERE event IN ('sip_completed', 'result_shared', 'result_copied')\n            AND properties.attempt_kind = 'daily'\n            AND properties.counts = true\n            AND properties.challenge_date IS NOT NULL\n            AND toString(properties.challenge_date) != ''\n            AND {filters}\n        GROUP BY browser_id, challenge_date\n    )\n    WHERE eligible_completions > 0\n)\nGROUP BY visual_theme\nORDER BY finishers DESC\nLIMIT 500",
+          "filters": {
+            "dateRange": {
+              "date_from": "-90d",
+              "date_to": null
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "visual_theme"
+            },
+            {
+              "column": "first_challenge_date"
+            },
+            {
+              "column": "last_challenge_date"
+            },
+            {
+              "column": "finishers"
+            },
+            {
+              "column": "converters"
+            },
+            {
+              "column": "share_rate",
+              "settings": {
+                "formatting": {
+                  "style": "percent",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "partial_finishers"
+            },
+            {
+              "column": "window_hours"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Daily Split · share conversion by campaign",
+      "description": "Browser × challenge conversion: first daily counts=true, new_record=true completion → native handoff or copy after completion, within 24h, on the same local challenge date. Repeat shares count once. Attribution uses completion properties. Rates weight browser-challenge finishers; partial_finishers have an open 24h window. Dates follow challenges; event scan defaults to 90 days.",
+      "tags": [
+        "dailysplit:calendar-campaign-conversion"
+      ],
+      "query": {
+        "kind": "DataVisualizationNode",
+        "source": {
+          "kind": "HogQLQuery",
+          "query": "SELECT\n    campaign_id AS campaign_id,\n    min(challenge_date) AS first_challenge_date,\n    max(challenge_date) AS last_challenge_date,\n    count() AS finishers,\n    countIf(converted) AS converters,\n    1.0 * countIf(converted) / nullIf(count(), 0) AS share_rate,\n    countIf(partial_cohort) AS partial_finishers,\n    24 AS window_hours\nFROM (\n    SELECT\n        browser_id AS browser_id,\n        challenge_date AS challenge_date,\n        theme AS theme,\n        glass_id AS glass_id,\n        vessel AS vessel,\n        scene AS scene,\n        visual_theme AS visual_theme,\n        campaign_id AS campaign_id,\n        campaign_day AS campaign_day,\n        schedule_version AS schedule_version,\n        arrayExists(shared_at -> shared_at > completed_at\n            AND shared_at <= addHours(completed_at, 24), successful_share_times) AS converted,\n        addHours(completed_at, 24) > now() AS partial_cohort\n    FROM (\n        SELECT\n            distinct_id AS browser_id,\n            toString(toDate(properties.challenge_date)) AS challenge_date,\n            countIf(event = 'sip_completed' AND properties.new_record = true) AS eligible_completions,\n            minIf(timestamp, event = 'sip_completed' AND properties.new_record = true) AS completed_at,\n            argMinIf(coalesce(nullIf(toString(properties.theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS theme,\n            argMinIf(coalesce(nullIf(toString(properties.glass_id), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'sapporo'\n                WHEN properties.theme = 'butterbeer' THEN 'butterbeer'\n                WHEN properties.theme = 'peroni' THEN 'peroni'\n                WHEN properties.theme = 'lager' THEN 'lager'\n                WHEN properties.theme = 'pale' THEN 'pale'\n                WHEN properties.theme = 'cider' THEN 'cider'\n                WHEN properties.theme = 'red' THEN 'red'\n                WHEN properties.theme = 'coffee' THEN 'coffee'\n                WHEN properties.theme = 'choc' THEN 'choc'\n                WHEN properties.theme = 'matcha' THEN 'matcha'\n                WHEN properties.theme = 'cola' THEN 'cola'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS glass_id,\n            argMinIf(coalesce(nullIf(toString(properties.vessel), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'tulip'\n                WHEN properties.theme = 'beach' THEN 'bottle'\n                WHEN properties.theme = 'munich' THEN 'stein'\n                WHEN properties.theme = 'sapporo' THEN 'tall'\n                WHEN properties.theme = 'butterbeer' THEN 'tulip'\n                WHEN properties.theme = 'peroni' THEN 'tall'\n                WHEN properties.theme = 'lager' THEN 'nonic'\n                WHEN properties.theme = 'pale' THEN 'tumbler'\n                WHEN properties.theme = 'cider' THEN 'tulip'\n                WHEN properties.theme = 'red' THEN 'nonic'\n                WHEN properties.theme = 'coffee' THEN 'cup'\n                WHEN properties.theme = 'choc' THEN 'mug'\n                WHEN properties.theme = 'matcha' THEN 'tumbler'\n                WHEN properties.theme = 'cola' THEN 'tall'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS vessel,\n            argMinIf(coalesce(nullIf(toString(properties.scene), ''), CASE\n                WHEN properties.theme = 'pub' THEN 'pub'\n                WHEN properties.theme = 'beach' THEN 'beach'\n                WHEN properties.theme = 'munich' THEN 'munich'\n                WHEN properties.theme = 'sapporo' THEN 'tokyo'\n                WHEN properties.theme = 'butterbeer' THEN 'hogsmeade'\n                WHEN properties.theme = 'peroni' THEN 'rome'\n                WHEN properties.theme = 'lager' THEN 'bar'\n                WHEN properties.theme = 'pale' THEN 'bar'\n                WHEN properties.theme = 'cider' THEN 'bar'\n                WHEN properties.theme = 'red' THEN 'bar'\n                WHEN properties.theme = 'coffee' THEN 'bar'\n                WHEN properties.theme = 'choc' THEN 'bar'\n                WHEN properties.theme = 'matcha' THEN 'bar'\n                WHEN properties.theme = 'cola' THEN 'bar'\n                ELSE 'Unknown'\n            END), timestamp, event = 'sip_completed' AND properties.new_record = true) AS scene,\n            argMinIf(coalesce(nullIf(toString(properties.visual_theme), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS visual_theme,\n            argMinIf(coalesce(nullIf(toString(properties.campaign_id), ''), 'none'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_id,\n            argMinIf(coalesce(toInt(properties.campaign_day), 0), timestamp, event = 'sip_completed' AND properties.new_record = true) AS campaign_day,\n            argMinIf(coalesce(nullIf(toString(properties.schedule_version), ''), 'Unknown'), timestamp, event = 'sip_completed' AND properties.new_record = true) AS schedule_version,\n            groupArrayIf(timestamp,\n                event IN ('result_shared', 'result_copied')\n                AND properties.local_play_date = properties.challenge_date\n            ) AS successful_share_times\n        FROM events\n        WHERE event IN ('sip_completed', 'result_shared', 'result_copied')\n            AND properties.attempt_kind = 'daily'\n            AND properties.counts = true\n            AND properties.challenge_date IS NOT NULL\n            AND toString(properties.challenge_date) != ''\n            AND {filters}\n        GROUP BY browser_id, challenge_date\n    )\n    WHERE eligible_completions > 0\n)\nGROUP BY campaign_id\nORDER BY finishers DESC\nLIMIT 500",
+          "filters": {
+            "dateRange": {
+              "date_from": "-90d",
+              "date_to": null
+            }
+          }
+        },
+        "display": "ActionsTable",
+        "tableSettings": {
+          "columns": [
+            {
+              "column": "campaign_id"
+            },
+            {
+              "column": "first_challenge_date"
+            },
+            {
+              "column": "last_challenge_date"
+            },
+            {
+              "column": "finishers"
+            },
+            {
+              "column": "converters"
+            },
+            {
+              "column": "share_rate",
+              "settings": {
+                "formatting": {
+                  "style": "percent",
+                  "decimalPlaces": 1
+                }
+              }
+            },
+            {
+              "column": "partial_finishers"
+            },
+            {
+              "column": "window_hours"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

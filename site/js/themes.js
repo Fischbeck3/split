@@ -1,9 +1,10 @@
 // Split content: one entry per glass, each in its own place.
 //
-// Day No. 1 falls on LAUNCH, a local calendar date. The first days follow SCHEDULE in order.
-// After that the game picks a glass by date and never serves the same glass two days running.
+// SCHEDULE is the frozen opening rotation. Reviewed date pins and holiday runs
+// live in calendar-data.js; appending a theme cannot reroll released challenges.
 export {LAUNCH} from './config.js';
-export const SCHEDULE = ['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach'];
+import {LEGACY_OPENING_IDS} from './calendar-data.js';
+export const SCHEDULE = LEGACY_OPENING_IDS;
 
 // Fields
 //   id          short unique name, saved with each result

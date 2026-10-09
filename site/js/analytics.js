@@ -1,6 +1,7 @@
 import {dayKey} from './core.js';
 import {POSTHOG_PROJECT_KEY, POSTHOG_API_HOST, ANALYTICS_HOSTNAMES} from './config.js';
 import {shareResultText, copyResultText} from './share-actions.js';
+import {getCalendarAttribution} from './content-calendar.js';
 
 const EVENTS = new Set(['game_opened', 'friend_link_opened', 'sip_started', 'sip_completed',
   'result_share_attempted', 'result_shared', 'result_copied', 'result_share_cancelled',
@@ -13,8 +14,18 @@ export function attemptKind(state){
 
 /** Dates belong to the visitor's calendar; dashboard timestamps can use one project timezone. */
 export function gameProperties(state, now = new Date()){
-  return {local_play_date:dayKey(now), challenge_date:state.key, challenge_number:state.num,
+  return {...(state.attribution || getCalendarAttribution(state.key, state.theme)),
+    local_play_date:dayKey(now), challenge_date:state.key, challenge_number:state.num,
     theme:state.theme?.id, input_mode:state.mode, attempt_kind:attemptKind(state), friend_link:!!state.friend};
+}
+
+/** Sharing keeps the attribution recorded with the result, even after a release. */
+export function resultProperties(state, now = new Date()){
+  const properties = gameProperties(state, now), saved = state.result?.attribution;
+  for (const key of ['glass_id', 'vessel', 'scene', 'visual_theme', 'campaign_id', 'campaign_day', 'schedule_version']){
+    if (typeof saved?.[key] === (['campaign_day', 'schedule_version'].includes(key) ? 'number' : 'string')) properties[key] = saved[key];
+  }
+  return {...properties, score:state.result?.score, drained:!!state.result?.drained, counts:!!state.result?.counts};
 }
 
 export function cleanUrl(value){

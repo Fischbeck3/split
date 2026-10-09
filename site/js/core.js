@@ -1,6 +1,8 @@
 // Pure game logic: the calendar, seeded randomness, vessel shapes, the daily glass and scoring.
 // Nothing here touches the page, so the tests can import it in Node.
 import {LAUNCH, SCHEDULE, THEMES as RAW_THEMES} from './themes.js';
+import {CALENDAR, LEGACY_ROTATION_IDS} from './calendar-data.js';
+import {getPublishedEntry} from './content-calendar.js';
 
 export const pad = n => String(n).padStart(2, '0');
 
@@ -60,25 +62,31 @@ const DEFAULTS = {scene: 'bar', box: {top: 0.13, bot: 0.84, w: 0.34, h: 0.3}, ma
 export const THEMES = RAW_THEMES.map(t => Object.freeze(Object.assign({label: t.name + ' day'}, DEFAULTS, t)));
 export const themeById = id => THEMES.find(t => t.id === id);
 
-const pickIndex = key => Math.floor(mulberry32(hashStr('split-theme:' + key))() * THEMES.length);
-const scheduledIndex = n => THEMES.findIndex(t => t.id === SCHEDULE[n - 1]);
+// Keep the released rotation independent of new artwork/catalog entries. An
+// explicit date pin changes that date only, including its archive and shares.
+const pickIndex = key => Math.floor(mulberry32(hashStr('split-theme:' + key))() * LEGACY_ROTATION_IDS.length);
+const scheduledIndex = n => LEGACY_ROTATION_IDS.indexOf(SCHEDULE[n - 1]);
 
 /** The glass a day No. serves. */
-export function themeForDay(num){
-  if (num >= 1 && num <= SCHEDULE.length) return THEMES[scheduledIndex(num)];
-  if (num < 1) return THEMES[pickIndex(keyForDay(num))];
+export function themeForDay(num, calendar = CALENDAR){
+  // Array.map passes an index as its second argument. Preserve that public use.
+  calendar = calendar && typeof calendar === 'object' && calendar.days ? calendar : CALENDAR;
+  const pinned = getPublishedEntry(keyForDay(num), calendar);
+  if (pinned?.themeId && themeById(pinned.themeId)) return themeById(pinned.themeId);
+  if (num >= 1 && num <= SCHEDULE.length) return themeById(SCHEDULE[num - 1]);
+  if (num < 1) return themeById(LEGACY_ROTATION_IDS[pickIndex(keyForDay(num))]);
   let prev = SCHEDULE.length ? scheduledIndex(SCHEDULE.length) : -1;
   for (let n = SCHEDULE.length + 1; n <= num; n++){
     let i = pickIndex(keyForDay(n));
-    if (i === prev) i = (i + 1) % THEMES.length;
+    if (i === prev) i = (i + 1) % LEGACY_ROTATION_IDS.length;
     prev = i;
   }
-  return THEMES[prev];
+  return themeById(LEGACY_ROTATION_IDS[prev]);
 }
 
 /** Everything that makes one day's glass: the theme, where the mark sits, how fast it drinks, the wobble. */
-export function dayParams(num){
-  const theme = themeForDay(num), key = keyForDay(num);
+export function dayParams(num, calendar = CALENDAR){
+  const theme = themeForDay(num, calendar), key = keyForDay(num);
   const rnd = mulberry32(hashStr('split:' + key)), r = (a, b) => a + rnd() * (b - a);
   const choppy = typeof theme.choppy === 'boolean' ? theme.choppy : rnd() < 0.4;
   const markY = r(theme.markRange[0], theme.markRange[1]);

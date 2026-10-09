@@ -3,7 +3,8 @@ import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRa
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
-import {createAnalytics, gameProperties, trackedResultAction} from './analytics.js';
+import {createAnalytics, gameProperties, resultProperties as analyticsResultProperties, trackedResultAction} from './analytics.js';
+import {getCalendarAttribution} from './content-calendar.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY, RECORD_RUN} from './config.js';
@@ -45,7 +46,7 @@ const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: 
   result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState()};
 const analytics = createAnalytics();
 function resultProperties(){
-  return {...gameProperties(S), score:S.result.score, drained:S.result.drained, counts:!!S.result.counts};
+  return analyticsResultProperties(S);
 }
 function renderSound(enabled){
   $('soundBtn').setAttribute('aria-pressed', String(enabled));
@@ -223,7 +224,8 @@ function finish(now){
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
   const counts = !S.practice && canRecordChallenge({key:S.key, kind:S.kind, now:finishedAt});
   let newRecord = false;
-  S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: finishedAt.toISOString()};
+  const attribution = {...S.attribution};
+  S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: finishedAt.toISOString(), attribution};
   const completedProperties = {...gameProperties(S, finishedAt), score:r.score, drained:S.drained};
   if (counts){
     const st = load();
@@ -232,7 +234,7 @@ function finish(now){
       S.L = recorded.L; S.mode = recorded.mode; S.result = {...recorded, counts:true};
       toast('Your first sip is already saved.');
     } else {
-      st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f, L:S.L, mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true};
+      st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f, L:S.L, mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true, attribution};
       save(st);
       newRecord = true;
     }
@@ -454,6 +456,7 @@ async function init(){
   const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
   S.P = dayParams(S.num); S.theme = S.P.theme;
+  S.attribution = getCalendarAttribution(S.key, S.theme);
   S.friend = readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
   analytics.capture('game_opened', gameProperties(S, now), now);
   if (S.friend) analytics.capture('friend_link_opened', {...gameProperties(S, now), friend_sip_kind:S.friend.kind}, now);
@@ -503,7 +506,7 @@ async function init(){
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
   if (rec && rec.done && rec.theme === S.theme.id){
     S.L = rec.L; setPhase('result'); S.mode = rec.mode || 'hold';
-    S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString()};
+    S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString(), attribution:rec.attribution};
     $('intro').hidden = true; draw(performance.now()); renderResult();
   }
   requestAnimationFrame(frame);
