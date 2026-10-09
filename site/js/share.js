@@ -4,7 +4,8 @@ import {drawScene} from './draw.js';
 
 const DISPLAY = 'Fraunces, "Playfair Display", Georgia, serif';
 const BODY = 'Karla, "Helvetica Neue", Arial, sans-serif';
-const CARD_W = 1080, CARD_H = 1350, SCENE_H = 920;
+const CARD_W = 1080, CARD_H = 1350;
+const PHOTO = {x: 40, y: 246, w: 1000, h: 750};
 
 function statusLabel(result, preview){
   return preview ? 'Preview' : result.counts === false ? 'Practice' : '';
@@ -61,49 +62,15 @@ function fitText(c, value, x, y, maxW, size, family, weight = 700){
 
 function paletteFor(theme){
   const p = theme.palette || {bg: '#101b17', fg: '#eee7d6', sheet: '#1d2a23', accent: '#d9b874', accentFg: '#17221b'};
-  return {...p, band: theme.scene === 'pub' ? p.accent : p.fg, bandInk: theme.scene === 'pub' ? p.accentFg : p.sheet};
+  return {...p, paper: theme.scene === 'pub' ? p.fg : p.sheet, ink: theme.scene === 'pub' ? p.accentFg : p.fg,
+    guidePaper: theme.scene === 'pub' ? p.bg : p.sheet};
 }
 
-/** A quieter version of each place gives the exported vessel room to be read. */
-function drawCardBackdrop(c, theme, palette){
-  c.fillStyle = palette.bg;
-  c.fillRect(0, 0, CARD_W, SCENE_H);
-  if (theme.scene === 'beach'){
-    c.fillStyle = '#d9eef0'; c.fillRect(0, 250, CARD_W, 276);
-    c.fillStyle = '#2f9da5'; c.fillRect(0, 526, CARD_W, 114);
-    c.fillStyle = '#73c7c6'; c.fillRect(0, 612, CARD_W, 74);
-    c.fillStyle = '#fbf8ed';
-    c.beginPath(); c.moveTo(0, 684); c.bezierCurveTo(310, 661, 670, 711, CARD_W, 679);
-    c.lineTo(CARD_W, SCENE_H); c.lineTo(0, SCENE_H); c.closePath(); c.fill();
-    c.strokeStyle = '#fffdf4'; c.lineWidth = 9;
-    c.beginPath(); c.moveTo(0, 675); c.bezierCurveTo(310, 652, 670, 702, CARD_W, 670); c.stroke();
-    c.fillStyle = '#f1cd6a'; c.beginPath(); c.arc(886, 340, 47, 0, Math.PI * 2); c.fill();
-    return;
-  }
-  if (theme.scene === 'munich'){
-    c.fillStyle = '#e0edf4'; c.fillRect(0, 250, CARD_W, 573);
-    c.fillStyle = '#fffaf0'; c.fillRect(0, 283, CARD_W, 100);
-    c.fillStyle = '#3c72a4';
-    for (let x = -70; x < CARD_W + 120; x += 154){
-      c.beginPath(); c.moveTo(x, 283); c.lineTo(x + 78, 333); c.lineTo(x, 383); c.lineTo(x - 78, 333); c.closePath(); c.fill();
-    }
-    c.fillStyle = '#9b693c'; c.fillRect(0, 823, CARD_W, SCENE_H - 823);
-    c.fillStyle = '#c4985e'; c.fillRect(0, 823, CARD_W, 6);
-    c.strokeStyle = 'rgba(60,38,21,0.25)'; c.lineWidth = 2;
-    for (const y of [865, 908]){ c.beginPath(); c.moveTo(0, y); c.lineTo(CARD_W, y); c.stroke(); }
-    return;
-  }
-  c.strokeStyle = '#28392d'; c.lineWidth = 2;
-  for (const x of [180, 360, 720, 900]){ c.beginPath(); c.moveTo(x, 250); c.lineTo(x, 825); c.stroke(); }
-  for (const x of [164, 916]){
-    const glow = c.createRadialGradient(x, 343, 10, x, 343, 200);
-    glow.addColorStop(0, 'rgba(217,184,116,0.16)'); glow.addColorStop(1, 'rgba(217,184,116,0)');
-    c.fillStyle = glow; c.fillRect(x - 200, 250, 400, 400);
-    c.fillStyle = '#c9a46c'; c.beginPath(); c.moveTo(x - 51, 343); c.lineTo(x + 51, 343); c.lineTo(x + 27, 306); c.lineTo(x - 27, 306); c.closePath(); c.fill();
-    c.fillStyle = '#f7deaa'; c.fillRect(x - 43, 341, 86, 5);
-  }
-  c.fillStyle = '#4c3324'; c.fillRect(0, 823, CARD_W, SCENE_H - 823);
-  c.fillStyle = '#b18b58'; c.fillRect(0, 823, CARD_W, 5);
+function placeCopy(theme){
+  if (theme.scene === 'pub') return {title: 'Old Irish pub.', line: theme.name + ' · Ireland'};
+  if (theme.scene === 'beach') return {title: 'Cabo, Mexico.', line: theme.name + ' · Beach day'};
+  if (theme.scene === 'munich') return {title: 'Oktoberfest.', line: theme.name + ' · Munich, Germany'};
+  return {title: theme.label || theme.name, line: theme.name + (theme.location ? ' · ' + theme.location : '')};
 }
 
 function drawGuide(c, G, P, result, palette){
@@ -111,12 +78,17 @@ function drawGuide(c, G, P, result, palette){
   const markW = widthAt(G.glass, P.markY) * G.halfW;
   const lineW = widthAt(G.glass, result.L) * G.halfW;
   c.save();
-  c.strokeStyle = palette.fg; c.fillStyle = palette.fg; c.lineWidth = 3;
-  c.setLineDash([10, 8]); c.beginPath(); c.moveTo(151, markY); c.lineTo(G.cx - markW - 22, markY); c.stroke();
-  c.setLineDash([]); c.beginPath(); c.moveTo(G.cx + lineW + 22, lineY); c.lineTo(929, lineY); c.stroke();
-  c.font = '700 22px ' + BODY; c.textBaseline = 'middle';
-  c.textAlign = 'left'; c.fillText('MARK', 68, markY);
-  c.textAlign = 'right'; c.fillText('STOP', 1012, lineY);
+  // Paper-backed ink keeps the actual mark and stop readable over each place.
+  for (const [start, end, y, dash] of [[113, G.cx - markW - 22, markY, [10, 8]], [G.cx + lineW + 22, PHOTO.w - 112, lineY, []]]){
+    c.setLineDash(dash);
+    c.beginPath(); c.moveTo(start, y); c.lineTo(end, y);
+    c.strokeStyle = palette.guidePaper; c.lineWidth = 5; c.globalAlpha = 0.8; c.stroke();
+    c.strokeStyle = palette.fg; c.lineWidth = 2; c.globalAlpha = 1; c.stroke();
+  }
+  c.setLineDash([]); c.fillStyle = palette.guidePaper; c.globalAlpha = 0.92;
+  c.fillRect(18, markY - 23, 83, 46); c.fillRect(PHOTO.w - 101, lineY - 23, 83, 46);
+  c.fillStyle = palette.fg; c.globalAlpha = 1; c.font = '700 22px ' + BODY; c.textBaseline = 'middle';
+  c.textAlign = 'center'; c.fillText('MARK', 59, markY); c.fillText('STOP', PHOTO.w - 59, lineY);
   c.restore();
 }
 
@@ -139,39 +111,42 @@ function drawBand(c, f, x, y, ink){
   }
 }
 
-/** Draw synchronously after the caller has loaded the app's Fraunces and Karla fonts. */
+/** Draw synchronously after the caller has loaded the fonts and shared place assets. */
 export function drawShareCard(canvas, {num, theme, P, result, url, preview = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
-  const c = canvas.getContext('2d'), palette = paletteFor(theme);
+  const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
   const doc = canvas.ownerDocument || document;
-  const backdrop = doc.createElement('canvas'); backdrop.width = CARD_W; backdrop.height = SCENE_H;
-  drawCardBackdrop(backdrop.getContext('2d'), theme, palette);
-  const G = {cx: 540, top: 250, bot: 840, halfW: theme.vessel === 'bottle' ? 120 : theme.vessel === 'stein' ? 185 : 180, glass: theme.vessel};
-  drawScene(c, {G, w: CARD_W, h: SCENE_H, L: result.L, theme, P, bubbles: false, backdrop});
-  drawGuide(c, G, P, result, palette);
+  const photo = doc.createElement('canvas'); photo.width = PHOTO.w; photo.height = PHOTO.h;
+  const scene = photo.getContext('2d');
+  const G = {cx: PHOTO.w / 2, top: 48, bot: 690, halfW: theme.vessel === 'bottle' ? 128 : theme.vessel === 'stein' ? 200 : 190, glass: theme.vessel};
+  // The same place and exact stopped level travel with the sip. Only the paper changes.
+  drawScene(scene, {G, w: PHOTO.w, h: PHOTO.h, L: result.L, theme, P, bubbles: false, titleWash: false});
+  drawGuide(scene, G, P, result, palette);
+  c.fillStyle = palette.paper; c.fillRect(0, 0, CARD_W, CARD_H);
+  c.drawImage(photo, PHOTO.x, PHOTO.y);
 
-  // A fixed masthead makes the place recognizable while the card remains Split.
-  c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = palette.fg;
-  c.font = '900 84px ' + DISPLAY; c.fillText('Split.', 64, 121);
-  fitText(c, theme.label, 64, 208, 952, 70, DISPLAY, 900);
-  c.textAlign = 'right'; c.font = '700 32px ' + BODY;
-  c.fillText('#' + String(num).padStart(3, '0'), 1016, 95);
+  // A place-led postcard feels like something brought home from a shared trip.
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = palette.ink;
+  c.font = '900 52px ' + DISPLAY; c.fillText('Split.', 64, 85);
+  fitText(c, place.title, 64, 177, 952, 82, DISPLAY, 900);
+  fitText(c, place.line, 64, 221, 952, 30, BODY, 600);
+  c.textAlign = 'right'; c.font = '700 30px ' + BODY;
+  c.fillText('#' + String(num).padStart(3, '0'), 1016, 82);
   const status = statusLabel(result, preview);
-  if (status){ c.font = '700 25px ' + BODY; c.fillText(status + ' · not saved', 1016, 137); }
+  if (status){ c.font = '700 23px ' + BODY; c.fillText(status + ' · not saved', 1016, 117); }
 
   // Score and error use different units: a score is /100, an offset is mark height.
-  c.fillStyle = palette.band; c.fillRect(0, SCENE_H, CARD_W, CARD_H - SCENE_H);
-  c.fillStyle = palette.bandInk; c.textAlign = 'left';
-  c.font = '900 218px ' + DISPLAY; c.fillText(String(result.score), 64, 1131);
-  c.font = '700 40px ' + BODY; c.fillText('/100', 72, 1199);
-  fitText(c, result.label, 550, 1010, 466, 45, DISPLAY, 900);
-  fitText(c, offsetLabel(result), 550, 1065, 466, 30, BODY, 600);
-  drawBand(c, result.f, 566, 1120, palette.bandInk);
-  c.fillStyle = palette.bandInk;
-  if (status){ c.font = '700 24px ' + BODY; c.fillText(status + ' sip', 550, 1220); }
-  c.strokeStyle = palette.bandInk; c.globalAlpha = 0.25; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(64, 1249); c.lineTo(1016, 1249); c.stroke(); c.globalAlpha = 1;
-  fitText(c, cardUrl(url), 64, 1302, 450, 29, BODY, 700);
-  c.textAlign = 'right'; c.font = '700 33px ' + BODY; c.fillText('One sip. Your turn.', 1016, 1302);
+  c.textAlign = 'left'; c.font = '900 178px ' + DISPLAY;
+  c.fillText(String(result.score), 64, 1189);
+  c.font = '700 34px ' + BODY; c.fillText('/100', 72, 1237);
+  fitText(c, result.label, 536, 1058, 480, 45, DISPLAY, 900);
+  fitText(c, offsetLabel(result), 536, 1104, 480, 28, BODY, 600);
+  drawBand(c, result.f, 552, 1146, palette.ink);
+  c.fillStyle = palette.ink;
+  c.font = '600 22px ' + BODY; c.fillText('One stopping point', 536, 1240);
+  c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
+  fitText(c, cardUrl(url), 64, 1313, 450, 27, BODY, 700);
+  c.textAlign = 'right'; c.font = '700 31px ' + BODY; c.fillText('One sip. Your turn.', 1016, 1313);
   return canvas;
 }

@@ -8,7 +8,7 @@ test('an official sip shares a /100 score, one truthful strip, and a canonical l
   const text = buildShareText({num: 1, theme: P.theme,
     result: {score: 98, label: 'Perfect split', f: 0.04, counts: true},
     url: 'https://split.example/play/?day=1#result'});
-  assert.equal(text, 'Split #001 · 🍺 Guinness · Pub night\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nOne sip. Your turn.\nhttps://split.example/play/');
+  assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nOne sip. Your turn.\nhttps://split.example/play/');
   assert.doesNotMatch(text, /98%|Preview|Practice/);
 });
 
@@ -17,7 +17,7 @@ test('a day preview is explicitly identified without adding fake attempts', () =
   const text = buildShareText({num: 2, theme: P.theme,
     result: {score: 41, label: 'High in the crown', f: -0.28, counts: false},
     url: 'https://split.example/?day=2', preview: true});
-  assert.equal(text, 'Split #002 · 🍾 Corona · Beach day · Preview\n41/100 · High in the crown\n⬜🟨⬜⬜⬜\nOne sip. Your turn.\nhttps://split.example/');
+  assert.equal(text, 'Split #002 · 🍾 Corona · Cabo beach · Preview\n41/100 · High in the crown\n⬜🟨⬜⬜⬜\nOne sip. Your turn.\nhttps://split.example/');
   assert.equal(text.split('\n').filter(line => line.includes('⬜')).length, 1);
 });
 

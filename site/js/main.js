@@ -1,7 +1,7 @@
 // The app: input, the tilt sensor, the drink, results, sharing and the record.
 import {dayNumber, dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRate, TILT_START, TILT_STOP, DRAIN_LEVEL,
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
-import {drawScene, makeBackdrop} from './draw.js';
+import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 
@@ -14,7 +14,9 @@ const S = {num: 0, key: '', P: null, theme: null, mode: 'hold', state: 'intro', 
   result: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
 const sensor = {available: false, theta: 0, roll: 0, sign: 1, base: 0, rollBase: 0, raw: null};
 const scene = $('scene'), ctx = scene.getContext('2d');
+$('startHold').disabled = true; $('startTilt').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
+function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
 
 // ---------- storage ----------
 function load(){ try { const v = JSON.parse(localStorage.getItem(STORE)); return v && v.days ? v : {days: {}}; } catch { return {days: {}}; } }
@@ -87,7 +89,7 @@ async function enableTilt(){
 
 // ---------- the drink ----------
 function begin(){
-  S.state = 'ready'; S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
+  setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
   S.motion = makeMotionState();
   $('intro').hidden = true; $('result').hidden = true;
@@ -112,7 +114,7 @@ function frame(now){
   const dt = Math.min(0.05, (now - (S.last || now)) / 1000); S.last = now;
   const elapsed = S.drink?.elapsed || 0;
   if (S.state === 'ready' && wantsDrink()){
-    S.state = 'drinking'; if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
+    setPhase('drinking'); if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
     $('recalibrateBtn').disabled = true;
     $('footPill').textContent = S.mode === 'hold' ? 'Release to stop. Let it settle.' : 'Come upright to stop. Let it settle.';
   }
@@ -127,17 +129,17 @@ function frame(now){
   }
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
     input: S.state === 'drinking' ? Math.min(1, rate(now) / S.P.K) : 0, elapsed, dt, reducedMotion});
-  if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish();
+  if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
   if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = Math.round(tiltAngle()) + '° · ' + S.theme.feel;
   if (S.state !== 'result') draw(now);
   requestAnimationFrame(frame);
 }
 function lock(now){
-  S.state = 'locked'; S.lockAt = now; up();
+  setPhase('locked'); S.lockAt = now; up();
   $('drinkControl').disabled = true; $('drinkControl').textContent = 'Settling…';
   $('footPill').textContent = 'Returning upright…';
 }
-function finish(){
+function finish(now){
   const f = S.drained ? 2 : (S.L - S.P.markY) / S.P.markH, r = scoreFromOffset(f, S.theme.target);
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
   const counts = !S.practice && !S.preview;
@@ -153,7 +155,9 @@ function finish(){
       save(st);
     }
   }
-  S.state = 'result'; $('liveControls').hidden = true; $('hudMode').hidden = true;
+  // Paint the true upright stopping line before the postcard reveals over it.
+  draw(now);
+  setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
   renderResult(); renderStats();
 }
 
@@ -169,7 +173,8 @@ function renderResult(){
   $('resKind').textContent = r.counts ? 'Today’s sip' : S.preview ? 'Preview · not saved' : 'Practice · not saved';
   $('officialBtn').hidden = r.counts || S.preview || !load().days[S.key]?.done;
   $('resStrip').textContent = bandEmoji(r.f);
-  $('shareText').textContent = shareText(); $('copyBtn').textContent = 'Copy text';
+  $('shareText').textContent = shareText(); $('shareText').closest('details').open = false;
+  resetAction($('shareBtn')); resetAction($('copyBtn')); $('copyBtn').textContent = 'Copy text';
   $('dayHeading').hidden = true;
   $('result').hidden = false;
   // Build the card now, so the share sheet opens straight from the tap.
@@ -182,25 +187,44 @@ function drawCard(){
   return drawShareCard($('card'), {num:S.num, theme:S.theme, P:S.P, result:S.result, url:SITE_URL, preview:S.preview});
 }
 async function share(){
-  const btn = $('shareBtn'); btn.disabled = true;
+  const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
   try {
     const {canvas, blob} = await S.card, name = 'split-no-' + S.num + '.png', text = shareText();
     let file = null; try { file = new File([blob], name, {type: 'image/png'}); } catch { file = null; }
     if (file && navigator.canShare && navigator.canShare({files: [file]})){
-      try { await navigator.share({files: [file], text}); return; } catch (e){ if (e && e.name === 'AbortError') return; }
+      try { await navigator.share({files: [file], text}); confirmAction(btn, 'Shared'); return; } catch (e){ if (e && e.name === 'AbortError') return; }
     }
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
     $('cardImg').src = canvas.toDataURL('image/png');
+    confirmAction(btn, 'Card saved');
     toast('Card saved. Copy the text to go with it.');
   } catch { toast('Could not build the card'); }
-  finally { btn.disabled = false; }
+  finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+}
+const actionFeedback = new WeakMap();
+function resetAction(btn){
+  const previous = actionFeedback.get(btn);
+  if (previous){ clearTimeout(previous.timer); btn.innerHTML = previous.html; actionFeedback.delete(btn); }
+  delete btn.dataset.confirmed;
+}
+function confirmAction(btn, label){
+  const html = actionFeedback.get(btn)?.html || btn.innerHTML;
+  resetAction(btn); btn.textContent = label; btn.dataset.confirmed = 'true';
+  actionFeedback.set(btn, {html, timer: setTimeout(() => resetAction(btn), 1800)});
 }
 function copyText(){
   const text = shareText(), btn = $('copyBtn');
-  const fallback = () => { const range = document.createRange(); range.selectNodeContents($('shareText')); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); btn.textContent = 'Select and copy'; };
+  const fallback = () => {
+    resetAction(btn);
+    const pre = $('shareText'); pre.closest('details').open = true;
+    pre.focus({preventScroll:true});
+    const range = document.createRange(); range.selectNodeContents(pre);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    btn.textContent = 'Select and copy'; pre.scrollIntoView({block:'nearest'});
+  };
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(() => { btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = 'Copy text'; }, 1800); }).catch(fallback);
+    navigator.clipboard.writeText(text).then(() => confirmAction(btn, 'Copied')).catch(fallback);
   } else fallback();
 }
 
@@ -270,17 +294,18 @@ $('newDayBtn').addEventListener('click', () => location.reload());
 $('officialBtn').addEventListener('click', () => {
   const rec = load().days[S.key]; if (!rec || !rec.done) return;
   S.practice = false; S.mode = rec.mode; S.L = rec.L;
-  S.result = {...rec, counts:true}; S.state = 'result'; renderResult();
+  S.result = {...rec, counts:true}; setPhase('result'); renderResult();
 });
 window.addEventListener('hashchange', () => location.reload());
 window.addEventListener('resize', layout);
 
 // ---------- start ----------
-function init(){
+async function init(){
   const now = new Date(), m = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.num = dayNumber(now);
   if (m){ S.num = parseInt(m[1], 10); S.preview = true; }
   S.P = dayParams(S.num); S.theme = S.P.theme; S.key = S.P.key;
+  await loadSceneAssets(S.theme);
   S.L0 = startLevel(S.theme); S.L = S.L0;
   const palette = S.theme.palette || {bg:'#17110d', fg:'#f5ecdc', muted:'#b3a48e', sheet:'#221a14', line:'#3a2d23', accent:'#e9b949', accentFg:'#17110d'};
   for (const [name, value] of Object.entries(palette)) document.documentElement.style.setProperty('--' + (name === 'accentFg' ? 'accent-fg' : name), value);
@@ -288,7 +313,7 @@ function init(){
   document.documentElement.style.colorScheme = light ? 'light' : 'dark';
   for (const [name,value] of Object.entries(light ? {good:'#267347',warn:'#936210',miss:'#b64037'} : {good:'#91dda8',warn:'#d9b874',miss:'#ffaaa0'})) document.documentElement.style.setProperty('--'+name,value);
   document.querySelector('meta[name="theme-color"]').content = palette.bg;
-  $('hudSub').textContent = S.theme.name + (S.theme.id === 'pub' ? ' at the pub' : S.theme.id === 'beach' ? ' on white sand' : S.theme.id === 'munich' ? ' in a liter stein' : ' · ' + S.theme.label);
+  $('hudSub').textContent = S.theme.name + (S.theme.id === 'pub' ? ' · Ireland' : S.theme.id === 'beach' ? ' · Cabo, Mexico' : S.theme.id === 'munich' ? ' · Munich, Germany' : ' · ' + S.theme.label);
   $('introNo').textContent = 'No. ' + String(S.num).padStart(3, '0');
   $('introName').textContent = S.theme.label;
   $('introGoal').textContent = $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
@@ -309,10 +334,12 @@ function init(){
     $('startTilt').hidden = true;
   }
 
-  layout(); renderStats(); tickClock(); setInterval(tickClock, 1000);
+  setPhase('intro'); layout(); draw(performance.now()); $('app').classList.add('scene-ready');
+  $('startHold').disabled = false; $('startTilt').disabled = false;
+  renderStats(); tickClock(); setInterval(tickClock, 1000);
   const rec = S.preview ? null : load().days[S.key];
   if (rec && rec.done && rec.theme === S.theme.id){
-    S.L = rec.L; S.state = 'result'; S.mode = rec.mode || 'hold';
+    S.L = rec.L; setPhase('result'); S.mode = rec.mode || 'hold';
     S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString()};
     $('intro').hidden = true; renderResult();
   }

@@ -27,26 +27,27 @@ footer{margin:26px 0 0;color:#556c73;font-size:13px}
 </style>
 </head>
 <body>
-<header><div><h1>See the sip.</h1><p>Three vessels. Three rhythms. Hold to tip, release to settle, and read the line when it lands.</p></div><a href="./design.html">Play the first three days</a></header>
+<header><div><h1>Wish you were here.</h1><p>An old Irish pub. A beach in Cabo. One long table in Munich. Three places to return to, one sip at a time.</p></div><a href="./design.html">Play the first three days</a></header>
 <div class="controls" aria-label="Preview sip movement">
-  <button id="play" type="button">Play the sip</button>
-  <button id="ready" type="button" aria-pressed="true">Ready</button>
-  <button id="drinking" type="button" aria-pressed="false">Drinking</button>
-  <button id="released" type="button" aria-pressed="false">Just released</button>
-  <button id="settled" type="button" aria-pressed="false">Settled</button>
+  <button id="play" type="button" disabled>Play the sip</button>
+  <button id="ready" type="button" aria-pressed="true" disabled>Ready</button>
+  <button id="drinking" type="button" aria-pressed="false" disabled>Drinking</button>
+  <button id="released" type="button" aria-pressed="false" disabled>Just released</button>
+  <button id="settled" type="button" aria-pressed="false" disabled>Settled</button>
   <p id="status" role="status">Ready to sip.</p>
 </div>
 <section class="vessels" aria-label="Vessel movement previews">
-  <article><h2>Guinness at the pub</h2><p>A smooth lift, a dense cream head, and a clean stop.</p><canvas id="scene1" aria-label="Guinness motion preview"></canvas></article>
-  <article><h2>Corona on white sand</h2><p>Clear glass, fine fizz, and a tip that pulses with each glug.</p><canvas id="scene2" aria-label="Corona motion preview"></canvas></article>
-  <article><h2>A stein at Oktoberfest</h2><p>Thick glass, generous foam, and a heavy return. Release early.</p><canvas id="scene3" aria-label="Stein motion preview"></canvas></article>
+  <article><h2>The old Irish pub.</h2><p>Guinness, dark oak, and one more story. A smooth sip and a clean stop.</p><canvas id="scene1" aria-label="Guinness in an old Irish pub motion preview"></canvas></article>
+  <article><h2>Back in Cabo.</h2><p>A cold Corona under the palapa. Clear glass, fine fizz, and a pulsing glug.</p><canvas id="scene2" aria-label="Corona on a Cabo beach motion preview"></canvas></article>
+  <article><h2>Meet me in Munich.</h2><p>A liter stein at the long table. Generous foam and a heavy return.</p><canvas id="scene3" aria-label="Stein in a Munich Oktoberfest tent motion preview"></canvas></article>
 </section>
 <footer>Illustrative motion preview. No daily scores are saved. The game and share cards use these same vessels and liquid geometry.</footer>
 <script type="module">
 import {dayParams,makeDrinkState,stepDrink,secondsToMark} from './js/core.js';
 import {makeMotionState,stepMotion} from './js/motion.js';
-import {drawScene,makeBackdrop} from './js/draw.js';
+import {drawScene,makeBackdrop,loadSceneAssets} from './js/draw.js';
 
+await loadSceneAssets();
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const demos=[1,2,3].map(num=>{
   const P=dayParams(num),canvas=document.getElementById('scene'+num),w=390,h=600;
@@ -65,7 +66,7 @@ const demos=[1,2,3].map(num=>{
     motion=stepMotion(P,motion,{drinking:elapsed<releaseAt,input,elapsed:drink.elapsed,dt:1/120,reducedMotion});
     drink=stepDrink(P,drink,P.K*input,1/120);
   }
-  return {P,ctx,G,w,h,releaseAt,frames,backdrop:makeBackdrop(w,h,G,P.theme,2)};
+  return {P,ctx,G,w,h,releaseAt,frames,backdrop:makeBackdrop(w,h,G,P.theme,2,{titleWash:false})};
 });
 const status=document.getElementById('status');
 let playback=0;
@@ -107,6 +108,7 @@ document.getElementById('play').onclick=()=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(playback)});
 await Promise.all([document.fonts.load('900 40px Fraunces'),document.fonts.load('700 16px Karla')]);
 render(0);
+for(const button of document.querySelectorAll('.controls button'))button.disabled=false;
 </script>
 </body>
 </html>

@@ -31,17 +31,17 @@ export const SCHEDULE = ['pub', 'beach', 'munich'];
 //   emoji       the vessel in a plain-text share
 //   palette     UI and card colors: bg, fg, muted, sheet, line, accent, accentFg
 export const THEMES = [
-  {id: 'pub', name: 'Guinness', label: 'Pub night', line: 'One smooth sip. Split the G.', location: 'THE PUB', feel: 'smooth pour', emoji: '🍺', scene: 'pub', vessel: 'tulip',
+  {id: 'pub', name: 'Guinness', label: 'Old Irish pub', line: 'Dark oak. Old stories. One smooth sip. Split the G.', location: 'IRELAND', feel: 'smooth pour', emoji: '🍺', scene: 'pub', vessel: 'tulip',
     palette: {bg: '#101b17', fg: '#eee7d6', muted: '#aaa797', sheet: '#1d2a23', line: '#3c4a40', accent: '#d9b874', accentFg: '#17221b'},
     box: {top: 0.13, bot: 0.84, w: 0.34, h: 0.3}, body: ['#21190e', '#080d0a'], head: '#f4edd8', headT: 0.10,
     mark: 'letter', letter: 'G', markFill: '#f3e9cf', markStroke: '#1a110b', target: 'the G',
     markRange: [0.48, 0.64], markHRange: [0.10, 0.13], speed: 1, choppy: false},
-  {id: 'beach', name: 'Corona', label: 'Beach day', line: 'Quick neck. Slow glug. Split the crown.', location: 'WHITE SAND BEACH', feel: 'bottle glug', emoji: '🍾', scene: 'beach', vessel: 'bottle',
+  {id: 'beach', name: 'Corona', label: 'Cabo beach', line: 'White sand. A cold bottle. Quick neck, slow glug. Split the crown.', location: 'CABO, MEXICO', feel: 'bottle glug', emoji: '🍾', scene: 'beach', vessel: 'bottle',
     palette: {bg: '#f6f0e3', fg: '#153e4d', muted: '#556c73', sheet: '#fffaf0', line: '#d7e0d8', accent: '#18777d', accentFg: '#fffaf0'},
     box: {top: 0.06, bot: 0.84, w: 0.26, h: 0.19}, body: ['#f6e08f', '#ecc953'], head: '#fff9e2', headT: 0.015,
     mark: 'crown', markFill: '#163e55', markStroke: '#fffaf0', target: 'the crown',
     markRange: [0.52, 0.62], markHRange: [0.07, 0.09], speed: 1, choppy: false, bubbles: true},
-  {id: 'munich', name: 'Festbier', label: 'Oktoberfest', line: 'A heavy stein. A little follow-through. Split the crest.', location: 'OKTOBERFEST', feel: 'heavy stein', emoji: '🍻', scene: 'munich', vessel: 'stein',
+  {id: 'munich', name: 'Festbier', label: 'Oktoberfest', line: 'Friends at the long table. A heavy stein with a little follow-through. Split the crest.', location: 'MUNICH, GERMANY', feel: 'heavy stein', emoji: '🍻', scene: 'munich', vessel: 'stein',
     palette: {bg: '#f0f5f7', fg: '#233c56', muted: '#5a7083', sheet: '#ffffff', line: '#ccdce6', accent: '#c49433', accentFg: '#23344a'},
     box: {top: 0.2, bot: 0.84, w: 0.3, h: 0.36}, body: ['#f3bd45', '#d2891a'], head: '#fff8ea', headT: 0.14,
     mark: 'crest', markFill: '#2a67c9', markStroke: '#c9a24a', target: 'the crest',

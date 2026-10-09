@@ -6,6 +6,47 @@ export const SCENES = ['pub', 'beach', 'munich', 'bar'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
+const SCENE_ART = {
+  pub: {url: new URL('../assets/scenes/irish-pub.webp', import.meta.url).href, table: .606},
+  beach: {url: new URL('../assets/scenes/cabo-beach.webp', import.meta.url).href, table: .627},
+  munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636}
+};
+const sceneImages = new Map(), sceneLoads = new Map();
+
+/** Decode once before painting a game or export. A failed asset keeps the vector fallback. */
+export async function loadSceneAssets(theme){
+  const scenes = theme ? [theme.scene] : Object.keys(SCENE_ART);
+  await Promise.all(scenes.map(scene => {
+    if (!SCENE_ART[scene]) return;
+    if (!sceneLoads.has(scene)) sceneLoads.set(scene, new Promise(resolve => {
+      const image = new Image();
+      image.onload = async () => {
+        try { await image.decode(); } catch { /* onload already supplied valid pixels */ }
+        sceneImages.set(scene, image); resolve();
+      };
+      image.onerror = () => resolve();
+      image.src = SCENE_ART[scene].url;
+    }));
+    return sceneLoads.get(scene);
+  }));
+}
+
+function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
+  const image = sceneImages.get(theme.scene), art = SCENE_ART[theme.scene];
+  if (!image || !art) return false;
+  // Anchor the illustrated tabletop to the vessel rather than to the viewport.
+  const tableY = Math.max(h * .4, G.bot - h * .08), iw = image.naturalWidth, ih = image.naturalHeight;
+  const scale = Math.max(w / iw, tableY / (ih * art.table), (h - tableY) / (ih * (1 - art.table)));
+  c.drawImage(image, (w - iw * scale) / 2, tableY - ih * art.table * scale, iw * scale, ih * scale);
+  if (!titleWash) return true;
+  // The title lives on a quiet area of the place, while the vessel retains full contrast.
+  const dark = theme.scene === 'pub', wash = c.createLinearGradient(0, 0, 0, h * .35);
+  wash.addColorStop(0, dark ? 'rgba(16,27,23,.94)' : 'rgba(246,240,227,.96)');
+  wash.addColorStop(.42, dark ? 'rgba(16,27,23,.68)' : 'rgba(246,240,227,.78)');
+  wash.addColorStop(1, dark ? 'rgba(16,27,23,0)' : 'rgba(246,240,227,0)');
+  c.fillStyle = wash; c.fillRect(0, 0, w, h * .35);
+  return true;
+}
 
 function roundedRect(c, x, y, w, h, r){
   c.beginPath();
@@ -24,7 +65,8 @@ function woodTable(c, w, h, y, palette){
 }
 
 // ---------- places ----------
-export function drawBackdrop(c, w, h, G, theme){
+export function drawBackdrop(c, w, h, G, theme, titleWash = true){
+  if (drawMemoryBackdrop(c, w, h, G, theme, titleWash)) return;
   const sc = theme.scene; let g;
   if (sc === 'pub'){
     g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#101b17'); g.addColorStop(0.6, '#23332a'); g.addColorStop(1, '#15221b'); c.fillStyle = g; c.fillRect(0, 0, w, h);
@@ -101,9 +143,9 @@ export function drawBackdrop(c, w, h, G, theme){
   const vg = c.createRadialGradient(w / 2, h * 0.45, h * 0.1, w / 2, h * 0.45, h * 0.8); vg.addColorStop(0, 'rgba(255,220,170,0.10)'); vg.addColorStop(1, 'rgba(0,0,0,0.35)'); c.fillStyle = vg; c.fillRect(0, 0, w, h);
 }
 /** The backdrop rendered once into its own canvas, so frames only copy it. */
-export function makeBackdrop(w, h, G, theme, dpr){
+export function makeBackdrop(w, h, G, theme, dpr, {titleWash = true} = {}){
   const cv = document.createElement('canvas'); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); drawBackdrop(g, w, h, G, theme);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); drawBackdrop(g, w, h, G, theme, titleWash);
   return cv;
 }
 
@@ -329,11 +371,11 @@ function drawLacing(c, G, theme, L){
 
 /** Draw the place, the vessel, the drink at level L (0 rim, 1 base) and the mark.
  *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place. */
-export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0}){
+export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true}){
   const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
   const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
   const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
-  if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme);
+  if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme, titleWash);
   // The table and shadow stay put. Everything attached to the vessel tips together.
   c.save(); c.globalAlpha *= Math.max(0.22, 1 - lift / gh * 2.5);
   c.fillStyle = theme.scene === 'beach' ? 'rgba(87,105,91,0.18)' : theme.scene === 'munich' ? 'rgba(56,60,37,0.22)' : 'rgba(0,0,0,0.3)';

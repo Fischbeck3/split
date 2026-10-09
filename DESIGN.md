@@ -127,18 +127,21 @@ components:
 
 ## Overview
 
-**Creative North Star: "One sip. Three places."**
+**Creative North Star: "One sip. A place you remember."**
 
-Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
+Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place: an old Irish pub, a beach palapa in Cabo, or an Oktoberfest tent in Munich. The interface gives it a short destination, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
 
-The pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.
+The pub carries aged oak, a fireplace, and amber light; Cabo carries palapa shade, turquoise water, and a distant rocky headland; Munich carries timber roof ribs, warm lamps, blue and white bunting, and communal tables. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn.
+
+The scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed WebP assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.
 
 **Key Characteristics:**
 
 - A large, unobscured vessel is the focal point.
-- The place changes the palette, backdrop, vessel, and share card together.
+- The place changes the palette, painted backdrop, vessel, and postcard together.
 - Heavy serif titles pair with plain, compact instructions.
 - A visible lift and tip explain the sip; a single settled stopping position carries the result.
+- The postcard carries the destination and a social invitation into the group chat.
 
 ## Colors
 
@@ -146,7 +149,7 @@ The three opening themes share semantic roles while changing the atmosphere. The
 
 ### Primary
 
-- **Pub gold** (`pub-accent`): the start/hold/share control and the pub card's score band. Deep green ink keeps the gold surface readable.
+- **Pub gold** (`pub-accent`): the start/hold/share control. Deep green ink keeps the gold surface readable; the exported pub postcard uses warm cream paper with the same dark ink.
 - **Sea teal** (`beach-accent`): the beach control, paired with cream ink.
 - **Festival gold** (`fest-accent`): the stein control, paired with deep blue ink.
 
@@ -160,7 +163,7 @@ The three opening themes share semantic roles while changing the atmosphere. The
 
 Good, warning, and miss colors change with the light or dark theme. The dark warning uses pub gold. These colors communicate verdicts; they do not change the accuracy calculation or turn the positional strip into an attempt grid.
 
-**The Same Place Rule.** The game and its exported card use the same daily theme. Keep scene, vessel, mark, and palette coherent.
+**The Same Place Rule.** The game and its exported postcard use the same daily scene, vessel, mark, and settled liquid level. Keep the destination and palette coherent.
 
 **The Readable State Rule.** Use foreground ink for focus outlines and active preview labels. Accent color may underline a selection; it does not replace readable text.
 
@@ -193,7 +196,7 @@ The `site/design.html` review route shows all three opening days and their sampl
 
 ## Elevation & Depth
 
-The interface is mostly flat. Theme-colored sheets meet the illustrated scene without floating-card effects. Depth comes from the glass rim and wall highlights, condensation or dimples, the beer gradient, dense microfoam and lacing, wood or shoreline layers, and restrained scene lighting. Only the desktop game container and transient toast use CSS shadows: respectively `0 10px 60px #0003` and `0 8px 24px #0003`.
+The interface is mostly flat. Theme-colored sheets meet the painted travel scene without floating-card effects. Depth comes from the place's worn wood, canopy or roof, distant company, and natural light, then the glass rim and wall highlights, condensation or dimples, beer gradient, dense microfoam, and lacing. The desktop game container and transient toast use ambient CSS shadows: respectively `0 10px 60px #0003` and `0 8px 24px #0003`. The hold control uses a shallow inset edge at rest (`inset 0 -3px 0 #0002`) and an inset pressed shadow (`inset 0 2px 5px #0003`) to make the gesture tangible.
 
 Keep illustrated depth attached to the place and vessel. The result image is the dominant artifact, so the surrounding controls and stats need no added elevation.
 
@@ -201,13 +204,13 @@ Keep illustrated depth attached to the place and vessel. The result image is the
 
 Controls use softly curved corners from the control token; result images use the smaller card radius. The review route's embedded game frames use the preview-frame radius. Text actions remain bare and underlined. Separators are thin and tonal.
 
-The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-necked bottle with lime, and a broad handled liter stein. Marks are readable at the center of the glass; simplified printed brand names sit below the scored mark. Oktoberfest bunting stays above the glass and below the heading.
+The vessel silhouette is the signature geometry: a curved tulip pint, a narrow-necked bottle with lime, and a broad handled liter stein. Marks are readable at the center of the glass; simplified printed brand names sit below the scored mark. The painted scenery reserves a quiet central foreground, with architecture, bunting, and people providing context around the vessel.
 
 ## Components
 
 ### Buttons
 
-Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the primary input across devices; optional phone tilt uses a secondary text action. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens it. All keyboard focus outlines use foreground ink (2px, offset 5px).
+Primary start, hold, and share actions are broad theme-accent surfaces with strong Karla labels. Hold is the primary input across devices; optional phone tilt uses a secondary text action. The main action has the frontmatter padding and a minimum height of 54px; the drinking control is 64px tall. Short viewports reduce the main action to 48px. Hover brightens the main button; pressing the hold control darkens and depresses it by 2px when motion is allowed. All keyboard focus outlines use foreground ink (2px, offset 5px).
 
 Text actions have underlined foreground labels and a minimum height of 38px. The outlined copy action uses a thin theme separator border, foreground ink, and a separator-colored hover fill. Disabled controls reduce opacity to one half. Inline arrow and share icons use the current text color.
 
@@ -229,25 +232,28 @@ The pub's intake stops immediately, the bottle drops quickly through its neck an
 
 Material follows the vessel: dense cream microfoam and lacing on the pint; a clear long-necked bottle with a distinct lip and shoulder, condensation, lime, fine fizz, and a larger rising air pocket synchronized to each glug; thick glass, a broad clear handle, recessed dimples, and an irregular foam crest on the stein. Foam responds to the surface and leaves evidence of the sip while the scored boundary remains readable.
 
-Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liquid progress and static foam and material detail. Optional CSS transitions use 160ms ease-out; the result image arrives over 400ms only when reduced motion is not requested.
+The place enters through a 650ms opacity reveal once its asset is ready. Starting a sip ends that introductory animation immediately. After the drink and vessel settle, the game paints the true upright stopping line before showing the result: a 220ms result fade and 420ms postcard focus reveal. These transitions support the gesture and the shareable result without adding delay to the score.
+
+Reduced motion zeroes spatial tipping, lifting, and slosh while preserving liquid progress and static foam and material detail. It omits the scene, result, postcard, and sending reveals. Controls retain brief 100ms color transitions; the regular action and hold transitions use 140ms and 110ms respectively.
 
 ### Results and sharing
 
-The result surface leads with a verdict, practice/preview status when needed, the themed card, and the score. Sharing offers the image or text; practice is an explicit secondary action. The first daily score is retained separately from later practice.
+The result surface leads with a verdict, practice/preview status when needed, the destination postcard, and the score. Sharing offers the image or text; practice is an explicit secondary action. The first daily score is retained separately from later practice. The share action exposes a busy state and briefly confirms successful sharing or download; copying confirms the completed action as well. If automatic copying fails, the text disclosure opens, focuses and selects the result, and scrolls it into view for manual copying; the next result closes that disclosure again.
 
-The image card is 1080 × 1350, with the daily scene and vessel above a strong score band. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the canonical game URL. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. The same one-row position appears in plain text. Preview and practice labels travel with both formats; sample review cards are explicitly previews.
+The image postcard is 1080 × 1350, with a paper border framing the same painted scene and vessel used in play. A large destination title and drink cue sit above it; the actual score and verdict sit below it. It uses the actual settled liquid level, a dashed mark guide, a solid stop guide, the score out of 100, the offset measured in mark height, and the canonical game URL. Its five cells show one stopping position: high to low, with the middle cell green. An arrow indicates a stop outside the strip. “One sip. Your turn.” makes the social action clear without promising a result. The same destination, invitation, and one-row position appear in plain text. Preview and practice labels travel with both formats; sample review postcards are explicitly previews.
 
 ## Do's and Don'ts
 
 ### Do:
 
 - **Do** preserve the existing wordmark, Fraunces/Karla pairing, and canvas vessel language when adding a day.
-- **Do** give each new place a coherent palette, recognizable vessel, short target, and matching share treatment.
+- **Do** give each new place a coherent palette, recognizable vessel, short target, and matching destination postcard.
 - **Do** keep the vessel and mark visible between the heading and controls at both normal and short phone heights.
 - **Do** preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.
 - **Do** show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.
 - **Do** label preview and practice results on both image and text shares.
-- **Do** use foreground ink for focus and active preview text, and retain the reduced-motion treatment.
+- **Do** keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.
+- **Do** use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails.
 
 ### Don't:
 

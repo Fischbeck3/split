@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-09T04:35:26.321741Z",
+  "generatedAt": "2026-10-09T04:51:50.622808Z",
   "title": "Design System: Split",
   "extensions": {
     "colorMeta": {
@@ -399,18 +399,28 @@
         "name": "toast",
         "value": "0 8px 24px #0003",
         "purpose": "Separate transient feedback from the game scene."
+      },
+      {
+        "name": "hold-rest",
+        "value": "inset 0 -3px 0 #0002",
+        "purpose": "Give the hold action a shallow tactile edge."
+      },
+      {
+        "name": "hold-pressed",
+        "value": "inset 0 2px 5px #0003",
+        "purpose": "Indicate a held sip through an inset pressed state."
       }
     ],
     "motion": [
       {
         "name": "control-transition",
-        "value": "160ms ease-out",
-        "purpose": "Optional filter and background state transitions."
+        "value": "140ms ease-out",
+        "purpose": "Filter and color transitions on the primary and outlined actions when motion is allowed."
       },
       {
         "name": "card-arrive",
-        "value": "400ms cubic-bezier(.16,1,.3,1)",
-        "purpose": "Optional result-card opacity and clip reveal."
+        "value": "420ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Postcard opacity and clip reveal after the true upright stopping line has been painted; omitted for reduced motion."
       },
       {
         "name": "stein-follow-through",
@@ -450,7 +460,32 @@
       {
         "name": "reduced-motion-sip",
         "value": "zero spatial motion",
-        "purpose": "Keep tipping, lift, and slosh at zero while showing liquid progress and static material detail."
+        "purpose": "Keep tipping, lift, and slosh at zero; omit scene, result, postcard, and sending reveals while showing liquid progress and static material detail."
+      },
+      {
+        "name": "scene-enter",
+        "value": "650ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Brighten the decoded travel scene at first entry; starting the sip ends this introductory animation."
+      },
+      {
+        "name": "hold-control-transition",
+        "value": "110ms ease-out",
+        "purpose": "Depress the held control by 2px and change its inset shadow without affecting the drink simulation."
+      },
+      {
+        "name": "result-reveal",
+        "value": "220ms ease-out",
+        "purpose": "Fade the result over the already-painted upright stopping line; omitted for reduced motion."
+      },
+      {
+        "name": "share-send",
+        "value": "220ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "A small icon movement acknowledges the busy sharing state; omitted for reduced motion."
+      },
+      {
+        "name": "reduced-motion-control",
+        "value": "100ms ease-out",
+        "purpose": "Brief color transitions retain control feedback when spatial and reveal animation is disabled."
       }
     ],
     "breakpoints": [
@@ -481,9 +516,9 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Start the primary hold-to-sip interaction or share the result.",
+      "description": "Start the primary hold-to-sip interaction or share the destination postcard; sharing exposes a busy state and confirms completion.",
       "html": "<button type=\"button\" class=\"ds-primary\">Take today’s sip <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
-      "css": ".ds-primary{display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 20px;border:0;border-radius:8px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:17px;font-weight:700;line-height:1.3;cursor:pointer}.ds-primary:hover{filter:brightness(1.06)}.ds-primary:disabled{opacity:.5;cursor:wait}.ds-primary:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-primary{transition:filter 160ms ease-out}}"
+      "css": ".ds-primary{display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 20px;border:0;border-radius:8px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:17px;font-weight:700;line-height:1.3;cursor:pointer}.ds-primary:hover{filter:brightness(1.06)}.ds-primary:disabled{opacity:.5;cursor:wait}.ds-primary:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-primary{transition:filter 140ms ease-out,background-color 140ms ease-out,color 140ms ease-out}}"
     },
     {
       "name": "Text action",
@@ -499,15 +534,15 @@
       "refersTo": "button-outline",
       "description": "Copy the plain-text share.",
       "html": "<button type=\"button\" class=\"ds-outline\">Copy text</button>",
-      "css": ".ds-outline{min-height:54px;border:1px solid var(--line,#3c4a40);border-radius:8px;background:transparent;color:var(--fg,#eee7d6);padding:8px 14px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:14px;cursor:pointer}.ds-outline:hover{background:var(--line,#3c4a40)}.ds-outline:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-outline{transition:background 160ms ease-out}}"
+      "css": ".ds-outline{min-height:54px;border:1px solid var(--line,#3c4a40);border-radius:8px;background:transparent;color:var(--fg,#eee7d6);padding:8px 14px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:14px;cursor:pointer}.ds-outline:hover{background:var(--line,#3c4a40)}.ds-outline:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-outline{transition:filter 140ms ease-out,background-color 140ms ease-out,color 140ms ease-out}}"
     },
     {
       "name": "Hold control",
       "kind": "button",
       "refersTo": "drink-control",
-      "description": "Hold to tip and sip; release to return upright and settle before scoring.",
+      "description": "A tactile held state accompanies the visible tip; release returns the vessel upright before scoring.",
       "html": "<button type=\"button\" class=\"ds-drink\" aria-pressed=\"false\">Hold to drink</button>",
-      "css": ".ds-drink{width:100%;min-height:64px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);border:0;border-radius:8px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:700;touch-action:none;user-select:none;cursor:pointer}.ds-drink:active{filter:brightness(.91)}.ds-drink:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}"
+      "css": ".ds-drink{width:100%;min-height:64px;background:var(--accent,#d9b874);color:var(--accent-fg,#17221b);border:0;border-radius:8px;font-family:Karla,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:700;touch-action:none;user-select:none;cursor:pointer;box-shadow:inset 0 -3px 0 #0002}.ds-drink:active,.ds-drink[aria-pressed=true]{filter:brightness(.93);box-shadow:inset 0 2px 5px #0003}.ds-drink:focus-visible{outline:2px solid var(--fg,#eee7d6);outline-offset:5px}@media(prefers-reduced-motion:no-preference){.ds-drink{transition:filter 110ms ease-out,box-shadow 110ms ease-out,transform 110ms ease-out}.ds-drink:active,.ds-drink[aria-pressed=true]{transform:translateY(2px)}}@media(prefers-reduced-motion:reduce){.ds-drink{transition:background-color 100ms ease-out,color 100ms ease-out}}"
     },
     {
       "name": "Preview navigation",
@@ -535,18 +570,19 @@
     }
   ],
   "narrative": {
-    "northStar": "One sip. Three places.",
-    "overview": "Split puts a familiar drink in a recognizable place. The oversized canvas vessel carries the experience; the interface gives it a short title, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub is dark and warm, the beach is pale with sea-colored ink, and Oktoberfest is bright with blue and white detail. Each place also travels into the result card and text share. The visual world stays simple enough to recognize in a group chat, with a distinct vessel silhouette and a truthful stopping position.",
+    "northStar": "One sip. A place you remember.",
+    "overview": "Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place: an old Irish pub, a beach palapa in Cabo, or an Oktoberfest tent in Munich. The interface gives it a short destination, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub carries aged oak, a fireplace, and amber light; Cabo carries palapa shade, turquoise water, and a distant rocky headland; Munich carries timber roof ribs, warm lamps, blue and white bunting, and communal tables. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn.\n\nThe scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed WebP assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.",
     "keyCharacteristics": [
       "A large, unobscured vessel is the focal point.",
-      "The place changes the palette, backdrop, vessel, and share card together.",
+      "The place changes the palette, painted backdrop, vessel, and postcard together.",
       "Heavy serif titles pair with plain, compact instructions.",
-      "A visible lift and tip explain the sip; a single settled stopping position carries the result."
+      "A visible lift and tip explain the sip; a single settled stopping position carries the result.",
+      "The postcard carries the destination and a social invitation into the group chat."
     ],
     "rules": [
       {
         "name": "The Same Place Rule",
-        "body": "The game and its exported card use the same daily theme. Keep scene, vessel, mark, and palette coherent.",
+        "body": "The game and its exported postcard use the same daily scene, vessel, mark, and settled liquid level. Keep the destination and palette coherent.",
         "section": "colors"
       },
       {
@@ -562,12 +598,13 @@
     ],
     "dos": [
       "Do preserve the existing wordmark, Fraunces/Karla pairing, and canvas vessel language when adding a day.",
-      "Do give each new place a coherent palette, recognizable vessel, short target, and matching share treatment.",
+      "Do give each new place a coherent palette, recognizable vessel, short target, and matching destination postcard.",
       "Do keep the vessel and mark visible between the heading and controls at both normal and short phone heights.",
       "Do preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.",
       "Do show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.",
       "Do label preview and practice results on both image and text shares.",
-      "Do use foreground ink for focus and active preview text, and retain the reduced-motion treatment."
+      "Do keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.",
+      "Do use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails."
     ],
     "donts": [
       "Don't let scenery, printed brand names, bunting, headings, or controls obscure the scoring mark.",
