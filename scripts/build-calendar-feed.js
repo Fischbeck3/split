@@ -7,11 +7,13 @@ import {CALENDAR} from '../site/js/calendar-data.js';
 import {LAUNCH} from '../site/js/config.js';
 import {dayParams, themeById, THEMES} from '../site/js/core.js';
 import {addDateDays, createCalendarFeed, keyToDayNumber, validateCalendarPlan} from '../site/js/content-calendar.js';
+import {checkCalendarContent} from './check-calendar-content.js';
 
 export async function buildCalendarFeeds(outputDir, {now = new Date(), plan = CALENDAR,
   resolveTheme = (date, themeId) => themeId ? themeById(themeId) : dayParams(keyToDayNumber(date)).theme} = {}){
   if (!outputDir) throw new Error('Provide the calendar feed output directory.');
   const normalized = validateCalendarPlan(plan, {now, themeIds:THEMES.map(theme => theme.id)});
+  await checkCalendarContent(normalized);
   const today = new Date(now).toISOString().slice(0, 10);
   const startDate = [LAUNCH, addDateDays(today, -7)].sort().at(-1), endDate = addDateDays(startDate, 89);
   const files = {published:resolve(outputDir, 'calendar.ics'), planning:resolve(outputDir, 'calendar-planning.ics')};

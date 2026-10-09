@@ -70,7 +70,7 @@ test('imported IDs must stay scalar strings instead of accepting JavaScript coer
   }
 });
 
-test('draft imports preserve all published days; explicit promotion only accepts globally future dates', async () => {
+test('draft imports preserve published days; promotion requires ready content on a globally future date', async () => {
   const input = copy(); input.drafts['2026-10-25'].themeId = 'cider';
   const draftReview = prepareCalendarChange(input, {now:NOW});
   assert.deepEqual(draftReview.plan.days, normalizeCalendarPlan(CALENDAR).days);
@@ -78,11 +78,13 @@ test('draft imports preserve all published days; explicit promotion only accepts
   assert.equal(draftReview.plan.version, 2);
   assert.equal(draftReview.changes.length, 1);
   assert.deepEqual(draftReview.changes[0], {section:'drafts', key:'2026-10-25', before:CALENDAR.drafts['2026-10-25'], after:input.drafts['2026-10-25']});
-  const promoted = prepareCalendarChange(input, {now:NOW, publish:true});
-  assert.equal(promoted.promotedDates.length, 7);
-  assert.equal(promoted.plan.days['2026-10-25'].themeId, 'cider');
-  assert.equal(promoted.plan.campaigns['halloween-2026'].status, 'published');
-  assert.deepEqual(promoted.plan.drafts, {});
+  assert.throws(() => prepareCalendarChange(input, {now:NOW, publish:true}), /cannot schedule/);
+  input.drafts['2026-11-01'] = {themeId:'pub', campaignId:'none', notes:'Reviewed standalone pub day.'};
+  const promoted = prepareCalendarChange(input, {now:NOW, publish:true, date:'2026-11-01'});
+  assert.deepEqual(promoted.promotedDates, ['2026-11-01']);
+  assert.equal(promoted.plan.days['2026-11-01'].themeId, 'pub');
+  assert.equal(promoted.plan.campaigns['halloween-2026'].status, 'draft');
+  assert.equal(Object.keys(promoted.plan.drafts).length, 7);
   assert.throws(() => prepareCalendarChange(input, {now:'2026-10-24T10:00:00Z', publish:true}), /globally live/);
   assert.throws(() => prepareCalendarChange(input, {now:'2026-10-25T20:00:00Z', publish:true, date:'2026-10-31'}), /already started/);
   const altered = copy(); altered.days['2026-10-13'].themeId = 'cola';
@@ -94,7 +96,8 @@ test('draft imports preserve all published days; explicit promotion only accepts
   const writes = [], logs = [];
   const dependencies = {now:NOW, read:async () => JSON.stringify(input), write:async (...args) => writes.push(args), log:value => logs.push(value)};
   await runCalendarCli(['--check','plan.json'], dependencies);
-  await runCalendarCli(['--publish','plan.json','--check'], dependencies);
+  await assert.rejects(runCalendarCli(['--publish','plan.json','--check'], dependencies), /cannot schedule/);
+  await runCalendarCli(['--publish','plan.json','--date','2026-11-01','--check'], dependencies);
   assert.equal(writes.length, 0, 'reviews cannot write or publish');
   await runCalendarCli(['--apply','plan.json'], dependencies);
   assert.equal(writes.length, 1);
@@ -111,12 +114,16 @@ test('feeds keep actual and draft glass selections separate with stable all-day 
   const actual = events(createCalendarFeed({...options, plan}));
   const drafts = events(createCalendarFeed({...options, plan, includeDrafts:true}));
   assert.equal(actual.length, 7); assert.equal(drafts.length, 8);
-  assert.ok(actual.every(event => event.includes('STATUS:CONFIRMED')));
+  assert.ok(actual.every(event => event.includes('STATUS:TENTATIVE')));
   assert.ok(drafts.every(event => event.includes('STATUS:TENTATIVE')));
   assert.match(actual[0], /UID:split-2026-10-25@dailysplit.us/);
   assert.match(drafts[0], /UID:split-2026-10-25@dailysplit.us/);
   assert.match(actual[0], /Automatic rotation/);
+  assert.match(actual[0], /SUMMARY:Unplanned fallback/);
   assert.match(drafts[0], /Draft lineup/);
+  assert.match(drafts[0], /Needs build & review/);
+  const opening = events(createCalendarFeed({...options, startDate:'2026-10-09', endDate:'2026-10-14'}));
+  assert.ok(opening.every(event => event.includes('STATUS:CONFIRMED') && event.includes('Scheduled theme. Built and approved.')));
   assert.match(actual[0], /DTSTART;VALUE=DATE:20261025\r\nDTEND;VALUE=DATE:20261026/);
   assert.match(actual[0], /URL:https:\/\/dailysplit.us\/#day17/);
   assert.match(drafts.at(-1), /DTSTART;VALUE=DATE:20261025\r\nDTEND;VALUE=DATE:20261101/);
