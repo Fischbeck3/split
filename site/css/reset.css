@@ -1,0 +1,14 @@
+html,body{height:auto;min-height:100%;overscroll-behavior:auto}
+body{overflow:auto}
+.reset-page{width:min(100%,540px);margin:0 auto;padding:calc(36px + env(safe-area-inset-top,0px)) 26px calc(40px + env(safe-area-inset-bottom,0px))}
+.reset-page h1{font:900 clamp(34px,9vw,46px)/1.1 var(--display);letter-spacing:-.03em;text-wrap:balance;margin:48px 0 16px}
+.reset-intro{font-size:18px;line-height:1.55;margin:0 0 32px;max-width:38ch;color:var(--fg)}
+.reset-day{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;margin:0 0 8px;color:var(--muted)}
+.reset-record{font-size:18px;margin:0 0 24px;line-height:1.45}
+.reset-status{padding:0;margin:0 0 24px;line-height:1.5;color:var(--good)}
+.reset-status[data-error=true]{color:var(--miss)}
+.reset-actions{display:grid;gap:12px}
+.reset-open{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}
+.reset-open.is-primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-size:17px}
+.reset-note{font-size:14px;line-height:1.55;color:var(--muted);margin:28px 0 0}
+@media(max-height:650px){.reset-page h1{margin-top:32px}.reset-intro{margin-bottom:24px}}
