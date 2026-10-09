@@ -4,14 +4,17 @@ import {getLiquidSurface} from './liquid.js';
 import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar'];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
 const SCENE_ART = {
   pub: {url: new URL('../assets/scenes/irish-pub.webp', import.meta.url).href, table: .606},
   beach: {url: new URL('../assets/scenes/cabo-beach.webp', import.meta.url).href, table: .627},
-  munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636}
+  munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636},
+  tokyo: {url: new URL('../assets/concepts/japan-options.jpg', import.meta.url).href, panel: 0, table: .57},
+  hogsmeade: {url: new URL('../assets/concepts/hogsmeade-options.jpg', import.meta.url).href, panel: 2, table: .664},
+  rome: {url: new URL('../assets/concepts/rome-options.jpg', import.meta.url).href, panel: 0, table: .66}
 };
 const sceneImages = new Map(), sceneLoads = new Map();
 
@@ -37,11 +40,15 @@ function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
   const image = sceneImages.get(theme.scene), art = SCENE_ART[theme.scene];
   if (!image || !art) return false;
   // Anchor the illustrated tabletop to the vessel rather than to the viewport.
-  const iw = image.naturalWidth, ih = image.naturalHeight;
+  const panelWidth = image.naturalWidth / 3;
+  // The concept sheets have three places side by side. Keep their edge pixels
+  // outside the selected panel so its neighbours never leak into a postcard.
+  const iw = art.panel === undefined ? image.naturalWidth : panelWidth - 4, ih = image.naturalHeight;
   const {x, y, scale} = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
-  c.drawImage(image, x, y, iw * scale, ih * scale);
+  if (art.panel === undefined) c.drawImage(image, x, y, iw * scale, ih * scale);
+  else c.drawImage(image, art.panel * panelWidth + 2, 0, iw, ih, x, y, iw * scale, ih * scale);
   if (!titleWash) return true;
-  drawTitleWash(c, w, h, theme.scene === 'pub');
+  drawTitleWash(c, w, h, theme.colorScheme ? theme.colorScheme === 'dark' : ['pub', 'tokyo', 'hogsmeade'].includes(theme.scene));
   return true;
 }
 function drawTitleWash(c, w, h, dark){
@@ -142,6 +149,15 @@ export function drawBackdrop(c, w, h, G, theme, titleWash = true){
       c.strokeStyle = 'rgba(71,119,151,0.2)'; c.lineWidth = Math.max(0.6, w * 0.001); c.stroke();
     }
     woodTable(c, w, h, tt, ['#d2aa6b', '#b1894f', '#785a33']);
+    return;
+  }
+  if (sc === 'rome'){
+    const tt = G.bot - h * .007;
+    g = c.createLinearGradient(0, 0, 0, tt);
+    g.addColorStop(0, '#efe8d9'); g.addColorStop(1, '#d5b393');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    woodTable(c, w, h, tt, ['#d8b687', '#ba925f', '#806443']);
+    if (titleWash) drawTitleWash(c, w, h, false);
     return;
   }
   g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#2b2018'); g.addColorStop(1, '#120d0a'); c.fillStyle = g; c.fillRect(0, 0, w, h);
