@@ -19,11 +19,8 @@ canvas#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touc
 .hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 26px 0;z-index:3;pointer-events:none}
 .hud a{pointer-events:auto}
 .hud-tools{display:flex;align-items:center;gap:12px;pointer-events:auto}
-.sound-button,.motion-button{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:8px;color:var(--fg);background:transparent}
-.sound-button:hover,.motion-button:hover{background:var(--sheet)}
-.motion-button .motion-arrow{display:none}
-.motion-button[aria-pressed=true] .motion-arrow{display:block}
-.motion-button[aria-pressed=true] .motion-slash{display:none}
+.sound-button{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:8px;color:var(--fg);background:transparent}
+.sound-button:hover{background:var(--sheet)}
 .sound-button .sound-waves{display:none}
 .sound-button[aria-pressed=true] .sound-waves{display:block}
 .sound-button[aria-pressed=true] .sound-slash{display:none}

@@ -1,5 +1,5 @@
-// The app: input, the tilt sensor, the drink, results, sharing and the record.
-import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, tiltRate, TILT_START, TILT_STOP, DRAIN_LEVEL,
+// The app: hold input, the drink, results, sharing and the record.
+import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL,
   scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
@@ -10,7 +10,6 @@ import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY, RECORD_RUN} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
-import {readPreference, savePreference} from './motion-preference.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 
@@ -19,19 +18,12 @@ const $ = id => document.getElementById(id);
 const STORE = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reducedMotion = motionQuery.matches;
-let preferenceStorage;
-try { preferenceStorage = window.localStorage; } catch { /* keep the preference in memory */ }
-let glassMotionOverride = readPreference(preferenceStorage);
-const stillGlass = () => glassMotionOverride ?? reducedMotion;
+// The removed glass button's saved choice must not silently disable tipping.
+// Keep the device accessibility preference as the single motion setting.
+const stillGlass = () => reducedMotion;
 function renderMotionPreference(){
-  const still = stillGlass(), btn = $('motionBtn');
-  btn.setAttribute('aria-pressed', String(!still));
-  btn.setAttribute('aria-label', still ? 'Turn glass motion on' : 'Turn glass motion off');
-  btn.title = still ? 'Glass motion off. Turn it on.' : 'Glass motion on. Turn it off.';
-  $('motionNote').hidden = !still;
-  $('motionNote').textContent = glassMotionOverride === null
-    ? 'Glass motion is off to match your device. The glass button above turns it on.'
-    : 'Glass motion is off. The glass button above turns it on.';
+  $('motionNote').hidden = !stillGlass();
+  $('motionNote').textContent = 'Reduced motion is on in your device settings. The glass stays upright; the sip works the same.';
 }
 const onMotionPreferenceChange = event => {
   reducedMotion = event.matches;
@@ -54,9 +46,8 @@ function renderSound(enabled){
   $('soundBtn').title = 'Sound ' + (enabled ? 'on' : 'off');
 }
 const sound = createSipSound({onChange:renderSound});
-const sensor = {available: false, theta: 0, roll: 0, sign: 1, base: 0, rollBase: 0, raw: null};
 const scene = $('scene'), ctx = scene.getContext('2d');
-$('startHold').disabled = true; $('startTilt').disabled = true;
+$('startHold').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
 function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
 
@@ -115,49 +106,9 @@ function draw(now){
     targetHint: (S.state === 'intro' || S.state === 'ready') && S.targetAt !== null ? targetHintOpacity(now - S.targetAt, reducedMotion) : 0});
 }
 
-// ---------- the tilt sensor ----------
-function onMotion(e){
-  const g = e.accelerationIncludingGravity; if (!g || g.y == null) return;
-  sensor.raw = {x: g.x, y: g.y, z: g.z};
-  if (sensor.sign === 0) return;
-  // iOS and Android report gravity with opposite signs; sign is set so upright reads as positive y.
-  const X = g.x * sensor.sign, Y = g.y * sensor.sign, Z = g.z * sensor.sign;
-  sensor.theta = Math.atan2(Z, Y) * 180 / Math.PI; sensor.roll = Math.atan2(-X, Y) * 180 / Math.PI; sensor.available = true;
-}
-// Tipping either way counts, so it works with the screen toward you or away from you.
-const tiltAngle = () => Math.abs(sensor.theta - sensor.base);
-function calibrate(){ sensor.base = sensor.theta; sensor.rollBase = sensor.roll; }
-async function enableTilt(){
-  const btn = $('startTilt'); btn.disabled = true; btn.textContent = 'Checking the tilt sensor…';
-  try {
-    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
-      let p = 'unknown'; try { p = await DeviceMotionEvent.requestPermission(); } catch { p = 'unknown'; }
-      if (p === 'denied') throw new Error('denied');
-    }
-    sensor.sign = 0; sensor.raw = null; window.addEventListener('devicemotion', onMotion);
-    const ok = await new Promise(res => {
-      const t0 = performance.now();
-      const iv = setInterval(() => {
-        if (sensor.raw && Math.abs(sensor.raw.y) > 3){ clearInterval(iv); res(true); }
-        else if (performance.now() - t0 > 1800){ clearInterval(iv); res(false); }
-      }, 50);
-    });
-    if (!ok) throw new Error(sensor.raw ? 'flat' : 'none');
-    sensor.sign = sensor.raw.y > 0 ? 1 : -1; onMotion({accelerationIncludingGravity: sensor.raw});
-    await new Promise(r => setTimeout(r, 350));
-    calibrate(); S.mode = 'tilt'; begin();
-  } catch (err){
-    window.removeEventListener('devicemotion', onMotion);
-    btn.disabled = false; btn.textContent = 'Try tilt again';
-    const why = err && err.message;
-    if (why === 'flat'){ toast('Hold the phone upright, then try again'); return; }
-    toast(why === 'denied' ? 'Tilt was not allowed. Using hold to drink.' : 'No tilt sensor here. Using hold to drink.');
-    S.mode = 'hold'; begin();
-  }
-}
-
 // ---------- the drink ----------
 function begin(){
+  S.mode = 'hold';
   refreshDayStatus();
   sound.stop();
   $('result').classList.remove('fresh-sip');
@@ -168,17 +119,15 @@ function begin(){
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
   $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + S.theme.feel;
-  $('drinkControl').hidden = S.mode === 'tilt';
+  $('drinkControl').hidden = false;
   $('drinkControl').disabled = false;
   $('drinkControl').textContent = 'Hold to drink';
-  $('recalibrateBtn').hidden = S.mode !== 'tilt';
-  $('recalibrateBtn').disabled = false;
-  $('footPill').textContent = S.mode === 'tilt' ? 'Come upright early; settle at the mark.' : 'Release early; settle at the mark.';
-  if (S.mode === 'hold') $('drinkControl').focus({preventScroll: true});
+  $('footPill').textContent = 'Release early; settle at the mark.';
+  $('drinkControl').focus({preventScroll: true});
 }
-const wantsDrink = () => S.mode === 'tilt' ? tiltAngle() > TILT_START : S.holding;
-const wantsStop = () => S.mode === 'tilt' ? tiltAngle() < TILT_STOP : !S.holding;
-function rate(){ return S.mode === 'tilt' ? tiltRate(S.P.K, tiltAngle()) : S.P.K; }
+const wantsDrink = () => S.holding;
+const wantsStop = () => !S.holding;
+function rate(){ return S.P.K; }
 function frame(now){
   if (document.hidden){ S.last = 0; requestAnimationFrame(frame); return; }
   const dt = Math.min(0.25, (now - (S.last || now)) / 1000); S.last = now;
@@ -186,12 +135,11 @@ function frame(now){
   let drinkDt = dt;
   if (S.state === 'ready' && wantsDrink()){
     refreshDayStatus();
-    setPhase('drinking'); if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
-    if (S.mode === 'hold') drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
+    setPhase('drinking'); if (!S.holdStart) S.holdStart = now;
+    drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
     analytics.capture('sip_started', {...gameProperties(S), counts:!S.practice && canRecordChallenge({key:S.key, kind:S.kind})});
     sound.start(S.theme);
-    $('recalibrateBtn').disabled = true;
-    $('footPill').textContent = S.mode === 'hold' ? 'Release early. Let the sip settle.' : 'Come upright early. Let the sip settle.';
+    $('footPill').textContent = 'Release early. Let the sip settle.';
   }
   if (S.state === 'drinking'){
     if (wantsStop()) lock(now);
@@ -206,7 +154,6 @@ function frame(now){
     input: S.state === 'drinking' ? Math.min(1, rate() / S.P.K) : 0, level:S.L, elapsed, dt, reducedMotion: stillGlass()});
   sound.update(S.theme, {drinking:S.state === 'drinking', elapsed:S.drink?.elapsed || 0});
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
-  if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = sipKind() + ' · ' + Math.round(tiltAngle()) + '° · ' + S.theme.feel;
   // Ambient layers need only 30 fps at rest; the sip retains its full frame rate.
   if (S.state !== 'result' && ((S.state === 'drinking' || S.state === 'locked') || now - S.drawnAt >= 1000 / 30)){
     draw(now); S.drawnAt = now;
@@ -371,12 +318,12 @@ const down = e => {
   if (e.pointerId != null && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
   $('drinkControl').setAttribute('aria-pressed', 'true');
   $('drinkControl').textContent = 'Release to stop';
-  if (S.mode === 'hold'){ S.holding = true; if (S.state === 'ready') S.holdStart = performance.now(); }
+  S.holding = true; if (S.state === 'ready') S.holdStart = performance.now();
 };
 const up = () => {
   // Account for the final part of a hold at the release event, rather than
   // allowing a slower screen's next animation frame to choose the stopping time.
-  if (S.mode === 'hold' && S.holding && S.state === 'drinking'){
+  if (S.holding && S.state === 'drinking'){
     const now = performance.now(), dt = Math.max(0, Math.min(0.25, (now - S.last) / 1000));
     S.drink = stepDrink(S.P, S.drink, S.P.K, dt); S.L = S.drink.level; S.last = now;
     if (S.L >= DRAIN_LEVEL) S.drained = true;
@@ -404,14 +351,6 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => { if (e.code === 'Space') up(); });
 $('drinkControl').addEventListener('keydown', e => { if (e.code === 'Enter' && !e.repeat){ e.preventDefault(); down(e); } });
 $('drinkControl').addEventListener('keyup', e => { if (e.code === 'Enter') up(); });
-$('recalibrateBtn').addEventListener('click', () => { if (S.state === 'ready'){ calibrate(); toast('Upright position reset. Ready to sip.'); } });
-$('startTilt').addEventListener('click', enableTilt);
-$('motionBtn').addEventListener('click', () => {
-  glassMotionOverride = !stillGlass();
-  savePreference(preferenceStorage, glassMotionOverride);
-  renderMotionPreference();
-  toast(stillGlass() ? 'Glass motion off. The sip and scoring work the same.' : 'Glass motion on. Hold to lift and tip your glass.');
-});
 $('soundBtn').addEventListener('click', async () => {
   const btn = $('soundBtn'), requested = !sound.enabled;
   btn.disabled = true; btn.setAttribute('aria-busy', 'true');
@@ -421,15 +360,13 @@ $('soundBtn').addEventListener('click', async () => {
     if (requested && !sound.enabled) toast('Sip sounds are unavailable here. You can keep playing.');
   } finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
 });
-$('startHold').addEventListener('click', () => { S.mode = 'hold'; begin(); });
+$('startHold').addEventListener('click', begin);
 $('shareBtn').addEventListener('click', share);
 $('saveCardBtn').addEventListener('click', savePostcard);
 $('copyBtn').addEventListener('click', copyText);
 $('practiceBtn').addEventListener('click', () => {
   S.practice = true;
-  if (S.mode !== 'tilt') begin();
-  else if (sensor.available){ calibrate(); begin(); }
-  else enableTilt();
+  begin();
 });
 for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventListener('click', () => location.assign('./'));
 $('officialBtn').addEventListener('click', () => {
@@ -495,13 +432,8 @@ async function init(){
     if (active) active.setAttribute('aria-current', 'page');
   }
 
-  const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  if (typeof DeviceMotionEvent === 'undefined' || !coarse){
-    $('startTilt').hidden = true;
-  }
-
   setPhase('intro'); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
-  $('startHold').disabled = false; $('startTilt').disabled = false;
+  $('startHold').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
   if (rec && rec.done && rec.theme === S.theme.id){

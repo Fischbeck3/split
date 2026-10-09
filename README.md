@@ -11,8 +11,8 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 ## How it plays
 
 - **Hold.** Tap “Take today's sip” (or “Take a preview sip” on a preview), then press and hold the glass or the “Hold to drink” button. The whole vessel lifts and tips farther as it empties; release a little early to bring it upright and let the moving sip settle. The space bar works on a keyboard; a focused hold button also supports Enter.
-- **Glass motion.** The glass button beside the day number switches tipping on or off and remembers your choice in this browser. Until you choose, it follows your device’s reduced-motion setting; a short note explains a still glass. Switching motion changes presentation only, with identical liquid dynamics and scoring. A shared challenge cannot change the recipient’s motion preference.
-- **Phone tilt.** “Use phone tilt” is an optional secondary action. Start with the phone upright, then tip it either way to drink; tip farther to drink faster. Come back within 15 degrees of upright to stop. iPhones request motion access. If no sensor is available, the game uses hold mode.
+- **Glass movement.** Holding to drink tips the glass automatically. The confusing glass-motion button has been removed, and its old saved choice no longer suppresses tipping. The device’s reduced-motion setting keeps the glass upright; a short note explains that setting. Liquid dynamics and scoring are identical.
+- **One play control.** Hold the drink button, glass, or space bar to sip; release to settle. The glass tips inside the scene. Phone sensor input and its permission/recalibration controls have been removed so turning the phone is unnecessary. Practice always starts in hold mode, including after an older saved tilt-mode result.
 - **The line.** What counts is the bottom of the head, where the foam meets the drink. Within 6% of the mark's height is a perfect split and within 16% is a split. The score is 100 at dead center and falls off quickly from there.
 - **One a day.** The first completed sip for today's local date is saved in this browser. Later sips are practice and cannot replace it. You can return to the saved score. A new glass arrives at local midnight. Preview sips never write official records.
 - **Same glass for a friend.** Public shares carry `?day=YYYY-MM-DD`, so a friend opens the same seeded pour. Today's challenge can count once; earlier dates open as Archive and new archive sips never write a daily record. A friend one calendar day ahead shares an unsaved preview of that exact pour. Later future dates, malformed dates, and dates before the first sip return to today's glass with an explanation.
@@ -44,7 +44,7 @@ A thin dashed line briefly shows the exact target before each sip, then fades. O
 
 The Guinness pint carries the full serif wordmark with the gold harp above it, using a self-hosted SVG adapted from [Guinness's public brand artwork](https://www.guinness.com/en-us). The [pint photographed in the VinePair reference](https://vinepair.com/articles/splitting-the-g-guinness-trend/) guides its proportions. The printed G's crossbar top remains exactly at the scored height. The game and postcard wait for the same decoded print; no external image request or font substitution is needed during play or export.
 
-The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 6, unpinned dates use the frozen fourteen-glass rotation, which avoids consecutive repeats. Reviewed future date pins can choose a different lineup without rerolling old challenges.
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. The device’s reduced-motion setting keeps an upright vessel, shows liquid progress, and retains static material detail; decorative motion also respects that setting. After day 6, unpinned dates use the frozen fourteen-glass rotation, which avoids consecutive repeats. Reviewed future date pins can choose a different lineup without rerolling old challenges.
 
 The opening places use painted travel illustrations: aged oak, amber lamps, and a fireplace in the pub; warm Roman stone and a café table at sunset; rain-lit lanterns and a little counter in Tokyo. Small distant figures suggest friends without competing with the glass or the scoring mark. The table stays anchored beneath the vessel in the game, movement preview, and exported postcard.
 
@@ -118,13 +118,13 @@ The calendar links to authenticated PostHog views for a selected challenge and c
 npm start
 ```
 
-This serves the game on http://localhost:8000, the three-day review on http://localhost:8000/design.html, and the movement preview on http://localhost:8000/motion.html. Hold mode works there. Phones require HTTPS for tilt, so try tilt on the live site.
+This serves the game on http://localhost:8000, the three-day review on http://localhost:8000/design.html, and the movement preview on http://localhost:8000/motion.html. Hold-to-drink works on both localhost and the live HTTPS site.
 
 ```
 npm test
 ```
 
-The tests cover the schedule, date links and recording eligibility, score boundaries, reachable marks, cross-sectional flow and momentum settling across frame rates, round-vessel volume conservation in tilted vessels, explicit motion preferences and reduced motion, share semantics, and launch preparation. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
+The tests cover the schedule, date links and recording eligibility, score boundaries, reachable marks, cross-sectional flow and momentum settling across frame rates, round-vessel volume conservation in tilted vessels, hold input through the game frame, legacy saved-mode recovery, reduced motion, share semantics, and launch preparation. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
 
 To preview the production HTML, revision-stamped module graph, and generated feeds locally, build with a real Git revision and serve `.pages/`:
 
@@ -171,7 +171,7 @@ npm test
 
 `--check` prints the plan without editing files. Preparation sets day No. 1, sets `LAUNCH_READY = true`, freezes the date, and synchronizes the canonical URL and social metadata. It refuses a different launch date once frozen. Review and commit the resulting diff, then release to `main`; the script itself does not deploy or change DNS. After release, preserve existing dates, seeds, and scheduled themes so shared links continue to identify the same glass.
 
-Follow-up playtest checks are still open: iPhone and Android hold/release, optional sensor permission, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone tilt and native text sharing have not been tested. Production analytics is live as described below. No backend, daily job, or runtime image service is required for the game itself.
+Follow-up playtest checks are still open: iPhone and Android hold/release, native text sharing, postcard download, copied links, and midnight rollover on the HTTPS domain. Physical-phone hold/release and native text sharing still need playtesting. Production analytics is live as described below. No backend, daily job, or runtime image service is required for the game itself.
 
 ## Daily users and sharing
 
@@ -238,12 +238,11 @@ Tracking is live as of October 9, 2026. Open [Daily Split users and shares](http
 - `site/js/sound.js`: optional short vessel cues, initialized only by the sound toggle
 - `site/js/ambient.js`: bounded environmental movement around the first three vessels
 - `site/js/core.js`: the daily seed, vessel shapes, drink physics, and scoring, with no page code so tests run in Node
-- `site/js/motion-preference.js`: local full/still glass choice, independent of shared challenges and recording
 - `site/js/motion.js`: deterministic vessel lift, tipping, glug movement, slosh, and return to rest
 - `site/js/liquid.js`: the liquid surface that preserves the filled area while a vessel tilts
 - `site/js/draw.js`: shared place assets and canvas fallback, glass material, beer, foam, printed names, and marks
 - `site/js/share.js`: the destination postcard and plain-text result
-- `site/js/main.js`: input, the tilt sensor, results, local daily records, and sharing
+- `site/js/main.js`: hold input, results, local daily records, and sharing
 - `site/js/analytics.js`: optional production analytics and observed share/copy outcomes
 - `site/assets/scenes/`: compressed place illustrations and their generation/framing metadata
 - `site/fonts/`: local fonts and license files
