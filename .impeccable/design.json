@@ -501,7 +501,22 @@
         "name": "review-single-column",
         "value": "max-width: 900px"
       }
-    ]
+    ],
+    "friendChallenges": {
+      "invitation": "Beat my sip",
+      "benchmark": "Self-reported score and real stopping line scoped to the exact seeded glass; daily and unsaved sip status remain explicit.",
+      "comparison": "A dashed SHARED line alongside the actual solid STOP; outgoing links use the current player result."
+    },
+    "sipFinish": {
+      "sound": "Off by default; explicit enablement only; material landing cues, bottle cadence, and a quiet perfect-split rim click.",
+      "reveal": "The true stopping line shines for 540 ms, 720 ms for perfect; verdict focus lasts 480 ms without delaying controls or recording.",
+      "reducedMotion": "Static place and stopping line; omit environmental motion and reveal flourish."
+    },
+    "livingPlaces": {
+      "scope": "Opening three days only",
+      "motion": "Localized pub hearth, Cabo surf, and Munich canopy cloth around the vessel; static exports.",
+      "memory": "One concise place-specific memory cue below the destination."
+    }
   },
   "components": [
     {

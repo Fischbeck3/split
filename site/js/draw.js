@@ -1,6 +1,7 @@
 // Canvas drawing: the places, the vessels and the marks.
 import {widthAt, mulberry32} from './core.js';
 import {getLiquidSurface} from './liquid.js';
+import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 
 export const SCENES = ['pub', 'beach', 'munich', 'bar'];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf'];
@@ -35,9 +36,9 @@ function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
   const image = sceneImages.get(theme.scene), art = SCENE_ART[theme.scene];
   if (!image || !art) return false;
   // Anchor the illustrated tabletop to the vessel rather than to the viewport.
-  const tableY = Math.max(h * .4, G.bot - h * .08), iw = image.naturalWidth, ih = image.naturalHeight;
-  const scale = Math.max(w / iw, tableY / (ih * art.table), (h - tableY) / (ih * (1 - art.table)));
-  c.drawImage(image, (w - iw * scale) / 2, tableY - ih * art.table * scale, iw * scale, ih * scale);
+  const iw = image.naturalWidth, ih = image.naturalHeight;
+  const {x, y, scale} = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
+  c.drawImage(image, x, y, iw * scale, ih * scale);
   if (!titleWash) return true;
   // The title lives on a quiet area of the place, while the vessel retains full contrast.
   const dark = theme.scene === 'pub', wash = c.createLinearGradient(0, 0, 0, h * .35);
@@ -147,6 +148,93 @@ export function makeBackdrop(w, h, G, theme, dpr, {titleWash = true} = {}){
   const cv = document.createElement('canvas'); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); drawBackdrop(g, w, h, G, theme, titleWash);
   return cv;
+}
+
+// Small, feathered copies of the actual painting, including its title wash. Each
+// cached backdrop builds these once; a frame moves only the selected detail.
+// Keeping this cache on the backdrop also releases old patches after a resize.
+const memoryPatches = new WeakMap(), ambientBackdrops = new WeakMap();
+function makeMemoryPatches(backdrop, w, h, G, theme){
+  if (memoryPatches.has(backdrop)) return memoryPatches.get(backdrop);
+  const image = sceneImages.get(theme.scene), art = SCENE_ART[theme.scene], details = MEMORY_DETAILS[theme.scene];
+  if (!image || !art || !details) return null;
+  const iw = image.naturalWidth, ih = image.naturalHeight, dpr = backdrop.width / w;
+  const placement = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
+  const point = ([x, y]) => [placement.x + x * iw * placement.scale, placement.y + y * ih * placement.scale];
+  const patches = [];
+  for (const detail of details){
+    const [x, y] = point(detail.box), width = detail.box[2] * iw * placement.scale, height = detail.box[3] * ih * placement.scale;
+    if (x + width < 0 || x > w || y + height < 0 || y > h) continue;
+    const cv = document.createElement('canvas'); cv.width = Math.ceil(width * dpr); cv.height = Math.ceil(height * dpr);
+    const p = cv.getContext('2d'); p.setTransform(dpr, 0, 0, dpr, 0, 0);
+    p.save(); p.beginPath();
+    if (detail.ellipse) p.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+    else if (detail.polygon){
+      for (const [i, coordinate] of detail.polygon.entries()){
+        const [px, py] = point(coordinate);
+        if (!i) p.moveTo(px - x, py - y); else p.lineTo(px - x, py - y);
+      }
+      p.closePath();
+    } else p.rect(0, 0, width, height);
+    p.clip(); p.drawImage(backdrop, -x, -y, w, h); p.restore();
+    // Fade all four outer edges so a shifted source slice has no visible seam.
+    p.globalCompositeOperation = 'destination-in';
+    const feather = Math.min(5, width * .1, height * .1);
+    for (const [length, vertical] of [[width, false], [height, true]]){
+      const mask = p.createLinearGradient(0, 0, vertical ? 0 : length, vertical ? length : 0);
+      mask.addColorStop(0, 'rgba(0,0,0,0)'); mask.addColorStop(feather / length, '#000');
+      mask.addColorStop(1 - feather / length, '#000'); mask.addColorStop(1, 'rgba(0,0,0,0)');
+      p.fillStyle = mask; p.fillRect(0, 0, width, height);
+    }
+    patches.push({canvas: cv, x, y, width, height, kind: detail.kind});
+  }
+  const data = {patches, placement, iw, ih}; memoryPatches.set(backdrop, data); return data;
+}
+function drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash}){
+  if (!sceneImages.has(theme.scene) || !MEMORY_DETAILS[theme.scene]) return;
+  // Consumers without a cached backdrop still get one stable base per layout.
+  if (!backdrop){
+    const key = [theme.scene, w, h, G.bot, titleWash].join(':');
+    let cache = ambientBackdrops.get(c.canvas);
+    if (!cache || cache.key !== key){ cache = {key, backdrop: makeBackdrop(w, h, G, theme, 1, {titleWash})}; ambientBackdrops.set(c.canvas, cache); }
+    backdrop = cache.backdrop;
+  }
+  const data = makeMemoryPatches(backdrop, w, h, G, theme);
+  if (!data) return;
+  const motion = memoryMotion(now), t = Number.isFinite(now) ? now / 1000 : 0, scale = data.placement.scale;
+  c.save();
+  for (const patch of data.patches){
+    const {canvas, x, y, width, height, kind} = patch;
+    c.save(); c.beginPath(); c.rect(x, y, width, height); c.clip();
+    if (kind === 'fire'){
+      c.drawImage(canvas, x + motion.flame * scale, y - motion.flame * 3 * scale, width, height * (1 + motion.flame * .025));
+    } else {
+      const strips = kind === 'cloth' ? 7 : kind === 'surf' ? 11 : 5;
+      for (let i = 0; i < strips; i++){
+        const sourceY = canvas.height * i / strips, sourceH = canvas.height / strips;
+        const rowY = height * i / strips, rowH = height / strips;
+        const dx = kind === 'cloth'
+          ? motion.breeze * 2.8 * scale * Math.sin(Math.PI * i / strips)
+          : Math.sin(t * .9 + i * .4) * (kind === 'surf' ? 3.2 : 1.8) * scale;
+        const dy = kind === 'cloth' ? 0 : motion.surf * (kind === 'surf' ? 2.4 : .7) * scale;
+        c.drawImage(canvas, 0, sourceY, canvas.width, sourceH, x + dx, y + rowY + dy, width, rowH + .5);
+      }
+    }
+    c.restore();
+  }
+  if (theme.scene === 'pub'){
+    // The glow belongs to the fireplace, rather than to a flashing whole scene.
+    const {x, y, scale} = data.placement;
+    c.translate(x + data.iw * .814 * scale, y + data.ih * .401 * scale);
+    c.scale(data.iw * .145 * scale, data.ih * .095 * scale);
+    const glow = c.createRadialGradient(0, 0, 0, 0, 0, 1);
+    glow.addColorStop(0, 'rgba(255,167,65,' + (.055 + motion.firelight * .12) + ')');
+    glow.addColorStop(.4, 'rgba(255,146,54,' + (.015 + motion.firelight * .045) + ')');
+    glow.addColorStop(1, 'rgba(255,146,54,0)');
+    c.globalCompositeOperation = 'screen'; c.fillStyle = glow;
+    c.beginPath(); c.arc(0, 0, 1, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
 }
 
 // ---------- vessels ----------
@@ -370,12 +458,14 @@ function drawLacing(c, G, theme, L){
 }
 
 /** Draw the place, the vessel, the drink at level L (0 rim, 1 base) and the mark.
- *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place. */
-export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true}){
+ *  G is the vessel box: {cx, top, bot, halfW, glass}. Pass a pre-rendered backdrop to skip redrawing the place.
+ *  Ambient is opt-in; leave it false for reduced motion and stable postcard exports. */
+export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, guides = false, bubbles = true, backdrop = null, motion = null, drinking = false, drinkElapsed = 0, titleWash = true, ambient = false}){
   const gh = G.bot - G.top, ht = theme.headT * gh, angle = motion?.angle || 0, lift = (motion?.lift || 0) * gh, activity = bubbles ? (motion?.activity || 0) : 0;
   const surface = getLiquidSurface({vessel: theme.vessel, level: L, aspect: G.halfW / gh, vesselAngle: angle, liquidAngle: motion ? motion.liquidAngle || 0 : rollDeg});
   const yL = G.top + surface.centerLevel * gh, liquidRotation = Math.atan(surface.slope), clock = bubbles ? now / 1000 : 0;
   if (backdrop) c.drawImage(backdrop, 0, 0, w, h); else drawBackdrop(c, w, h, G, theme, titleWash);
+  if (ambient) drawMemoryLife(c, {w, h, G, theme, now, backdrop, titleWash});
   // The table and shadow stay put. Everything attached to the vessel tips together.
   c.save(); c.globalAlpha *= Math.max(0.22, 1 - lift / gh * 2.5);
   c.fillStyle = theme.scene === 'beach' ? 'rgba(87,105,91,0.18)' : theme.scene === 'munich' ? 'rgba(56,60,37,0.22)' : 'rgba(0,0,0,0.3)';

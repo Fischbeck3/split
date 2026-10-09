@@ -7,6 +7,8 @@ import {shareResultText, copyResultText} from './share-actions.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
+import {readFriendChallenge, comparisonCopy} from './friend.js';
+import {createSipSound} from './sound.js';
 
 const $ = id => document.getElementById(id);
 // A fixed release calendar keeps prototype scores out of the public run.
@@ -14,7 +16,13 @@ const STORE = 'split.v1:' + LAUNCH;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
-  result: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
+  result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, drained: false, card: null, drink: null, motion: makeMotionState()};
+function renderSound(enabled){
+  $('soundBtn').setAttribute('aria-pressed', String(enabled));
+  $('soundBtn').setAttribute('aria-label', 'Turn sip sounds ' + (enabled ? 'off' : 'on'));
+  $('soundBtn').title = 'Sound ' + (enabled ? 'on' : 'off');
+}
+const sound = createSipSound({onChange:renderSound});
 const sensor = {available: false, theta: 0, roll: 0, sign: 1, base: 0, rollBase: 0, raw: null};
 const scene = $('scene'), ctx = scene.getContext('2d');
 $('startHold').disabled = true; $('startTilt').disabled = true;
@@ -72,7 +80,7 @@ function draw(now){
   const G = glassBox(W, H, S.theme);
   drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
-    guides: true, bubbles: !reducedMotion, backdrop: currentBackdrop(G)});
+    guides: true, bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G)});
 }
 
 // ---------- the tilt sensor ----------
@@ -119,6 +127,8 @@ async function enableTilt(){
 // ---------- the drink ----------
 function begin(){
   refreshDayStatus();
+  sound.stop();
+  $('result').classList.remove('fresh-sip');
   setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
   S.motion = makeMotionState();
@@ -145,6 +155,7 @@ function frame(now){
   const elapsed = S.drink?.elapsed || 0;
   if (S.state === 'ready' && wantsDrink()){
     setPhase('drinking'); if (S.mode === 'hold' && !S.holdStart) S.holdStart = now;
+    sound.start(S.theme);
     $('recalibrateBtn').disabled = true;
     $('footPill').textContent = S.mode === 'hold' ? 'Release to stop. Let it settle.' : 'Come upright to stop. Let it settle.';
   }
@@ -159,9 +170,13 @@ function frame(now){
   }
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
     input: S.state === 'drinking' ? Math.min(1, rate(now) / S.P.K) : 0, elapsed, dt, reducedMotion});
+  sound.update(S.theme, {drinking:S.state === 'drinking', elapsed:S.drink?.elapsed || 0});
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
   if (S.mode === 'tilt' && (S.state === 'ready' || S.state === 'drinking') && sensor.available) $('hudMode').textContent = sipKind() + ' · ' + Math.round(tiltAngle()) + '° · ' + S.theme.feel;
-  if (S.state !== 'result') draw(now);
+  // Ambient layers need only 30 fps at rest; the sip retains its full frame rate.
+  if (S.state !== 'result' && ((S.state === 'drinking' || S.state === 'locked') || now - S.drawnAt >= 1000 / 30)){
+    draw(now); S.drawnAt = now;
+  }
   requestAnimationFrame(frame);
 }
 function lock(now){
@@ -182,7 +197,7 @@ function finish(now){
       S.L = recorded.L; S.mode = recorded.mode; S.result = {...recorded, counts:true};
       toast('Your first sip is already saved.');
     } else {
-      st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f: +f.toFixed(4), L: +S.L.toFixed(4), mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true};
+      st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f, L:S.L, mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true};
       save(st);
     }
   }
@@ -190,6 +205,8 @@ function finish(now){
   draw(now);
   setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
   renderResult(); renderStats();
+  $('result').classList.add('fresh-sip');
+  sound.land(S.theme, {perfect:!S.result.drained && Math.abs(S.result.f) <= PERFECT});
 }
 
 // ---------- results and sharing ----------
@@ -204,6 +221,16 @@ function renderResult(){
   $('resKind').textContent = S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !load().days[S.key]?.done;
   $('resStrip').textContent = bandEmoji(r.f);
+  const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
+  $('friendComparison').hidden = !comparison;
+  if (comparison){
+    const kind = S.friend.kind === 'daily' || S.friend.kind === 'archive-saved' ? '' : ' (' + S.friend.kind + ')';
+    $('friendComparison').textContent = 'You ' + r.score + ' · Shared sip ' + S.friend.score + kind + '. ' + comparison.text;
+    $('friendComparison').dataset.outcome = comparison.status;
+  }
+  $('result').dataset.perfect = String(!r.drained && Math.abs(r.f) <= PERFECT);
+  $('result').style.setProperty('--stop-line', ((48 + r.L * 642) / 750 * 100) + '%');
+  $('result').classList.remove('fresh-sip');
   $('shareText').textContent = shareText(); $('shareText').closest('details').open = false;
   for (const id of ['shareBtn', 'copyBtn', 'saveCardBtn']) resetAction($(id));
   $('copyBtn').textContent = 'Copy text';
@@ -211,12 +238,12 @@ function renderResult(){
   $('result').hidden = false;
   // Prepare the postcard separately; sharing the result never waits for its image.
   const c = drawCard(); $('cardImg').src = c.toDataURL('image/png'); $('cardImg').hidden = false;
-  $('cardImg').alt = S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent;
+  $('cardImg').alt = S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both stopping lines are shown.' : '');
   S.card = new Promise(res => c.toBlob(blob => res({canvas: c, blob}), 'image/png'));
   $('result').scrollTop = 0;
 }
 function drawCard(){
-  return drawShareCard($('card'), {num:S.num, key:S.key, theme:S.theme, P:S.P, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
+  return drawShareCard($('card'), {num:S.num, key:S.key, theme:S.theme, P:S.P, result:S.result, friend:S.friend, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive'});
 }
 async function share(){
   const btn = $('shareBtn'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
@@ -311,17 +338,29 @@ for (const target of [scene, $('drinkControl')]){
 window.addEventListener('pointerup', up);
 window.addEventListener('blur', up);
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden){ up(); if (S.state === 'drinking') lock(performance.now()); }
+  if (document.hidden){ up(); sound.suspend(); if (S.state === 'drinking') lock(performance.now()); }
   else if (S.P) tickClock();
 });
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && !e.repeat && (S.state === 'ready' || S.state === 'drinking')){ e.preventDefault(); down(e); }
+  // Space on a secondary control keeps its native action; the hold button and
+  // noninteractive page area remain keyboard sipping targets.
+  const secondary = e.target instanceof Element && e.target.closest('button,a,summary,input,textarea,select') && e.target !== $('drinkControl');
+  if (e.code === 'Space' && !e.repeat && !secondary && (S.state === 'ready' || S.state === 'drinking')){ e.preventDefault(); down(e); }
 });
 document.addEventListener('keyup', e => { if (e.code === 'Space') up(); });
 $('drinkControl').addEventListener('keydown', e => { if (e.code === 'Enter' && !e.repeat){ e.preventDefault(); down(e); } });
 $('drinkControl').addEventListener('keyup', e => { if (e.code === 'Enter') up(); });
 $('recalibrateBtn').addEventListener('click', () => { if (S.state === 'ready'){ calibrate(); toast('Upright position reset. Ready to sip.'); } });
 $('startTilt').addEventListener('click', enableTilt);
+$('soundBtn').addEventListener('click', async () => {
+  const btn = $('soundBtn'), requested = !sound.enabled;
+  btn.disabled = true; btn.setAttribute('aria-busy', 'true');
+  try {
+    await sound.setEnabled(requested);
+    renderSound(sound.enabled);
+    if (requested && !sound.enabled) toast('Sip sounds are unavailable here. You can keep playing.');
+  } finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+});
 $('startHold').addEventListener('click', () => { S.mode = 'hold'; begin(); });
 $('shareBtn').addEventListener('click', share);
 $('saveCardBtn').addEventListener('click', savePostcard);
@@ -350,6 +389,7 @@ async function init(){
   const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
   S.P = dayParams(S.num); S.theme = S.P.theme;
+  S.friend = readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
   await loadSceneAssets(S.theme);
   S.L0 = startLevel(S.theme); S.L = S.L0;
   const palette = S.theme.palette || {bg:'#17110d', fg:'#f5ecdc', muted:'#b3a48e', sheet:'#221a14', line:'#3a2d23', accent:'#e9b949', accentFg:'#17110d'};
@@ -361,6 +401,12 @@ async function init(){
   $('hudSub').textContent = S.theme.name + (S.theme.id === 'pub' ? ' · Ireland' : S.theme.id === 'beach' ? ' · Cabo, Mexico' : S.theme.id === 'munich' ? ' · Munich, Germany' : ' · ' + S.theme.label);
   $('introNo').textContent = 'No. ' + String(S.num).padStart(3, '0');
   $('introName').textContent = S.theme.label;
+  $('memoryLine').textContent = S.theme.memory || ''; $('memoryLine').hidden = !S.theme.memory;
+  $('friendInvite').hidden = !S.friend;
+  if (S.friend){
+    const kind = S.friend.kind === 'daily' || S.friend.kind === 'archive-saved' ? '' : ' (' + S.friend.kind + ')';
+    $('friendInvite').textContent = 'Your friend’s ' + S.friend.score + '/100' + kind + ' to beat.';
+  }
   $('introGoal').textContent = $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
   $('introFeel').textContent = S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour');
   $('vesselHint').textContent = S.theme.line;

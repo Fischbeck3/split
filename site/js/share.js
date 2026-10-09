@@ -3,6 +3,7 @@ import {bandEmoji, widthAt, keyForDay} from './core.js';
 import {isCalendarDateKey} from './challenge.js';
 import {SITE_URL} from './config.js';
 import {drawScene} from './draw.js';
+import {readFriendChallenge, comparisonCopy} from './friend.js';
 
 const DISPLAY = 'Fraunces, "Playfair Display", Georgia, serif';
 const BODY = 'Karla, "Helvetica Neue", Arial, sans-serif';
@@ -23,11 +24,20 @@ function canonicalUrl(url){
   }
 }
 
-function challengeUrl({url, key, num, preview}){
+function challengeUrl({url, key, num, preview, archive, theme, result}){
   const parsed = new URL(canonicalUrl(url));
   const day = Number.isInteger(num) && num >= 1 && isCalendarDateKey(keyForDay(num)) ? num : 1;
   if (preview) parsed.hash = 'day' + (day <= 9999 ? day : 1);
   else parsed.searchParams.set('day', isCalendarDateKey(key) ? key : keyForDay(day));
+  if (result && theme && Number.isFinite(result.f)){
+    parsed.searchParams.set('vs', String(result.score));
+    parsed.searchParams.set('f', String(result.f));
+    parsed.searchParams.set('glass', theme.id);
+    parsed.searchParams.set('sip', preview ? 'preview' : archive ? result.counts === false ? 'archive' : 'archive-saved' : result.counts === false ? 'practice' : 'daily');
+    parsed.searchParams.set('empty', result.drained ? '1' : '0');
+    const accepted = readFriendChallenge({search: parsed.search, hash: parsed.hash, key: keyForDay(day), num: day, theme});
+    if (!accepted) for (const field of ['vs', 'f', 'glass', 'sip', 'empty']) parsed.searchParams.delete(field);
+  }
   return parsed.href;
 }
 
@@ -52,8 +62,8 @@ export function buildShareText({num, key, theme, result, url = SITE_URL, preview
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
     result.score + '/100 · ' + result.label,
     bandEmoji(result.f),
-    'One sip. Your turn.',
-    challengeUrl({url, key, num, preview})
+    'Beat my sip. One sip. Your turn.',
+    challengeUrl({url, key, num, preview, archive, theme, result})
   ].join('\n');
 }
 
@@ -82,11 +92,27 @@ function placeCopy(theme){
   return {title: theme.label || theme.name, line: theme.name + (theme.location ? ' · ' + theme.location : '')};
 }
 
-function drawGuide(c, G, P, result, palette){
+function drawGuide(c, G, P, result, palette, friend){
   const gh = G.bot - G.top, markY = G.top + P.markY * gh, lineY = G.top + result.L * gh;
   const markW = widthAt(G.glass, P.markY) * G.halfW;
   const lineW = widthAt(G.glass, result.L) * G.halfW;
   c.save();
+  if (friend){
+    const sharedY = G.top + friend.L * gh, sharedW = widthAt(G.glass, friend.L) * G.halfW;
+    const labelY = Math.max(30, Math.min(PHOTO.h - 30, Math.abs(sharedY - markY) < 55 ? markY - 62 : sharedY));
+    // A dashed line is the shared beer position; the solid STOP guide remains the player's actual boundary.
+    c.setLineDash([8, 8]); c.beginPath();
+    c.moveTo(G.cx - sharedW, sharedY); c.lineTo(G.cx + sharedW, sharedY);
+    c.strokeStyle = palette.guidePaper; c.lineWidth = 6; c.stroke();
+    c.strokeStyle = palette.fg; c.lineWidth = 2; c.stroke();
+    c.setLineDash([]); c.beginPath(); c.moveTo(180, labelY);
+    c.lineTo(218, labelY); c.lineTo(240, sharedY); c.lineTo(G.cx - sharedW - 14, sharedY);
+    c.strokeStyle = palette.guidePaper; c.lineWidth = 5; c.stroke();
+    c.strokeStyle = palette.fg; c.lineWidth = 2; c.stroke();
+    c.fillStyle = palette.guidePaper; c.globalAlpha = 0.94; c.fillRect(18, labelY - 23, 155, 46);
+    c.globalAlpha = 1; c.fillStyle = palette.fg; c.font = '700 26px ' + BODY;
+    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('SHARED ' + friend.score, 95, labelY);
+  }
   // Paper-backed ink keeps the actual mark and stop readable over each place.
   for (const [start, end, y, dash] of [[113, G.cx - markW - 22, markY, [10, 8]], [G.cx + lineW + 22, PHOTO.w - 112, lineY, []]]){
     c.setLineDash(dash);
@@ -121,7 +147,7 @@ function drawBand(c, f, x, y, ink){
 }
 
 /** Draw synchronously after the caller has loaded the fonts and shared place assets. */
-export function drawShareCard(canvas, {num, key, theme, P, result, url = SITE_URL, preview = false, archive = false}){
+export function drawShareCard(canvas, {num, key, theme, P, result, friend = null, url = SITE_URL, preview = false, archive = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
   const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
   const doc = canvas.ownerDocument || document;
@@ -130,7 +156,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, url = SITE_UR
   const G = {cx: PHOTO.w / 2, top: 48, bot: 690, halfW: theme.vessel === 'bottle' ? 128 : theme.vessel === 'stein' ? 200 : 190, glass: theme.vessel};
   // The same place and exact stopped level travel with the sip. Only the paper changes.
   drawScene(scene, {G, w: PHOTO.w, h: PHOTO.h, L: result.L, theme, P, bubbles: false, titleWash: false});
-  drawGuide(scene, G, P, result, palette);
+  drawGuide(scene, G, P, result, palette, friend);
   c.fillStyle = palette.paper; c.fillRect(0, 0, CARD_W, CARD_H);
   c.drawImage(photo, PHOTO.x, PHOTO.y);
 
@@ -155,10 +181,13 @@ export function drawShareCard(canvas, {num, key, theme, P, result, url = SITE_UR
   fitText(c, offsetLabel(result), 536, 1104, 480, 28, BODY, 600);
   drawBand(c, result.f, 552, 1146, palette.ink);
   c.fillStyle = palette.ink;
-  c.font = '600 22px ' + BODY; c.fillText('One stopping point', 536, 1240);
+  c.font = '600 22px ' + BODY;
+  const comparison = comparisonCopy(friend, result);
+  fitText(c, comparison ? 'You ' + result.score + ' · Shared sip ' + friend.score : 'One stopping point', 536, 1240, 480, 22, BODY, 600);
   c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
+  // Keep the printed address short; the benchmark travels in the text link, not an unreadable query on paper.
   fitText(c, cardUrl(challengeUrl({url, key, num, preview}), num), 64, 1313, 450, 27, BODY, 700);
-  c.textAlign = 'right'; c.font = '700 31px ' + BODY; c.fillText('One sip. Your turn.', 1016, 1313);
+  c.textAlign = 'right'; fitText(c, 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
   return canvas;
 }
