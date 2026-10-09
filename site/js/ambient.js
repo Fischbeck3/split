@@ -11,8 +11,6 @@ export function memoryScenePlacement(w, h, G, {width, height, table}){
 export function memoryMotion(now = 0){
   const t = Number.isFinite(now) ? Math.max(0, now) / 1000 : 0;
   return {
-    firelight: .5 + .21 * Math.sin(t * 4.7) + .12 * Math.sin(t * 7.3 + .8) + .07 * Math.sin(t * 11.1),
-    flame: Math.sin(t * 5.3) * .7 + Math.sin(t * 8.1) * .3,
     surf: Math.sin(t * Math.PI * 2 / 6.8),
     breeze: Math.sin(t * Math.PI * 2 / 7.6)
   };
@@ -23,7 +21,7 @@ export function memoryMotion(now = 0){
 // stays on cloth, with the rafters and chandelier still in place.
 export const MEMORY_DETAILS = {
   pub: [
-    {kind: 'fire', box: [.759, .354, .105, .082], ellipse: true}
+    {kind: 'fire', box: [804 / 1024, 530 / 1536, 84 / 1024, 94 / 1536], base: 615 / 1536}
   ],
   beach: [
     {kind: 'water', box: [.305, .385, .402, .034]},
