@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {THEMES, dayParams, scoreFromOffset, widthAt} from '../site/js/core.js';
+import {THEMES, dayParams, scoreFromOffset} from '../site/js/core.js';
+import {renderVessel, renderWidthAt as widthAt} from '../site/js/render-vessels.js';
 import {CONCEPT_CHAPTERS, conceptParams} from '../site/js/concepts.js';
 import {TARGET_HINT_MS, targetGeometry, targetHintOpacity} from '../site/js/target.js';
 
@@ -20,7 +21,7 @@ function liveBox(w, h, theme, concept = false){
   const bot = h * (concept ? .805 : h < 740 ? .625 : .665);
   const halfW = concept ? Math.min(w * .29, (bot - top) * (bottle ? .19 : handled ? .32 : .28))
     : Math.min(w * (stein ? .27 : theme.box.w), (bot - top) * theme.box.h);
-  return {cx:w / 2 - (handled ? halfW * .24 : 0), top, bot, halfW, glass:theme.vessel};
+  return {cx:w / 2 - (handled ? halfW * .24 : 0), top, bot, halfW, glass:renderVessel(theme)};
 }
 
 function boxes(P){
@@ -29,7 +30,7 @@ function boxes(P){
     liveBox(280, 400, P.theme, concept),
     liveBox(375, 667, P.theme, concept),
     liveBox(560, 900, P.theme, concept),
-    {cx:500, top:48, bot:690, halfW:P.theme.vessel === 'bottle' ? 128 : P.theme.vessel === 'stein' ? 200 : 190, glass:P.theme.vessel}
+    {cx:500, top:48, bot:690, halfW:P.theme.vessel === 'bottle' ? 128 : P.theme.vessel === 'stein' ? 200 : 190, glass:renderVessel(P.theme)}
   ];
 }
 
@@ -90,7 +91,7 @@ test('translated vessel coordinates translate logo and hint together', () => {
 test('tiny and empty vessels never produce negative artwork or hint geometry', () => {
   const P = dayParams(5);
   for (const size of [0, .01, .5, 1, 2, 8]){
-    const G = {cx:0, top:7, bot:7 + size, halfW:size / 4, glass:P.theme.vessel};
+    const G = {cx:0, top:7, bot:7 + size, halfW:size / 4, glass:renderVessel(P.theme)};
     const target = targetGeometry(G, P, P.theme);
     assert.ok(target.markHeight >= 0);
     assert.ok(target.lineHalfWidth >= 0 && target.lineHalfWidth <= target.vesselHalfWidth);

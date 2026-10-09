@@ -4,6 +4,7 @@ import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {drawScene} from './draw.js';
 import {TARGET_HINT_MS, targetHintOpacity} from './target.js';
 import {memoryScenePlacement} from './ambient.js';
+import {renderVessel} from './render-vessels.js';
 
 const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reducedMotion = reducedQuery.matches, frameId = 0;
@@ -42,7 +43,7 @@ function glassBox(w, h, theme, photo = false){
   const bottle = theme.vessel === 'bottle', handled = theme.vessel === 'mug' || theme.vessel === 'stein';
   const top = h * (photo ? .16 : bottle ? .285 : .335), bot = h * (photo ? .89 : .805);
   const halfW = Math.min(w * .29, (bot - top) * (bottle ? .19 : handled ? .32 : .28));
-  return {cx:w / 2 - (handled ? halfW * .22 : 0), top, bot, halfW, glass:theme.vessel};
+  return {cx:w / 2 - (handled ? halfW * .22 : 0), top, bot, halfW, glass:renderVessel(theme)};
 }
 function optionBackdrop(image, panel, w, h, G, theme, table, dpr = 1, wash = true){
   const canvas = document.createElement('canvas'); canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);

@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {dayParams, keyForDay, scoreFromOffset, widthAt, DRAIN_LEVEL} from '../site/js/core.js';
+import {dayParams, keyForDay, scoreFromOffset, DRAIN_LEVEL} from '../site/js/core.js';
+import {renderVessel, renderWidthAt} from '../site/js/render-vessels.js';
 import {SITE_URL} from '../site/js/config.js';
 import {buildShareText, drawShareCard} from '../site/js/share.js';
 import {readFriendChallenge} from '../site/js/friend.js';
@@ -134,7 +135,7 @@ function recordingCanvas(){
     ownerDocument:{createElement:() => ({getContext:() => photoContext})}}};
 }
 
-test('comparison postcards keep both true stopping lines and distinct readable labels on the original vessel', () => {
+test('comparison postcards keep both true stopping lines and distinct readable labels on the displayed vessel', () => {
   for (const num of [1, 2, 3]){
     const P = dayParams(num), f = 0.08, result = {...scoreFromOffset(f, P.theme.target), f, L:P.markY + f * P.markH, counts:true};
     for (const sharedOffset of [0, 2]){
@@ -148,9 +149,14 @@ test('comparison postcards keep both true stopping lines and distinct readable l
       assert.ok(Math.abs(sharedLabel[3] - markLabel[3]) >= 55, 'shared and mark labels do not overlap');
       assert.equal(stopLabel[3], 48 + result.L * (690 - 48), 'your stop guide keeps your actual beer level');
       const halfW = P.theme.vessel === 'bottle' ? 128 : P.theme.vessel === 'stein' ? 200 : 190;
-      const sharedW = widthAt(P.theme.vessel, friend.L) * halfW, sharedY = 48 + friend.L * (690 - 48);
+      const vessel = renderVessel(P.theme);
+      const sharedW = renderWidthAt(vessel, friend.L) * halfW, sharedY = 48 + friend.L * (690 - 48);
       assert.ok(recording.photoCalls.some(call => call[0] === 'moveTo' && call[1] === 500 - sharedW && call[2] === sharedY));
       assert.ok(recording.photoCalls.some(call => call[0] === 'lineTo' && call[1] === 500 + sharedW && call[2] === sharedY));
+      const markW = renderWidthAt(vessel, P.markY) * halfW, markY = 48 + P.markY * (690 - 48);
+      const stopW = renderWidthAt(vessel, result.L) * halfW;
+      assert.ok(recording.photoCalls.some(call => call[0] === 'lineTo' && call[1] === 500 - markW - 22 && call[2] === markY), 'mark guide meets the displayed wall');
+      assert.ok(recording.photoCalls.some(call => call[0] === 'moveTo' && call[1] === 500 + stopW + 22 && call[2] === stopLabel[3]), 'stop guide meets the displayed wall');
       assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'You ' + result.score + ' · Shared sip ' + friend.score));
     }
   }

@@ -1,7 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {widthAt} from '../site/js/core.js';
+import {renderWidthAt as widthAt} from '../site/js/render-vessels.js';
 import {getLiquidSurface} from '../site/js/liquid.js';
+
+const VESSELS = ['tulip', 'bottle', 'corona', 'stein'];
 
 // Independent fine integration against the actual outline rather than the
 // solver's cached rectangular rows.
@@ -17,7 +19,7 @@ function area(vessel, aspect, center, slope){
 }
 
 test('an upright surface has the exact input level in every vessel', () => {
-  for (const vessel of ['tulip', 'bottle', 'stein']){
+  for (const vessel of VESSELS){
     for (const level of [0, 0.08, 0.27, 0.4, 0.58, 0.97, 1]){
       assert.deepEqual(getLiquidSurface({vessel, level, aspect: 0.31}), {centerLevel: level, slope: 0});
       assert.deepEqual(getLiquidSurface({vessel, level, aspect: 0.31, vesselAngle: 37, liquidAngle: 37}), {centerLevel: level, slope: 0});
@@ -25,10 +27,10 @@ test('an upright surface has the exact input level in every vessel', () => {
   }
 });
 
-test('tilt and slosh conserve liquid across the first three vessel shapes', () => {
-  for (const vessel of ['tulip', 'bottle', 'stein']){
+test('tilt and slosh conserve liquid in the physical and Corona display outlines', () => {
+  for (const vessel of VESSELS){
     for (const aspect of [0.2, 0.36]){
-      for (const level of [0.09, 0.29, 0.4, 0.59, 0.93]){
+      for (const level of [0.09, 0.26, 0.31, 0.38, 0.4, 0.45, 0.47, 0.53, 0.59, 0.93]){
         const expected = area(vessel, aspect, level, 0);
         for (const [vesselAngle, liquidAngle] of [[18, 0], [-42, 0], [55, 4], [35, -6]]){
           const surface = getLiquidSurface({vessel, level, aspect, vesselAngle, liquidAngle});
@@ -54,7 +56,7 @@ test('the bottle intercept adjusts as liquid crosses its shoulder', () => {
 });
 
 test('tiny inclination remains continuous with the upright level', () => {
-  for (const vessel of ['tulip', 'bottle', 'stein']){
+  for (const vessel of VESSELS){
     for (const level of [0.2, 0.32, 0.6]){
       const surface = getLiquidSurface({vessel, level, aspect: 0.3, vesselAngle: 0.0001});
       assert.ok(Math.abs(surface.centerLevel - level) < 0.00001);
@@ -63,12 +65,23 @@ test('tiny inclination remains continuous with the upright level', () => {
 });
 
 test('full and empty amounts remain full and empty at an inclination', () => {
-  for (const vessel of ['tulip', 'bottle', 'stein']){
+  for (const vessel of VESSELS){
     const aspect = 0.3;
     for (const level of [0, 1]){
       const surface = getLiquidSurface({vessel, level, aspect, vesselAngle: 48});
       assert.ok(Math.abs(area(vessel, aspect, surface.centerLevel, surface.slope) - area(vessel, aspect, level, 0)) < 0.000005);
     }
+  }
+});
+
+test('Corona and the green bottle retain separate cached liquid outlines', () => {
+  const options = {level: 0.36, aspect: 0.24, vesselAngle: 48};
+  const original = getLiquidSurface({...options, vessel: 'bottle'});
+  const corona = getLiquidSurface({...options, vessel: 'corona'});
+  assert.ok(Math.abs(corona.centerLevel - original.centerLevel) > 0.01, 'different shoulders must produce different slosh intercepts');
+  for (let i = 0; i < 3; i++){
+    assert.deepEqual(getLiquidSurface({...options, vessel: 'bottle'}), original);
+    assert.deepEqual(getLiquidSurface({...options, vessel: 'corona'}), corona);
   }
 });
 
