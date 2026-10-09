@@ -19,7 +19,9 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 - **Beat my sip.** Result links also carry the shared score and stopping offset. A friend sees the score to beat before playing, then their own score and both real stopping lines on the postcard. These are self-reported comparisons, without accounts or a leaderboard; daily, practice, archive, and preview labels stay explicit. Invalid benchmarks are ignored without changing the daily seed or recording rule.
 - **Sip sounds.** The speaker button starts off. Enable it for bottle glugs, a soft pint landing, a heavier stein landing, and a quiet rim click for a perfect split. Unsupported or blocked audio leaves play available. Sound stops when the page is hidden.
 
-If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar, so older prototype scores do not carry into the public run.
+If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Take today's sip” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar and the configured record run.
+
+The friends soft launch starts on the existing Day 1, October 9. `RECORD_RUN` is fixed at `friends-2026-10-09`, giving returning test browsers a fresh first sip and empty stats after refreshing. Earlier attempts remain untouched under their old storage key; motion preferences and analytics history remain intact. The calendar, seeded pours, and existing challenge links keep their original meaning. Keep this run fixed when inviting a wider audience so friends retain their scores and streaks.
 
 ## The first six days
 

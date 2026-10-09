@@ -6,7 +6,7 @@ import {buildShareText, drawShareCard} from './share.js';
 import {createAnalytics, gameProperties, trackedResultAction} from './analytics.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
-import {SITE_URL, LAUNCH, LAUNCH_READY} from './config.js';
+import {SITE_URL, LAUNCH, LAUNCH_READY, RECORD_RUN} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {createSipSound} from './sound.js';
 import {readPreference, savePreference} from './motion-preference.js';
@@ -14,8 +14,8 @@ import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 
 const $ = id => document.getElementById(id);
-// A fixed release calendar keeps prototype scores out of the public run.
-const STORE = 'split.v1:' + LAUNCH;
+// Separate the friends run from earlier test attempts without moving the calendar.
+const STORE = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reducedMotion = motionQuery.matches;
 let preferenceStorage;
