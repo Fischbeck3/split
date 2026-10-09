@@ -5,3 +5,9 @@ export const SITE_URL = 'https://dailysplit.us/';
 // moving it would renumber existing challenges and shared results.
 export const LAUNCH = '2026-10-09';
 export const LAUNCH_READY = true;
+
+// Public PostHog project token (phc_...), never a personal API key.
+// A blank token disables analytics; local and preview hosts never send events.
+export const POSTHOG_PROJECT_KEY = '';
+export const POSTHOG_API_HOST = 'https://us.i.posthog.com';
+export const ANALYTICS_HOSTNAMES = ['dailysplit.us', 'www.dailysplit.us'];

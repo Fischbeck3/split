@@ -1,0 +1,128 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {loadDashboard, provisionDashboard} from '../scripts/provision-posthog-dashboard.js';
+
+const options = {projectId:'123', personalKey:'phx_test_personal_key'};
+function fakePostHog(){
+  const records = {dashboards:[], insights:[]};
+  const calls = [];
+  let nextId = 1, failName = null;
+  return {records, calls, fail(name){failName = name;}, fetchImpl:async (url, options) => {
+    assert.equal(options.redirect, 'error');
+    const path = new URL(url).pathname;
+    const [,resource,id] = path.match(/^\/api\/projects\/123\/(dashboards|insights)\/(\d+)?\/?$/) || [];
+    assert.ok(resource, path);
+    const body = options.body && JSON.parse(options.body);
+    calls.push({method:options.method, resource, id, body});
+    if (options.method === 'GET'){
+      if (resource === 'insights') assert.equal(new URL(url).searchParams.get('include_dashboards'), 'true', 'request existing dashboard memberships explicitly');
+      return {ok:true, json:async()=>({results:structuredClone(records[resource]), next:null})};
+    }
+    if (body.name === failName){failName = null; return {ok:false, status:503};}
+    let record;
+    if (options.method === 'POST'){
+      record = {...body,id:nextId++};
+      records[resource].push(record);
+    } else {
+      record = records[resource].find(item=>item.id === Number(id));
+      assert.ok(record);
+      Object.assign(record, body);
+    }
+    return {ok:true, json:async()=>structuredClone(record)};
+  }};
+}
+
+test('partial dashboard provisioning resumes without duplicate insights or overwriting an unrelated same-name dashboard', async () => {
+  const plan = await loadDashboard();
+  const api = fakePostHog();
+  api.records.dashboards.push({id:999, name:plan.dashboard.name, tags:['another-owner']});
+  api.fail(plan.insights[2].name);
+  const messages = [];
+  await assert.rejects(provisionDashboard({...options, ...api, log:message=>messages.push(message)}), /HTTP 503/);
+  assert.equal(api.records.dashboards.length, 2);
+  assert.equal(api.records.insights.length, 2);
+  const result = await provisionDashboard({...options, ...api, log:message=>messages.push(message)});
+  assert.equal(api.records.dashboards.length, 2);
+  assert.equal(api.records.insights.length, plan.insights.length);
+  assert.ok(api.records.insights.every(insight=>insight.dashboards.includes(result.id)));
+  assert.deepEqual(api.records.dashboards[0], {id:999, name:plan.dashboard.name, tags:['another-owner']});
+  assert.ok(!messages.join('\n').includes(options.personalKey));
+
+  // A manual rename and attachment to another dashboard don't break reruns.
+  api.records.insights[0].name = 'Renamed in PostHog';
+  api.records.insights[0].dashboards.push(777);
+  api.records.insights[0].tags.push('keep-user-tag');
+  const previousCreates = api.calls.filter(call=>call.method === 'POST').length;
+  await provisionDashboard({...options, ...api, log:()=>{}});
+  assert.equal(api.calls.filter(call=>call.method === 'POST').length, previousCreates);
+  assert.ok(api.records.insights[0].dashboards.includes(777));
+  assert.ok(api.records.insights[0].tags.includes('keep-user-tag'));
+});
+
+test('unsafe hosts, public capture keys and non-numeric project IDs fail before any network request', async () => {
+  let calls = 0;
+  const fetchImpl = async()=>{calls++; throw new Error('Unexpected request');};
+  for (const host of ['http://us.posthog.com','https://attacker.example','https://us.posthog.com/redirect','https://user:password@us.posthog.com']){
+    await assert.rejects(provisionDashboard({...options,host,fetchImpl}), /POSTHOG_APP_HOST/);
+  }
+  await assert.rejects(provisionDashboard({...options,personalKey:'phc_public_capture_key',fetchImpl}), /personal API key/);
+  await assert.rejects(provisionDashboard({...options,projectId:'123/other',fetchImpl}), /positive project ID/);
+  assert.equal(calls, 0);
+});
+
+test('pagination cannot forward the personal API key outside the selected project', async () => {
+  let calls = 0;
+  await assert.rejects(provisionDashboard({...options,log:()=>{},fetchImpl:async()=>{
+    calls++;
+    return {ok:true,json:async()=>({results:[],next:'https://attacker.example/api/projects/123/dashboards/'})};
+  }}), /outside this PostHog project/);
+  assert.equal(calls, 1);
+});
+
+test('duplicate managed dashboards stop provisioning before a write', async () => {
+  const api = fakePostHog();
+  const plan = await loadDashboard();
+  api.records.dashboards.push({id:10,...plan.dashboard},{id:11,...plan.dashboard});
+  await assert.rejects(provisionDashboard({...options,...api,log:()=>{}}), /Resolve the duplicate/);
+  assert.ok(api.calls.every(call=>call.method === 'GET'));
+});
+
+test('share SQL deduplicates native plus copy per browser and Phoenix day, excludes uncounted modes, and handles no finishers', async t => {
+  let DatabaseSync;
+  try { ({DatabaseSync} = await import('node:sqlite')); } catch { return t.skip('SQL fixture requires Node 22.16+; provisioning supports Node 20.'); }
+  if (!DatabaseSync?.prototype.aggregate) return t.skip('SQL fixture requires Node 22.16+.');
+  const db = new DatabaseSync(':memory:');
+  try {
+    // SQLite evaluates the stored SQL locally. These adapters supply HogQL's
+    // aggregate/timezone functions and flatten JSON properties. This verifies
+    // metric semantics; it does not replace validation in a PostHog project.
+    db.aggregate('uniqExactIf', {
+      start:()=>new Set(),
+      step:(ids,id,condition)=>{if (condition && id !== null) ids.add(id); return ids;},
+      result:ids=>ids.size
+    });
+    db.function('toTimeZone', (timestamp,timeZone)=>new Intl.DateTimeFormat('en-CA',{timeZone}).format(new Date(timestamp)));
+    db.function('toDate', value=>value.slice(0,10));
+    db.exec('CREATE TABLE events (timestamp TEXT, event TEXT, distinct_id TEXT, attempt_kind TEXT, counts INTEGER)');
+    const insert = db.prepare('INSERT INTO events VALUES (?, ?, ?, ?, ?)');
+    const beforeMidnight = '2026-10-09T06:50:00Z', afterMidnight = '2026-10-09T07:05:00Z';
+    for (const name of ['sip_completed','result_shared','result_copied','result_shared']) insert.run(beforeMidnight,name,'a','daily',1);
+    insert.run(beforeMidnight,'sip_completed','b','daily',1);
+    for (const name of ['result_shared','result_copied']) insert.run(afterMidnight,name,'a','daily',1);
+    for (const mode of ['practice','archive','preview']){
+      insert.run(afterMidnight,'result_copied',mode,mode,1);
+      insert.run(afterMidnight,'sip_completed',mode,mode,1);
+    }
+    insert.run(afterMidnight,'result_copied','race','daily',0);
+    insert.run(afterMidnight,'sip_completed','race','daily',0);
+    insert.run(afterMidnight,'result_share_attempted','attempt-only','daily',1);
+    const plan = await loadDashboard();
+    const stored = plan.insights.find(item=>item.tags.includes('dailysplit:share-rate')).query.source.query;
+    const query = stored.replace('FROM events','FROM events AS properties').replace('{filters}', "timestamp >= '2026-10-08T07:00:00Z' AND timestamp < '2026-10-10T07:00:00Z'");
+    const rows = db.prepare(query).all().map(row=>({...row}));
+    assert.deepEqual(rows, [
+      {day:'2026-10-09',unique_sharers:1,daily_finishers:0,share_rate:null},
+      {day:'2026-10-08',unique_sharers:1,daily_finishers:2,share_rate:0.5}
+    ]);
+  } finally { db.close(); }
+});
