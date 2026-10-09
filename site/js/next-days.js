@@ -243,7 +243,7 @@ class ConceptGlass {
     if (this.phase !== 'drinking' && this.phase !== 'settling') return;
     const drinking = this.phase === 'drinking', elapsed = this.drink.elapsed;
     this.drink = stepDrink(this.P,this.drink,drinking ? this.P.K : 0,dt);
-    this.motion = stepMotion(this.P,this.motion,{drinking,input:drinking ? 1 : 0,elapsed,dt,reducedMotion});
+    this.motion = stepMotion(this.P,this.motion,{drinking,input:drinking ? 1 : 0,level:this.drink.level,elapsed,dt,reducedMotion});
     if (drinking && this.drink.level >= DRAIN_LEVEL){
       this.pointer = null; this.keyHeld = false; this.phase = 'settling'; this.hold.setAttribute('aria-pressed','false');
       this.hold.disabled = true; this.hold.textContent = 'Settling…'; this.status.textContent = 'The glass is empty.';

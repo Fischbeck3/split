@@ -93,11 +93,13 @@ export const DRAIN_LEVEL = 0.97;
 export const TILT_START = 25, TILT_STOP = 15;
 /** Where the line starts: just under the rim, below the foam. */
 export const startLevel = theme => 0.04 + theme.headT;
-/** How fast the line falls at a level, relative to the base rate. Narrow parts drop faster:
- *  a bottle's neck empties quickly and its body slowly. */
+/** Line speed for a fixed volume flow. A round vessel's section is proportional to
+ * radius squared: d(level)/dt = Q / A(level). Normalize at the mark to keep each
+ * day's base rate, while a tapered pint accelerates and a bottle slows at its shoulder. */
 export function flowFactor(theme, markY, level){
   const here = widthAt(theme.vessel, Math.max(0, Math.min(1, level)));
-  return (widthAt(theme.vessel, markY) / here) * theme.speed;
+  const ratio = widthAt(theme.vessel, Math.max(0, Math.min(1, markY))) / here;
+  return ratio * ratio * theme.speed;
 }
 /** Base drink rate from tilt in degrees past upright: nothing under 15, full at 40, up to 1.6 times beyond. */
 export function tiltRate(K, deg){
@@ -111,10 +113,22 @@ export function makeDrinkState(P){
 }
 
 export const STEIN_SETTLE_SECONDS = 0.24;
-const STEIN_RISE_SECONDS = 0.18, STEIN_FALL_SECONDS = 0.09;
+// These response times are a playable approximation of starting and arresting a
+// sip, not a viscosity solver. Open pints carry a short moving stream after release;
+// a neck restricts the bottle's response, while the stein takes longer to get going.
+const DRINK_RESPONSE = {
+  tulip: {rise: 0.16, fall: 0.14, settle: 0.42},
+  nonic: {rise: 0.15, fall: 0.13, settle: 0.39},
+  tumbler: {rise: 0.12, fall: 0.11, settle: 0.33},
+  cup: {rise: 0.12, fall: 0.11, settle: 0.33},
+  mug: {rise: 0.10, fall: 0.09, settle: 0.27},
+  tall: {rise: 0.12, fall: 0.10, settle: 0.30},
+  bottle: {rise: 0.055, fall: 0.07, settle: 0.21},
+  stein: {rise: 0.18, fall: 0.09, settle: STEIN_SETTLE_SECONDS}
+};
 const MAX_DRINK_STEP = 0.25, INTEGRATION_STEP = 1 / 120;
 
-function vesselRate(P, level, elapsed, inputRate){
+function volumeRate(P, level, elapsed, inputRate){
   let cadence = 1;
   if (P.theme.vessel === 'bottle'){
     // Air enters freely through the empty neck, then arrives in regular glugs in the body.
@@ -122,14 +136,15 @@ function vesselRate(P, level, elapsed, inputRate){
     const body = Math.max(0, Math.min(1, (level - 0.32) / 0.12));
     cadence += body * 0.65 * Math.sin(elapsed * Math.PI * 2 / 0.58);
   }
-  return inputRate * flowFactor(P.theme, P.markY, level) * cadence;
+  return inputRate * cadence;
 }
 
 /** Advance one sip without mutating its state.
  * inputRate is the BASE rate (K for a held sip, or tiltRate(K, angle)); 0 releases it.
- * The pub stops immediately, the bottle pulses below its shoulder, and a heavy stein
- * has a small, bounded follow-through. dt is seconds, capped to ignore background gaps.
- * RK4 substeps keep variable frame rates comparable even in the bottle's narrow neck. */
+ * Momentum is integrated as volume flow, so taper changes line speed without
+ * inventing or losing liquid. Every vessel ramps up and has bounded follow-through;
+ * the bottle pulses below its shoulder. dt is capped to ignore background gaps.
+ * RK4 substeps keep variable frame rates comparable even in the narrow neck. */
 export function stepDrink(P, state, inputRate, dt){
   const next = {
     level: Math.max(0, Math.min(DRAIN_LEVEL, Number.isFinite(state.level) ? state.level : startLevel(P.theme))),
@@ -138,40 +153,35 @@ export function stepDrink(P, state, inputRate, dt){
     releaseElapsed: Math.max(0, Number.isFinite(state.releaseElapsed) ? state.releaseElapsed : 0)
   };
   const seconds = Number.isFinite(dt) ? Math.max(0, Math.min(MAX_DRINK_STEP, dt)) : 0;
-  const rate = Number.isFinite(inputRate) ? Math.max(0, Math.min(P.K * Math.pow(1.6, 1.3), inputRate)) : 0;
-  const heavy = P.theme.vessel === 'stein';
+  const maxRate = P.K * Math.pow(1.6, 1.3);
+  const rate = Number.isFinite(inputRate) ? Math.max(0, Math.min(maxRate, inputRate)) : 0;
+  const response = DRINK_RESPONSE[P.theme.vessel];
+  // Public velocity stays in vessel-heights/second. Internally, throughput is
+  // normalized to the mark's section; its inertia is independent of local width.
+  let throughput = Math.min(maxRate * 1.65, next.velocity / flowFactor(P.theme, P.markY, next.level));
+  next.velocity = throughput * flowFactor(P.theme, P.markY, next.level);
   if (!seconds) return next;
   if (next.level >= DRAIN_LEVEL){ next.velocity = 0; next.elapsed += seconds; return next; }
 
-  if (rate === 0){
-    if (heavy && next.velocity > 0){
-      const tail = Math.max(0, Math.min(seconds, STEIN_SETTLE_SECONDS - next.releaseElapsed));
-      const decay = Math.exp(-tail / STEIN_FALL_SECONDS);
-      next.level += next.velocity * STEIN_FALL_SECONDS * (1 - decay);
-      next.velocity *= decay;
-      next.releaseElapsed += seconds;
-      if (next.releaseElapsed >= STEIN_SETTLE_SECONDS - 1e-9) next.velocity = 0;
-    } else next.velocity = 0;
-    next.elapsed += seconds;
-  } else {
-    next.releaseElapsed = 0;
-    const steps = Math.ceil(seconds / INTEGRATION_STEP), h = seconds / steps;
-    const derivative = (level, velocity, elapsed) => {
-      const desired = vesselRate(P, level, elapsed, rate);
-      return heavy ? [velocity, (desired - velocity) / STEIN_RISE_SECONDS] : [desired, 0];
-    };
-    for (let i = 0; i < steps && next.level < DRAIN_LEVEL; i++){
-      const {level: l, velocity: v, elapsed: t} = next;
-      const a = derivative(l, v, t);
-      const b = derivative(l + a[0] * h / 2, v + a[1] * h / 2, t + h / 2);
-      const c = derivative(l + b[0] * h / 2, v + b[1] * h / 2, t + h / 2);
-      const d = derivative(l + c[0] * h, v + c[1] * h, t + h);
-      next.level += h * (a[0] + 2 * b[0] + 2 * c[0] + d[0]) / 6;
-      next.velocity += h * (a[1] + 2 * b[1] + 2 * c[1] + d[1]) / 6;
-      next.elapsed += h;
-    }
-    if (!heavy) next.velocity = vesselRate(P, next.level, next.elapsed, rate);
+  const released = rate === 0;
+  const activeSeconds = released ? Math.max(0, Math.min(seconds, response.settle - next.releaseElapsed)) : seconds;
+  const steps = Math.ceil(activeSeconds / INTEGRATION_STEP), h = steps ? activeSeconds / steps : 0;
+  const derivative = (level, flow, elapsed) => {
+    const desired = released ? 0 : volumeRate(P, level, elapsed, rate);
+    return [flow * flowFactor(P.theme, P.markY, level), (desired - flow) / (released ? response.fall : response.rise)];
+  };
+  for (let i = 0; i < steps && next.level < DRAIN_LEVEL; i++){
+    const l = next.level, q = throughput, t = next.elapsed + i * h;
+    const a = derivative(l, q, t);
+    const b = derivative(l + a[0] * h / 2, q + a[1] * h / 2, t + h / 2);
+    const c = derivative(l + b[0] * h / 2, q + b[1] * h / 2, t + h / 2);
+    const d = derivative(l + c[0] * h, q + c[1] * h, t + h);
+    next.level += h * (a[0] + 2 * b[0] + 2 * c[0] + d[0]) / 6;
+    throughput = Math.max(0, q + h * (a[1] + 2 * b[1] + 2 * c[1] + d[1]) / 6);
   }
+  next.releaseElapsed = released ? next.releaseElapsed + seconds : 0;
+  next.elapsed += seconds;
+  next.velocity = released && next.releaseElapsed >= response.settle - 1e-9 ? 0 : throughput * flowFactor(P.theme, P.markY, next.level);
   if (next.level >= DRAIN_LEVEL){ next.level = DRAIN_LEVEL; next.velocity = 0; }
   return next;
 }

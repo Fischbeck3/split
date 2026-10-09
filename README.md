@@ -1,6 +1,6 @@
 # Split
 
-Hold to lift the glass, tip it, and take a sip. Release to bring it upright, then read the settled beer line through the middle of the mark. One scored sip a day, the same pour for everyone, and a postcard for the group chat: a beer, a place, and the memory of being there with friends.
+Hold to lift the glass, tip it, and take a sip. Release a little early to bring it upright, then read the settled beer line through the middle of the mark. One scored sip a day, the same pour for everyone, and a postcard for the group chat: a beer, a place, and the memory of being there with friends.
 
 **GitHub Pages address:** https://fischbeck3.github.io/split/ · **Configured public address:** https://dailysplit.us/
 
@@ -10,7 +10,8 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 
 ## How it plays
 
-- **Hold.** Tap “Take today's sip” (or “Take a preview sip” on a preview), then press and hold the glass or the “Hold to drink” button. The whole vessel lifts and tips while you drink; release to bring it upright and let the line settle. The space bar works on a keyboard; a focused hold button also supports Enter.
+- **Hold.** Tap “Take today's sip” (or “Take a preview sip” on a preview), then press and hold the glass or the “Hold to drink” button. The whole vessel lifts and tips farther as it empties; release a little early to bring it upright and let the moving sip settle. The space bar works on a keyboard; a focused hold button also supports Enter.
+- **Glass motion.** The glass button beside the day number switches tipping on or off and remembers your choice in this browser. Until you choose, it follows your device’s reduced-motion setting; a short note explains a still glass. Switching motion changes presentation only, with identical liquid dynamics and scoring. A shared challenge cannot change the recipient’s motion preference.
 - **Phone tilt.** “Use phone tilt” is an optional secondary action. Start with the phone upright, then tip it either way to drink; tip farther to drink faster. Come back within 15 degrees of upright to stop. iPhones request motion access. If no sensor is available, the game uses hold mode.
 - **The line.** What counts is the bottom of the head, where the foam meets the drink. Within 6% of the mark's height is a perfect split and within 16% is a split. The score is 100 at dead center and falls off quickly from there.
 - **One a day.** The first completed sip for today's local date is saved in this browser. Later sips are practice and cannot replace it. You can return to the saved score. A new glass arrives at local midnight. Preview sips never write official records.
@@ -24,18 +25,20 @@ If midnight passes during a sip, that glass becomes an archive and the finished 
 
 | Day | Drink and place | Vessel and mark | Feel |
 |---|---|---|---|
-| 1 · Oct 9, 2026 · Old Irish pub | Guinness in an old Irish pub | Tulip pint · the G | Smooth lift and tip; drinking stops immediately, then the vessel returns upright |
+| 1 · Oct 9, 2026 · Old Irish pub | Guinness in an old Irish pub | Tulip pint · the G | Smooth lift and progressively deeper tip; tapered cross-section accelerates the line and a brief release tail rewards anticipation |
 | 2 · Oct 10, 2026 · Cabo beach | Corona at a beach palapa in Cabo, Mexico | Clear bottle with lime · the crown | Fast through the neck, slower deterministic glugs through the body |
 | 3 · Oct 11, 2026 · Oktoberfest | Festbier in a Munich beer tent | Liter stein · Bavarian crest | Slower, heavy pour with a short 0.24-second follow-through after release |
-| 4 · Oct 12, 2026 · Tokyo izakaya | Sapporo at a rain-lit counter | Tall star glass · gold star | Crisp lager, steady sip, clean stop |
-| 5 · Oct 13, 2026 · Snowy Hogsmeade | Butterbeer beneath snowy rooftops | Tulip glass · H shield | Creamy head, slower steady sip, clean stop |
-| 6 · Oct 14, 2026 · Trastevere sunset | Peroni at a Roman café table | Tall glass · blue P | Light lager, steady sip, clean stop |
+| 4 · Oct 12, 2026 · Tokyo izakaya | Sapporo at a rain-lit counter | Tall star glass · gold star | Crisp lager, accelerating sip, brief afterflow |
+| 5 · Oct 13, 2026 · Snowy Hogsmeade | Butterbeer beneath snowy rooftops | Tulip glass · H shield | Creamy head, slower sip, brief afterflow |
+| 6 · Oct 14, 2026 · Trastevere sunset | Peroni at a Roman café table | Tall glass · blue P | Light lager, accelerating sip, brief afterflow |
 
-The vessel changes both the flow and movement. The pint tips toward 20 degrees, the bottle toward 24 degrees with a kick synchronized to each glug, and the stein toward 18 degrees with a slower lift and return. The liquid responds to gravity and damped slosh while preserving the amount in the glass. Your score waits for both the drink and the vessel movement to settle.
+The vessel changes both the flow and movement. A round glass’s cross-sectional area is proportional to its radius squared: for the same volume removed per second, the line falls faster toward the narrow bottom of a pint and slower after a bottle’s shoulder. Momentum is integrated as volume flow, with smooth startup and short release tails: at most 0.42 seconds for the tulip pint, 0.21 seconds for the bottle, and 0.24 seconds for the stein. The line continues moving during that tail, so release before the target rather than at it. Bottle glugs remain deterministic.
+
+The pint begins around 20 degrees, the bottle around 24 degrees with a kick synchronized to each glug, and the stein around 18 degrees with a slower lift and return. Each tips farther as it empties. The liquid stays near gravity-horizontal with damped slosh, preserving actual round-vessel volume through the tilt and bottle shoulder. Your score waits for both the drink and the vessel movement to settle. This is a bounded gameplay approximation of continuity and momentum, not a turbulence or spill simulation.
 
 A thin dashed line briefly shows the exact target before each sip, then fades. Opening How to play shows it again. Reduced motion keeps the cue static until it clears; beginning the drink clears it immediately. Match the settled beer line beneath the foam to that height, or the top of Guinness's G crossbar. Compact brand artwork replaces the permanent aiming notches: Corona's crown, Sapporo's gold star, Peroni's red-and-blue label, and Butterbeer's quartered Hogwarts-style crest. Postcards retain their MARK/STOP guides and use the same logos. Artwork remains separate from the seeded score tolerance, so daily pours and saved scores stay intact.
 
-The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion keeps the vessel upright, shows liquid progress, and retains static material detail. After day 6, the game picks from fourteen glasses by date and never pours the same glass two days running.
+The pub pint has a dense cream head and foam lacing; the clear bottle has a long neck, shoulder, lip, condensation, fine fizz, and a rising air pocket with each glug; the stein has thick dimpled glass and a generous head. These details carry into the share card. Reduced motion defaults to an upright vessel, shows liquid progress, and retains static material detail. An explicit glass-motion choice can enable tipping while decorative motion still respects the device preference. After day 6, the game picks from fourteen glasses by date and never pours the same glass two days running.
 
 The opening places use painted travel illustrations: aged oak, amber lamps, and a fireplace in the pub; a shaded palapa, turquoise water, and the Cabo headland at the beach; timber roof ribs, Bavarian bunting, and communal tables in Munich. Small distant figures suggest friends without competing with the glass or the scoring mark. The table stays anchored beneath the vessel in the game, movement preview, and exported postcard.
 
@@ -79,7 +82,7 @@ This serves the game on http://localhost:8000, the three-day review on http://lo
 npm test
 ```
 
-The tests cover the schedule, date links and recording eligibility, score boundaries, reachable marks, vessel flow and movement settling across frame rates, preserved liquid geometry in tilted vessels, reduced motion, share semantics, and launch preparation. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
+The tests cover the schedule, date links and recording eligibility, score boundaries, reachable marks, cross-sectional flow and momentum settling across frame rates, round-vessel volume conservation in tilted vessels, explicit motion preferences and reduced motion, share semantics, and launch preparation. There is nothing to install: the project has no dependencies. Fraunces and Karla are self-hosted in `site/fonts/`, with their OFL licenses alongside the font files.
 
 ## Deploy
 
@@ -175,6 +178,7 @@ Tracking is live as of October 9, 2026. Open [Daily Split users and shares](http
 - `site/js/sound.js`: optional short vessel cues, initialized only by the sound toggle
 - `site/js/ambient.js`: bounded environmental movement around the first three vessels
 - `site/js/core.js`: the daily seed, vessel shapes, drink physics, and scoring, with no page code so tests run in Node
+- `site/js/motion-preference.js`: local full/still glass choice, independent of shared challenges and recording
 - `site/js/motion.js`: deterministic vessel lift, tipping, glug movement, slosh, and return to rest
 - `site/js/liquid.js`: the liquid surface that preserves the filled area while a vessel tilts
 - `site/js/draw.js`: shared place assets and canvas fallback, glass material, beer, foam, printed names, and marks
