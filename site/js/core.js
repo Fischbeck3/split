@@ -3,6 +3,7 @@
 import {LAUNCH, SCHEDULE, THEMES as RAW_THEMES} from './themes.js';
 import {CALENDAR, LEGACY_ROTATION_IDS, ROTATION_IDS} from './calendar-data.js';
 import {getPublishedEntry} from './content-calendar.js';
+import {stageCadence} from './sip-cadence.js';
 
 export const pad = n => String(n).padStart(2, '0');
 
@@ -147,7 +148,7 @@ function volumeRate(P, level, elapsed, inputRate){
     const body = Math.max(0, Math.min(1, (level - 0.32) / 0.12));
     cadence += body * 0.65 * Math.sin(elapsed * Math.PI * 2 / 0.58);
   }
-  return inputRate * cadence;
+  return inputRate * cadence * stageCadence(P, elapsed);
 }
 
 /** Advance one sip without mutating its state.

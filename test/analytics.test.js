@@ -1,9 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
 import {analyticsAllowed, attemptKind, gameProperties, resultProperties, cleanUrl, sanitizeEvent, createAnalytics, trackedResultAction} from '../site/js/analytics.js';
-import {dayParams, scoreFromOffset, dayKey} from '../site/js/core.js';
+import {dayParams} from '../site/js/core.js';
+import {controllerApp} from './helpers/controller-app.js';
 
 const projectKey = 'phc_test_public_token';
 const location = {protocol:'https:', hostname:'dailysplit.us', href:'https://dailysplit.us/?day=2026-10-09&vs=99&f=.02#day1'};
@@ -199,32 +198,45 @@ test('manual fallback and clipboard failure have separate observable outcomes', 
   assert.equal(events[1].props.stage, 'clipboard'); assert.equal(events[2].props.source, 'copy_button');
 });
 
-// Exercise the real finish() body with browser rendering stubbed out, including the stale-tab race.
-const mainSource = readFileSync(new URL('../site/js/main.js', import.meta.url), 'utf8');
-const finishSource = mainSource.slice(mainSource.indexOf('function finish(now){'), mainSource.indexOf('// ---------- results and sharing ----------'));
-function completeSip({saved = false, practice = false, kind = 'today', mode = 'hold'} = {}){
-  const P = dayParams(1), key = dayKey(new Date()), events = [], store = {days:{}};
-  const S = {...state(), key, P, theme:P.theme, L:P.markY, drained:false, practice, kind, mode, state:'locked'};
-  if (saved) store.days[key] = {done:true, theme:P.theme.id, L:P.markY, mode:'hold', score:99, f:0};
-  const element = {hidden:false, classList:{add(){}}};
-  const context = {S, analytics:{capture:(event, props) => events.push({event, props})}, gameProperties,
-    refreshDayStatus(){}, scoreFromOffset, canRecordChallenge:({kind}) => kind === 'today',
-    load:() => store, save(){}, toast(){}, draw(){}, setPhase:phase => { S.state = phase; },
-    $:() => element, renderResult(){}, renderStats(){}, PERFECT:.02, Date};
-  vm.runInNewContext(finishSource + '\nfinish(1000);', context);
-  return {events, S};
-}
+test('daily telemetry counts only the third completion and reports the best sip even when the last sip drains', () => {
+  const app = controllerApp();
+  app.sip(240); app.sip(200); app.sip(400);
+  const starts = app.events.filter(event => event.event === 'sip_started');
+  const completions = app.events.filter(event => event.event === 'sip_completed');
+  assert.deepEqual(starts.map(event => event.properties.sip_number), [1, 2, 3]);
+  assert.deepEqual(starts.map(event => event.properties.sip_stage), ['sober', 'tipsy', 'drunk']);
+  assert.deepEqual(completions.map(event => event.properties.sip_number), [1, 2, 3]);
+  assert.deepEqual(completions.map(event => event.properties.sip_stage), ['sober', 'tipsy', 'drunk']);
+  assert.deepEqual(completions.map(event => event.properties.counts), [false, false, true]);
+  assert.deepEqual(completions.map(event => event.properties.new_record), [false, false, true]);
+  assert.deepEqual(completions.map(event => event.properties.round_complete), [false, false, true]);
+  assert.equal(app.S.result.bestIndex, 0, 'the first sip wins this real three-sip round');
+  const last = completions.at(-1).properties, third = app.S.result.rounds[2];
+  assert.ok(app.S.result.rounds[0].score > third.score, 'the third sip must be worse to expose a last-score reporting regression');
+  assert.equal(third.drained, true);
+  assert.equal(last.score, app.S.result.score, 'daily dashboard score matches the official best-of-three result');
+  assert.equal(last.best_score, app.S.result.score);
+  assert.equal(last.drained, false, 'the official best sip did not drain');
+  assert.equal(last.sip_score, third.score, 'individual third-sip score is still available');
+  assert.equal(last.sip_drained, true);
+  assert.deepEqual(completions.slice(0, 2).map(event => event.properties.score), app.S.result.rounds.slice(0, 2).map(round => round.score));
+  assert.deepEqual(completions.map(event => event.properties.sip_score), app.S.result.rounds.map(round => round.score));
+  assert.deepEqual(completions.map(event => event.properties.sip_drained), app.S.result.rounds.map(round => round.drained));
+});
 
-test('first daily completion counts once; a stale tab reuses its saved result without another daily completion', () => {
-  const first = completeSip();
-  assert.equal(first.events[0].event, 'sip_completed');
-  assert.equal(first.events[0].props.counts, true); assert.equal(first.events[0].props.new_record, true);
-  const second = completeSip({saved:true, mode:'tilt'});
-  assert.equal(second.events[0].props.counts, false); assert.equal(second.events[0].props.new_record, false);
-  assert.equal(second.S.result.score, 99, 'the original saved result is still displayed');
-  assert.equal(second.events[0].props.input_mode, 'tilt', 'completion describes the actual attempt before a saved result is restored');
+test('complete practice, archive and preview rounds emit honest telemetry without daily writes', () => {
   for (const options of [{practice:true}, {kind:'archive'}, {kind:'preview'}]){
-    const event = completeSip(options).events[0];
-    assert.equal(event.props.counts, false); assert.equal(event.props.new_record, false);
+    const app = controllerApp(options);
+    app.sip(240); app.sip(200); app.sip(220);
+    const completions = app.events.filter(event => event.event === 'sip_completed');
+    assert.equal(completions.length, 3);
+    assert.equal(completions.at(-1).properties.round_complete, true);
+    for (const event of completions){
+      assert.equal(event.properties.counts, false);
+      assert.equal(event.properties.new_record, false);
+      assert.equal(event.properties.attempt_kind, options.practice ? 'practice' : options.kind);
+    }
+    assert.equal(app.S.result.counts, false);
+    assert.equal(app.storage.writes.length, 0, 'the controller never attempts to save ' + (options.kind || 'practice'));
   }
 });

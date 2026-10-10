@@ -2,7 +2,7 @@
   "name": "split",
   "version": "0.1.0",
   "private": true,
-  "description": "Hold to sip. Release to stop. Split the mark. One sip a day.",
+  "description": "Hold to sip. Release to stop. Three sips, best score, one glass a day.",
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.js",

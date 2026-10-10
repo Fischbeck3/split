@@ -12,6 +12,8 @@ import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from './theme-review.js';
+import {ROUND_STAGES, roundParams, normalizeRoundRecord, reserveRound, completeRound, recoverInterruptedRound, summarizeRounds} from './rounds.js';
+import {focusedGlassBox, interpolateGlassBox} from './focus.js';
 
 const $ = id => document.getElementById(id);
 // Separate the friends run from earlier test attempts without moving the calendar.
@@ -36,7 +38,8 @@ else if (motionQuery.addListener) motionQuery.addListener(onMotionPreferenceChan
 renderMotionPreference();
 
 const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, review:!!themeReview, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
-  result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState()};
+  result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState(),
+  baseP:null, progress:null, round:0, roundToken:null, focus:0, focusFrom:0, focusAt:0, focusDuration:620, liveFloor:Infinity, visualSway:0, storageFailed:false};
 const analytics = createAnalytics(themeReview ? {projectKey:''} : {});
 function resultProperties(){
   return analyticsResultProperties(S);
@@ -48,6 +51,20 @@ function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
 
 function sipKind(){ return S.review ? 'Review · not saved' : S.preview ? 'Preview' : S.kind === 'archive' ? 'Archive' : S.practice ? 'Practice' : 'Today’s sip'; }
 function pourFeel(){ return S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour'); }
+function roundStatus(){ return ROUND_STAGES[S.round].label + ' · Sip ' + (S.round + 1) + ' of 3'; }
+function renderRounds(id, rounds = [], current = -1, bestIndex = -1){
+  const list = $(id); list.replaceChildren();
+  list.dataset.fresh = String(!rounds.length);
+  ROUND_STAGES.forEach((stage, index) => {
+    const item = document.createElement('li'), name = document.createElement('span'), score = document.createElement('strong');
+    name.textContent = stage.label;
+    score.textContent = rounds[index] ? rounds[index].score + '/100' : index === current ? 'Your turn' : '—';
+    item.append(name, score);
+    if (index === current) item.setAttribute('aria-current', 'step');
+    if (index === bestIndex){ item.className = 'best-round'; const badge = document.createElement('small'); badge.textContent = 'Best'; item.append(badge); }
+    list.append(item);
+  });
+}
 function challengeDate(){
   const [year, month, date] = S.key.split('-').map(Number);
   return new Intl.DateTimeFormat(undefined, {month:'short', day:'numeric', year:'numeric'}).format(new Date(year, month - 1, date, 12));
@@ -60,9 +77,11 @@ function renderChallengeStatus(now = new Date()){
   $('introNote').textContent = S.review ? (S.notice ? S.notice + ' ' : '') + 'Unlimited review sips. Scores are not saved.' : S.kind === 'archive'
     ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
     : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
-    : (S.notice ? S.notice + ' ' : '') + 'One scored sip. Same pour for everyone.';
-  if (S.state === 'ready' || S.state === 'drinking') $('hudMode').textContent = sipKind() + ' · ' + pourFeel();
-  $('practiceBtn').textContent = 'Another sip · ' + (S.review ? 'review' : S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
+    : S.storageFailed ? 'Progress stays in this tab. This round will not be saved.'
+    : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of 3 saved. Finish your round.' : 'Best of three. Same challenge for everyone.');
+  if (['approaching','ready','drinking','between'].includes(S.state)) $('hudMode').textContent = roundStatus() + ' · ' + sipKind();
+  $('practiceBtn').textContent = 'Another round · ' + (S.review ? 'review' : S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
+  if (S.progress?.rounds.length && !S.progress.done) $('startLabel').textContent = 'Continue · ' + ROUND_STAGES[S.progress.rounds.length].label;
 }
 function refreshDayStatus(now = new Date()){
   if (S.kind === 'today' && !canRecordChallenge({key:S.key, kind:S.kind, now})){
@@ -74,8 +93,34 @@ function refreshDayStatus(now = new Date()){
 }
 
 // ---------- storage ----------
-function load(){ try { const v = JSON.parse(localStorage.getItem(STORE)); return v && v.days ? v : {days: {}}; } catch { return {days: {}}; } }
-function save(st){ try { localStorage.setItem(STORE, JSON.stringify(st)); } catch { /* private mode: play on without a record */ } }
+function load(){ try { const v = JSON.parse(localStorage.getItem(STORE)); return v && v.days && typeof v.days === 'object' && !Array.isArray(v.days) ? v : {days: {}}; } catch { return {days: {}}; } }
+function save(st){ try { localStorage.setItem(STORE, JSON.stringify(st)); return true; } catch { return false; } }
+
+function recordingRound(now = new Date()){
+  return !S.practice && !S.storageFailed && canRecordChallenge({key:S.key, kind:S.kind, now});
+}
+function writeProgress(record){
+  S.progress = record;
+  const st = load(); st.days[S.key] = record;
+  if (!save(st) && !S.storageFailed){
+    S.storageFailed = true;
+    toast('This browser can’t save progress. Keep this tab open to finish your round.');
+  }
+}
+function reserveCurrentRound(){
+  if (S.roundToken) return true;
+  const token = globalThis.crypto?.randomUUID?.() || String(Date.now()) + ':' + Math.random();
+  const saved = recordingRound() ? load().days[S.key] : null;
+  const existing = saved?.theme === S.theme.id ? saved : S.progress;
+  const reserved = reserveRound(existing, S.baseP, token);
+  if (!reserved.accepted || reserved.record.rounds.length !== S.round){
+    toast('This round changed in another tab. Reload to continue your saved sips.');
+    $('drinkControl').disabled = true; setPhase('blocked'); return false;
+  }
+  S.roundToken = token;
+  if (recordingRound()) writeProgress(reserved.record); else S.progress = reserved.record;
+  return true;
+}
 
 // ---------- layout and drawing ----------
 function layout(){
@@ -89,6 +134,10 @@ function layout(){
   intro.hidden = false; rules.open = false;
   S.glassFloor = intro.querySelector('.sheet').getBoundingClientRect().top - 12;
   rules.open = wasOpen; intro.hidden = wasHidden;
+  const controls = $('liveControls'), hidden = controls.hidden;
+  controls.hidden = false;
+  S.liveFloor = controls.getBoundingClientRect().top - 22;
+  controls.hidden = hidden;
 }
 function glassBox(w, h, theme){
   const b = theme.box, short = h < 740;
@@ -105,10 +154,15 @@ function currentBackdrop(G){
   return backdrop;
 }
 function draw(now){
-  const G = glassBox(W, H, S.theme);
-  drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion: S.motion,
+  const base = glassBox(W, H, S.theme);
+  const foreground = focusedGlassBox(base, {w:W,h:H,floor:S.liveFloor,vessel:S.theme.vessel});
+  const G = interpolateGlassBox(base, foreground, S.focus);
+  const motion = {...S.motion, angle:S.motion.angle + S.visualSway};
+  const blur = !reducedMotion && ['ready','drinking'].includes(S.state) ? S.P.sipBlur || 0 : 0;
+  scene.style.filter = blur ? 'blur(' + blur + 'px)' : '';
+  drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
-    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(G),
+    bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(base),
     targetHint: (S.state === 'intro' || S.state === 'ready') && S.targetAt !== null ? targetHintOpacity(now - S.targetAt, reducedMotion) : 0});
 }
 
@@ -117,19 +171,35 @@ function begin(){
   S.mode = 'hold';
   refreshDayStatus();
   $('result').classList.remove('fresh-sip');
-  setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
+  S.baseP ||= S.P;
+  S.progress ||= normalizeRoundRecord(null, S.baseP);
+  S.round = S.progress.rounds.length;
+  if (S.round >= 3) return;
+  S.P = roundParams(S.baseP, S.round); S.roundToken = null;
+  setPhase('approaching'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
   S.motion = makeMotionState();
-  S.targetAt = performance.now();
+  S.targetAt = null; S.visualSway = 0;
+  S.focusAt = performance.now(); S.focusFrom = S.focus;
+  S.focusDuration = reducedMotion ? 100 : S.focus < .1 ? 620 : 240;
+  renderRounds('liveRounds', S.progress.rounds, S.round);
+  $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
+  $('nextSipBtn').hidden = true;
   $('intro').hidden = true; $('result').hidden = true;
   $('dayHeading').hidden = false; $('liveControls').hidden = false;
-  $('hudMode').hidden = false; $('hudMode').textContent = sipKind() + ' · ' + pourFeel();
+  $('hudMode').hidden = false; $('hudMode').textContent = roundStatus() + ' · ' + sipKind();
   $('drinkControl').hidden = false;
-  $('drinkControl').disabled = false;
+  $('drinkControl').disabled = true;
   $('drinkControl').setAttribute('aria-pressed', 'false');
-  $('drinkControl').textContent = 'Hold to drink';
-  $('footPill').textContent = 'Release early; settle at the mark.';
-  $('drinkControl').focus({preventScroll: true});
+  $('drinkControl').textContent = 'Get ready…';
+  $('footPill').textContent = reducedMotion ? 'Finding the mark…' : 'Pulling your glass closer…';
+  layout();
+}
+function readyToSip(now){
+  setPhase('ready'); S.focus = 1; S.targetAt = now;
+  $('drinkControl').disabled = false; $('drinkControl').textContent = 'Hold to drink';
+  $('footPill').textContent = S.round === 0 ? 'Hold to sip. Release early; settle at the mark.' : S.round === 1 ? 'A little sway. Watch the line, then release.' : 'Less steady now. Find the mark and trust your timing.';
+  $('drinkControl').focus({preventScroll:true});
 }
 const wantsDrink = () => S.holding;
 const wantsStop = () => !S.holding;
@@ -139,11 +209,16 @@ function frame(now){
   const dt = Math.min(0.25, (now - (S.last || now)) / 1000); S.last = now;
   const elapsed = S.drink?.elapsed || 0;
   let drinkDt = dt;
+  if (S.state === 'approaching'){
+    const progress = Math.min(1, (now - S.focusAt) / S.focusDuration);
+    S.focus = reducedMotion ? 1 : S.focusFrom + (1 - S.focusFrom) * progress;
+    if (progress >= 1) readyToSip(now);
+  }
   if (S.state === 'ready' && wantsDrink()){
     refreshDayStatus();
     setPhase('drinking'); if (!S.holdStart) S.holdStart = now;
     drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
-    analytics.capture('sip_started', {...gameProperties(S), counts:!S.practice && canRecordChallenge({key:S.key, kind:S.kind})});
+    analytics.capture('sip_started', {...gameProperties(S), sip_number:S.round+1, sip_stage:ROUND_STAGES[S.round].label.toLowerCase(), counts:recordingRound()});
     $('footPill').textContent = 'Release early. Let the sip settle.';
   }
   if (S.state === 'drinking'){
@@ -157,7 +232,11 @@ function frame(now){
   }
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
     input: S.state === 'drinking' ? Math.min(1, rate() / S.P.K) : 0, level:S.L, elapsed, dt, reducedMotion: stillGlass()});
-  if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
+  const stageTime = (now - S.focusAt) / 1000;
+  const sway = !reducedMotion && ['ready','drinking'].includes(S.state)
+    ? (S.P.sipSway || 0) * (3.6 * Math.sin(stageTime * 1.65) + 1.1 * Math.sin(stageTime * 2.9)) : 0;
+  S.visualSway += (sway - S.visualSway) * (1 - Math.exp(-dt * 12));
+  if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && Math.abs(S.visualSway) < .025 && now - S.lockAt > 350) finish(now);
   // Ambient layers need only 30 fps at rest; the sip retains its full frame rate.
   if (S.state !== 'result' && ((S.state === 'drinking' || S.state === 'locked') || now - S.drawnAt >= 1000 / 30)){
     draw(now); S.drawnAt = now;
@@ -169,34 +248,49 @@ function lock(now){
   $('drinkControl').disabled = true; $('drinkControl').textContent = 'Settling…';
   $('footPill').textContent = stillGlass() ? 'Letting the sip settle…' : 'Returning upright. Let the sip settle…';
 }
+function showRoundOutcome(now = performance.now()){
+  S.roundToken = null;
+  const rounds = S.progress.rounds;
+  if (S.progress.done){
+    S.result = {...S.progress, counts:recordingRound(), attribution:{...S.attribution}};
+    S.L = S.result.L; S.motion = makeMotionState(); S.visualSway = 0;
+    draw(now); setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
+    renderResult(); renderStats(); $('result').classList.add('fresh-sip');
+    return;
+  }
+  setPhase('between'); scene.style.filter = '';
+  const last = rounds.at(-1), best = summarizeRounds(rounds);
+  renderRounds('liveRounds', rounds, -1, best.bestIndex);
+  $('liveGoal').textContent = last.score + '/100';
+  $('footPill').textContent = last.label + '. Best so far: ' + best.score + '/100.';
+  $('drinkControl').hidden = true; $('nextSipBtn').hidden = false;
+  $('nextSipBtn').textContent = 'Next sip · ' + ROUND_STAGES[rounds.length].label;
+  $('nextSipBtn').focus({preventScroll:true});
+  draw(now);
+}
 function finish(now){
   const finishedAt = new Date(); refreshDayStatus(finishedAt);
   const f = S.drained ? 2 : (S.L - S.P.markY) / S.P.markH, r = scoreFromOffset(f, S.theme.target);
   if (S.drained){ r.label = 'Drank the lot'; r.tone = 'miss'; r.score = 0; }
-  const counts = !S.practice && canRecordChallenge({key:S.key, kind:S.kind, now:finishedAt});
-  let newRecord = false;
-  const attribution = {...S.attribution};
-  S.result = {f, score: r.score, label: r.label, tone: r.tone, drained: S.drained, L: S.L, mode: S.mode, counts, t: finishedAt.toISOString(), attribution};
-  const completedProperties = {...gameProperties(S, finishedAt), score:r.score, drained:S.drained};
-  if (counts){
-    const st = load();
-    const recorded = st.days[S.key];
-    if (recorded && recorded.done && recorded.theme === S.theme.id){
-      S.L = recorded.L; S.mode = recorded.mode; S.result = {...recorded, counts:true};
-      toast('Your first sip is already saved.');
-    } else {
-      st.days[S.key] = {num: S.num, theme: S.theme.id, score: r.score, f, L:S.L, mode: S.mode, label: r.label, tone: r.tone, drained: S.drained, done: true, attribution};
-      save(st);
-      newRecord = true;
-    }
+  const counts = recordingRound(finishedAt);
+  const result = {f, score:r.score, label:r.label, tone:r.tone, drained:S.drained, L:S.L, mode:S.mode,
+    counts, t:finishedAt.toISOString(), attribution:{...S.attribution}};
+  const existing = counts ? load().days[S.key] || S.progress : S.progress;
+  const completed = completeRound(existing, S.baseP, S.roundToken, result);
+  if (!completed.accepted){
+    S.progress = completed.record;
+    if (S.progress?.done) showRoundOutcome(now);
+    else { setPhase('blocked'); $('drinkControl').disabled = true; toast('This sip changed in another tab. Reload to continue.'); }
+    return;
   }
-  // A restored record or a second tab's already saved sip is not another daily completion.
-  analytics.capture('sip_completed', {...completedProperties, counts:counts && newRecord, new_record:newRecord}, finishedAt);
-  // Paint the true upright stopping line before the postcard reveals over it.
-  draw(now);
-  setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
-  renderResult(); renderStats();
-  $('result').classList.add('fresh-sip');
+  if (counts) writeProgress(completed.record); else S.progress = completed.record;
+  analytics.capture('sip_completed', {...gameProperties(S, finishedAt),
+    score:S.progress.done ? S.progress.score : r.score, drained:S.progress.done ? S.progress.drained : S.drained,
+    sip_score:r.score, sip_drained:S.drained,
+    sip_number:S.round+1, sip_stage:ROUND_STAGES[S.round].label.toLowerCase(),
+    counts:counts && !S.storageFailed && S.progress.done, new_record:counts && !S.storageFailed && S.progress.done,
+    round_complete:S.progress.done, best_score:S.progress.score}, finishedAt);
+  showRoundOutcome(now);
 }
 
 // ---------- results and sharing ----------
@@ -208,10 +302,16 @@ function renderResult(){
   $('resScore').textContent = r.score; $('resScore').className = 'tone-' + r.tone;
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
-  $('resKind').textContent = S.review ? 'Review · not saved' : S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : r.counts ? 'Today’s sip' : 'Practice · not saved';
+  $('resKind').textContent = S.review ? 'Review · not saved' : S.preview ? 'Preview · not saved' : S.kind === 'archive' ? 'Archive · ' + (r.counts ? 'saved sip' : 'not saved') : S.storageFailed ? 'Today · not saved' : r.counts ? 'Today’s round' : 'Practice · not saved';
   const saved = load().days[S.key];
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
+  $('resultRounds').hidden = !r.rounds?.length;
+  if (r.rounds?.length) renderRounds('resultRounds', r.rounds, -1, r.bestIndex);
+  if (r.rounds?.length === 3){
+    $('resKind').textContent += ' · Best of 3';
+    $('resDetail').textContent = 'Best sip: ' + ROUND_STAGES[r.bestIndex].label + '. ' + $('resDetail').textContent;
+  }
   const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
   $('friendComparison').hidden = !comparison;
   if (comparison){
@@ -229,7 +329,7 @@ function renderResult(){
   $('result').hidden = false;
   // Prepare the postcard separately; sharing the result never waits for its image.
   const c = drawCard(); $('cardImg').src = c.toDataURL('image/png'); $('cardImg').hidden = false;
-  $('cardImg').alt = S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both stopping lines are shown.' : '');
+  $('cardImg').alt = (r.rounds?.length === 3 ? 'Best of three. ' : '') + S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both stopping lines are shown.' : '');
   S.card = new Promise(res => c.toBlob(blob => res({canvas: c, blob}), 'image/png'));
   $('result').scrollTop = 0;
 }
@@ -317,18 +417,26 @@ function toast(msg){
 const down = e => {
   if (S.state !== 'ready' && S.state !== 'drinking') return;
   refreshDayStatus();
+  if (!reserveCurrentRound()) return;
   if (e.cancelable) e.preventDefault();
   if (e.pointerId != null && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
   $('drinkControl').setAttribute('aria-pressed', 'true');
   $('drinkControl').textContent = 'Release to stop';
   S.holding = true; if (S.state === 'ready') S.holdStart = performance.now();
+  if (S.state === 'ready'){
+    // A short tap is still a sip, even when both events precede the next frame.
+    setPhase('drinking'); S.last = S.holdStart;
+    analytics.capture('sip_started', {...gameProperties(S), sip_number:S.round+1,
+      sip_stage:ROUND_STAGES[S.round].label.toLowerCase(), counts:recordingRound()});
+    $('footPill').textContent = 'Release early. Let the sip settle.';
+  }
 };
 const up = () => {
   // Account for the final part of a hold at the release event, rather than
   // allowing a slower screen's next animation frame to choose the stopping time.
   if (S.holding && S.state === 'drinking'){
     const now = performance.now(), dt = Math.max(0, Math.min(0.25, (now - S.last) / 1000));
-    S.drink = stepDrink(S.P, S.drink, S.P.K, dt); S.L = S.drink.level; S.last = now;
+    S.drink = stepDrink(S.P, S.drink, rate(), dt); S.L = S.drink.level; S.last = now;
     if (S.L >= DRAIN_LEVEL) S.drained = true;
     lock(now);
   }
@@ -355,21 +463,23 @@ document.addEventListener('keyup', e => { if (e.code === 'Space') up(); });
 $('drinkControl').addEventListener('keydown', e => { if (e.code === 'Enter' && !e.repeat){ e.preventDefault(); down(e); } });
 $('drinkControl').addEventListener('keyup', e => { if (e.code === 'Enter') up(); });
 $('startHold').addEventListener('click', begin);
+$('nextSipBtn').addEventListener('click', begin);
 $('shareBtn').addEventListener('click', share);
 $('saveCardBtn').addEventListener('click', savePostcard);
 $('copyBtn').addEventListener('click', copyText);
 $('practiceBtn').addEventListener('click', () => {
-  S.practice = true;
+  S.practice = true; S.progress = null; S.focus = 0;
   begin();
 });
 $('reviewTheme').addEventListener('change', event => { location.hash = reviewHash(event.target.value); });
-$('reviewRefill').addEventListener('click', () => { if (S.review && S.P){ S.practice = true; begin(); } });
+$('reviewRefill').addEventListener('click', () => { if (S.review && S.P){ S.practice = true; S.progress = null; S.focus = 0; begin(); } });
 for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventListener('click', () => location.assign('./'));
 $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
   if (!canRecordChallenge({key:S.key, kind:S.kind})) return;
   const rec = load().days[S.key]; if (!rec || !rec.done || rec.theme !== S.theme.id) return;
   S.practice = false; S.mode = rec.mode; S.L = rec.L;
+  S.progress = normalizeRoundRecord(rec, S.baseP);
   S.result = {...rec, counts:true}; setPhase('result'); draw(performance.now()); renderResult();
 });
 window.addEventListener('hashchange', () => location.reload());
@@ -388,7 +498,7 @@ async function init(){
   S.num = challenge.num; S.key = challenge.key; S.kind = challenge.kind; S.notice = challenge.notice;
   const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
-  S.P = themeReview?.P || dayParams(S.num); S.theme = S.P.theme;
+  S.P = themeReview?.P || dayParams(S.num); S.baseP = S.P; S.theme = S.P.theme;
   S.attribution = getCalendarAttribution(S.key, S.theme);
   S.friend = S.review ? null : readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
   analytics.capture('game_opened', gameProperties(S, now), now);
@@ -441,15 +551,31 @@ async function init(){
     document.querySelector('.next').hidden = true;
   }
 
+  renderRounds('introRounds', [], 0);
   setPhase('intro'); renderChallengeStatus(now); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
   $('startHold').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
-  if (rec && rec.done && rec.theme === S.theme.id){
-    S.L = rec.L; setPhase('result'); S.mode = rec.mode || 'hold';
-    S.result = {f: rec.f, score: rec.score, label: rec.label, tone: rec.tone, drained: !!rec.drained, L: rec.L, mode: S.mode, counts: true, t: now.toISOString(), attribution:rec.attribution};
-    $('intro').hidden = true; draw(performance.now()); renderResult();
-  }
+  if (rec && rec.theme === S.theme.id){
+    const normalized = normalizeRoundRecord(rec, S.baseP);
+    S.progress = recoverInterruptedRound(normalized, S.baseP);
+    if (!normalized){
+      S.progress = normalizeRoundRecord(null, S.baseP);
+      writeProgress(S.progress);
+      toast('This browser’s unfinished round could not be read. A fresh round is ready.');
+    }
+    if (rec.pending || rec.version !== 2) writeProgress(S.progress);
+    renderRounds('introRounds', S.progress.rounds, S.progress.done ? -1 : S.progress.rounds.length);
+    if (S.progress.done){
+      S.L = S.progress.L; S.mode = S.progress.mode || 'hold'; S.focus = 1;
+      S.result = {...S.progress, counts:true}; setPhase('result');
+      $('intro').hidden = true; draw(performance.now()); renderResult();
+    } else {
+      renderChallengeStatus(now);
+      if (rec.pending) toast('Your interrupted sip counted as a miss. Continue the round.');
+    }
+  } else renderRounds('introRounds', [], 0);
+  layout(); draw(performance.now());
   requestAnimationFrame(frame);
 }
 const fontsReady = document.fonts && document.fonts.load

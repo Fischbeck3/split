@@ -5,11 +5,26 @@ import {isCalendarDateKey} from './challenge.js';
 import {SITE_URL} from './config.js';
 import {drawScene} from './draw.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
+import {ROUND_STAGES} from './rounds.js';
 
 const DISPLAY = 'Fraunces, "Playfair Display", Georgia, serif';
 const BODY = 'Karla, "Helvetica Neue", Arial, sans-serif';
 const CARD_W = 1080, CARD_H = 1350;
 const PHOTO = {x: 40, y: 246, w: 1000, h: 750};
+const ROUND_LABELS = ROUND_STAGES.map(stage => stage.label);
+
+// A partial or damaged round must not claim three completed attempts. Legacy sips
+// retain their original text and postcard, including previously saved results.
+function completedRound(result){
+  if (result.version !== 2 || result.done !== true || !Array.isArray(result.rounds) || result.rounds.length !== 3 ||
+      !Number.isInteger(result.bestIndex) || result.bestIndex < 0 || result.bestIndex > 2) return null;
+  if (!result.rounds.every(sip => sip && Number.isInteger(sip.score) && sip.score >= 0 && sip.score <= 100 &&
+      Number.isFinite(sip.f) && Number.isFinite(sip.L) && typeof sip.label === 'string')) return null;
+  const best = result.rounds[result.bestIndex];
+  if (result.rounds.some(sip => sip.score > best.score) ||
+      best.score !== result.score || best.f !== result.f || best.L !== result.L || Boolean(best.drained) !== Boolean(result.drained)) return null;
+  return result.rounds;
+}
 
 function statusLabel(result, preview, archive, review){
   return review ? 'Review' : preview ? 'Preview' : archive ? 'Archive' : result.counts === false ? 'Practice' : '';
@@ -56,15 +71,16 @@ function offsetLabel(result){
   return pct === 0 ? 'Dead center.' : pct + '% of mark ' + (result.f < 0 ? 'high' : 'low');
 }
 
-/** Pure text sharing. The strip is one stopping position, never a grid of attempts. */
+/** Pure text sharing. Each strip is its actual stopping position. */
 export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false}){
   const status = statusLabel(result, preview, archive, review);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
+  const rounds = completedRound(result);
   return [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    result.score + '/100 · ' + result.label,
-    bandEmoji(result.f),
-    'Beat my sip. One sip. Your turn.',
+    (rounds ? 'Best of 3 · ' : '') + result.score + '/100 · ' + result.label,
+    ...(rounds ? rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === result.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]),
+    rounds ? 'Beat my best. Your turn.' : 'Beat my sip. One sip. Your turn.',
     challengeUrl({url, key, num, preview, archive, theme, result, review})
   ].join('\n');
 }
@@ -130,22 +146,22 @@ function drawGuide(c, G, P, result, palette, friend){
   c.restore();
 }
 
-function drawBand(c, f, x, y, ink){
+function drawBand(c, f, x, y, ink, scale = 1){
   const idx = f < -0.3 ? 0 : f < -0.1 ? 1 : f <= 0.1 ? 2 : f <= 0.3 ? 3 : 4;
   const outside = Math.abs(f) > 0.5;
   for (let i = 0; i < 5; i++){
     c.strokeStyle = ink; c.lineWidth = 2;
-    c.strokeRect(x + i * 76, y, 60, 60);
+    c.strokeRect(x + i * 76 * scale, y, 60 * scale, 60 * scale);
     if (!outside && i === idx){
       c.fillStyle = i === 2 ? '#5a9d6b' : i === 1 || i === 3 ? '#e2b95c' : '#d77e44';
-      c.fillRect(x + i * 76 + 5, y + 5, 50, 50);
+      c.fillRect(x + (i * 76 + 5) * scale, y + 5 * scale, 50 * scale, 50 * scale);
     }
   }
   if (outside){
-    const ax = f < 0 ? x - 27 : x + 5 * 76 + 11, ay = y + 30, dir = f < 0 ? -1 : 1;
+    const ax = f < 0 ? x - 27 * scale : x + (5 * 76 + 11) * scale, ay = y + 30 * scale, dir = f < 0 ? -1 : 1;
     c.strokeStyle = ink; c.lineWidth = 4; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(ax, ay - dir * 14); c.lineTo(ax, ay + dir * 14);
-    c.moveTo(ax - 9, ay + dir * 4); c.lineTo(ax, ay + dir * 14); c.lineTo(ax + 9, ay + dir * 4); c.stroke();
+    c.beginPath(); c.moveTo(ax, ay - dir * 14 * scale); c.lineTo(ax, ay + dir * 14 * scale);
+    c.moveTo(ax - 9 * scale, ay + dir * 4 * scale); c.lineTo(ax, ay + dir * 14 * scale); c.lineTo(ax + 9 * scale, ay + dir * 4 * scale); c.stroke();
   }
 }
 
@@ -153,6 +169,7 @@ function drawBand(c, f, x, y, ink){
 export function drawShareCard(canvas, {num, key, theme, P, result, friend = null, url = SITE_URL, preview = false, archive = false, review = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
   const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
+  const rounds = completedRound(result);
   const doc = canvas.ownerDocument || document;
   const photo = doc.createElement('canvas'); photo.width = PHOTO.w; photo.height = PHOTO.h;
   const scene = photo.getContext('2d');
@@ -177,20 +194,34 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   }
 
   // Score and error use different units: a score is /100, an offset is mark height.
-  c.textAlign = 'left'; c.font = '900 178px ' + DISPLAY;
-  c.fillText(String(result.score), 64, 1189);
+  c.textAlign = 'left';
+  if (rounds){
+    c.font = '700 28px ' + BODY; c.fillText('Best of 3', 64, 1042);
+  }
+  c.font = '900 ' + (rounds ? 154 : 178) + 'px ' + DISPLAY;
+  c.fillText(String(result.score), 64, rounds ? 1203 : 1189);
   c.font = '700 34px ' + BODY; c.fillText('/100', 72, 1237);
-  fitText(c, result.label, 536, 1058, 480, 45, DISPLAY, 900);
-  fitText(c, offsetLabel(result), 536, 1104, 480, 28, BODY, 600);
-  drawBand(c, result.f, 552, 1146, palette.ink);
+  if (rounds){
+    fitText(c, result.label, 536, 1036, 480, 36, DISPLAY, 900);
+    rounds.forEach((sip, index) => {
+      const y = 1058 + index * 58;
+      drawBand(c, sip.f, 552, y, palette.ink, 0.5);
+      c.fillStyle = palette.ink;
+      fitText(c, ROUND_LABELS[index] + ' ' + sip.score + (index === result.bestIndex ? ' · Best' : ''), 770, y + 22, 246, 22, BODY, index === result.bestIndex ? 800 : 600);
+    });
+  } else {
+    fitText(c, result.label, 536, 1058, 480, 45, DISPLAY, 900);
+    fitText(c, offsetLabel(result), 536, 1104, 480, 28, BODY, 600);
+    drawBand(c, result.f, 552, 1146, palette.ink);
+  }
   c.fillStyle = palette.ink;
   c.font = '600 22px ' + BODY;
   const comparison = comparisonCopy(friend, result);
-  fitText(c, comparison ? 'You ' + result.score + ' · Shared sip ' + friend.score : 'One stopping point', 536, 1240, 480, 22, BODY, 600);
+  fitText(c, comparison ? 'You ' + result.score + ' · Shared sip ' + friend.score : rounds ? offsetLabel(result) : 'One stopping point', 536, 1240, 480, 22, BODY, 600);
   c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
   // Keep the printed address short; the benchmark travels in the text link, not an unreadable query on paper.
   fitText(c, cardUrl(challengeUrl({url, key, num, preview, review, theme}), num), 64, 1313, 450, 27, BODY, 700);
-  c.textAlign = 'right'; fitText(c, 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
+  c.textAlign = 'right'; fitText(c, rounds ? 'Beat my best. Your turn.' : 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
   return canvas;
 }

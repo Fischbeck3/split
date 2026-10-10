@@ -5,6 +5,7 @@ import {renderVessel, renderWidthAt} from '../site/js/render-vessels.js';
 import {SITE_URL} from '../site/js/config.js';
 import {buildShareText, drawShareCard} from '../site/js/share.js';
 import {readFriendChallenge} from '../site/js/friend.js';
+import {shareResultText} from '../site/js/share-actions.js';
 
 const benchmarkLink = (base, {num, score = 100, f = 0, kind = 'daily', preview = false, drained = false}) => {
   const link = new URL(base);
@@ -45,6 +46,71 @@ test('a practice sip is labeled and an overshoot keeps the outside-band arrow', 
 const result = {score: 100, label: 'Perfect split', f: 0, counts: true};
 const options = {num: 2, theme: dayParams(2).theme, result};
 const lastLine = text => text.split('\n').at(-1);
+
+function completedThree(P, {offsets = [-0.28, 0.04, 0.8], counts = true} = {}){
+  const rounds = offsets.map(f => ({...scoreFromOffset(f, P.theme.target), f, L:P.markY + f * P.markH, counts}));
+  const bestIndex = rounds.reduce((best, sip, index) => sip.score > rounds[best].score ? index : best, 0);
+  return {...rounds[bestIndex], version:2, rounds, bestIndex, done:true};
+}
+
+test('a completed round shares three truthful stage strips and challenges the best actual sip', () => {
+  const P = dayParams(1), result = completedThree(P);
+  const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
+  assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n' +
+    'Best of 3 · 98/100 · Perfect split\n' +
+    '⬜🟨⬜⬜⬜  Sober 42/100\n' +
+    '⬜⬜🟩⬜⬜  Tipsy 98/100 · Best\n' +
+    '⬜⬜⬜⬜⬜⬇️  Drunk 0/100\n' +
+    'Beat my best. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:98, f:0.04}));
+  const link = new URL(lastLine(text));
+  const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
+  assert.equal(friend.score, result.score); assert.equal(friend.f, result.f); assert.equal(friend.L, result.L);
+  assert.equal(text.match(/ · Best/g).length, 1);
+});
+
+test('three-sip shares preserve truthful preview, practice, archive and review status', () => {
+  const P = dayParams(2);
+  for (const [flags, counts, status, kind] of [
+    [{}, true, '', 'daily'], [{}, false, 'Practice', 'practice'],
+    [{preview:true}, false, 'Preview', 'preview'],
+    [{archive:true}, true, 'Archive', 'archive-saved'], [{archive:true}, false, 'Archive', 'archive'],
+    [{review:true}, false, 'Review', null]
+  ]){
+    const result = completedThree(P, {counts});
+    const text = buildShareText({num:2, key:P.key, theme:P.theme, result, ...flags});
+    assert.ok(text.split('\n')[0].endsWith(status ? ' · ' + status : P.theme.label));
+    assert.match(text, /\nBest of 3 · 98\/100/);
+    assert.equal(text.split('\n').filter(line => /Sober|Tipsy|Drunk/.test(line)).length, 3);
+    assert.equal(lastLine(text), flags.review ? SITE_URL + '#admin/' + P.theme.id :
+      benchmarkLink(SITE_URL, {num:2, score:98, f:0.04, kind, preview:!!flags.preview}));
+  }
+});
+
+test('partial or inconsistent stored rounds never advertise three finished attempts', () => {
+  const P = dayParams(1), finished = completedThree(P);
+  for (const result of [
+    {...finished, done:false}, {...finished, rounds:finished.rounds.slice(0, 1)},
+    {...finished, rounds:finished.rounds.slice(0, 2)}, {...finished, rounds:[...finished.rounds, finished.rounds[0]]},
+    {...finished, bestIndex:-1}, {...finished, bestIndex:3},
+    {...finished, bestIndex:0}, {...finished, drained:true},
+    {...finished, rounds:[finished.rounds[0], null, finished.rounds[2]]},
+    {...finished, rounds:[finished.rounds[0], {...finished.rounds[1], L:NaN}, finished.rounds[2]]}
+  ]){
+    const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
+    assert.doesNotMatch(text, /Best of 3|Sober|Tipsy|Drunk/);
+    assert.equal(text.split('\n').length, 5);
+  }
+});
+
+test('native sharing sends the three-sip body and its exact-day best benchmark as separate fields', async () => {
+  const P = dayParams(3), result = completedThree(P), text = buildShareText({num:3, key:P.key, theme:P.theme, result});
+  const calls = [];
+  await shareResultText(text, {share:async payload => calls.push(payload), get canShare(){throw new Error('Do not inspect image sharing');}});
+  assert.deepEqual(calls, [{text:text.split('\n').slice(0, -1).join('\n'), url:lastLine(text)}]);
+  const copies = [];
+  await shareResultText(text, {clipboard:{writeText:async value => copies.push(value)}});
+  assert.deepEqual(copies, [text]);
+});
 
 test('an explicit challenge key wins over the day-number fallback and unrelated URL data', () => {
   assert.equal(lastLine(buildShareText({...options, key: '2028-02-29', url: 'https://split.example/play/?campaign=friend&day=wrong#day42'})),
@@ -120,18 +186,21 @@ test('inconsistent synthetic or damaged scores do not create a contradictory sha
 });
 
 function recordingCanvas(){
-  const calls = [], photoCalls = [];
-  const context = log => new Proxy({}, {
+  const calls = [], photoCalls = [], textStyles = [];
+  const context = (log, textStyleLog = []) => new Proxy({}, {
     get(target, method){
       if (method in target) return target[method];
       if (method === 'measureText') return value => ({width:String(value).length * 12});
       if (method === 'createLinearGradient' || method === 'createRadialGradient') return () => ({addColorStop(){}});
-      return (...args) => log.push([method, ...args]);
+      return (...args) => {
+        if (method === 'fillText') textStyleLog.push({text:args[0], fillStyle:target.fillStyle});
+        log.push([method, ...args]);
+      };
     },
     set(target, property, value){target[property] = value; return true;}
   });
-  const cardContext = context(calls), photoContext = context(photoCalls);
-  return {calls, photoCalls, canvas:{getContext:() => cardContext,
+  const cardContext = context(calls, textStyles), photoContext = context(photoCalls);
+  return {calls, photoCalls, textStyles, canvas:{getContext:() => cardContext,
     ownerDocument:{createElement:() => ({getContext:() => photoContext})}}};
 }
 
@@ -160,4 +229,36 @@ test('comparison postcards keep both true stopping lines and distinct readable l
       assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'You ' + result.score + ' · Shared sip ' + friend.score));
     }
   }
+});
+
+test('three-sip postcards preserve the full scene and best stopping line with a compact stage strip', () => {
+  for (const num of [1, 2, 3, 4, 5, 6]){
+    const P = dayParams(num), result = completedThree(P), recording = recordingCanvas();
+    drawShareCard(recording.canvas, {num, key:P.key, theme:P.theme, P, result});
+    assert.equal(recording.canvas.width, 1080); assert.equal(recording.canvas.height, 1350);
+    assert.ok(recording.calls.some(call => call[0] === 'drawImage' && call[2] === 40 && call[3] === 246));
+    const stop = recording.photoCalls.find(call => call[0] === 'fillText' && call[1] === 'STOP');
+    assert.equal(stop[3], 48 + result.L * (690 - 48));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Best of 3'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === String(result.score) && call[2] === 64));
+    const stages = ['Sober 42', 'Tipsy 98 · Best', 'Drunk 0'].map(value => recording.calls.find(call => call[0] === 'fillText' && call[1] === value));
+    assert.deepEqual(stages.map(call => call.slice(2)), [[770, 1080], [770, 1138], [770, 1196]]);
+    const ink = recording.textStyles.find(style => style.text === 'Best of 3').fillStyle;
+    for (const stage of stages) assert.equal(recording.textStyles.find(style => style.text === stage[1]).fillStyle, ink,
+      'every stage caption uses the card ink, even after a colored score band');
+    assert.ok(stages.every(call => call[3] > 996 && call[3] < 1230), 'all scores fit between the image and footer');
+    assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 15, 'five physical bands for each of three sips');
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === '4% of mark low'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my best. Your turn.'));
+  }
+});
+
+test('a partial round keeps the original single-sip postcard and no stage summary', () => {
+  const P = dayParams(1), result = {...completedThree(P), done:false}, recording = recordingCanvas();
+  drawShareCard(recording.canvas, {num:1, key:P.key, theme:P.theme, P, result});
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'One stopping point'));
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === String(result.score) && call[3] === 1189));
+  assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 5);
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my sip. Your turn.'));
+  assert.ok(!recording.calls.some(call => call[0] === 'fillText' && /Best of 3|Sober|Tipsy|Drunk/.test(call[1])));
 });

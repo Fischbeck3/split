@@ -1,13 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
-import {THEMES, dayParams, keyForDay, startLevel, secondsToMark, scoreFromOffset, PERFECT, DRAIN_LEVEL} from '../site/js/core.js';
-import {LAUNCH, RECORD_RUN} from '../site/js/config.js';
+import {THEMES, dayParams, keyForDay, startLevel, secondsToMark, DRAIN_LEVEL} from '../site/js/core.js';
 import {canRecordChallenge} from '../site/js/challenge.js';
 import {buildShareText} from '../site/js/share.js';
-import {gameProperties} from '../site/js/analytics.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from '../site/js/theme-review.js';
+import {controllerApp, browserStorage, storageKey} from './helpers/controller-app.js';
 
 const atNoon = key => {
   const [year, month, day] = key.split('-').map(Number);
@@ -75,49 +72,31 @@ test('a review cannot record on its date, after midnight, or before a launch', (
   }
 });
 
-test('the actual completion controller preserves existing daily storage through repeated review sips', () => {
-  const main = readFileSync(new URL('../site/js/main.js', import.meta.url), 'utf8');
-  const storeSource = main.match(/^const STORE = .+;$/m)[0];
-  const storageSource = main.slice(main.indexOf('function load(){'), main.indexOf('// ---------- layout and drawing ----------'));
-  const finishSource = main.slice(main.indexOf('function finish(now){'), main.indexOf('// ---------- results and sharing ----------'));
-  const today = keyForDay(1), now = atNoon(today);
-  class ReviewDate extends Date {
-    constructor(...args){ super(...(args.length ? args : [now.getTime()])); }
-  }
-  assert.equal(canRecordChallenge({key:today, kind:'today', now, launchReady:true}), true, 'a normal sip can record on this date');
-  const storageKey = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
-  const saved = JSON.stringify({days:{[today]:{num:1, theme:'pub', done:true, score:93, f:.08, L:.64, mode:'hold'}}});
-  const values = new Map([[storageKey, saved], ['split.sound.v1', 'on'], ['split.content-calendar.v1', '{"keep":"drafts"}']]);
-  const before = new Map(values), writes = [];
-  const localStorage = {
-    getItem:key => values.get(key) ?? null,
-    setItem(key, value){ writes.push({key, value}); throw new Error('Review must not attempt a daily write.'); }
-  };
-
+test('repeated review rounds preserve daily storage, preferences and calendar drafts on all six glasses', () => {
+  const today = keyForDay(1), saved = JSON.stringify({days:{[today]:{num:1, theme:'pub', done:true, score:93, f:.08, L:.64, mode:'hold'}}});
+  const storage = browserStorage([[storageKey, saved], ['split.sound.v1', 'on'], ['split.content-calendar.v1', '{"keep":"drafts"}']]);
+  const before = new Map(storage.values);
   for (const theme of THEMES){
-    const review = readThemeReview(reviewHash(theme.id)), P = review.P;
-    // Even if the reviewed glass has today's key, review cannot replace a daily record.
-    const S = {num:review.num, key:today, P, theme:review.theme, kind:review.kind,
-      review:true, preview:true, practice:false, mode:'hold', friend:null,
-      state:'locked', drained:false, L:P.markY, attribution:{}};
-    const element = {hidden:false, classList:{add(){}}};
-    const context = vm.createContext({LAUNCH, RECORD_RUN, localStorage, S, Date:ReviewDate,
-      canRecordChallenge, scoreFromOffset, PERFECT, gameProperties,
-      refreshDayStatus(){}, analytics:{capture(){}}, toast(){}, draw(){},
-      setPhase:phase => { S.state = phase; }, $:() => element,
-      renderResult(){}, renderStats(){}});
-    vm.runInContext(storeSource + '\n' + storageSource + '\n' + finishSource, context);
-    for (const offset of [0, .3, -.2]){
-      S.state = 'locked'; S.L = P.markY + offset * P.markH;
-      vm.runInContext('finish(1000);', context);
-      assert.equal(S.state, 'result', theme.id);
-      assert.equal(S.result.counts, false, theme.id + ': review result must remain unsaved');
-      assert.equal(S.result.score, scoreFromOffset(offset, theme.target).score, theme.id + ': official result must not replace review feedback');
-      S.practice = true;
-    }
+    const review = readThemeReview(reviewHash(theme.id));
+    const app = controllerApp({P:review.P, storage, kind:review.kind, review:true, calendarDate:atNoon(today)});
+    // Even a review using today's date cannot replace its official glass.
+    app.S.key = today;
+    app.restore();
+    assert.equal(app.S.progress, null, theme.id + ': review must not hydrate an official record');
+    for (let round = 0; round < 3; round++) app.sip(30);
+    assert.equal(app.S.state, 'result', theme.id);
+    assert.equal(app.S.result.rounds.length, 3, theme.id);
+    assert.equal(app.S.result.counts, false, theme.id);
+    const firstReview = structuredClone(app.S.result.rounds);
+    app.reviewRefill(); app.ready(); app.press(); app.advance(45); app.release(); app.settle();
+    app.sip(45); app.sip(45);
+    assert.equal(app.S.state, 'result', theme.id + ': refill gives a full new review round');
+    assert.equal(app.S.result.rounds.length, 3);
+    assert.notDeepEqual(structuredClone(app.S.result.rounds), firstReview, 'review feedback reflects the actual new pours');
+    assert.equal(app.S.result.counts, false);
   }
-  assert.deepEqual(writes, [], 'the actual finish/save path never attempts a write');
-  assert.deepEqual(values, before, 'official scores, sound choice, and calendar drafts are preserved');
+  assert.deepEqual(storage.writes, [], 'no review or refill attempts a daily write');
+  assert.deepEqual(storage.values, before);
 });
 
 test('review result links reopen the exact catalog glass and pour without a daily or friend benchmark', () => {
