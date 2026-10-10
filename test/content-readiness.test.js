@@ -10,26 +10,27 @@ import {prepareCalendarChange, runCalendarCli} from '../scripts/content-calendar
 import {checkCalendarContent} from '../scripts/check-calendar-content.js';
 import {buildCalendarFeeds} from '../scripts/build-calendar-feed.js';
 
+import {futureCalendar} from './fixtures/calendar-plans.js';
+
 const NOW = new Date('2026-10-09T20:30:00Z');
 
 test('a catalog prototype cannot be scheduled or written by the publishing command', async () => {
   const plan = structuredClone(CALENDAR);
   plan.drafts['2026-11-01'] = {themeId:'cola', campaignId:'none', notes:'A proposal, not a finished theme.'};
   assert.equal(contentReadiness(plan.drafts['2026-11-01']).ready, false);
-  assert.doesNotThrow(() => prepareCalendarChange(plan, {now:NOW}));
+  assert.throws(() => prepareCalendarChange(plan, {now:NOW}), /unknown theme cola/);
   let writes = 0;
   await assert.rejects(runCalendarCli(['--publish', 'plan.json', '--date', '2026-11-01'], {
     now:NOW, read:async () => JSON.stringify(plan), write:async () => writes++, log:() => {}
-  }), /cannot schedule cola/);
+  }), /unknown theme cola/);
   assert.equal(writes, 0);
 });
 
 test('reusing a built glass does not approve a holiday run', () => {
-  const plan = structuredClone(CALENDAR);
-  plan.drafts['2026-10-25'].themeId = 'pub';
+  const plan = futureCalendar();
   assert.match(contentReadiness(plan.drafts['2026-10-25']).label, /Needs campaign build & review/);
   assert.throws(() => prepareCalendarChange(plan, {now:NOW, publish:true, date:'2026-10-25'}), /themed run and its artwork have not been approved/);
-  const emptyRun = structuredClone(CALENDAR);
+  const emptyRun = futureCalendar();
   emptyRun.campaigns['halloween-2026'].status = 'published';
   assert.throws(() => validateCalendarPlan(emptyRun, {now:NOW}), /Campaign content is not built and approved/);
 });
@@ -43,12 +44,12 @@ test('approved opening artwork is present; missing or changed artwork blocks rel
 test('editing published JSON directly cannot bypass validation, feeds, or the static build', async () => {
   const plan = structuredClone(CALENDAR);
   plan.days['2026-11-01'] = {themeId:'cola', campaignId:'none'};
-  assert.throws(() => validateCalendarPlan(plan, {now:NOW}), /cannot schedule cola/);
+  assert.throws(() => validateCalendarPlan(plan, {now:NOW}), /unknown theme cola/);
   assert.throws(() => createCalendarFeed({plan, startDate:'2026-11-01', endDate:'2026-11-01',
     resolveTheme:() => ({id:'cola', name:'Cola'}), now:NOW}), /cannot schedule cola/);
   const directory = await mkdtemp(join(tmpdir(), 'split-unready-'));
   try {
-    await assert.rejects(buildCalendarFeeds(directory, {plan, now:NOW}), /cannot schedule cola/);
+    await assert.rejects(buildCalendarFeeds(directory, {plan, now:NOW}), /unknown theme cola/);
     assert.deepEqual(await readdir(directory), [], 'no misleading feed is written');
   } finally {await rm(directory, {recursive:true, force:true});}
 });

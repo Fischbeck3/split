@@ -34,7 +34,7 @@ test('the selected glasses carry the chosen place, vessel and mark', () => {
     return [t.id, t.label, t.scene, t.vessel, t.mark, t.letter || null, t.markFrame || null, t.speed, t.headT];
   }), [
     ['sapporo', 'Tokyo izakaya', 'tokyo', 'tall', 'star', null, null, 1, 0.09],
-    ['butterbeer', 'Snowy Hogsmeade', 'hogsmeade', 'tulip', 'letter', 'H', 'shield', 0.8, 0.17],
+    ['butterbeer', 'The Hog’s Head', 'hogsmeade', 'tulip', 'letter', 'H', 'shield', 0.8, 0.17],
     ['peroni', 'Trastevere sunset', 'rome', 'tall', 'letter', 'P', null, 1, 0.065]
   ]);
   for (const n of [3, 5, 2]){

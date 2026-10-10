@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {validateBrowserPlan} from '../site/js/calendar.js';
-import {CALENDAR} from '../site/js/calendar-data.js';
+import {futureCalendar} from './fixtures/calendar-plans.js';
+
+const CALENDAR = futureCalendar();
 
 const NOW = new Date('2026-10-09T20:30:00Z');
 const copy = () => structuredClone(CALENDAR);
-const validate = plan => validateBrowserPlan(plan, {now:NOW});
+const validate = plan => validateBrowserPlan(plan, {baseline:CALENDAR, now:NOW});
 const standalone = {themeId:'pub', campaignId:'none', notes:'An evening at the pub.'};
 
 test('browser plans validate without DOM or storage and preserve the input baseline', () => {
@@ -46,23 +48,23 @@ test('browser import preserves published runs and cannot promote or create one',
 
 test('draft editing locks as soon as the date is live in UTC+14', () => {
   const plan = copy(); plan.drafts['2026-10-10'] = {...standalone};
-  assert.ok(validateBrowserPlan(plan, {now:new Date('2026-10-09T09:59:59Z')}));
-  assert.throws(() => validateBrowserPlan(plan, {now:new Date('2026-10-09T10:00:00Z')}), /globally live date, 2026-10-10/);
+  assert.ok(validateBrowserPlan(plan, {baseline:CALENDAR, now:new Date('2026-10-09T09:59:59Z')}));
+  assert.throws(() => validateBrowserPlan(plan, {baseline:CALENDAR, now:new Date('2026-10-09T10:00:00Z')}), /globally live date, 2026-10-10/);
   const run = copy(); run.campaigns['started-run'] = {
     name:'Already started', startDate:'2026-10-15', endDate:'2026-10-17', status:'draft', notes:''
   };
-  assert.throws(() => validateBrowserPlan(run, {now:new Date('2026-10-14T10:00:00Z')}), /New runs must start after/);
+  assert.throws(() => validateBrowserPlan(run, {baseline:CALENDAR, now:new Date('2026-10-14T10:00:00Z')}), /New runs must start after/);
 });
 
 test('source drafts remain readable after their live boundary, but cannot be edited or removed', () => {
   const now = new Date('2026-10-24T10:00:00Z');
-  assert.deepEqual(validateBrowserPlan(CALENDAR, {now}), CALENDAR);
+  assert.deepEqual(validateBrowserPlan(CALENDAR, {baseline:CALENDAR, now}), CALENDAR);
   const edited = copy(); edited.drafts['2026-10-25'].notes = 'Changed after opening';
-  assert.throws(() => validateBrowserPlan(edited, {now}), /globally live date/);
+  assert.throws(() => validateBrowserPlan(edited, {baseline:CALENDAR, now}), /globally live date/);
   const removed = copy(); delete removed.drafts['2026-10-25'];
-  assert.throws(() => validateBrowserPlan(removed, {now}), /globally live date/);
+  assert.throws(() => validateBrowserPlan(removed, {baseline:CALENDAR, now}), /globally live date/);
   const movedRun = copy(); movedRun.campaigns['halloween-2026'].notes = 'Changed run';
-  assert.throws(() => validateBrowserPlan(movedRun, {now}), /already live runs unchanged/);
+  assert.throws(() => validateBrowserPlan(movedRun, {baseline:CALENDAR, now}), /already live runs unchanged/);
 });
 
 test('future draft removal and standalone proposals need no campaign or publishing action', () => {
@@ -96,4 +98,12 @@ test('browser imports reject overlapping runs, unknown IDs, coercible IDs, and i
 test('browser imports reject an export older than the current baseline', () => {
   const baseline = copy(); baseline.version = CALENDAR.version + 1;
   assert.throws(() => validateBrowserPlan(copy(), {baseline, now:NOW}), /version cannot go backwards/);
+});
+
+test('browser draft imports reject every retired prototype', () => {
+  for (const id of ['lager', 'pale', 'cider', 'red', 'coffee', 'choc', 'matcha', 'cola']) {
+    const plan = copy();
+    plan.drafts['2026-11-01'] = {...standalone, themeId:id};
+    assert.throws(() => validate(plan), /unknown theme/);
+  }
 });

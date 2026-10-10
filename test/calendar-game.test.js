@@ -1,10 +1,11 @@
 import {getCalendarAttribution} from '../site/js/content-calendar.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CALENDAR, LEGACY_ROTATION_IDS} from '../site/js/calendar-data.js';
+import {CALENDAR, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
 import {THEMES, dayParams, themeForDay, keyForDay} from '../site/js/core.js';
+import {futureCalendar} from './fixtures/calendar-plans.js';
 
-// Captured from the released game before calendar integration.
+// Captured before catalog cleanup: released Day 1 and the five frozen opening pours.
 const RELEASED = [
   {
     "num": 1,
@@ -37,6 +38,26 @@ const RELEASED = [
     "choppy": false
   },
   {
+    "num": 4,
+    "key": "2026-10-12",
+    "theme": "munich",
+    "markY": 0.5053066613525152,
+    "markH": 0.19762092594988645,
+    "K": 0.13169651078991593,
+    "wobble": 0,
+    "choppy": false
+  },
+  {
+    "num": 5,
+    "key": "2026-10-13",
+    "theme": "butterbeer",
+    "markY": 0.5629532196151558,
+    "markH": 0.135,
+    "K": 0.12857423663139345,
+    "wobble": 0,
+    "choppy": false
+  },
+  {
     "num": 6,
     "key": "2026-10-14",
     "theme": "beach",
@@ -46,76 +67,7 @@ const RELEASED = [
     "wobble": 0,
     "choppy": false
   },
-  {
-    "num": 7,
-    "key": "2026-10-15",
-    "theme": "matcha",
-    "markY": 0.4737578340712935,
-    "markH": 0.1222100926283747,
-    "K": 0.13089448445942253,
-    "wobble": 0.8611041117925197,
-    "choppy": true
-  },
-  {
-    "num": 8,
-    "key": "2026-10-16",
-    "theme": "cola",
-    "markY": 0.6076752865593881,
-    "markH": 0.1016794997267425,
-    "K": 0.1179448270983994,
-    "wobble": 0,
-    "choppy": false
-  },
-  {
-    "num": 15,
-    "key": "2026-10-23",
-    "theme": "pale",
-    "markY": 0.6422719722986221,
-    "markH": 0.13122361313551667,
-    "K": 0.14497380350250752,
-    "wobble": 0,
-    "choppy": false
-  },
-  {
-    "num": 30,
-    "key": "2026-11-07",
-    "theme": "pub",
-    "markY": 0.5178083018213511,
-    "markH": 0.10833298539277167,
-    "K": 0.13373258777894081,
-    "wobble": 0,
-    "choppy": false
-  },
-  {
-    "num": 64,
-    "key": "2026-12-11",
-    "theme": "coffee",
-    "markY": 0.5242640510573984,
-    "markH": 0.1273277011793107,
-    "K": 0.1336961137596518,
-    "wobble": 0,
-    "choppy": false
-  },
-  {
-    "num": 366,
-    "key": "2027-10-09",
-    "theme": "beach",
-    "markY": 0.5310160180367529,
-    "markH": 0.07101218053139746,
-    "K": 0.1270150105142966,
-    "wobble": 0,
-    "choppy": false
-  },
-  {
-    "num": 1000,
-    "key": "2029-07-04",
-    "theme": "cola",
-    "markY": 0.6017959657497705,
-    "markH": 0.11131807585246861,
-    "K": 0.14523167226463557,
-    "wobble": 0,
-    "choppy": false
-  }
+
 ];
 
 function snapshot(n, calendar){
@@ -123,15 +75,18 @@ function snapshot(n, calendar){
   return {num:n, key:p.key, theme:p.theme.id, markY:p.markY, markH:p.markH, K:p.K, wobble:p.wobble, choppy:p.choppy};
 }
 
-test('calendar integration retains released glasses, marks and flow seeds', () => {
+test('catalog cleanup retains all six opening glasses, marks and flow seeds', () => {
   assert.deepEqual(RELEASED.map(p => snapshot(p.num)), RELEASED);
 });
 
 test('adding a holiday glass cannot reroll the existing automatic calendar', () => {
   const future = {...THEMES[0], id:'future-halloween-pint', glassId:'pub', visualTheme:'halloween-pub'};
+  const futureDays = [7, 8, 15, 30, 64, 366, 1000], before = futureDays.map(n => snapshot(n));
   THEMES.push(future);
   try {
     assert.deepEqual(RELEASED.map(p => snapshot(p.num)), RELEASED);
+    assert.deepEqual(futureDays.map(n => snapshot(n)), before);
+    assert.equal(ROTATION_IDS.includes(future.id), false);
     assert.equal(LEGACY_ROTATION_IDS.includes(future.id), false);
     const date = keyForDay(30), plan = {...CALENDAR, days:{...CALENDAR.days, [date]:{themeId:future.id, campaignId:'none'}}};
     assert.equal(themeForDay(30, plan).id, future.id);
@@ -142,11 +97,26 @@ test('adding a holiday glass cannot reroll the existing automatic calendar', () 
 test('a published date pin changes that date while drafts leave live play alone', () => {
   const n = 22, date = keyForDay(n), before = themeForDay(n);
   const chosen = before.id === 'pub' ? 'beach' : 'pub';
-  const draft = {...CALENDAR, drafts:{[date]:{themeId:chosen, campaignId:'halloween-2026', notes:'A possible holiday glass'}}};
+  const draft = {...futureCalendar(), drafts:{[date]:{themeId:chosen, campaignId:'halloween-2026', notes:'A possible holiday glass'}}};
   assert.deepEqual(snapshot(n, draft), snapshot(n));
   assert.equal(getCalendarAttribution(date, themeForDay(n, draft), draft).campaign_id, 'none');
-  const published = {...draft, days:{...CALENDAR.days, [date]:{themeId:chosen, campaignId:'halloween-2026'}}, campaigns:{...CALENDAR.campaigns, 'halloween-2026':{...CALENDAR.campaigns['halloween-2026'], status:'published'}}};
+  const published = {...draft, days:{...CALENDAR.days, [date]:{themeId:chosen, campaignId:'halloween-2026'}}, campaigns:{...draft.campaigns, 'halloween-2026':{...draft.campaigns['halloween-2026'], status:'published'}}};
   assert.equal(themeForDay(n, published).id, chosen);
   assert.equal(getCalendarAttribution(date, themeForDay(n, published), published).campaign_id, 'halloween-2026');
   for (const neighbor of [n - 1, n + 1, n + 2]) assert.deepEqual(snapshot(neighbor, published), snapshot(neighbor));
+});
+
+test('future automatic dates use only the six developed glasses', () => {
+  const built = ['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni'];
+  assert.deepEqual(ROTATION_IDS, built);
+  assert.deepEqual(THEMES.map(theme => theme.id), built);
+  assert.ok(Object.isFrozen(ROTATION_IDS));
+  for (let n = 7; n <= 400; n++) {
+    const theme = themeForDay(n);
+    assert.ok(built.includes(theme.id), keyForDay(n) + ': unfinished glass in automatic rotation');
+    assert.notEqual(theme.id, themeForDay(n - 1).id, keyForDay(n) + ': repeated glass');
+  }
+  for (const n of [1000, 9999]) assert.ok(built.includes(themeForDay(n).id));
+  assert.deepEqual(CALENDAR.drafts, {});
+  assert.deepEqual(Object.keys(CALENDAR.campaigns), ['opening-2026']);
 });

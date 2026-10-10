@@ -1,4 +1,4 @@
-import {CONCEPT_CHAPTERS, MORE_PLACES, conceptParams} from './concepts.js';
+import {CONCEPT_CHAPTERS, conceptParams} from './concepts.js';
 import {makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL, scoreFromOffset, bandEmoji} from './core.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {drawScene} from './draw.js';
@@ -326,8 +326,3 @@ reducedQuery.addEventListener('change',event => {
 });
 document.fonts.ready.then(() => { for (const controller of controllers){ controller.paint(performance.now()); if (controller.result) postcard(controller.card,controller); } });
 document.getElementById('clearShortlist').addEventListener('click',() => { shortlist.clear(); renderShortlist(); });
-const more = document.getElementById('moreList');
-for (const idea of MORE_PLACES){
-  const row = element('li'), place = element('span','more-place',idea.place), drink = element('span','more-drink',idea.drink);
-  drink.append(element('span','more-glass',idea.glass)); row.append(place,drink,element('span','more-memory',idea.memory)); more.append(row);
-}

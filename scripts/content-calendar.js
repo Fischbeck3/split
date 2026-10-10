@@ -3,8 +3,8 @@
 import {readFile, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS} from '../site/js/calendar-data.js';
-import {THEMES} from '../site/js/themes.js';
+import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
+import {THEMES} from '../site/js/core.js';
 import {latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from '../site/js/content-calendar.js';
 import {checkCalendarContent} from './check-calendar-content.js';
 
@@ -65,7 +65,8 @@ export function serializeCalendarPlan(plan){
   return '// Published dates choose the live glass. Drafts only appear in the planning calendar.\n' +
     '// Keep the legacy lists fixed so new themes cannot reroll old automatic challenges.\n' +
     'export const LEGACY_ROTATION_IDS = Object.freeze(' + JSON.stringify(LEGACY_ROTATION_IDS) + ');\n' +
-    'export const LEGACY_OPENING_IDS = Object.freeze(' + JSON.stringify(LEGACY_OPENING_IDS) + ');\n\n' +
+    'export const LEGACY_OPENING_IDS = Object.freeze(' + JSON.stringify(LEGACY_OPENING_IDS) + ');\n' +
+    'export const ROTATION_IDS = Object.freeze(' + JSON.stringify(ROTATION_IDS) + ');\n\n' +
     'export const CALENDAR = ' + JSON.stringify(normalized, null, 2) + ';\n';
 }
 
