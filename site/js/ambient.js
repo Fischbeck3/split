@@ -7,6 +7,14 @@ export function memoryScenePlacement(w, h, G, {width, height, table}){
   return {x: (w - width * scale) / 2, y: tableY - height * table * scale, scale};
 }
 
+/** Preserve the Hog’s Head room above a separately framed foreground table. */
+export function roomScenePlacement(w, h, G, {width, height, table, topInset = h * .08}){
+  const tableY = Math.max(h * .4, G.bot - h * .08);
+  const y = topInset;
+  const scale = Math.max(w / width, (tableY - y) / (height * table));
+  return {x: (w - width * scale) / 2, y, scale, tableY};
+}
+
 /** Smooth, bounded motion, driven by wall time rather than drinking progress. */
 export function memoryMotion(now = 0){
   const t = Number.isFinite(now) ? Math.max(0, now) / 1000 : 0;

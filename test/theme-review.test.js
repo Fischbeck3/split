@@ -138,3 +138,15 @@ test('review result links reopen the exact catalog glass and pour without a dail
     assert.equal(canRecordChallenge({...reopened, now:atNoon(reopened.key), launchReady:true}), false);
   }
 });
+
+test('retired prototypes are absent from review choices and direct review routes', () => {
+  const built = ['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni'];
+  assert.deepEqual(THEMES.map(theme => theme.id), built);
+  for (const id of ['lager', 'pale', 'cider', 'red', 'coffee', 'choc', 'matcha', 'cola']) {
+    assert.throws(() => reviewHash(id), /Unknown review theme/);
+    const review = readThemeReview('#admin/' + id);
+    assert.equal(review.theme.id, 'pub');
+    assert.equal(review.kind, 'preview');
+    assert.match(review.notice, /unavailable/);
+  }
+});

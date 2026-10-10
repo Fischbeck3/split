@@ -54,7 +54,7 @@ export const THEMES = [
     box: {top: 0.13, bot: 0.84, w: 0.3, h: 0.3}, body: ['#efc65d', '#cd8b2f'], head: '#fff5df', headT: 0.09,
     mark: 'star', markFill: '#eac977', markStroke: '#3b2e16', target: 'the star', brandText: 'SAPPORO', brandSubline: 'JAPAN', garnish: 'none',
     markRange: [0.52, 0.585], markHRange: [0.12, 0.12], speed: 1, choppy: false, bubbles: true},
-  {id: 'butterbeer', name: 'Butterbeer', label: 'Snowy Hogsmeade', line: 'Snow on the rooftops. Bring the liquid line beneath the foam through the H.', memory: 'Snow on the rooftops. Something warm before the walk.', location: 'HOGSMEADE', feel: 'creamy, steady sip', emoji: '🍺', scene: 'hogsmeade', vessel: 'tulip', colorScheme: 'dark',
+  {id: 'butterbeer', name: 'Butterbeer', label: 'The Hog’s Head', line: 'Candles, crooked beams, and one foamy round. Split the H beneath the foam.', memory: 'A crooked table. Your friends. One sweet, foamy round.', location: 'HOGSMEADE', feel: 'creamy, steady sip', emoji: '🍺', scene: 'hogsmeade', vessel: 'tulip', colorScheme: 'dark',
     palette: {bg: '#25201b', fg: '#f6ebd5', muted: '#c5b49d', sheet: '#342c23', line: '#685642', accent: '#e5bb71', accentFg: '#302218'},
     box: {top: 0.13, bot: 0.84, w: 0.3, h: 0.3}, body: ['#d7973e', '#91521e'], head: '#fff0cc', headT: 0.17,
     mark: 'letter', letter: 'H', markFrame: 'shield', markFill: '#f4deac', markStroke: '#3d2918', target: 'the H crest', brandText: 'BUTTERBEER', brandSubline: 'HOGSMEADE', garnish: 'none',

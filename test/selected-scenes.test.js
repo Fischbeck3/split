@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {drawBackdrop, loadSceneAssets, SCENES} from '../site/js/draw.js';
-import {memoryScenePlacement} from '../site/js/ambient.js';
+import {memoryScenePlacement, roomScenePlacement} from '../site/js/ambient.js';
 
 function recordingContext(){
   const calls = [], values = {};
@@ -37,7 +37,7 @@ test('selected places decode lazily, crop the chosen panel, and anchor every gam
   try {
     const selected = [
       {scene: 'tokyo', file: 'japan-options.jpg', panel: 0, table: .57, colorScheme: 'dark'},
-      {scene: 'hogsmeade', file: 'hogsmeade-options.jpg', panel: 2, table: .664, colorScheme: 'dark'},
+      {scene: 'hogsmeade', file: 'hogsmeade-options.jpg', panel: 0, table: .664, colorScheme: 'dark'},
       {scene: 'rome', file: 'rome-options.jpg', panel: 0, table: .66, colorScheme: 'light'}
     ];
     for (const [index, place] of selected.entries()){
@@ -56,12 +56,18 @@ test('selected places decode lazily, crop the chosen panel, and anchor every gam
         assert.ok(image.url.endsWith('/assets/concepts/' + place.file));
         assert.equal(sx, place.panel * 1619 / 3 + 2);
         assert.equal(sy, 0); assert.equal(sw, 1619 / 3 - 4); assert.equal(sh, 971);
-        const expected = memoryScenePlacement(w, h, G, {width: sw, height: sh, table: place.table});
+        const room = place.scene === 'hogsmeade';
+        const expected = (room ? roomScenePlacement : memoryScenePlacement)(w, h, G, {width: sw, height: sh, table: place.table, topInset:0});
         assert.equal(dx, expected.x); assert.equal(dy, expected.y);
         assert.equal(dw, sw * expected.scale); assert.equal(dh, sh * expected.scale);
         assert.ok(dx <= 0 && dx + dw >= w, 'the scene left a horizontal seam');
-        assert.ok(dy <= .00001 && dy + dh >= h - .00001, 'the scene left a vertical seam');
-        assert.ok(Math.abs(dy + dh * place.table - Math.max(h * .4, bot - h * .08)) < .00001);
+        if (room){
+          const foreground = calls.filter(call => call[0] === 'drawImage').at(-1);
+          assert.equal(foreground[7] + foreground[9], h, 'the foreground left a vertical seam');
+        } else {
+          assert.ok(dy <= .00001 && dy + dh >= h - .00001, 'the scene left a vertical seam');
+          assert.ok(Math.abs(dy + dh * place.table - Math.max(h * .4, bot - h * .08)) < .00001);
+        }
         assert.ok(!calls.some(call => call[0] === 'colorStop'), 'an unshaded postcard gained a title wash');
       }
       const {context, calls} = recordingContext();

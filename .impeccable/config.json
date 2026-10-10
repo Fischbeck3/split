@@ -71,6 +71,15 @@
         ],
         "createdAt": "2026-10-09T22:48:45.114Z",
         "reason": "Codex verified browser computed padding: daily performance has 32px left inset on desktop and 20px top inset on mobile with no left border; upcoming section has 24px top inset; run, plan and feed sections have 45px desktop and 32px mobile top padding. Detector misses padding shorthand."
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "site/next-three.html"
+        ],
+        "createdAt": "2026-10-10T00:02:37.632Z",
+        "reason": "Agent verified computed caption #556c73 on body #f6f0e3; detector incorrectly pairs it with iframe-only #142b24. Game iframe uses its own themed document."
       }
     ]
   }

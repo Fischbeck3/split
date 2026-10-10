@@ -1,7 +1,7 @@
 // Pure calendar data and iCalendar formatting. Core imports this file, so it must
 // not import core, themes, or browser code. Callers supply theme resolution.
 import {LAUNCH, SITE_URL} from './config.js';
-import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS} from './calendar-data.js';
+import {CALENDAR, LEGACY_OPENING_IDS, ROTATION_IDS} from './calendar-data.js';
 import {assertContentReady, contentReadiness, isCampaignReady} from './content-readiness.js';
 
 const DAY_MS = 86400000;
@@ -103,10 +103,10 @@ export function normalizeCalendarPlan(input){
 }
 
 /** Validate a reviewed plan against the previously published calendar. */
-export function validateCalendarPlan(input, {baseline = CALENDAR, now = new Date(), themeIds = LEGACY_ROTATION_IDS} = {}){
+export function validateCalendarPlan(input, {baseline = CALENDAR, now = new Date(), themeIds = ROTATION_IDS} = {}){
   const plan = normalizeCalendarPlan(input), before = normalizeCalendarPlan(baseline), known = new Set(themeIds);
   if (plan.version < before.version) throw new Error('Calendar version cannot go backwards.');
-  for (const id of LEGACY_ROTATION_IDS) if (!known.has(id)) throw new Error('The legacy rotation is missing ' + id + '.');
+  for (const id of LEGACY_OPENING_IDS) if (!known.has(id)) throw new Error('The opening lineup is missing ' + id + '.');
   for (let i = 0; i < LEGACY_OPENING_IDS.length; i++){
     const date = addDateDays(LAUNCH, i);
     if (plan.days[date]?.themeId !== LEGACY_OPENING_IDS[i]) throw new Error('Keep the opening glass fixed on ' + date + '.');

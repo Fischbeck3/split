@@ -1,7 +1,7 @@
 // Pure game logic: the calendar, seeded randomness, vessel shapes, the daily glass and scoring.
 // Nothing here touches the page, so the tests can import it in Node.
 import {LAUNCH, SCHEDULE, THEMES as RAW_THEMES} from './themes.js';
-import {CALENDAR, LEGACY_ROTATION_IDS} from './calendar-data.js';
+import {CALENDAR, LEGACY_ROTATION_IDS, ROTATION_IDS} from './calendar-data.js';
 import {getPublishedEntry} from './content-calendar.js';
 
 export const pad = n => String(n).padStart(2, '0');
@@ -59,13 +59,16 @@ export function widthAt(vessel, t){
 }
 
 const DEFAULTS = {scene: 'bar', box: {top: 0.13, bot: 0.84, w: 0.34, h: 0.3}, markRange: [0.46, 0.66], markHRange: [0.10, 0.14], speed: 1};
-export const THEMES = RAW_THEMES.map(t => Object.freeze(Object.assign({label: t.name + ' day'}, DEFAULTS, t)));
-export const themeById = id => THEMES.find(t => t.id === id);
+const ALL_THEMES = RAW_THEMES.map(t => Object.freeze(Object.assign({label: t.name + ' day'}, DEFAULTS, t)));
+// Review and planning choices contain only the six glasses we have built. Keep
+// older definitions resolvable without putting unfinished glasses back on offer.
+export const THEMES = ALL_THEMES.filter(t => ROTATION_IDS.includes(t.id));
+export const themeById = id => THEMES.find(t => t.id === id) || ALL_THEMES.find(t => t.id === id);
 
-// Keep the released rotation independent of new artwork/catalog entries. An
-// explicit date pin changes that date only, including its archive and shares.
-const pickIndex = key => Math.floor(mulberry32(hashStr('split-theme:' + key))() * LEGACY_ROTATION_IDS.length);
-const scheduledIndex = n => LEGACY_ROTATION_IDS.indexOf(SCHEDULE[n - 1]);
+// Opening dates and their seeded pours stay fixed. Unassigned future dates use
+// only the built lineup; appending artwork cannot silently add a rotation choice.
+const pickIndex = (key, ids = ROTATION_IDS) => Math.floor(mulberry32(hashStr('split-theme:' + key))() * ids.length);
+const scheduledIndex = n => ROTATION_IDS.indexOf(SCHEDULE[n - 1]);
 
 /** The glass a day No. serves. */
 export function themeForDay(num, calendar = CALENDAR){
@@ -74,14 +77,14 @@ export function themeForDay(num, calendar = CALENDAR){
   const pinned = getPublishedEntry(keyForDay(num), calendar);
   if (pinned?.themeId && themeById(pinned.themeId)) return themeById(pinned.themeId);
   if (num >= 1 && num <= SCHEDULE.length) return themeById(SCHEDULE[num - 1]);
-  if (num < 1) return themeById(LEGACY_ROTATION_IDS[pickIndex(keyForDay(num))]);
+  if (num < 1) return themeById(LEGACY_ROTATION_IDS[pickIndex(keyForDay(num), LEGACY_ROTATION_IDS)]);
   let prev = SCHEDULE.length ? scheduledIndex(SCHEDULE.length) : -1;
   for (let n = SCHEDULE.length + 1; n <= num; n++){
     let i = pickIndex(keyForDay(n));
-    if (i === prev) i = (i + 1) % LEGACY_ROTATION_IDS.length;
+    if (i === prev) i = (i + 1) % ROTATION_IDS.length;
     prev = i;
   }
-  return themeById(LEGACY_ROTATION_IDS[prev]);
+  return themeById(ROTATION_IDS[prev]);
 }
 
 /** Everything that makes one day's glass: the theme, where the mark sits, how fast it drinks, the wobble. */

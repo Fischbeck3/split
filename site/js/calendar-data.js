@@ -2,12 +2,14 @@
 // Keep the legacy lists fixed so new themes cannot reroll old automatic challenges.
 export const LEGACY_ROTATION_IDS = Object.freeze(['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni', 'lager', 'pale', 'cider', 'red', 'coffee', 'choc', 'matcha', 'cola']);
 export const LEGACY_OPENING_IDS = Object.freeze(['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach']);
+// Automatic future pours use only the six developed scenes.
+export const ROTATION_IDS = Object.freeze(['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni']);
 
 export const CALENDAR = {
-  // Advance subscription revisions for the corrected readiness labels and
-  // tentative fallback status. Glass assignments and seeds stay unchanged.
-  version: 2,
-  updatedAt: '2026-10-09T23:17:00.000Z',
+  // Remove unfinished draft glasses and advance subscription revisions.
+  // The opening date assignments and seeded pours stay fixed.
+  version: 3,
+  updatedAt: '2026-10-09T23:56:37.000Z',
   days: {
     '2026-10-09': {themeId: 'pub', campaignId: 'opening-2026'},
     '2026-10-10': {themeId: 'peroni', campaignId: 'opening-2026'},
@@ -16,17 +18,8 @@ export const CALENDAR = {
     '2026-10-13': {themeId: 'butterbeer', campaignId: 'opening-2026'},
     '2026-10-14': {themeId: 'beach', campaignId: 'opening-2026'}
   },
-  drafts: {
-    '2026-10-25': {themeId: 'choc', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-26': {themeId: 'butterbeer', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-27': {themeId: 'coffee', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-28': {themeId: 'sapporo', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-29': {themeId: 'cider', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-30': {themeId: 'butterbeer', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'},
-    '2026-10-31': {themeId: 'matcha', campaignId: 'halloween-2026', notes: 'Planning placeholder using the existing glass. Holiday artwork is not approved.'}
-  },
+  drafts: {},
   campaigns: {
-    'opening-2026': {name: 'Opening lineup', startDate: '2026-10-09', endDate: '2026-10-14', status: 'published', notes: 'The six approved opening glasses.'},
-    'halloween-2026': {name: 'Halloween week', startDate: '2026-10-25', endDate: '2026-10-31', status: 'draft', notes: 'Draft only. Existing glasses are placeholders; holiday glasses and artwork still need approval.'}
+    'opening-2026': {name: 'Opening lineup', startDate: '2026-10-09', endDate: '2026-10-14', status: 'published', notes: 'The six approved opening glasses.'}
   }
 };

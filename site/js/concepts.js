@@ -65,12 +65,3 @@ export function conceptParams(option){
     markY:.52 + random() * .065, markH:option.theme.markFrame === 'shield' ? .135 : .12,
     K:.135 + random() * .012, wobble:0, choppy:false};
 }
-
-export const MORE_PLACES = [
-  {place:'Cologne', drink:'Kölsch', glass:'A tall, skinny K glass', memory:'The same corner table. Another little glass with friends.'},
-  {place:'Barcelona', drink:'Estrella', glass:'A star glass', memory:'Sand still on your shoes at the last beach table.'},
-  {place:'Lisbon', drink:'Super Bock', glass:'A little B tumbler', memory:'A shady pavement table, halfway up the hill.'},
-  {place:'Bangkok', drink:'Chang', glass:'A green bottle with paired elephants', memory:'A night-market table. One more story before the ride home.'},
-  {place:'Bruges', drink:'Duvel', glass:'A wide D goblet', memory:'The canal goes quiet. Your table does not.'},
-  {place:'An American road trip', drink:'Root beer', glass:'A frosty R mug', memory:'One roadside diner before the next stretch of highway.'}
-];

@@ -2,7 +2,7 @@
 import {mulberry32} from './core.js';
 import {renderWidthAt as widthAt} from './render-vessels.js';
 import {getLiquidSurface} from './liquid.js';
-import {memoryScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
+import {memoryScenePlacement, roomScenePlacement, memoryMotion, MEMORY_DETAILS} from './ambient.js';
 import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
@@ -17,7 +17,7 @@ export const SCENE_ART = {
   beach: {url: new URL('../assets/scenes/cabo-beach.webp', import.meta.url).href, table: .627},
   munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636},
   tokyo: {url: new URL('../assets/concepts/japan-options.jpg', import.meta.url).href, panel: 0, table: .57},
-  hogsmeade: {url: new URL('../assets/concepts/hogsmeade-options.jpg', import.meta.url).href, panel: 2, table: .664},
+  hogsmeade: {url: new URL('../assets/concepts/hogsmeade-options.jpg', import.meta.url).href, panel: 0, table: .664, framing: 'room'},
   rome: {url: new URL('../assets/concepts/rome-options.jpg', import.meta.url).href, panel: 0, table: .66}
 };
 const sceneImages = new Map(), sceneLoads = new Map();
@@ -48,9 +48,29 @@ function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
   // The concept sheets have three places side by side. Keep their edge pixels
   // outside the selected panel so its neighbours never leak into a postcard.
   const iw = art.panel === undefined ? image.naturalWidth : panelWidth - 4, ih = image.naturalHeight;
-  const {x, y, scale} = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
-  if (art.panel === undefined) c.drawImage(image, x, y, iw * scale, ih * scale);
-  else c.drawImage(image, art.panel * panelWidth + 2, 0, iw, ih, x, y, iw * scale, ih * scale);
+  if (art.framing === 'room'){
+    const {x, y, scale, tableY} = roomScenePlacement(w, h, G, {width: iw, height: ih, table: art.table, topInset: titleWash ? h * .08 : 0});
+    const sx = art.panel * panelWidth + 2;
+    // Extend the ceiling into the title band; the room itself stays below it,
+    // keeping the boar and candles beside the glass on a narrow phone.
+    c.fillStyle = theme.palette?.bg || '#25201b'; c.fillRect(0, 0, w, y);
+    c.drawImage(image, sx, 0, iw, ih, x, y, iw * scale, ih * scale);
+    // Use the real wood from this same panel. A short blend softens the join
+    // without zooming the boar out of the mobile or postcard composition.
+    const start = tableY - 12, destH = h - start, sy = ih * art.table, sourceH = ih - sy;
+    c.save();
+    for (let offset = 0; offset < 24; offset += 4){
+      c.globalAlpha = (offset + 2) / 24;
+      c.drawImage(image, sx, sy + sourceH * offset / destH, iw, sourceH * 4 / destH, 0, start + offset, w, 4);
+    }
+    c.globalAlpha = 1;
+    c.drawImage(image, sx, sy + sourceH * 24 / destH, iw, sourceH * (destH - 24) / destH, 0, start + 24, w, destH - 24);
+    c.restore();
+  } else {
+    const {x, y, scale} = memoryScenePlacement(w, h, G, {width: iw, height: ih, table: art.table});
+    if (art.panel === undefined) c.drawImage(image, x, y, iw * scale, ih * scale);
+    else c.drawImage(image, art.panel * panelWidth + 2, 0, iw, ih, x, y, iw * scale, ih * scale);
+  }
   if (!titleWash) return true;
   drawTitleWash(c, w, h, theme.colorScheme ? theme.colorScheme === 'dark' : ['pub', 'tokyo', 'hogsmeade'].includes(theme.scene));
   return true;
