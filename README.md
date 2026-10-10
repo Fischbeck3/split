@@ -17,7 +17,7 @@ The domain is registered at Network Solutions. GitHub ownership is verified, the
 - **One a day.** The first completed sip for today's local date is saved in this browser. Later sips are practice and cannot replace it. You can return to the saved score. A new glass arrives at local midnight. Preview sips never write official records.
 - **Same glass for a friend.** Public shares carry `?day=YYYY-MM-DD`, so a friend opens the same seeded pour. Today's challenge can count once; earlier dates open as Archive and new archive sips never write a daily record. A friend one calendar day ahead shares an unsaved preview of that exact pour. Later future dates, malformed dates, and dates before the first sip return to today's glass with an explanation.
 - **Beat my sip.** Result links also carry the shared score and stopping offset. A friend sees the score to beat before playing, then their own score and both real stopping lines on the postcard. These are self-reported comparisons, without accounts or a leaderboard; daily, practice, archive, and preview labels stay explicit. Invalid benchmarks are ignored without changing the daily seed or recording rule.
-- **Sip sounds.** The speaker button starts off. Enable it for bottle glugs, a soft pint landing, a heavier stein landing, and a quiet rim click for a perfect split. Unsupported or blocked audio leaves play available. Sound stops when the page is hidden.
+- **Quiet play.** The header shows the Split wordmark and day number. The sip and result use visual feedback.
 
 If midnight passes during a sip, that glass becomes an archive and the finished sip is not saved. A result saved before midnight remains labeled “Archive · saved sip.” “Play today’s glass” opens the current glass and clears the old date link. Browser records do not sync across devices or domains; clearing storage removes them. Records belong to the fixed launch calendar and the configured record run.
 
@@ -241,7 +241,7 @@ Tracking is live as of October 9, 2026. Open [Daily Split users and shares](http
 - `site/js/config.js`: planned public address and fixed release date
 - `site/js/challenge.js`: local-day links, preview/archive states, and recording eligibility
 - `site/js/friend.js`: validation and comparison of self-reported shared sips, without changing the seeded challenge
-- `site/js/sound.js`: optional short vessel cues, initialized only by the sound toggle
+- `site/js/sound.js`: unused audio prototype retained outside the game
 - `site/js/ambient.js`: bounded environmental movement around the first three vessels
 - `site/js/core.js`: the daily seed, vessel shapes, drink physics, and scoring, with no page code so tests run in Node
 - `site/js/motion.js`: deterministic vessel lift, tipping, glug movement, slosh, and return to rest
