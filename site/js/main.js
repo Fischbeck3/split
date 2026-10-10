@@ -37,7 +37,7 @@ if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotio
 else if (motionQuery.addListener) motionQuery.addListener(onMotionPreferenceChange);
 renderMotionPreference();
 
-const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, review:!!themeReview, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
+const S = {num: 0, key: '', kind: 'today', notice: '', designPreview: false, review:!!themeReview, followToday:false, switchingDay:false, P: null, theme: null, mode: 'hold', state: 'intro', L: 0, L0: 0, practice: false, preview: false,
   result: null, friend: null, holding: false, holdStart: 0, lockAt: 0, last: 0, drawnAt: 0, targetAt: null, drained: false, card: null, drink: null, motion: makeMotionState(),
   baseP:null, progress:null, round:0, roundToken:null, focus:0, focusFrom:0, focusAt:0, focusDuration:620, liveFloor:Infinity, visualSway:0, storageFailed:false};
 const analytics = createAnalytics(themeReview ? {projectKey:''} : {});
@@ -65,6 +65,11 @@ function renderRounds(id, rounds = [], current = -1, bestIndex = -1){
     list.append(item);
   });
 }
+function followsToday(challenge){
+  const dates = new URLSearchParams(location.search).getAll('day');
+  // A valid shared date stays pinned; rejected links follow their daily fallback.
+  return !S.review && !S.designPreview && !(dates.length === 1 && dates[0] === challenge.key);
+}
 function challengeDate(){
   const [year, month, date] = S.key.split('-').map(Number);
   return new Intl.DateTimeFormat(undefined, {month:'short', day:'numeric', year:'numeric'}).format(new Date(year, month - 1, date, 12));
@@ -84,12 +89,28 @@ function renderChallengeStatus(now = new Date()){
   if (S.progress?.rounds.length && !S.progress.done) $('startLabel').textContent = 'Continue · ' + ROUND_STAGES[S.progress.rounds.length].label;
 }
 function refreshDayStatus(now = new Date()){
+  if (S.switchingDay) return true;
+  if (S.followToday && S.key){
+    const current = resolveChallenge({now});
+    if (current.kind === 'today' && (current.key !== S.key || S.kind === 'preview')){
+      const idle = S.state === 'intro' || S.state === 'result';
+      if (idle && !document.hidden && !$('shareBtn').disabled && !$('saveCardBtn').disabled){
+        // Reload once so the next glass initializes its own assets and saved round.
+        S.switchingDay = true; $('startHold').disabled = true;
+        location.reload();
+        return true;
+      }
+      // Keep an already-started round available to finish and share as an archive.
+      if (!idle) S.followToday = false;
+    }
+  }
   if (S.kind === 'today' && !canRecordChallenge({key:S.key, kind:S.kind, now})){
     S.kind = 'archive'; S.notice = '';
     renderChallengeStatus(now);
     if (S.state === 'result'){ renderResult(); renderStats(); }
     else toast('A new glass is up. This sip is now an archive and will not be saved.');
   } else renderChallengeStatus(now);
+  return false;
 }
 
 // ---------- storage ----------
@@ -169,7 +190,7 @@ function draw(now){
 // ---------- the drink ----------
 function begin(){
   S.mode = 'hold';
-  refreshDayStatus();
+  if (refreshDayStatus()) return;
   $('result').classList.remove('fresh-sip');
   S.baseP ||= S.P;
   S.progress ||= normalizeRoundRecord(null, S.baseP);
@@ -459,6 +480,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden){ up(); if (S.state === 'drinking') lock(performance.now()); }
   else if (S.P) tickClock();
 });
+window.addEventListener('pageshow', () => { if (S.P) tickClock(); });
 document.addEventListener('keydown', e => {
   // Space on a secondary control keeps its native action; the hold button and
   // noninteractive page area remain keyboard sipping targets.
@@ -505,6 +527,7 @@ async function init(){
   S.num = challenge.num; S.key = challenge.key; S.kind = challenge.kind; S.notice = challenge.notice;
   const previewMatch = /^#day(\d{1,4})$/.exec(location.hash || '');
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
+  S.followToday = followsToday(challenge);
   S.P = themeReview?.P || dayParams(S.num); S.baseP = S.P; S.theme = S.P.theme;
   S.attribution = getCalendarAttribution(S.key, S.theme);
   S.friend = S.review ? null : readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
@@ -562,6 +585,7 @@ async function init(){
   setPhase('intro'); renderChallengeStatus(now); S.targetAt = performance.now(); layout(); draw(S.targetAt); $('app').classList.add('scene-ready');
   $('startHold').disabled = false;
   renderStats(); tickClock(); setInterval(tickClock, 1000);
+  if (S.switchingDay) return;
   const rec = canRecordChallenge({key:S.key, kind:S.kind}) ? load().days[S.key] : null;
   if (rec && rec.theme === S.theme.id){
     const normalized = normalizeRoundRecord(rec, S.baseP);

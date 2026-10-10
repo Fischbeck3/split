@@ -31,13 +31,18 @@ export function browserStorage(entries = [], {failWrites = false, failOnWrite = 
 // reload paths. Only pixels and DOM presentation are replaced; all pours,
 // motion, session transitions, dates and saved-data rules use production code.
 export function controllerApp({P = core.dayParams(1), storage = browserStorage(), deviceReduced = false,
-  kind = 'today', review = false, practice = false, previousMode = 'hold', calendarDate} = {}){
+  kind = 'today', review = false, practice = false, previousMode = 'hold', calendarDate,
+  search = kind === 'archive' ? '?day=' + P.key : '',
+  hash = kind === 'preview' && !review ? '#day' + P.num : '', designPreview = false} = {}){
   let now = 1000, calendar = (calendarDate ?? new Date(P.key + 'T12:00:00')).getTime();
   class AppDate extends Date {
     constructor(...args){ super(...(args.length ? args : [calendar])); }
     static now(){ return calendar; }
   }
-  const elements = new Map(), events = [], draws = [], messages = [], audio = {constructed:0};
+  const elements = new Map(), events = [], draws = [], messages = [], reloads = [], audio = {constructed:0};
+  const documentListeners = new Map(), windowListeners = new Map();
+  const listen = (listeners, name, callback) => listeners.set(name, [...(listeners.get(name) || []), callback]);
+  const dispatch = (listeners, name, event = {}) => { for (const callback of listeners.get(name) || []) callback(event); };
   class AudioContext {
     constructor(){ audio.constructed++; throw new Error('Visual play must stay quiet.'); }
   }
@@ -54,11 +59,15 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     return elements.get(id);
   }
   let created = 0;
-  const document = {hidden:false, createElement:tag => element(tag + ':' + ++created)};
+  const document = {hidden:false, createElement:tag => element(tag + ':' + ++created),
+    addEventListener:(name, callback) => listen(documentListeners, name, callback)};
+  const location = {search, hash, pathname:'/', href:'https://dailysplit.us/' + search + hash,
+    reload:() => reloads.push({at:calendar, search:location.search, hash:location.hash})};
   const context = vm.createContext({...core, ...motion, ...rounds, LAUNCH, LAUNCH_READY, RECORD_RUN,
-    Date:AppDate, Math, themeReview:review ? {} : null, $:element, document,
-    scene:{style:{}}, AudioContext,
-    window:{AudioContext, matchMedia:() => ({matches:deviceReduced, addEventListener(){}})},
+    Date:AppDate, Math, URLSearchParams, themeReview:review ? {} : null, $:element, document,
+    scene:{style:{}}, AudioContext, location,
+    window:{AudioContext, location, matchMedia:() => ({matches:deviceReduced, addEventListener(){}}),
+      addEventListener:(name, callback) => listen(windowListeners, name, callback)},
     localStorage:storage.localStorage, performance:{now:() => now}, requestAnimationFrame(){},
     globalThis:{crypto:{randomUUID:() => 'tab-' + (++created) + '-' + Math.random()}},
     analytics:{capture:(event, properties) => events.push({event, properties:structuredClone(properties)})},
@@ -79,8 +88,9 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     section('function sipKind(){', '// ---------- storage ----------'),
     section('function load(){', '// ---------- layout and drawing ----------'),
     section('function begin(){', '// ---------- results and sharing ----------'),
-    section('function renderStats(){', 'function msToMidnight(){'),
+    section('function renderStats(){', 'let toastTimer = '),
     section('const down = ', 'for (const target of '),
+    section("window.addEventListener('pointerup'", "document.addEventListener('keydown'"),
     section("$('practiceBtn').addEventListener('click'", "$('reviewTheme').addEventListener"),
     section("$('reviewRefill').addEventListener('click'", "for (const id of ['introTodayBtn'"),
     'function restoreSession(){ const now = new Date();',
@@ -89,9 +99,12 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
   ].join('\n');
   vm.runInContext(code, context);
   const S = vm.runInContext('S', context), initial = core.makeDrinkState(P);
+  const previewMatch = /^#day(\d{1,4})$/.exec(hash);
   Object.assign(S, {P, baseP:P, num:P.num, key:P.key, theme:P.theme, kind, review,
-    preview:kind === 'preview', practice, mode:previousMode, L:initial.level, L0:initial.level,
+    preview:kind === 'preview', designPreview:designPreview || (kind === 'preview' && !!previewMatch && Number(previewMatch[1]) >= 1),
+    switchingDay:false, practice, mode:previousMode, L:initial.level, L0:initial.level,
     drink:initial, last:now, attribution:{}, targetAt:now});
+  S.followToday = context.followsToday({num:P.num, key:P.key, kind});
   const run = code => vm.runInContext(code, context);
   const advance = (frames, hz = 60) => {
     for (let frame = 0; frame < frames; frame++){
@@ -112,11 +125,14 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     if (S.state !== 'between' && S.state !== 'result' && S.state !== 'blocked') throw new Error('Sip did not settle: ' + S.state);
   };
   const sip = (heldFrames = 30) => { begin(); ready(); press(); advance(heldFrames); release(); settle(); return S.progress.rounds.at(-1); };
-  return {S, storage, context, initial, element, events, draws, messages, audio, advance, begin, ready, press, release, settle, sip,
+  return {S, storage, context, initial, element, events, draws, messages, reloads, location, audio, advance, begin, ready, press, release, settle, sip,
     restore:() => run('restoreSession();'),
     practice:() => element('practiceBtn').click(), reviewRefill:() => element('reviewRefill').click(),
     finish:() => { context.frameTime = now; return run('finish(frameTime);'); },
     stats:() => { run('renderStats();'); return Object.fromEntries(['stDays','stStreak','stBest','stPerfect'].map(id => [id, element(id).textContent])); },
+    clock:() => run('tickClock();'),
+    visibility:hidden => { document.hidden = hidden; dispatch(documentListeners, 'visibilitychange'); },
+    pageshow:(event = {persisted:true}) => dispatch(windowListeners, 'pageshow', event),
     setCalendar:value => { calendar = value.getTime(); },
     read:() => structuredClone(run('load();'))};
 }
