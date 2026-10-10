@@ -62,7 +62,11 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     localStorage:storage.localStorage, performance:{now:() => now}, requestAnimationFrame(){},
     globalThis:{crypto:{randomUUID:() => 'tab-' + (++created) + '-' + Math.random()}},
     analytics:{capture:(event, properties) => events.push({event, properties:structuredClone(properties)})},
-    canRecordChallenge, resolveChallenge, gameProperties,
+    // Imported helpers retain their own Date global. Bind their default clock
+    // to this browser's calendar too, while honoring an explicitly supplied now.
+    canRecordChallenge:({now = new AppDate(), ...options} = {}) => canRecordChallenge({...options, now}),
+    resolveChallenge:({now = new AppDate(), ...options} = {}) => resolveChallenge({...options, now}),
+    gameProperties:(state, at = new AppDate()) => gameProperties(state, at),
     layout(){}, draw(){ draws.push({state:vm.runInContext('S.state', context)}); },
     toast:text => messages.push(text), renderResult(){ element('result').hidden = false; },
     setPhase:phase => { vm.runInContext('S', context).state = phase; element('app').dataset.phase = phase; }});
