@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {LAUNCH} from '../site/js/config.js';
 import {dayParams} from '../site/js/core.js';
+import {summarizeRounds} from '../site/js/rounds.js';
 import {controllerApp, browserStorage, storageKey} from './helpers/controller-app.js';
 
 const P = dayParams(1), legacyKey = 'split.v1:' + LAUNCH;
@@ -17,8 +18,9 @@ function storageWithHistory(){
 function unchangedEntries(storage, retained){
   for (const [key, value] of retained) assert.equal(storage.values.get(key), value, key + ' stays unchanged');
 }
+const average = rounds => Math.round(rounds.reduce((sum, round) => sum + round.score, 0) / rounds.length);
 
-test('the friends run records one best-of-three day without removing earlier records or preferences', () => {
+test('the friends run records one three-sip average without removing earlier records or preferences', () => {
   const {storage, retained} = storageWithHistory(), app = controllerApp({storage});
   assert.notEqual(storageKey, legacyKey);
   assert.deepEqual(app.read(), {days:{}});
@@ -33,7 +35,8 @@ test('the friends run records one best-of-three day without removing earlier rec
   app.sip(220);
   assert.equal(app.S.state, 'result');
   assert.equal(app.S.result.counts, true);
-  assert.equal(app.S.result.score, Math.max(...app.S.result.rounds.map(round => round.score)));
+  assert.equal(app.S.result.score, average(app.S.result.rounds));
+  assert.equal(app.S.result.bestScore, Math.max(...app.S.result.rounds.map(round => round.score)));
   assert.equal(app.stats().stDays, 1);
   assert.equal(app.stats().stStreak, 1);
   assert.equal(app.stats().stBest, app.S.result.score);
@@ -49,7 +52,7 @@ test('a reload resumes at the next graduated sip and preserves the first result 
   const storage = browserStorage(), first = controllerApp({storage});
   first.sip(240);
   const recorded = structuredClone(first.S.progress.rounds[0]);
-  assert.ok(recorded.score > 0, 'the saved first sip provides a real best-score candidate');
+  assert.ok(recorded.score > 0, 'the saved first sip contributes to the real average');
   const reload = controllerApp({storage}); reload.restore();
   assert.equal(reload.S.state, 'intro');
   assert.equal(reload.S.progress.rounds.length, 1);
@@ -62,9 +65,9 @@ test('a reload resumes at the next graduated sip and preserves the first result 
   assert.equal(reload.S.round, 2);
   assert.equal(reload.S.P.sipStage, 2);
   assert.deepEqual(structuredClone(reload.S.result.rounds[0]), recorded);
-  assert.equal(reload.S.result.score, Math.max(...reload.S.result.rounds.map(round => round.score)));
+  assert.equal(reload.S.result.score, average(reload.S.result.rounds));
   const best = reload.S.result.rounds[reload.S.result.bestIndex];
-  assert.equal(reload.S.result.L, best.L, 'the best score and shared stopping line come from the same sip');
+  assert.equal(reload.S.result.L, best.L, 'the representative stopping line comes from the best real sip');
   assert.equal(reload.S.result.f, best.f);
 });
 
@@ -250,7 +253,7 @@ test('read-only browser storage keeps a legacy first sip and finishes two more i
   assert.ok(completions.every(event => !event.properties.counts && !event.properties.new_record));
 });
 
-test('failure on the final save leaves a playable best result without falsely recording a completed day', () => {
+test('failure on the final save leaves a playable average without falsely recording a completed day', () => {
   const storage = browserStorage([], {failOnWrite:6}), app = controllerApp({storage});
   app.sip(240); app.sip(200);
   const firstTwo = app.read().days[P.key].rounds;
@@ -259,9 +262,9 @@ test('failure on the final save leaves a playable best result without falsely re
   assert.equal(storage.writes.length, 6, 'only the third completion write fails');
   assert.equal(app.S.storageFailed, true);
   assert.equal(app.S.state, 'result');
-  assert.equal(app.S.result.done, true, 'the completed best-of-three result remains available in this tab');
+  assert.equal(app.S.result.done, true, 'the completed three-sip average remains available in this tab');
   assert.equal(app.S.result.rounds.length, 3);
-  assert.equal(app.S.result.score, Math.max(...app.S.result.rounds.map(round => round.score)));
+  assert.equal(app.S.result.score, average(app.S.result.rounds));
   assert.equal(app.S.result.counts, false);
   const persisted = app.read().days[P.key];
   assert.deepEqual(persisted.rounds, firstTwo);
@@ -273,4 +276,62 @@ test('failure on the final save leaves a playable best result without falsely re
   assert.equal(completion.counts, false, 'daily completion telemetry must reflect the failed save');
   assert.equal(completion.new_record, false);
   assert.equal(completion.score, app.S.result.score);
+});
+
+test('today’s completed v2 best-score record recalculates its average without replaying or replacing any sip', () => {
+  const rounds = [
+    {score:91, f:.1, L:P.markY + P.markH * .1, label:'Split', tone:'good', mode:'hold', drained:false},
+    {score:24, f:.35, L:P.markY + P.markH * .35, label:'Low in G', tone:'warn', mode:'hold', drained:false},
+    {score:45, f:-.25, L:P.markY - P.markH * .25, label:'High in G', tone:'warn', mode:'hold', drained:false}
+  ];
+  const old = {...summarizeRounds(rounds), num:P.num, theme:P.theme.id, pending:null,
+    score:91, label:'Split', tone:'good'};
+  delete old.scoring; delete old.averageScore; delete old.bestScore;
+  const historicalKey = '2026-10-08', historical = {...old, num:0, theme:'beach'};
+  const storage = browserStorage([[storageKey, JSON.stringify({days:{[P.key]:old,[historicalKey]:historical}})]]);
+  const app = controllerApp({storage}); app.restore();
+  assert.equal(app.S.state, 'result');
+  assert.equal(app.S.result.counts, true);
+  assert.equal(app.S.result.version, 2, 'the schema and daily run are unchanged');
+  assert.equal(app.S.result.score, 53);
+  assert.equal(app.S.result.averageScore, 53);
+  assert.equal(app.S.result.bestScore, 91);
+  assert.equal(app.S.result.bestIndex, 0);
+  assert.equal(app.S.result.L, rounds[0].L);
+  assert.equal(app.S.result.label, 'Three-sip average');
+  assert.deepEqual(structuredClone(app.S.result.rounds), old.rounds);
+  assert.equal(app.read().days[P.key].scoring, 'average');
+  assert.equal(app.read().days[P.key].score, 53);
+  assert.equal(storage.writes.length, 1, 'one bounded summary migration persists the existing day');
+  assert.deepEqual(app.read().days[historicalKey], historical, 'historical records are read without rewriting');
+  assert.equal(app.events.filter(event => event.event === 'sip_completed' || event.event === 'sip_started').length, 0);
+  assert.equal(app.stats().stDays, 2);
+  const reload = controllerApp({storage}); reload.restore();
+  assert.equal(reload.S.result.score, 53);
+  assert.deepEqual(structuredClone(reload.S.result.rounds), old.rounds);
+  assert.equal(storage.writes.length, 1, 'the migrated result restores read-only thereafter');
+});
+
+test('statistics use preserved historical v2 averages and require all three sips to be perfect', () => {
+  const perfect = score => ({score, f:0, L:P.markY, label:'Perfect split', tone:'good', mode:'hold', drained:false});
+  const makeOld = (num, rounds) => {
+    const summary = summarizeRounds(rounds), record = {...summary, num, theme:'pub', pending:null,
+      score:summary.bestScore, label:rounds[summary.bestIndex].label, tone:rounds[summary.bestIndex].tone};
+    delete record.scoring; delete record.averageScore; delete record.bestScore;
+    return record;
+  };
+  const days = {
+    '2026-10-08':makeOld(0, [perfect(100),perfect(100),{...perfect(0), f:2, L:.97, drained:true}]),
+    '2026-10-07':makeOld(-1, [perfect(80),perfect(80),perfect(80)]),
+    '2026-10-06':{num:-2, theme:'pub', done:true, ...perfect(100)}
+  };
+  const original = JSON.stringify({days}), storage = browserStorage([[storageKey, original]]), app = controllerApp({storage});
+  assert.deepEqual(app.stats(), {stDays:3, stStreak:3, stBest:100, stPerfect:2},
+    'one old single perfect sip and one all-three perfect round count; the round with a zero does not');
+  assert.equal(storage.writes.length, 0);
+  assert.equal(storage.values.get(storageKey), original);
+  delete days['2026-10-06'];
+  storage.values.set(storageKey, JSON.stringify({days}));
+  assert.equal(app.stats().stBest, 80, 'the best average is 80 rather than the stale best-sip score of 100');
+  assert.equal(storage.writes.length, 0, 'statistics never migrate or rewrite historical data');
 });

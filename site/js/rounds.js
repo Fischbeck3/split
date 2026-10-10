@@ -6,13 +6,14 @@ import {stageCadence} from './sip-cadence.js';
 export const ROUND_STAGES = Object.freeze([
   Object.freeze({label:'Sober', blur:0, sway:0, cadenceAmplitude:0, cadencePeriod:1}),
   Object.freeze({label:'Tipsy', blur:.3, sway:.6, cadenceAmplitude:.13, cadencePeriod:.92}),
-  Object.freeze({label:'Drunk', blur:.7, sway:1.15, cadenceAmplitude:.24, cadencePeriod:.73})
+  Object.freeze({label:'Drunk', blur:1.05, sway:1.45, cadenceAmplitude:.30, cadencePeriod:.68})
 ]);
 
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const stageIndex = index => Number.isInteger(index) && index >= 0 && index < ROUND_STAGES.length ? index : 0;
 const validToken = token => typeof token === 'string' && token.length > 0 && token.length <= 256 && token.trim() === token;
-const structural = new Set(['version','num','theme','rounds','pending','done','bestIndex','__proto__','prototype','constructor']);
+const structural = new Set(['version','num','theme','rounds','pending','done','bestIndex','bestScore',
+  'averageScore','scoring','__proto__','prototype','constructor']);
 
 /** Preserve the released glass, target, base rate and seed. Only the staged
  * presentation and deterministic drinking cadence are added. */
@@ -76,7 +77,8 @@ function individualResult(input, target = 'the mark'){
     tone:input.tone ?? scored.tone, drained:input.drained ?? false};
 }
 
-/** Best score wins; an equal later score keeps the earlier sip and its line.
+/** Every sip contributes to the rounded average. The best real sip supplies
+ * the representative stopping line; an equal later score keeps the earlier one.
  * This helper handles presentation arrays; record validation below rejects
  * malformed stored rounds instead of quietly granting replacement attempts. */
 export function summarizeRounds(rounds = []){
@@ -85,8 +87,13 @@ export function summarizeRounds(rounds = []){
   for (let index = 0; index < clean.length; index++){
     if (bestIndex === null || clean[index].score > clean[bestIndex].score) bestIndex = index;
   }
-  return {...(bestIndex === null ? {} : clean[bestIndex]), version:2, rounds:clean,
-    bestIndex, done:clean.length === ROUND_STAGES.length};
+  const done = clean.length === ROUND_STAGES.length;
+  const score = clean.length ? Math.round(clean.reduce((sum, round) => sum + round.score, 0) / clean.length) : null;
+  return {...(bestIndex === null ? {} : clean[bestIndex]),
+    ...(score === null ? {} : {score, averageScore:score}),
+    ...(done ? {label:'Three-sip average', tone:score >= 75 ? 'good' : score >= 25 ? 'warn' : 'miss'} : {}),
+    version:2, scoring:'average', rounds:clean, bestIndex,
+    bestScore:bestIndex === null ? null : clean[bestIndex].score, done};
 }
 
 function recordFromRounds(rounds, P, pending = null){

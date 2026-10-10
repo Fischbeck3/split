@@ -20,10 +20,16 @@ function completedRound(result){
       !Number.isInteger(result.bestIndex) || result.bestIndex < 0 || result.bestIndex > 2) return null;
   if (!result.rounds.every(sip => sip && Number.isInteger(sip.score) && sip.score >= 0 && sip.score <= 100 &&
       Number.isFinite(sip.f) && Number.isFinite(sip.L) && typeof sip.label === 'string')) return null;
-  const best = result.rounds[result.bestIndex];
-  if (result.rounds.some(sip => sip.score > best.score) ||
-      best.score !== result.score || best.f !== result.f || best.L !== result.L || Boolean(best.drained) !== Boolean(result.drained)) return null;
-  return result.rounds;
+  const bestIndex = result.rounds.reduce((best, sip, index) => sip.score > result.rounds[best].score ? index : best, 0);
+  const best = result.rounds[bestIndex], score = Math.round(result.rounds.reduce((sum, sip) => sum + sip.score, 0) / 3);
+  // Earlier v2 completions stored the best score at the top level. Their real
+  // three sip scores are still sufficient to share a truthful average.
+  if (bestIndex !== result.bestIndex || (result.scoring !== undefined && result.scoring !== 'average') ||
+      result.score !== (result.scoring === 'average' ? score : best.score) ||
+      (result.averageScore !== undefined && result.averageScore !== score) ||
+      (result.bestScore !== undefined && result.bestScore !== best.score) ||
+      best.f !== result.f || best.L !== result.L || Boolean(best.drained) !== Boolean(result.drained)) return null;
+  return {rounds:result.rounds, bestIndex, best, score};
 }
 
 function statusLabel(result, preview, archive, review){
@@ -47,13 +53,15 @@ function challengeUrl({url, key, num, preview, archive, theme, result, review}){
   if (preview) parsed.hash = 'day' + (day <= 9999 ? day : 1);
   else parsed.searchParams.set('day', isCalendarDateKey(key) ? key : keyForDay(day));
   if (result && theme && Number.isFinite(result.f)){
-    parsed.searchParams.set('vs', String(result.score));
+    const round = completedRound(result);
+    parsed.searchParams.set('vs', String(round ? round.score : result.score));
     parsed.searchParams.set('f', String(result.f));
     parsed.searchParams.set('glass', theme.id);
     parsed.searchParams.set('sip', preview ? 'preview' : archive ? result.counts === false ? 'archive' : 'archive-saved' : result.counts === false ? 'practice' : 'daily');
     parsed.searchParams.set('empty', result.drained ? '1' : '0');
+    if (round) parsed.searchParams.set('rounds', round.rounds.map(sip => sip.score).join(','));
     const accepted = readFriendChallenge({search: parsed.search, hash: parsed.hash, key: keyForDay(day), num: day, theme});
-    if (!accepted) for (const field of ['vs', 'f', 'glass', 'sip', 'empty']) parsed.searchParams.delete(field);
+    if (!accepted) for (const field of ['vs', 'f', 'glass', 'sip', 'empty', 'rounds']) parsed.searchParams.delete(field);
   }
   return parsed.href;
 }
@@ -75,12 +83,12 @@ function offsetLabel(result){
 export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false}){
   const status = statusLabel(result, preview, archive, review);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
-  const rounds = completedRound(result);
+  const round = completedRound(result);
   return [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    (rounds ? 'Best of 3 · ' : '') + result.score + '/100 · ' + result.label,
-    ...(rounds ? rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === result.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]),
-    rounds ? 'Beat my best. Your turn.' : 'Beat my sip. One sip. Your turn.',
+    round ? 'Average of 3 · ' + round.score + '/100' : result.score + '/100 · ' + result.label,
+    ...(round ? round.rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === round.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]),
+    round ? 'Beat my average. Your turn.' : 'Beat my sip. One sip. Your turn.',
     challengeUrl({url, key, num, preview, archive, theme, result, review})
   ].join('\n');
 }
@@ -130,7 +138,9 @@ function drawGuide(c, G, P, result, palette, friend){
     c.strokeStyle = palette.fg; c.lineWidth = 2; c.stroke();
     c.fillStyle = palette.guidePaper; c.globalAlpha = 0.94; c.fillRect(18, labelY - 23, 155, 46);
     c.globalAlpha = 1; c.fillStyle = palette.fg; c.font = '700 26px ' + BODY;
-    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('SHARED ' + friend.score, 95, labelY);
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    if (friend.scoring === 'average') fitText(c, 'SHARED BEST ' + friend.bestScore, 95, labelY, 141, 19, BODY, 700);
+    else c.fillText('SHARED ' + friend.score, 95, labelY);
   }
   // Paper-backed ink keeps the actual mark and stop readable over each place.
   for (const [start, end, y, dash] of [[113, G.cx - markW - 22, markY, [10, 8]], [G.cx + lineW + 22, PHOTO.w - 112, lineY, []]]){
@@ -169,7 +179,7 @@ function drawBand(c, f, x, y, ink, scale = 1){
 export function drawShareCard(canvas, {num, key, theme, P, result, friend = null, url = SITE_URL, preview = false, archive = false, review = false}){
   canvas.width = CARD_W; canvas.height = CARD_H;
   const c = canvas.getContext('2d'), palette = paletteFor(theme), place = placeCopy(theme);
-  const rounds = completedRound(result);
+  const round = completedRound(result);
   const doc = canvas.ownerDocument || document;
   const photo = doc.createElement('canvas'); photo.width = PHOTO.w; photo.height = PHOTO.h;
   const scene = photo.getContext('2d');
@@ -195,19 +205,19 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
 
   // Score and error use different units: a score is /100, an offset is mark height.
   c.textAlign = 'left';
-  if (rounds){
-    c.font = '700 28px ' + BODY; c.fillText('Best of 3', 64, 1042);
+  if (round){
+    c.font = '700 28px ' + BODY; c.fillText('Average of 3', 64, 1042);
   }
-  c.font = '900 ' + (rounds ? 154 : 178) + 'px ' + DISPLAY;
-  c.fillText(String(result.score), 64, rounds ? 1203 : 1189);
+  c.font = '900 ' + (round ? 154 : 178) + 'px ' + DISPLAY;
+  c.fillText(String(round ? round.score : result.score), 64, round ? 1203 : 1189);
   c.font = '700 34px ' + BODY; c.fillText('/100', 72, 1237);
-  if (rounds){
-    fitText(c, result.label, 536, 1036, 480, 36, DISPLAY, 900);
-    rounds.forEach((sip, index) => {
+  if (round){
+    fitText(c, 'Best sip: ' + ROUND_LABELS[round.bestIndex] + ' ' + round.best.score + '/100', 536, 1036, 480, 28, BODY, 700);
+    round.rounds.forEach((sip, index) => {
       const y = 1058 + index * 58;
       drawBand(c, sip.f, 552, y, palette.ink, 0.5);
       c.fillStyle = palette.ink;
-      fitText(c, ROUND_LABELS[index] + ' ' + sip.score + (index === result.bestIndex ? ' · Best' : ''), 770, y + 22, 246, 22, BODY, index === result.bestIndex ? 800 : 600);
+      fitText(c, ROUND_LABELS[index] + ' ' + sip.score + (index === round.bestIndex ? ' · Best' : ''), 770, y + 22, 246, 22, BODY, index === round.bestIndex ? 800 : 600);
     });
   } else {
     fitText(c, result.label, 536, 1058, 480, 45, DISPLAY, 900);
@@ -217,11 +227,11 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   c.fillStyle = palette.ink;
   c.font = '600 22px ' + BODY;
   const comparison = comparisonCopy(friend, result);
-  fitText(c, comparison ? 'You ' + result.score + ' · Shared sip ' + friend.score : rounds ? offsetLabel(result) : 'One stopping point', 536, 1240, 480, 22, BODY, 600);
+  fitText(c, comparison ? 'You ' + (round ? round.score : result.score) + ' · Shared ' + (friend.scoring === 'average' ? 'average ' : 'sip ') + friend.score : round ? offsetLabel(round.best) : 'One stopping point', 536, 1240, 480, 22, BODY, 600);
   c.strokeStyle = palette.ink; c.globalAlpha = 0.25; c.lineWidth = 1;
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
   // Keep the printed address short; the benchmark travels in the text link, not an unreadable query on paper.
   fitText(c, cardUrl(challengeUrl({url, key, num, preview, review, theme}), num), 64, 1313, 450, 27, BODY, 700);
-  c.textAlign = 'right'; fitText(c, rounds ? 'Beat my best. Your turn.' : 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
+  c.textAlign = 'right'; fitText(c, round ? 'Beat my average. Your turn.' : 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
   return canvas;
 }

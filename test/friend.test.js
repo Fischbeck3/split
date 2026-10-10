@@ -127,3 +127,58 @@ test('comparisons report supplied score differences truthfully without claiming 
   assert.equal(comparisonCopy({score:101}, {score:84}), null);
   assert.equal(comparisonCopy({score:84}, {score:NaN}), null);
 });
+
+function averageChallenge(num = 1){
+  const f = .3 * Math.sqrt(-Math.log(97 / 100));
+  return changed(challenge(num, f), {vs:'93', rounds:'96,86,97'});
+}
+
+test('a three-sip benchmark compares the rounded average and retains the true best stopping line', () => {
+  for (const num of [1, 2, 3, 4, 5, 6]){
+    const P = dayParams(num), input = averageChallenge(num), f = Number(new URLSearchParams(input.search).get('f'));
+    assert.deepEqual(readFriendChallenge(input), {score:93, f, L:P.markY + f * P.markH, drained:false, kind:'daily',
+      scoring:'average', rounds:[96, 86, 97], bestScore:97});
+    for (const kind of ['practice', 'archive', 'archive-saved']) assert.equal(readFriendChallenge(changed(input, {sip:kind})).kind, kind);
+    const preview = {...changed(input, {day:null, sip:'preview'}), hash:'#day' + num};
+    assert.equal(readFriendChallenge(preview).scoring, 'average');
+  }
+});
+
+test('three-score benchmarks reject malformed, duplicated and contradictory averages', () => {
+  const input = averageChallenge();
+  for (const rounds of ['', '96,86', '96,86,97,98', '096,86,97', '96, 86,97', '96,86.0,97',
+    '96,+86,97', '96,-1,97', '101,86,97', 'NaN,86,97', '96;86;97', '96,86,97\n']){
+    assert.equal(readFriendChallenge(changed(input, {rounds})), null, rounds);
+  }
+  assert.equal(readFriendChallenge(changed(input, {vs:'97'})), null, 'best score cannot masquerade as the average');
+  assert.equal(readFriendChallenge(changed(input, {vs:'92'})), null, 'rounding is fixed, not a tolerance');
+  assert.equal(readFriendChallenge(changed(input, {f:'0.3'})), null, 'the pictured line must correspond to the best sip');
+  const p = new URLSearchParams(input.search); p.append('rounds', p.get('rounds'));
+  assert.equal(readFriendChallenge({...input, search:'?' + p}), null);
+});
+
+test('best stopping lines retain only the existing one-point legacy rounding tolerance', () => {
+  const input = averageChallenge();
+  assert.equal(readFriendChallenge(changed(input, {rounds:'96,86,96', vs:'93'})).bestScore, 96);
+  assert.equal(readFriendChallenge(changed(input, {rounds:'95,86,95', vs:'92'})), null);
+});
+
+test('an empty best glass is valid only when all three scores are zero and the drain offset is exact', () => {
+  const input = changed(averageChallenge(3), {rounds:'0,0,0', vs:'0', f:'2', empty:'1'});
+  assert.deepEqual(readFriendChallenge(input), {score:0, f:2, L:DRAIN_LEVEL, drained:true, kind:'daily',
+    scoring:'average', rounds:[0, 0, 0], bestScore:0});
+  assert.equal(readFriendChallenge(changed(input, {rounds:'0,0,1'})), null, 'rounded zero does not mean every sip was zero');
+  assert.equal(readFriendChallenge(changed(input, {f:'1.999'})), null);
+});
+
+test('average comparisons use all three scores even for an older best-only v2 result', () => {
+  const friend = {score:93, scoring:'average', rounds:[96, 86, 97], bestScore:97};
+  const result = {version:2, done:true, score:100, rounds:[{score:100}, {score:86}, {score:96}]};
+  assert.deepEqual(comparisonCopy(friend, result), {text:'You beat the shared average by 1 point.', status:'win', label:'Beat shared average', delta:1});
+  assert.deepEqual(comparisonCopy(friend, {...result, rounds:[{score:90}, {score:90}, {score:90}]}),
+    {text:'The shared average finished 3 points ahead.', status:'lose', label:'Shared average wins', delta:-3});
+  assert.deepEqual(comparisonCopy(friend, {...result, rounds:[{score:96}, {score:86}, {score:97}]}),
+    {text:'Same average. You matched the shared average.', status:'tie', label:'Matched shared average', delta:0});
+  assert.deepEqual(comparisonCopy({score:93}, result),
+    {text:'You beat the shared sip by 1 point.', status:'win', label:'Beat shared sip', delta:1});
+});

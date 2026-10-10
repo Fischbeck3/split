@@ -34,6 +34,8 @@ test('Start pulls the glass closer before allowing a hold or consuming a sip', (
   assert.equal(app.S.state, 'between');
   assert.equal(app.S.motion.angle, 0);
   assert.equal(app.S.progress.rounds.length, 1);
+  assert.match(app.element('footPill').textContent, /Average so far: \d+\/100\./);
+  assert.doesNotMatch(app.element('footPill').textContent, /Best so far/);
 });
 
 test('device reduced motion keeps a still glass but identical drinking physics in every stage', () => {
@@ -56,6 +58,9 @@ test('device reduced motion keeps a still glass but identical drinking physics i
   }
   assert.equal(full.storage.writes.length, 0);
   assert.equal(reduced.storage.writes.length, 0);
+  const average = rounds => Math.round(rounds.reduce((sum, round) => sum + round.score, 0) / rounds.length);
+  assert.equal(full.S.result.score, average(full.S.result.rounds));
+  assert.equal(reduced.S.result.score, average(reduced.S.result.rounds));
 });
 
 test('another round after a legacy tilt result uses the hold control and focus pause', () => {
@@ -86,6 +91,8 @@ test('all six official and review glasses complete three quiet sips despite lega
     }
     assert.equal(app.S.state, 'result', label);
     assert.equal(app.S.result.rounds.length, 3, label);
+    assert.equal(app.S.result.score, Math.round(app.S.result.rounds.reduce((sum, round) => sum + round.score, 0) / 3), label);
+    assert.equal(app.S.result.bestScore, Math.max(...app.S.result.rounds.map(round => round.score)), label);
     assert.equal(app.S.result.counts, !challenge.review, label);
     assert.equal(app.audio.constructed, 0, label + ': old sound preference cannot construct audio');
     assert.equal(app.storage.values.get('split.sound.v1'), 'on');
