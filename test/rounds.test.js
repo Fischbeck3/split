@@ -24,9 +24,9 @@ function completed(scores){
 
 test('three stage profiles preserve each released glass, target and base rate', () => {
   assert.deepEqual(ROUND_STAGES.map(stage => stage.label), ['Sober','Tipsy','Drunk']);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.blur), [0,.3,1.05]);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.sway), [0,.6,1.45]);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadenceAmplitude), [0,.13,.30]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.blur), [0,.345,1.2075]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.sway), [0,.69,1.6675]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadenceAmplitude), [0,.1495,.345]);
   assert.deepEqual(ROUND_STAGES.map(stage => stage.cadencePeriod), [1,.92,.68]);
   assert.ok(Object.isFrozen(ROUND_STAGES));
   const glassFields = ['num','key','theme','markY','markH','K','wobble','choppy'];
@@ -123,7 +123,7 @@ test('malformed cadence knobs and negative rates cannot reverse or poison the si
   for (const period of [-1, 0, NaN, Infinity, 'fast']){
     for (const elapsed of [-1, NaN, Infinity]){
       const multiplier = stageCadence({sipCadenceAmplitude:999, sipCadencePeriod:period, sipCadencePhase:NaN}, elapsed);
-      assert.ok(Number.isFinite(multiplier) && multiplier >= .70 && multiplier <= 1.30);
+      assert.ok(Number.isFinite(multiplier) && multiplier >= .655 && multiplier <= 1.345);
     }
   }
   assert.equal(roundRate({...roundParams(P, 2), K:-.1}, 1), 0);

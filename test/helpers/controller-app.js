@@ -3,6 +3,9 @@ import vm from 'node:vm';
 import * as core from '../../site/js/core.js';
 import * as motion from '../../site/js/motion.js';
 import * as rounds from '../../site/js/rounds.js';
+import {focusedGlassBox, interpolateGlassBox} from '../../site/js/focus.js';
+import {renderVessel} from '../../site/js/render-vessels.js';
+import {targetHintOpacity} from '../../site/js/target.js';
 import {canRecordChallenge, resolveChallenge} from '../../site/js/challenge.js';
 import {gameProperties} from '../../site/js/analytics.js';
 import {LAUNCH, LAUNCH_READY, RECORD_RUN} from '../../site/js/config.js';
@@ -33,7 +36,8 @@ export function browserStorage(entries = [], {failWrites = false, failOnWrite = 
 export function controllerApp({P = core.dayParams(1), storage = browserStorage(), deviceReduced = false,
   kind = 'today', review = false, practice = false, previousMode = 'hold', calendarDate,
   search = kind === 'archive' ? '?day=' + P.key : '',
-  hash = kind === 'preview' && !review ? '#day' + P.num : '', designPreview = false} = {}){
+  hash = kind === 'preview' && !review ? '#day' + P.num : '', designPreview = false,
+  controllerDrawing = false} = {}){
   let now = 1000, calendar = (calendarDate ?? new Date(P.key + 'T12:00:00')).getTime();
   class AppDate extends Date {
     constructor(...args){ super(...(args.length ? args : [calendar])); }
@@ -63,9 +67,12 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     addEventListener:(name, callback) => listen(documentListeners, name, callback)};
   const location = {search, hash, pathname:'/', href:'https://dailysplit.us/' + search + hash,
     reload:() => reloads.push({at:calendar, search:location.search, hash:location.hash})};
+  const scene = {style:{}};
   const context = vm.createContext({...core, ...motion, ...rounds, LAUNCH, LAUNCH_READY, RECORD_RUN,
     Date:AppDate, Math, URLSearchParams, themeReview:review ? {} : null, $:element, document,
-    scene:{style:{}}, AudioContext, location,
+    scene, AudioContext, location, focusedGlassBox, interpolateGlassBox, renderVessel, targetHintOpacity,
+    ctx:{}, makeBackdrop:() => ({}),
+    drawScene(_ctx, options){ draws.push({...structuredClone(options), state:vm.runInContext('S.state', context), filter:scene.style.filter}); },
     window:{AudioContext, location, matchMedia:() => ({matches:deviceReduced, addEventListener(){}}),
       addEventListener:(name, callback) => listen(windowListeners, name, callback)},
     localStorage:storage.localStorage, performance:{now:() => now}, requestAnimationFrame(){},
@@ -87,6 +94,10 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     section('const S = ', 'const analytics = '),
     section('function sipKind(){', '// ---------- storage ----------'),
     section('function load(){', '// ---------- layout and drawing ----------'),
+    ...(controllerDrawing ? [
+      'let W = 375, H = 812, DPR = 1, backdrop = null, backdropKey = "";',
+      section('function glassBox(', '// ---------- the drink ----------')
+    ] : []),
     section('function begin(){', '// ---------- results and sharing ----------'),
     section('function renderStats(){', 'let toastTimer = '),
     section('const down = ', 'for (const target of '),
@@ -125,7 +136,7 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     if (S.state !== 'between' && S.state !== 'result' && S.state !== 'blocked') throw new Error('Sip did not settle: ' + S.state);
   };
   const sip = (heldFrames = 30) => { begin(); ready(); press(); advance(heldFrames); release(); settle(); return S.progress.rounds.at(-1); };
-  return {S, storage, context, initial, element, events, draws, messages, reloads, location, audio, advance, begin, ready, press, release, settle, sip,
+  return {S, storage, context, initial, element, events, draws, messages, reloads, location, scene, audio, advance, begin, ready, press, release, settle, sip,
     restore:() => run('restoreSession();'),
     practice:() => element('practiceBtn').click(), reviewRefill:() => element('reviewRefill').click(),
     finish:() => { context.frameTime = now; return run('finish(frameTime);'); },
