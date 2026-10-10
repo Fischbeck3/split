@@ -210,7 +210,7 @@ function completeSip({saved = false, practice = false, kind = 'today', mode = 'h
   const context = {S, analytics:{capture:(event, props) => events.push({event, props})}, gameProperties,
     refreshDayStatus(){}, scoreFromOffset, canRecordChallenge:({kind}) => kind === 'today',
     load:() => store, save(){}, toast(){}, draw(){}, setPhase:phase => { S.state = phase; },
-    $:() => element, renderResult(){}, renderStats(){}, sound:{land(){}}, PERFECT:.02, Date};
+    $:() => element, renderResult(){}, renderStats(){}, PERFECT:.02, Date};
   vm.runInNewContext(finishSource + '\nfinish(1000);', context);
   return {events, S};
 }

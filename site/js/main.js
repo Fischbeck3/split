@@ -9,7 +9,6 @@ import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
 import {SITE_URL, LAUNCH, LAUNCH_READY, RECORD_RUN} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
-import {createSipSound} from './sound.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from './theme-review.js';
@@ -42,12 +41,6 @@ const analytics = createAnalytics(themeReview ? {projectKey:''} : {});
 function resultProperties(){
   return analyticsResultProperties(S);
 }
-function renderSound(enabled){
-  $('soundBtn').setAttribute('aria-pressed', String(enabled));
-  $('soundBtn').setAttribute('aria-label', 'Turn sip sounds ' + (enabled ? 'off' : 'on'));
-  $('soundBtn').title = 'Sound ' + (enabled ? 'on' : 'off');
-}
-const sound = createSipSound({onChange:renderSound});
 const scene = $('scene'), ctx = scene.getContext('2d');
 $('startHold').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
@@ -123,7 +116,6 @@ function draw(now){
 function begin(){
   S.mode = 'hold';
   refreshDayStatus();
-  sound.stop();
   $('result').classList.remove('fresh-sip');
   setPhase('ready'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
@@ -152,7 +144,6 @@ function frame(now){
     setPhase('drinking'); if (!S.holdStart) S.holdStart = now;
     drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
     analytics.capture('sip_started', {...gameProperties(S), counts:!S.practice && canRecordChallenge({key:S.key, kind:S.kind})});
-    sound.start(S.theme);
     $('footPill').textContent = 'Release early. Let the sip settle.';
   }
   if (S.state === 'drinking'){
@@ -166,7 +157,6 @@ function frame(now){
   }
   S.motion = stepMotion(S.P, S.motion, {drinking: S.state === 'drinking',
     input: S.state === 'drinking' ? Math.min(1, rate() / S.P.K) : 0, level:S.L, elapsed, dt, reducedMotion: stillGlass()});
-  sound.update(S.theme, {drinking:S.state === 'drinking', elapsed:S.drink?.elapsed || 0});
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && now - S.lockAt > 350) finish(now);
   // Ambient layers need only 30 fps at rest; the sip retains its full frame rate.
   if (S.state !== 'result' && ((S.state === 'drinking' || S.state === 'locked') || now - S.drawnAt >= 1000 / 30)){
@@ -207,7 +197,6 @@ function finish(now){
   setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
   renderResult(); renderStats();
   $('result').classList.add('fresh-sip');
-  sound.land(S.theme, {perfect:!S.result.drained && Math.abs(S.result.f) <= PERFECT});
 }
 
 // ---------- results and sharing ----------
@@ -353,7 +342,7 @@ for (const target of [scene, $('drinkControl')]){
 window.addEventListener('pointerup', up);
 window.addEventListener('blur', up);
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden){ up(); sound.suspend(); if (S.state === 'drinking') lock(performance.now()); }
+  if (document.hidden){ up(); if (S.state === 'drinking') lock(performance.now()); }
   else if (S.P) tickClock();
 });
 document.addEventListener('keydown', e => {
@@ -365,15 +354,6 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => { if (e.code === 'Space') up(); });
 $('drinkControl').addEventListener('keydown', e => { if (e.code === 'Enter' && !e.repeat){ e.preventDefault(); down(e); } });
 $('drinkControl').addEventListener('keyup', e => { if (e.code === 'Enter') up(); });
-$('soundBtn').addEventListener('click', async () => {
-  const btn = $('soundBtn'), requested = !sound.enabled;
-  btn.disabled = true; btn.setAttribute('aria-busy', 'true');
-  try {
-    await sound.setEnabled(requested);
-    renderSound(sound.enabled);
-    if (requested && !sound.enabled) toast('Sip sounds are unavailable here. You can keep playing.');
-  } finally { btn.disabled = false; btn.removeAttribute('aria-busy'); }
-});
 $('startHold').addEventListener('click', begin);
 $('shareBtn').addEventListener('click', share);
 $('saveCardBtn').addEventListener('click', savePostcard);

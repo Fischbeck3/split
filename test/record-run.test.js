@@ -67,7 +67,7 @@ function sipTab(localStorage, {offset = 0, mode = 'hold'} = {}){
   const context = storageContext(localStorage, {S, Date:PlayDate, gameProperties, canRecordChallenge,
     scoreFromOffset, PERFECT, analytics:{capture:(event, properties) => events.push({event, properties})},
     refreshDayStatus(){}, toast(){}, draw(){}, setPhase:phase => { S.state = phase; },
-    $:() => element, renderResult(){}, renderStats(){}, sound:{land(){}}});
+    $:() => element, renderResult(){}, renderStats(){}});
   vm.runInContext(finishSource, context);
   return {S, events, context, finish:() => vm.runInContext('finish(1000);', context)};
 }

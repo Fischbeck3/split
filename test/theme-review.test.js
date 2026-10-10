@@ -105,7 +105,7 @@ test('the actual completion controller preserves existing daily storage through 
       canRecordChallenge, scoreFromOffset, PERFECT, gameProperties,
       refreshDayStatus(){}, analytics:{capture(){}}, toast(){}, draw(){},
       setPhase:phase => { S.state = phase; }, $:() => element,
-      renderResult(){}, renderStats(){}, sound:{land(){}}});
+      renderResult(){}, renderStats(){}});
     vm.runInContext(storeSource + '\n' + storageSource + '\n' + finishSource, context);
     for (const offset of [0, .3, -.2]){
       S.state = 'locked'; S.L = P.markY + offset * P.markH;

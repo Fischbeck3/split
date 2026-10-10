@@ -18,12 +18,6 @@ button,a,summary{outline-offset:5px}
 canvas#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;-webkit-touch-callout:none}
 .hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 26px 0;z-index:3;pointer-events:none}
 .hud a{pointer-events:auto}
-.hud-tools{display:flex;align-items:center;gap:12px;pointer-events:auto}
-.sound-button{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:8px;color:var(--fg);background:transparent}
-.sound-button:hover{background:var(--sheet)}
-.sound-button .sound-waves{display:none}
-.sound-button[aria-pressed=true] .sound-waves{display:block}
-.sound-button[aria-pressed=true] .sound-slash{display:none}
 .wordmark{font:900 36px/1 var(--display);letter-spacing:-.035em;color:var(--fg);text-decoration:none}
 .split-dot{color:var(--accent)}
 .day-number{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.035em}
@@ -115,7 +109,7 @@ body.theme-review .live-controls{bottom:calc(116px + env(safe-area-inset-bottom,
 .noscript{position:absolute;inset:auto 24px 50px;text-align:center}
 @media(min-width:700px){.app{box-shadow:0 10px 60px #0003}.hud{padding-inline:32px}.overlay{padding-inline:36px}.day-heading{top:94px}}
 @media(max-height:740px){.hud{padding-top:14px}.wordmark{font-size:30px}.day-heading{top:66px}.day-heading h1{font-size:33px}.day-heading p{font-size:13px}.mode{top:133px}.sheet{gap:6px;padding:12px}.big{min-height:48px}.goal-row h2{font-size:22px}.result{padding-top:68px}.result-sheet{gap:8px}.cardimg{max-height:34dvh}.result-top h2{font-size:24px}}
-@media(max-height:740px){.day-heading{top:60px}.day-heading h1{font-size:30px}.day-heading .memory-line{font-size:12px;margin-top:6px}.postcard-stage{width:min(100%,42dvh)}.friend-invite{font-size:13px;line-height:1.3;padding:0;margin:0;border:0}.hud-tools{gap:8px}}
+@media(max-height:740px){.day-heading{top:60px}.day-heading h1{font-size:30px}.day-heading .memory-line{font-size:12px;margin-top:6px}.postcard-stage{width:min(100%,42dvh)}.friend-invite{font-size:13px;line-height:1.3;padding:0;margin:0;border:0}}
 @media(max-height:650px){.intro{padding-top:68px}.day-heading h1{font-size:26px}.day-heading .memory-line,.goal-row .feel{display:none}.mode{top:116px}.sheet .instructions{font-size:13px}#startHold{min-height:52px}.intro-meta{gap:6px 10px}.daily-note{font-size:11px}.intro-meta summary{min-height:34px}}
 @media(max-height:650px){.live-controls{bottom:calc(20px + env(safe-area-inset-bottom,0px));padding:12px}.live-goal{font-size:22px;margin-bottom:4px}.live-status{font-size:13px;margin-bottom:12px}.drink-control{min-height:52px}body.preview .live-controls{bottom:calc(38px + env(safe-area-inset-bottom,0px))}}
 @media(max-height:650px){body.theme-review .live-controls{bottom:calc(108px + env(safe-area-inset-bottom,0px))}body.theme-review .overlay{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))}}
