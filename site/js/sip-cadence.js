@@ -1,7 +1,8 @@
 // The staged flow lives below both the round model and the fluid integrator.
 // Sample at integration time, rather than animation-frame boundaries, so every
 // device gets the same tipsy/drunk pour. Existing unstaged glasses return 1.
-const MAX_AMPLITUDE = .30;
+// Admit the full Drunk profile while keeping malformed inputs bounded.
+const MAX_AMPLITUDE = .345;
 
 export function stageCadence(P, elapsed = 0){
   const amplitude = Number.isFinite(P?.sipCadenceAmplitude)

@@ -5,8 +5,8 @@ import {stageCadence} from './sip-cadence.js';
 
 export const ROUND_STAGES = Object.freeze([
   Object.freeze({label:'Sober', blur:0, sway:0, cadenceAmplitude:0, cadencePeriod:1}),
-  Object.freeze({label:'Tipsy', blur:.3, sway:.6, cadenceAmplitude:.13, cadencePeriod:.92}),
-  Object.freeze({label:'Drunk', blur:1.05, sway:1.45, cadenceAmplitude:.30, cadencePeriod:.68})
+  Object.freeze({label:'Tipsy', blur:.345, sway:.69, cadenceAmplitude:.1495, cadencePeriod:.92}),
+  Object.freeze({label:'Drunk', blur:1.2075, sway:1.6675, cadenceAmplitude:.345, cadencePeriod:.68})
 ]);
 
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
