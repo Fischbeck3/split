@@ -198,7 +198,7 @@ test('manual fallback and clipboard failure have separate observable outcomes', 
   assert.equal(events[1].props.stage, 'clipboard'); assert.equal(events[2].props.source, 'copy_button');
 });
 
-test('daily telemetry counts only the third completion and reports the best sip even when the last sip drains', () => {
+test('daily telemetry counts only the third completion and reports its average while retaining a worse final sip', () => {
   const app = controllerApp();
   app.sip(240); app.sip(200); app.sip(400);
   const starts = app.events.filter(event => event.event === 'sip_started');
@@ -214,14 +214,23 @@ test('daily telemetry counts only the third completion and reports the best sip 
   const last = completions.at(-1).properties, third = app.S.result.rounds[2];
   assert.ok(app.S.result.rounds[0].score > third.score, 'the third sip must be worse to expose a last-score reporting regression');
   assert.equal(third.drained, true);
-  assert.equal(last.score, app.S.result.score, 'daily dashboard score matches the official best-of-three result');
-  assert.equal(last.best_score, app.S.result.score);
+  const average = Math.round(app.S.result.rounds.reduce((sum, round) => sum + round.score, 0) / 3);
+  assert.equal(last.score, average, 'daily dashboard score matches the official three-sip average');
+  assert.equal(app.S.result.score, average);
+  assert.equal(last.average_score, average);
+  assert.equal(last.best_score, app.S.result.bestScore);
+  assert.equal(last.best_score, app.S.result.rounds[0].score);
+  assert.ok(last.score < last.best_score, 'the drained third sip lowers the average instead of being hidden by the best sip');
   assert.equal(last.drained, false, 'the official best sip did not drain');
   assert.equal(last.sip_score, third.score, 'individual third-sip score is still available');
   assert.equal(last.sip_drained, true);
   assert.deepEqual(completions.slice(0, 2).map(event => event.properties.score), app.S.result.rounds.slice(0, 2).map(round => round.score));
   assert.deepEqual(completions.map(event => event.properties.sip_score), app.S.result.rounds.map(round => round.score));
   assert.deepEqual(completions.map(event => event.properties.sip_drained), app.S.result.rounds.map(round => round.drained));
+  assert.deepEqual(completions.map(event => event.properties.average_score), [
+    app.S.result.rounds[0].score,
+    Math.round((app.S.result.rounds[0].score + app.S.result.rounds[1].score) / 2), average
+  ]);
 });
 
 test('complete practice, archive and preview rounds emit honest telemetry without daily writes', () => {

@@ -7,12 +7,13 @@ import {buildShareText, drawShareCard} from '../site/js/share.js';
 import {readFriendChallenge} from '../site/js/friend.js';
 import {shareResultText} from '../site/js/share-actions.js';
 
-const benchmarkLink = (base, {num, score = 100, f = 0, kind = 'daily', preview = false, drained = false}) => {
+const benchmarkLink = (base, {num, score = 100, f = 0, kind = 'daily', preview = false, drained = false, rounds = null}) => {
   const link = new URL(base);
   if (!preview) link.searchParams.set('day', keyForDay(num));
   link.searchParams.set('vs', String(score)); link.searchParams.set('f', String(f));
   link.searchParams.set('glass', dayParams(num).theme.id); link.searchParams.set('sip', kind);
   link.searchParams.set('empty', drained ? '1' : '0');
+  if (rounds) link.searchParams.set('rounds', rounds.join(','));
   if (preview) link.hash = 'day' + num;
   return link.href;
 };
@@ -50,21 +51,24 @@ const lastLine = text => text.split('\n').at(-1);
 function completedThree(P, {offsets = [-0.28, 0.04, 0.8], counts = true} = {}){
   const rounds = offsets.map(f => ({...scoreFromOffset(f, P.theme.target), f, L:P.markY + f * P.markH, counts}));
   const bestIndex = rounds.reduce((best, sip, index) => sip.score > rounds[best].score ? index : best, 0);
-  return {...rounds[bestIndex], version:2, rounds, bestIndex, done:true};
+  const averageScore = Math.round(rounds.reduce((sum, sip) => sum + sip.score, 0) / 3);
+  return {...rounds[bestIndex], version:2, rounds, bestIndex, done:true, scoring:'average', score:averageScore,
+    averageScore, bestScore:rounds[bestIndex].score, label:'Three-sip average'};
 }
 
-test('a completed round shares three truthful stage strips and challenges the best actual sip', () => {
+test('a completed round shares its rounded average, three truthful strips and best actual line', () => {
   const P = dayParams(1), result = completedThree(P);
   const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
   assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n' +
-    'Best of 3 · 98/100 · Perfect split\n' +
+    'Average of 3 · 47/100\n' +
     '⬜🟨⬜⬜⬜  Sober 42/100\n' +
     '⬜⬜🟩⬜⬜  Tipsy 98/100 · Best\n' +
     '⬜⬜⬜⬜⬜⬇️  Drunk 0/100\n' +
-    'Beat my best. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:98, f:0.04}));
+    'Beat my average. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
   const link = new URL(lastLine(text));
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
   assert.equal(friend.score, result.score); assert.equal(friend.f, result.f); assert.equal(friend.L, result.L);
+  assert.equal(friend.scoring, 'average'); assert.equal(friend.bestScore, 98); assert.deepEqual(friend.rounds, [42, 98, 0]);
   assert.equal(text.match(/ · Best/g).length, 1);
 });
 
@@ -79,11 +83,22 @@ test('three-sip shares preserve truthful preview, practice, archive and review s
     const result = completedThree(P, {counts});
     const text = buildShareText({num:2, key:P.key, theme:P.theme, result, ...flags});
     assert.ok(text.split('\n')[0].endsWith(status ? ' · ' + status : P.theme.label));
-    assert.match(text, /\nBest of 3 · 98\/100/);
+    assert.match(text, /\nAverage of 3 · 47\/100/);
     assert.equal(text.split('\n').filter(line => /Sober|Tipsy|Drunk/.test(line)).length, 3);
     assert.equal(lastLine(text), flags.review ? SITE_URL + '#admin/' + P.theme.id :
-      benchmarkLink(SITE_URL, {num:2, score:98, f:0.04, kind, preview:!!flags.preview}));
+      benchmarkLink(SITE_URL, {num:2, score:47, f:0.04, rounds:[42, 98, 0], kind, preview:!!flags.preview}));
   }
+});
+
+test('older complete v2 best-only records derive the same truthful three-sip average', () => {
+  const P = dayParams(1), current = completedThree(P);
+  const {scoring, averageScore, bestScore, ...old} = current;
+  old.score = current.bestScore; old.label = current.rounds[current.bestIndex].label;
+  assert.equal(buildShareText({num:1, key:P.key, theme:P.theme, result:old}),
+    buildShareText({num:1, key:P.key, theme:P.theme, result:current}));
+  const recording = recordingCanvas();
+  drawShareCard(recording.canvas, {num:1, key:P.key, theme:P.theme, P, result:old});
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === '47' && call[2] === 64));
 });
 
 test('partial or inconsistent stored rounds never advertise three finished attempts', () => {
@@ -93,11 +108,12 @@ test('partial or inconsistent stored rounds never advertise three finished attem
     {...finished, rounds:finished.rounds.slice(0, 2)}, {...finished, rounds:[...finished.rounds, finished.rounds[0]]},
     {...finished, bestIndex:-1}, {...finished, bestIndex:3},
     {...finished, bestIndex:0}, {...finished, drained:true},
+    {...finished, score:98}, {...finished, averageScore:48}, {...finished, bestScore:97},
     {...finished, rounds:[finished.rounds[0], null, finished.rounds[2]]},
     {...finished, rounds:[finished.rounds[0], {...finished.rounds[1], L:NaN}, finished.rounds[2]]}
   ]){
     const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
-    assert.doesNotMatch(text, /Best of 3|Sober|Tipsy|Drunk/);
+    assert.doesNotMatch(text, /Average of 3|Sober|Tipsy|Drunk/);
     assert.equal(text.split('\n').length, 5);
   }
 });
@@ -231,7 +247,7 @@ test('comparison postcards keep both true stopping lines and distinct readable l
   }
 });
 
-test('three-sip postcards preserve the full scene and best stopping line with a compact stage strip', () => {
+test('three-sip postcards show the average while clearly identifying the best photographed sip', () => {
   for (const num of [1, 2, 3, 4, 5, 6]){
     const P = dayParams(num), result = completedThree(P), recording = recordingCanvas();
     drawShareCard(recording.canvas, {num, key:P.key, theme:P.theme, P, result});
@@ -239,17 +255,18 @@ test('three-sip postcards preserve the full scene and best stopping line with a 
     assert.ok(recording.calls.some(call => call[0] === 'drawImage' && call[2] === 40 && call[3] === 246));
     const stop = recording.photoCalls.find(call => call[0] === 'fillText' && call[1] === 'STOP');
     assert.equal(stop[3], 48 + result.L * (690 - 48));
-    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Best of 3'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Average of 3'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Best sip: Tipsy 98/100'));
     assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === String(result.score) && call[2] === 64));
     const stages = ['Sober 42', 'Tipsy 98 · Best', 'Drunk 0'].map(value => recording.calls.find(call => call[0] === 'fillText' && call[1] === value));
     assert.deepEqual(stages.map(call => call.slice(2)), [[770, 1080], [770, 1138], [770, 1196]]);
-    const ink = recording.textStyles.find(style => style.text === 'Best of 3').fillStyle;
+    const ink = recording.textStyles.find(style => style.text === 'Average of 3').fillStyle;
     for (const stage of stages) assert.equal(recording.textStyles.find(style => style.text === stage[1]).fillStyle, ink,
       'every stage caption uses the card ink, even after a colored score band');
     assert.ok(stages.every(call => call[3] > 996 && call[3] < 1230), 'all scores fit between the image and footer');
     assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 15, 'five physical bands for each of three sips');
     assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === '4% of mark low'));
-    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my best. Your turn.'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my average. Your turn.'));
   }
 });
 
@@ -260,5 +277,15 @@ test('a partial round keeps the original single-sip postcard and no stage summar
   assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === String(result.score) && call[3] === 1189));
   assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 5);
   assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my sip. Your turn.'));
-  assert.ok(!recording.calls.some(call => call[0] === 'fillText' && /Best of 3|Sober|Tipsy|Drunk/.test(call[1])));
+  assert.ok(!recording.calls.some(call => call[0] === 'fillText' && /Average of 3|Sober|Tipsy|Drunk/.test(call[1])));
+});
+
+test('average comparison postcards label the shared best line separately from the shared average', () => {
+  const P = dayParams(1), result = completedThree(P), recording = recordingCanvas();
+  const friend = {score:93, f:0.052, L:P.markY + 0.052 * P.markH, drained:false, kind:'daily', scoring:'average', rounds:[96, 86, 97], bestScore:97};
+  drawShareCard(recording.canvas, {num:1, key:P.key, theme:P.theme, P, result, friend});
+  const sharedLabel = recording.photoCalls.find(call => call[0] === 'fillText' && call[1] === 'SHARED BEST 97');
+  assert.ok(sharedLabel);
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'You 47 · Shared average 93'));
+  assert.ok(!recording.photoCalls.some(call => call[0] === 'fillText' && call[1] === 'SHARED 93'));
 });

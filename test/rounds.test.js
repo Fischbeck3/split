@@ -24,7 +24,10 @@ function completed(scores){
 
 test('three stage profiles preserve each released glass, target and base rate', () => {
   assert.deepEqual(ROUND_STAGES.map(stage => stage.label), ['Sober','Tipsy','Drunk']);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.blur), [0,.3,.7]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.blur), [0,.3,1.05]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.sway), [0,.6,1.45]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadenceAmplitude), [0,.13,.30]);
+  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadencePeriod), [1,.92,.68]);
   assert.ok(Object.isFrozen(ROUND_STAGES));
   const glassFields = ['num','key','theme','markY','markH','K','wobble','choppy'];
   for (let num = 1; num <= THEMES.length; num++){
@@ -120,7 +123,7 @@ test('malformed cadence knobs and negative rates cannot reverse or poison the si
   for (const period of [-1, 0, NaN, Infinity, 'fast']){
     for (const elapsed of [-1, NaN, Infinity]){
       const multiplier = stageCadence({sipCadenceAmplitude:999, sipCadencePeriod:period, sipCadencePhase:NaN}, elapsed);
-      assert.ok(Number.isFinite(multiplier) && multiplier >= .76 && multiplier <= 1.24);
+      assert.ok(Number.isFinite(multiplier) && multiplier >= .70 && multiplier <= 1.30);
     }
   }
   assert.equal(roundRate({...roundParams(P, 2), K:-.1}, 1), 0);
@@ -134,30 +137,46 @@ test('malformed cadence knobs and negative rates cannot reverse or poison the si
   }
 });
 
-test('the daily round becomes done only on sip three and keeps the best score with earliest ties', () => {
+test('the daily round becomes done only on sip three and averages scores while keeping the earliest best sip', () => {
   const initial = blank();
-  assert.deepEqual(initial, {version:2, rounds:[], bestIndex:null, done:false,
+  assert.deepEqual(initial, {version:2, scoring:'average', rounds:[], bestIndex:null, bestScore:null, done:false,
     num:P.num, theme:P.theme.id, pending:null});
   const first = completed([82]);
   assert.equal(first.done, false);
   assert.equal(first.bestIndex, 0);
   assert.equal(first.score, 82);
-  assert.equal(completed([82,91]).done, false);
+  const second = completed([82,91]);
+  assert.equal(second.done, false);
+  assert.equal(second.score, 87);
+  assert.equal(second.averageScore, 87);
+  assert.equal(second.bestScore, 91);
   const full = completed([82,91,91]);
   assert.equal(full.done, true);
   assert.equal(full.bestIndex, 1);
-  assert.equal(full.score, 91);
+  assert.equal(full.score, 88);
+  assert.equal(full.averageScore, 88);
+  assert.equal(full.bestScore, 91);
+  assert.equal(full.scoring, 'average');
+  assert.equal(full.label, 'Three-sip average');
+  assert.equal(full.tone, 'good');
   assert.deepEqual(full.rounds.map(round => round.score), [82,91,91]);
   assert.equal(reserveRound(full, P, 'fourth').accepted, false);
   assert.deepEqual(normalizeRoundRecord(full, P), full);
   assert.equal(summarizeRounds([sip(88),sip(88),sip(1)]).bestIndex, 0);
 });
 
-test('top-level score, line, mode and attribution belong to the winning sip', () => {
+test('the shared average uses the best real sip for its line, mode and attribution', () => {
   const early = sip(12, -.4, {mode:'tilt', attribution:{campaign_id:'opening'}, t:'2026-10-09T10:00:00.000Z'});
   const best = sip(97, .04, {label:'Perfect split', tone:'good', attribution:{campaign_id:'opening', campaign_day:1}, custom:{note:'second'}});
   const summary = summarizeRounds([early,best,sip(38,.3)]);
-  for (const [key, value] of Object.entries(best)) assert.deepEqual(summary[key], value, key);
+  for (const [key, value] of Object.entries(best)){
+    if (!['score','label','tone'].includes(key)) assert.deepEqual(summary[key], value, key);
+  }
+  assert.equal(summary.score, 49);
+  assert.equal(summary.averageScore, 49);
+  assert.equal(summary.bestScore, 97);
+  assert.equal(summary.label, 'Three-sip average');
+  assert.equal(summary.tone, 'warn');
   assert.equal(summary.bestIndex, 1);
   best.attribution.campaign_id = 'changed';
   assert.equal(summary.attribution.campaign_id, 'opening', 'winner metadata is copied rather than shared');
@@ -170,6 +189,9 @@ test('a valid same-glass legacy result becomes the first sober sip without consu
   assert.equal(migrated.version, 2);
   assert.equal(migrated.done, false);
   assert.equal(migrated.score, 87, 'do not recompute a released saved score from offset');
+  assert.equal(migrated.averageScore, 87);
+  assert.equal(migrated.bestScore, 87);
+  assert.equal(migrated.scoring, 'average');
   assert.equal(migrated.rounds.length, 1);
   assert.equal(migrated.bestIndex, 0);
   assert.equal(migrated.rounds[0].done, undefined);
@@ -204,7 +226,9 @@ test('interrupted reservations count as misses and invalidate a live older tab',
   assert.equal(recovered.rounds.length, 2);
   assert.equal(recovered.done, false);
   assert.equal(recovered.pending, null);
-  assert.equal(recovered.score, 64);
+  assert.equal(recovered.score, 32);
+  assert.equal(recovered.averageScore, 32);
+  assert.equal(recovered.bestScore, 64);
   assert.deepEqual(recovered.rounds[1], {score:0, f:2, L:DRAIN_LEVEL, drained:true,
     label:'Interrupted sip', tone:'miss', mode:'hold', abandoned:true});
   assert.equal(completeRound(recovered, P, 'unfinished', sip(100)).accepted, false);
@@ -212,7 +236,11 @@ test('interrupted reservations count as misses and invalidate a live older tab',
   const third = recoverInterruptedRound(reserveRound(recovered, P, 'unfinished-third').record, P);
   assert.equal(third.done, true);
   assert.equal(third.rounds.length, 3);
-  assert.equal(third.score, 64);
+  assert.equal(third.score, 21);
+  assert.equal(third.averageScore, 21);
+  assert.equal(third.bestScore, 64);
+  assert.equal(third.label, 'Three-sip average');
+  assert.equal(third.tone, 'miss');
 });
 
 test('stored attempts reject other glasses, dates, future schemas and malformed round data', () => {
@@ -246,7 +274,7 @@ test('stored attempts reject other glasses, dates, future schemas and malformed 
   assert.deepEqual(completeRound(reserved, P, 'reserved', sip(-1)).record, reserved);
 });
 
-test('normalization derives completion and winner from rounds rather than stale top-level fields', () => {
+test('normalization derives completion, average and representative sip from preserved rounds rather than stale fields', () => {
   const first = completed([73]);
   const stale = {...first, done:true, bestIndex:2, score:100, L:0, f:0};
   const repaired = normalizeRoundRecord(stale, P);
@@ -254,13 +282,27 @@ test('normalization derives completion and winner from rounds rather than stale 
   assert.equal(repaired.bestIndex, 0);
   assert.equal(repaired.score, 73);
   assert.equal(repaired.L, first.rounds[0].L);
+  const bestScoredV2 = {...completed([30,90,60]), score:90, label:'Split', tone:'good',
+    averageScore:99, bestScore:100, scoring:'best'};
+  const recomputed = normalizeRoundRecord(bestScoredV2, P);
+  assert.equal(recomputed.version, 2, 'existing saved schema is retained');
+  assert.equal(recomputed.done, true);
+  assert.equal(recomputed.score, 60);
+  assert.equal(recomputed.averageScore, 60);
+  assert.equal(recomputed.bestScore, 90);
+  assert.equal(recomputed.bestIndex, 1);
+  assert.equal(recomputed.label, 'Three-sip average');
+  assert.equal(recomputed.tone, 'warn');
+  assert.equal(recomputed.scoring, 'average');
+  assert.deepEqual(recomputed.rounds, bestScoredV2.rounds, 'all individual attempts stay intact');
   assert.deepEqual(normalizeRoundRecord({...completed([1,2,3]), pending:{token:'fourth',index:3}}, P), null);
 });
 
 test('safe result extras survive JSON while cycles, non-finite values and prototype keys cannot corrupt the record', () => {
   const extra = {attribution:{campaign_id:'opening', undefined:undefined, infinity:Infinity},
     custom:{nested:[1, 'two', null]}, callback:() => {}, invalid:Infinity,
-    done:true, bestIndex:2, rounds:['injected'], pending:{token:'injected'}, version:99};
+    done:true, bestIndex:2, bestScore:100, averageScore:100, scoring:'best',
+    rounds:['injected'], pending:{token:'injected'}, version:99};
   extra.cycle = extra;
   const result = JSON.parse('{"score":80,"f":0.1,"L":0.6,"__proto__":{"polluted":true}}');
   Object.assign(result, extra);
@@ -270,6 +312,10 @@ test('safe result extras survive JSON while cycles, non-finite values and protot
   assert.equal(copy.done, false);
   assert.equal(copy.pending, null);
   assert.equal(copy.rounds.length, 1);
+  assert.equal(copy.score, 80);
+  assert.equal(copy.averageScore, 80);
+  assert.equal(copy.bestScore, 80);
+  assert.equal(copy.scoring, 'average');
   assert.deepEqual(copy.attribution, {campaign_id:'opening'});
   assert.deepEqual(copy.custom, {nested:[1,'two',null]});
   assert.equal(copy.callback, undefined);
@@ -277,4 +323,52 @@ test('safe result extras survive JSON while cycles, non-finite values and protot
   assert.equal({}.polluted, undefined);
   assert.equal(Object.hasOwn(copy.rounds[0], '__proto__'), false);
   assert.equal(Object.hasOwn(copy.rounds[0], 'version'), false);
+  assert.equal(Object.hasOwn(copy.rounds[0], 'scoring'), false);
+  assert.equal(Object.hasOwn(copy.rounds[0], 'averageScore'), false);
+  assert.equal(Object.hasOwn(copy.rounds[0], 'bestScore'), false);
+});
+
+test('average rounding, zero sips and verdict thresholds use all completed attempts', () => {
+  const empty = summarizeRounds([]);
+  assert.equal(Object.hasOwn(empty, 'score'), false);
+  assert.equal(Object.hasOwn(empty, 'averageScore'), false);
+  assert.equal(empty.bestIndex, null);
+  assert.equal(empty.bestScore, null);
+  assert.equal(empty.scoring, 'average');
+  const half = summarizeRounds([sip(0), sip(1)]);
+  assert.equal(half.score, 1, 'Math.round rounds a half upward');
+  assert.equal(half.bestScore, 1);
+  assert.equal(half.done, false);
+  const zero = completed([0,0,0]);
+  assert.equal(zero.score, 0);
+  assert.equal(zero.averageScore, 0);
+  assert.equal(zero.bestScore, 0);
+  assert.equal(zero.bestIndex, 0);
+  assert.equal(zero.done, true);
+  assert.equal(zero.tone, 'miss');
+  for (const [scores, average, tone] of [
+    [[100,100,24],75,'good'], [[100,100,22],74,'warn'],
+    [[75,0,0],25,'warn'], [[72,0,0],24,'miss'], [[100,0,0],33,'warn']
+  ]){
+    const record = completed(scores);
+    assert.equal(record.score, average);
+    assert.equal(record.averageScore, average);
+    assert.equal(record.tone, tone);
+  }
+});
+
+test('a migrated legacy first sip and later completed sips contribute equally to the average', () => {
+  const legacy = {num:P.num, theme:P.theme.id, done:true, ...sip(87)};
+  const original = structuredClone(legacy);
+  let record = normalizeRoundRecord(legacy, P);
+  for (const [token, score] of [['tipsy',0], ['drunk',100]]){
+    record = completeRound(reserveRound(record, P, token).record, P, token, sip(score)).record;
+  }
+  assert.equal(record.score, 62);
+  assert.equal(record.averageScore, 62);
+  assert.equal(record.bestScore, 100);
+  assert.equal(record.bestIndex, 2);
+  assert.equal(record.done, true);
+  assert.deepEqual(record.rounds.map(round => round.score), [87,0,100]);
+  assert.deepEqual(legacy, original, 'legacy source is never reset or overwritten by the model');
 });

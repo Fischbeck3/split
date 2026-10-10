@@ -78,7 +78,7 @@ function renderChallengeStatus(now = new Date()){
     ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
     : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
     : S.storageFailed ? 'Progress stays in this tab. This round will not be saved.'
-    : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of 3 saved. Finish your round.' : 'Best of three. Same challenge for everyone.');
+    : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of 3 saved. Finish your round.' : 'All three count. Same challenge for everyone.');
   if (['approaching','ready','drinking','between'].includes(S.state)) $('hudMode').textContent = roundStatus() + ' · ' + sipKind();
   $('practiceBtn').textContent = 'Another round · ' + (S.review ? 'review' : S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
   if (S.progress?.rounds.length && !S.progress.done) $('startLabel').textContent = 'Continue · ' + ROUND_STAGES[S.progress.rounds.length].label;
@@ -262,7 +262,7 @@ function showRoundOutcome(now = performance.now()){
   const last = rounds.at(-1), best = summarizeRounds(rounds);
   renderRounds('liveRounds', rounds, -1, best.bestIndex);
   $('liveGoal').textContent = last.score + '/100';
-  $('footPill').textContent = last.label + '. Best so far: ' + best.score + '/100.';
+  $('footPill').textContent = last.label + '. Average so far: ' + best.score + '/100.';
   $('drinkControl').hidden = true; $('nextSipBtn').hidden = false;
   $('nextSipBtn').textContent = 'Next sip · ' + ROUND_STAGES[rounds.length].label;
   $('nextSipBtn').focus({preventScroll:true});
@@ -289,7 +289,7 @@ function finish(now){
     sip_score:r.score, sip_drained:S.drained,
     sip_number:S.round+1, sip_stage:ROUND_STAGES[S.round].label.toLowerCase(),
     counts:counts && !S.storageFailed && S.progress.done, new_record:counts && !S.storageFailed && S.progress.done,
-    round_complete:S.progress.done, best_score:S.progress.score}, finishedAt);
+    round_complete:S.progress.done, best_score:S.progress.bestScore, average_score:S.progress.averageScore}, finishedAt);
   showRoundOutcome(now);
 }
 
@@ -306,20 +306,22 @@ function renderResult(){
   const saved = load().days[S.key];
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
+  $('resStrip').hidden = r.rounds?.length === 3;
   $('resultRounds').hidden = !r.rounds?.length;
   if (r.rounds?.length) renderRounds('resultRounds', r.rounds, -1, r.bestIndex);
   if (r.rounds?.length === 3){
-    $('resKind').textContent += ' · Best of 3';
-    $('resDetail').textContent = 'Best sip: ' + ROUND_STAGES[r.bestIndex].label + '. ' + $('resDetail').textContent;
+    $('resDetail').textContent = 'Best sip: ' + ROUND_STAGES[r.bestIndex].label + ' · ' + r.bestScore + '/100. ' + $('resDetail').textContent;
   }
   const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
   $('friendComparison').hidden = !comparison;
   if (comparison){
     const kind = S.friend.kind === 'daily' || S.friend.kind === 'archive-saved' ? '' : ' (' + S.friend.kind + ')';
-    $('friendComparison').textContent = 'You ' + r.score + ' · Shared sip ' + S.friend.score + kind + '. ' + comparison.text;
+    $('friendComparison').textContent = 'You ' + r.score + ' · Shared ' + (S.friend.scoring === 'average' ? 'average ' : 'sip ') + S.friend.score + kind + '. ' + comparison.text;
     $('friendComparison').dataset.outcome = comparison.status;
   }
-  $('result').dataset.perfect = String(!r.drained && Math.abs(r.f) <= PERFECT);
+  $('result').dataset.perfect = String(r.rounds?.length === 3
+    ? r.rounds.every(sip => !sip.drained && Math.abs(sip.f) <= PERFECT)
+    : !r.drained && Math.abs(r.f) <= PERFECT);
   $('result').style.setProperty('--stop-line', ((48 + r.L * 642) / 750 * 100) + '%');
   $('result').classList.remove('fresh-sip');
   $('shareText').textContent = shareText(); $('shareText').closest('details').open = false;
@@ -329,7 +331,7 @@ function renderResult(){
   $('result').hidden = false;
   // Prepare the postcard separately; sharing the result never waits for its image.
   const c = drawCard(); $('cardImg').src = c.toDataURL('image/png'); $('cardImg').hidden = false;
-  $('cardImg').alt = (r.rounds?.length === 3 ? 'Best of three. ' : '') + S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both stopping lines are shown.' : '');
+  $('cardImg').alt = (r.rounds?.length === 3 ? 'Average of three. ' : '') + S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both best stopping lines are shown.' : '');
   S.card = new Promise(res => c.toBlob(blob => res({canvas: c, blob}), 'image/png'));
   $('result').scrollTop = 0;
 }
@@ -394,7 +396,11 @@ async function copyText(){
 function renderStats(){
   const st = LAUNCH_READY ? load() : {days:{}}, keys = Object.keys(st.days).filter(k => st.days[k].done);
   let best = null, perfect = 0;
-  for (const k of keys){ const d = st.days[k]; if (best === null || d.score > best) best = d.score; if (Math.abs(d.f) <= PERFECT && !d.drained) perfect++; }
+  for (const k of keys){
+    const saved = st.days[k], d = saved.version === 2 && Array.isArray(saved.rounds) ? summarizeRounds(saved.rounds) : saved;
+    if (best === null || d.score > best) best = d.score;
+    if (d.rounds?.length === 3 ? d.rounds.every(sip => Math.abs(sip.f) <= PERFECT && !sip.drained) : Math.abs(d.f) <= PERFECT && !d.drained) perfect++;
+  }
   let streak = 0; const cur = new Date(); cur.setHours(0, 0, 0, 0);
   if (!(st.days[dayKey(cur)] && st.days[dayKey(cur)].done)) cur.setDate(cur.getDate() - 1);
   while (st.days[dayKey(cur)] && st.days[dayKey(cur)].done){ streak++; cur.setDate(cur.getDate() - 1); }
@@ -478,9 +484,10 @@ $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
   if (!canRecordChallenge({key:S.key, kind:S.kind})) return;
   const rec = load().days[S.key]; if (!rec || !rec.done || rec.theme !== S.theme.id) return;
-  S.practice = false; S.mode = rec.mode; S.L = rec.L;
   S.progress = normalizeRoundRecord(rec, S.baseP);
-  S.result = {...rec, counts:true}; setPhase('result'); draw(performance.now()); renderResult();
+  if (!S.progress?.done) return;
+  S.practice = false; S.mode = S.progress.mode; S.L = S.progress.L;
+  S.result = {...S.progress, counts:true}; setPhase('result'); draw(performance.now()); renderResult();
 });
 window.addEventListener('hashchange', () => location.reload());
 window.addEventListener('resize', () => {
@@ -518,7 +525,7 @@ async function init(){
   $('friendInvite').hidden = !S.friend;
   if (S.friend){
     const kind = S.friend.kind === 'daily' || S.friend.kind === 'archive-saved' ? '' : ' (' + S.friend.kind + ')';
-    $('friendInvite').textContent = 'Your friend’s ' + S.friend.score + '/100' + kind + ' to beat.';
+    $('friendInvite').textContent = 'Your friend’s ' + (S.friend.scoring === 'average' ? 'average: ' : '') + S.friend.score + '/100' + kind + ' to beat.';
   }
   $('introGoal').textContent = $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
   $('introFeel').textContent = S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour');
@@ -564,7 +571,7 @@ async function init(){
       writeProgress(S.progress);
       toast('This browser’s unfinished round could not be read. A fresh round is ready.');
     }
-    if (rec.pending || rec.version !== 2) writeProgress(S.progress);
+    if (rec.pending || rec.version !== 2 || rec.scoring !== 'average') writeProgress(S.progress);
     renderRounds('introRounds', S.progress.rounds, S.progress.done ? -1 : S.progress.rounds.length);
     if (S.progress.done){
       S.L = S.progress.L; S.mode = S.progress.mode || 'hold'; S.focus = 1;
