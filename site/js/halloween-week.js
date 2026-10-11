@@ -4,6 +4,8 @@ import {renderVessel} from './render-vessels.js';
 import {readThemeReview} from './theme-review.js';
 import {drawShareCard} from './share.js';
 import {SITE_URL} from './config.js';
+import {getPublishedEntry} from './content-calendar.js';
+import {contentReadiness} from './content-readiness.js';
 
 const NIGHTS = [
   {id:'halloween-pumpkin-porch',day:25,vessel:'Squat tumbler · orange pumpkin ale'},
@@ -110,7 +112,10 @@ function build(night){
   sceneLink.append(canvas,loadingLabel);
   const heading = node('h3','',theme.label); heading.id = titleId;
   const dateLine = node('p','night-date'),date = node('time','','October ' + night.day);
-  date.dateTime = '2026-10-' + night.day; dateLine.append(date,document.createTextNode(' · proposed night'));
+  date.dateTime = '2026-10-' + night.day;
+  const entry = getPublishedEntry(date.dateTime);
+  const scheduled = entry?.themeId === night.id && contentReadiness(entry).ready;
+  dateLine.append(date,document.createTextNode(scheduled ? ' · scheduled' : ' · proposed night'));
   const beer = node('p','beer-name',theme.name),memory = node('p','theme-memory',theme.memory);
   const vessel = node('p','vessel-info',night.vessel + ' · split ' + theme.target);
   const tryLink = node('a','try-link','Try this glass'); tryLink.href = sceneLink.href;

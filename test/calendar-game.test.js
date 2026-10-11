@@ -95,15 +95,15 @@ test('adding a holiday glass cannot reroll the existing automatic calendar', () 
 });
 
 test('a published date pin changes that date while drafts leave live play alone', () => {
-  const n = 22, date = keyForDay(n), before = themeForDay(n);
+  const n = 22, date = keyForDay(n), baseline = futureCalendar(), before = themeForDay(n, baseline);
   const chosen = before.id === 'pub' ? 'beach' : 'pub';
-  const draft = {...futureCalendar(), drafts:{[date]:{themeId:chosen, campaignId:'halloween-2026', notes:'A possible holiday glass'}}};
-  assert.deepEqual(snapshot(n, draft), snapshot(n));
+  const draft = {...futureCalendar(), drafts:{[date]:{themeId:chosen, campaignId:'unreviewed-holiday-2026', notes:'A possible holiday glass'}}};
+  assert.deepEqual(snapshot(n, draft), snapshot(n, baseline));
   assert.equal(getCalendarAttribution(date, themeForDay(n, draft), draft).campaign_id, 'none');
-  const published = {...draft, days:{...CALENDAR.days, [date]:{themeId:chosen, campaignId:'halloween-2026'}}, campaigns:{...draft.campaigns, 'halloween-2026':{...draft.campaigns['halloween-2026'], status:'published'}}};
+  const published = {...draft, days:{...baseline.days, [date]:{themeId:chosen, campaignId:'unreviewed-holiday-2026'}}, campaigns:{...draft.campaigns, 'unreviewed-holiday-2026':{...draft.campaigns['unreviewed-holiday-2026'], status:'published'}}};
   assert.equal(themeForDay(n, published).id, chosen);
-  assert.equal(getCalendarAttribution(date, themeForDay(n, published), published).campaign_id, 'halloween-2026');
-  for (const neighbor of [n - 1, n + 1, n + 2]) assert.deepEqual(snapshot(neighbor, published), snapshot(neighbor));
+  assert.equal(getCalendarAttribution(date, themeForDay(n, published), published).campaign_id, 'unreviewed-holiday-2026');
+  for (const neighbor of [n - 1, n + 1, n + 2]) assert.deepEqual(snapshot(neighbor, published), snapshot(neighbor, baseline));
 });
 
 test('future automatic dates use only the six developed glasses', () => {
@@ -111,12 +111,12 @@ test('future automatic dates use only the six developed glasses', () => {
   assert.deepEqual(ROTATION_IDS, built);
   assert.deepEqual(THEMES.map(theme => theme.id), built);
   assert.ok(Object.isFrozen(ROTATION_IDS));
+  const unassigned = {...CALENDAR, days:{}};
   for (let n = 7; n <= 400; n++) {
-    const theme = themeForDay(n);
+    const theme = themeForDay(n, unassigned);
     assert.ok(built.includes(theme.id), keyForDay(n) + ': unfinished glass in automatic rotation');
-    assert.notEqual(theme.id, themeForDay(n - 1).id, keyForDay(n) + ': repeated glass');
+    assert.notEqual(theme.id, themeForDay(n - 1, unassigned).id, keyForDay(n) + ': repeated glass');
   }
   for (const n of [1000, 9999]) assert.ok(built.includes(themeForDay(n).id));
   assert.deepEqual(CALENDAR.drafts, {});
-  assert.deepEqual(Object.keys(CALENDAR.campaigns), ['opening-2026']);
 });

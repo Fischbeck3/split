@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {AUTUMN_THEME_IDS,PREVIEW_THEME_IDS,HALLOWEEN_THEME_IDS} from '../site/js/themes.js';
 import {AUTUMN_BASE_IDS,AUTUMN_GUINNESS_IDS} from '../site/js/autumn-themes.js';
+import {CALENDAR} from '../site/js/calendar-data.js';
 import {THEMES,REVIEW_THEMES,themeById,themeForDay,makeDrinkState,stepDrink} from '../site/js/core.js';
 import {SCENE_ART,SCENES,drawScene,drawBackdrop,loadSceneAssets} from '../site/js/draw.js';
 import {renderVessel} from '../site/js/render-vessels.js';
@@ -29,13 +30,13 @@ function canvas(){
   return {c,calls};
 }
 
-test('fifteen autumn seats extend only the admin catalog and retain the original public calendar',()=>{
+test('fifteen autumn seats retain the review order and leave automatic fallbacks unchanged',()=>{
   assert.equal(AUTUMN_THEME_IDS.length,15);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(HALLOWEEN_THEME_IDS.length,7);
   assert.equal(REVIEW_THEMES.length,43);assert.equal(new Set(REVIEW_THEMES.map(t=>t.id)).size,43);
   assert.deepEqual(REVIEW_THEMES.slice(-15).map(t=>t.id),AUTUMN_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   assert.equal(AUTUMN_GUINNESS_IDS.length,5);assert.equal(AUTUMN_BASE_IDS.includes('guinness-chicago'),false);
-  for (let day=1;day<=730;day++) assert.ok(THEMES.includes(themeForDay(day)),'seasonal artwork reached public day '+day);
+  for (let day=1;day<=730;day++) assert.ok(THEMES.includes(themeForDay(day,{...CALENDAR,days:{}})),'seasonal artwork reached an automatic day '+day);
   for (const id of AUTUMN_THEME_IDS){
     const theme=themeById(id),review=readThemeReview(reviewHash(id));
     assert.equal(theme.seasonal,'autumn');assert.equal(theme.preview,true);

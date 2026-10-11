@@ -3,8 +3,8 @@
 import {readFile, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
-import {THEMES} from '../site/js/core.js';
+import {CALENDAR, CALENDAR_THEME_IDS, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
+import {CALENDAR_THEMES as THEMES} from '../site/js/core.js';
 import {latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from '../site/js/content-calendar.js';
 import {checkCalendarContent} from './check-calendar-content.js';
 
@@ -66,7 +66,8 @@ export function serializeCalendarPlan(plan){
     '// Keep the legacy lists fixed so new themes cannot reroll old automatic challenges.\n' +
     'export const LEGACY_ROTATION_IDS = Object.freeze(' + JSON.stringify(LEGACY_ROTATION_IDS) + ');\n' +
     'export const LEGACY_OPENING_IDS = Object.freeze(' + JSON.stringify(LEGACY_OPENING_IDS) + ');\n' +
-    'export const ROTATION_IDS = Object.freeze(' + JSON.stringify(ROTATION_IDS) + ');\n\n' +
+    'export const ROTATION_IDS = Object.freeze(' + JSON.stringify(ROTATION_IDS) + ');\n' +
+    'export const CALENDAR_THEME_IDS = Object.freeze(' + JSON.stringify(CALENDAR_THEME_IDS) + ');\n\n' +
     'export const CALENDAR = ' + JSON.stringify(normalized, null, 2) + ';\n';
 }
 

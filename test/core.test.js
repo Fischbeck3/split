@@ -73,10 +73,10 @@ test('the same day always pours the same glass', () => {
   for (const n of [1, 2, 3, 4, 50, 365]) assert.deepEqual(dayParams(n), dayParams(n));
 });
 
-test('no glass two days running, and every glass turns up', () => {
+test('no glass two days running, and every automatic fallback turns up', () => {
   const seen = new Set();
   for (const n of DAYS){
-    seen.add(themeForDay(n).id);
+    seen.add(themeForDay(n, {days:{}}).id);
     assert.notEqual(themeForDay(n).id, themeForDay(n + 1).id, 'day ' + n + ' and ' + (n + 1));
   }
   assert.equal(seen.size, THEMES.length);

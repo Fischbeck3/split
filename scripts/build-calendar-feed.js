@@ -5,7 +5,7 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {CALENDAR} from '../site/js/calendar-data.js';
 import {LAUNCH} from '../site/js/config.js';
-import {dayParams, themeById, THEMES} from '../site/js/core.js';
+import {dayParams, themeById, CALENDAR_THEMES as THEMES} from '../site/js/core.js';
 import {addDateDays, createCalendarFeed, keyToDayNumber, validateCalendarPlan} from '../site/js/content-calendar.js';
 import {checkCalendarContent} from './check-calendar-content.js';
 

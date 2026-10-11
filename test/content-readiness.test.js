@@ -29,9 +29,9 @@ test('a catalog prototype cannot be scheduled or written by the publishing comma
 test('reusing a built glass does not approve a holiday run', () => {
   const plan = futureCalendar();
   assert.match(contentReadiness(plan.drafts['2026-10-25']).label, /Needs campaign build & review/);
-  assert.throws(() => prepareCalendarChange(plan, {now:NOW, publish:true, date:'2026-10-25'}), /themed run and its artwork have not been approved/);
+  assert.throws(() => prepareCalendarChange(plan, {baseline:plan, now:NOW, publish:true, date:'2026-10-25'}), /themed run and its artwork have not been approved/);
   const emptyRun = futureCalendar();
-  emptyRun.campaigns['halloween-2026'].status = 'published';
+  emptyRun.campaigns['unreviewed-holiday-2026'].status = 'published';
   assert.throws(() => validateCalendarPlan(emptyRun, {now:NOW}), /Campaign content is not built and approved/);
 });
 

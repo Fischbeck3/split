@@ -1,5 +1,5 @@
 import {LAUNCH, SITE_URL} from './config.js';
-import {THEMES, themeById, themeForDay, dayKey} from './core.js';
+import {CALENDAR_THEMES as THEMES, themeById, themeForDay, dayKey} from './core.js';
 import {CALENDAR} from './calendar-data.js';
 import {addDateDays, createCalendarFeed, getCampaignForDate, getPublishedEntry, isDateKey,
   keyToDayNumber, latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from './content-calendar.js';
@@ -293,7 +293,7 @@ function initCalendar(){
   }
   function render(){ renderDailyCheck(); renderGrid(); renderInspector(); renderPlans(); }
 
-  for (const theme of THEMES) $('draftTheme').append(new Option(theme.name + ' · ' + theme.label + (Object.hasOwn(THEME_READINESS, theme.id) ? ' · built' : ' · prototype'), theme.id));
+  for (const theme of THEMES) $('draftTheme').append(new Option(theme.name + ' · ' + theme.label + (theme.seasonal ? ' · ' + theme.seasonal : '') + (Object.hasOwn(THEME_READINESS, theme.id) ? ' · built' : ' · prototype'), theme.id));
   $('previousMonth').addEventListener('click', () => {
     const date = view === 'month' ? shiftedMonth(selected, -1) : addDateDays(selected, -7);
     select(date < LAUNCH ? LAUNCH : date);
