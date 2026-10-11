@@ -24,7 +24,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 The flat contact sheet uses four columns on a wide desktop, then three, two, and one as space narrows. Native disclosures show explicitly illustrative 100/100 sample postcards and PNG downloads. Scene loads are lazy; thumbnails do not run perpetual animation. Failure copy preserves the playable review link and offers a reload. Keyboard focus, image descriptions, themed browser surfaces, and reduced-motion behavior follow Split's established review routes.
 
-The admin catalog contains six public themes, fifteen travel previews, and seven Halloween previews. The public daily calendar and rotation retain the original six. The travel review links to this route so all new glasses are discoverable while the user is away.
+The current admin catalog contains 43 glasses: six public themes, fifteen travel previews, seven Halloween previews, and fifteen autumn previews. The public daily calendar and rotation retain the original six. The travel review links to this route so all new glasses are discoverable while the user is away.
 
 ## Finish evidence
 

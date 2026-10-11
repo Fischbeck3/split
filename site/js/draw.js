@@ -7,9 +7,10 @@ import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
 import {loadBrandAssets, isGuinnessTheme} from './brand-assets.js';
-import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS} from './themes.js';
+import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS} from './themes.js';
+import {AUTUMN_BASE_IDS} from './autumn-themes.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
@@ -32,30 +33,44 @@ export const SCENE_ART = {
     table:({'halloween-pumpkin-porch':.524,'halloween-ghost-stories':.560,'halloween-witching-hour':.496,'halloween-ravens-rest':.539,
       'halloween-vampires-toast':.548,'halloween-midnight-carnival':.534,'halloween-last-orders':.533})[id] || .62,
     framing:'table'
+  }])),
+  ...Object.fromEntries(AUTUMN_THEME_IDS.map((id,index) => [id, {
+    url:new URL('../assets/scenes/'+id+'.webp',import.meta.url).href,
+    table:({'autumn-pub':.605,'autumn-guinness-dublin':.580,'autumn-guinness-london':.650,
+      'autumn-guinness-edinburgh':.632,'autumn-guinness-new-york':.659,'autumn-heineken-amsterdam':.609,
+      'autumn-pilsner-prague':.562,'autumn-stella-brussels':.638,'autumn-carlsberg-copenhagen':.651,
+      'autumn-estrella-barcelona':.576,'autumn-modelo-mexico-city':.556641,'autumn-sam-adams-boston':.638021,
+      'autumn-high-life-milwaukee':.576823,'autumn-coors-apres-ski':.524089,'autumn-sierra-high-sierras':.593750})[id],
+    framing:'table',fallback:AUTUMN_BASE_IDS[index]
   }]))
 };
 const sceneImages = new Map(), sceneLoads = new Map();
 
-/** Decode once before painting a game or export. A failed asset keeps the vector fallback. */
+function loadScene(scene){
+  const art=SCENE_ART[scene];
+  if (!art || typeof Image === 'undefined') return Promise.resolve();
+  if (!sceneLoads.has(scene)) sceneLoads.set(scene, new Promise(resolve => {
+    const image = new Image();
+    image.onload = async () => {
+      try { await image.decode(); } catch { /* onload already supplied valid pixels */ }
+      sceneImages.set(scene, image); resolve();
+    };
+    // Seasonal edits can always return to their original painted seat.
+    image.onerror = async () => { if (art.fallback) await loadScene(art.fallback); resolve(); };
+    image.src = art.url;
+  }));
+  return sceneLoads.get(scene);
+}
+
+/** Decode once before painting a game or export, including the original seasonal fallback. */
 export async function loadSceneAssets(theme){
   const scenes = theme ? [theme.scene] : Object.keys(SCENE_ART);
-  await Promise.all([loadBrandAssets(theme), ...scenes.map(scene => {
-    if (!SCENE_ART[scene]) return;
-    if (!sceneLoads.has(scene)) sceneLoads.set(scene, new Promise(resolve => {
-      const image = new Image();
-      image.onload = async () => {
-        try { await image.decode(); } catch { /* onload already supplied valid pixels */ }
-        sceneImages.set(scene, image); resolve();
-      };
-      image.onerror = () => resolve();
-      image.src = SCENE_ART[scene].url;
-    }));
-    return sceneLoads.get(scene);
-  })]);
+  await Promise.all([loadBrandAssets(theme), ...scenes.map(loadScene)]);
 }
 
 function drawMemoryBackdrop(c, w, h, G, theme, titleWash){
-  const image = sceneImages.get(theme.scene), art = SCENE_ART[theme.scene];
+  const scene = sceneImages.has(theme.scene) ? theme.scene : SCENE_ART[theme.scene]?.fallback;
+  const image = sceneImages.get(scene), art = SCENE_ART[scene];
   if (!image || !art) return false;
   // Anchor the illustrated tabletop to the vessel rather than to the viewport.
   const panelWidth = image.naturalWidth / 3;

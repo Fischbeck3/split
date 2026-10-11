@@ -29,8 +29,9 @@ function canvas(){
 }
 
 test('the seven Halloween previews add a separate review week while preserving the public six and travel fifteen',()=>{
-  assert.equal(HALLOWEEN_THEME_IDS.length,7);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(REVIEW_THEMES.length,28);
-  assert.equal(new Set(REVIEW_THEMES.map(t=>t.id)).size,28);
+  const nonAutumn=REVIEW_THEMES.filter(t=>t.seasonal!=='autumn');
+  assert.equal(HALLOWEEN_THEME_IDS.length,7);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(nonAutumn.length,28);
+  assert.equal(new Set(nonAutumn.map(t=>t.id)).size,28);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   for (let day=1;day<=730;day++){
     assert.ok(THEMES.some(t=>t.id===themeForDay(day).id),'an isolated preview reached public day '+day);

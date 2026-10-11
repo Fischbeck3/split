@@ -1,6 +1,6 @@
 // Pure game logic: the calendar, seeded randomness, vessel shapes, the daily glass and scoring.
 // Nothing here touches the page, so the tests can import it in Node.
-import {LAUNCH, SCHEDULE, THEMES as RAW_THEMES, PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS} from './themes.js';
+import {LAUNCH, SCHEDULE, THEMES as RAW_THEMES, PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS} from './themes.js';
 import {CALENDAR, LEGACY_ROTATION_IDS, ROTATION_IDS} from './calendar-data.js';
 import {getPublishedEntry} from './content-calendar.js';
 import {stageCadence} from './sip-cadence.js';
@@ -64,7 +64,7 @@ const ALL_THEMES = RAW_THEMES.map(t => Object.freeze(Object.assign({label: t.nam
 // Planning and automatic play retain the released six. Review adds isolated
 // travel and seasonal previews; older prototypes remain outside both catalogs.
 export const THEMES = ALL_THEMES.filter(t => ROTATION_IDS.includes(t.id));
-export const REVIEW_THEMES = ALL_THEMES.filter(t => ROTATION_IDS.includes(t.id) || PREVIEW_THEME_IDS.includes(t.id) || HALLOWEEN_THEME_IDS.includes(t.id));
+export const REVIEW_THEMES = ALL_THEMES.filter(t => ROTATION_IDS.includes(t.id) || PREVIEW_THEME_IDS.includes(t.id) || HALLOWEEN_THEME_IDS.includes(t.id) || AUTUMN_THEME_IDS.includes(t.id));
 export const themeById = id => THEMES.find(t => t.id === id) || ALL_THEMES.find(t => t.id === id);
 
 // Opening dates and their seeded pours stay fixed. Unassigned future dates use

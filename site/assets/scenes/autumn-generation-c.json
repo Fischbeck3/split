@@ -1,0 +1,117 @@
+[
+  {
+    "name": "autumn-modelo-mexico-city",
+    "base": "site/assets/scenes/modelo-mexico-city.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait painted scenery background for Split, 1024 by 1536 pixels.\nInput images: Image 1 is the edit target, not merely a style reference.\nPrimary request: make a restrained autumn variation of this existing scene. Change only seasonal foliage, weather, time-of-day light, and light outerwear as specified below. Preserve the exact location, viewpoint, architecture, subject arrangement, perspective, foreground empty table, its rear-edge height, and original richly painted travel-postcard gouache/pencil style.\nSeasonal change: this same Mexico City cantina in a cool, dry early-autumn evening. The open doorway now receives cooler subdued early-evening light; the existing cantina lanterns provide warm amber light over the same ochre plaster, teal tiles, green door, and aged wood. Keep the distant friends in their existing seats, now in light jackets. The outside tree can have a few mellow golden leaves, but avoid an exaggerated northern-European fall. The tabletop and every structural edge stay exactly in place.\nConstraints: scenery only. Preserve the quiet unobstructed central foreground for a live beer vessel added separately by the game. Keep the foreground tabletop entirely free of any glass, bottle, cup, mug, can, drink, lettering, logo, or new props. No readable text, interface, watermark, borders, baked-in foreground beer, Halloween, pumpkins, costumes, decorations, Day of the Dead, skulls, or other holiday cues. Keep the source image's composition and full-bleed 2:3 portrait framing.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-5fc94150-5024-4d42-a2ed-3cfbf79395e8.png",
+    "outputPath": "site/assets/scenes/autumn-modelo-mexico-city.webp",
+    "tool": "built-in image_gen",
+    "mode": "edit",
+    "tabletop": 0.556641,
+    "rearTableEdgeY": 855,
+    "tableMeasurement": "Visual inspection plus largest central 201-pixel row gradient at the rear tabletop edge.",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "framing": "table"
+  },
+  {
+    "name": "autumn-sam-adams-boston",
+    "base": "site/assets/scenes/sam-adams-boston.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait painted scenery background for Split, 1024 by 1536 pixels.\nInput images: Image 1 is the edit target, not merely a style reference.\nPrimary request: make a restrained autumn variation of this existing scene. Change only seasonal foliage, weather, time-of-day light, and light outerwear as specified below. Preserve the exact location, viewpoint, architecture, subject arrangement, perspective, foreground empty table, its rear-edge height, and original richly painted travel-postcard gouache/pencil style.\nSeasonal change: preserve this exact Fenway ballpark view, Green Monster, skyline, players, seating, and empty foreground ledge/table. Turn it into a crisp fall ballgame in cool early-evening light, with the visible park trees beyond the outfield turning gold and amber. The same peripheral spectators wear coats or layers. Slightly longer warm shadows and cooler blue sky announce autumn while the field remains green and recognizable. Keep the center empty and preserve the existing small peanut-shell props at the extreme table edges.\nConstraints: scenery only. Preserve the quiet unobstructed central foreground for a live beer vessel added separately by the game. Keep the foreground tabletop entirely free of any glass, bottle, cup, mug, can, drink, lettering, logo, or new props. No readable text, interface, watermark, borders, baked-in foreground beer, Halloween, pumpkins, costumes, decorations, Day of the Dead, skulls, or other holiday cues. Keep the source image's composition and full-bleed 2:3 portrait framing.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-b6c0b255-be74-47a7-a862-f9be1076de1e.png",
+    "outputPath": "site/assets/scenes/autumn-sam-adams-boston.webp",
+    "tool": "built-in image_gen",
+    "mode": "edit",
+    "tabletop": 0.638021,
+    "rearTableEdgeY": 980,
+    "tableMeasurement": "Visual inspection plus largest central 201-pixel row gradient at the rear tabletop edge.",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "framing": "table"
+  },
+  {
+    "name": "autumn-high-life-milwaukee",
+    "base": "site/assets/scenes/high-life-milwaukee.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait painted scenery background for Split, 1024 by 1536 pixels.\nInput images: Image 1 is the edit target, not merely a style reference.\nPrimary request: make a restrained autumn variation of this existing scene. Change only seasonal foliage, weather, time-of-day light, and light outerwear as specified below. Preserve the exact location, viewpoint, architecture, subject arrangement, perspective, foreground empty table, its rear-edge height, and original richly painted travel-postcard gouache/pencil style.\nSeasonal change: preserve this exact Milwaukee neighborhood tavern, same windows, brick, tin ceiling, pool table, booths, friends, and foreground wood tabletop. Outside the windows it is a rainy fall early evening, with wet pavement, a few muted ochre leaves on the visible street trees, and softly rain-streaked upper glass. Existing pendant and wall lamps are warm amber against the cooler street. The same peripheral friends have coats or light autumn layers; preserve their scale and positions. The empty foreground tabletop stays identical.\nConstraints: scenery only. Preserve the quiet unobstructed central foreground for a live beer vessel added separately by the game. Keep the foreground tabletop entirely free of any glass, bottle, cup, mug, can, drink, lettering, logo, or new props. No readable text, interface, watermark, borders, baked-in foreground beer, Halloween, pumpkins, costumes, decorations, Day of the Dead, skulls, or other holiday cues. Keep the source image's composition and full-bleed 2:3 portrait framing.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-d1cf1005-d193-46dd-9d00-f335e307caf6.png",
+    "outputPath": "site/assets/scenes/autumn-high-life-milwaukee.webp",
+    "tool": "built-in image_gen",
+    "mode": "edit",
+    "tabletop": 0.576823,
+    "rearTableEdgeY": 886,
+    "tableMeasurement": "Visual inspection plus largest central 201-pixel row gradient at the rear tabletop edge.",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "framing": "table"
+  },
+  {
+    "name": "autumn-coors-apres-ski",
+    "base": "site/assets/scenes/coors-apres-ski.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait painted scenery background for Split, 1024 by 1536 pixels.\nInput images: Image 1 is the edit target, not merely a style reference.\nPrimary request: make a restrained autumn variation of this existing scene. Change only seasonal foliage, weather, time-of-day light, and light outerwear as specified below. Preserve the exact location, viewpoint, architecture, subject arrangement, perspective, foreground empty table, its rear-edge height, and original richly painted travel-postcard gouache/pencil style.\nSeasonal change: keep this exact Colorado ski-lodge deck, lodge wall and lantern, skis, rail, mountain silhouettes, and peripheral friends at their existing distant table. Make it late autumn at the first snowfall. Reduce the snow coverage over the slopes and trees to patches and first dustings rather than full winter; keep fresh snow on the high peaks. Mix golden aspens into the same valley tree zones among the green conifers. Friends keep light cold-weather layers. Preserve the empty foreground wooden table and its rear-edge position, with only small surviving snow patches at the outer edges.\nConstraints: scenery only. Preserve the quiet unobstructed central foreground for a live beer vessel added separately by the game. Keep the foreground tabletop entirely free of any glass, bottle, cup, mug, can, drink, lettering, logo, or new props. No readable text, interface, watermark, borders, baked-in foreground beer, Halloween, pumpkins, costumes, decorations, Day of the Dead, skulls, or other holiday cues. Keep the source image's composition and full-bleed 2:3 portrait framing.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-4b1ccf8c-5524-496c-b0d9-38992089855c.png",
+    "outputPath": "site/assets/scenes/autumn-coors-apres-ski.webp",
+    "tool": "built-in image_gen",
+    "mode": "edit",
+    "tabletop": 0.524089,
+    "rearTableEdgeY": 805,
+    "tableMeasurement": "Visual inspection plus largest central 201-pixel row gradient at the rear tabletop edge.",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "framing": "table"
+  },
+  {
+    "name": "autumn-sierra-high-sierras",
+    "base": "site/assets/scenes/sierra-high-sierras.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait painted scenery background for Split, 1024 by 1536 pixels.\nInput images: Image 1 is the edit target, not merely a style reference.\nPrimary request: make a restrained autumn variation of this existing scene. Change only seasonal foliage, weather, time-of-day light, and light outerwear as specified below. Preserve the exact location, viewpoint, architecture, subject arrangement, perspective, foreground empty table, its rear-edge height, and original richly painted travel-postcard gouache/pencil style.\nSeasonal change: preserve this exact High Sierras campsite, granite mountain silhouettes, clear lake, pines, rocks, tent, seated friends, and empty foreground wood table. Make it a crisp autumn early dusk rather than a summer sunset: cooler clear lake reflections and blue-gray air, restrained amber light on granite, a modest band of golden aspens among the existing lakeside trees, and the same small friends in warmer layers. Keep all major shapes and positions fixed; no bonfire or new props.\nConstraints: scenery only. Preserve the quiet unobstructed central foreground for a live beer vessel added separately by the game. Keep the foreground tabletop entirely free of any glass, bottle, cup, mug, can, drink, lettering, logo, or new props. No readable text, interface, watermark, borders, baked-in foreground beer, Halloween, pumpkins, costumes, decorations, Day of the Dead, skulls, or other holiday cues. Keep the source image's composition and full-bleed 2:3 portrait framing.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-e02a778f-84e1-437d-9b79-eae2e0cdb2d9.png",
+    "outputPath": "site/assets/scenes/autumn-sierra-high-sierras.webp",
+    "tool": "built-in image_gen",
+    "mode": "edit",
+    "tabletop": 0.59375,
+    "rearTableEdgeY": 912,
+    "tableMeasurement": "Visual inspection plus largest central 201-pixel row gradient at the rear tabletop edge.",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "framing": "table"
+  }
+]

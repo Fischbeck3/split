@@ -6,8 +6,10 @@ export {LAUNCH} from './config.js';
 import {LEGACY_OPENING_IDS} from './calendar-data.js';
 import {travelThemePreviews} from './theme-expansion.js';
 import {halloweenThemePreviews} from './halloween-themes.js';
+import {autumnThemePreviews} from './autumn-themes.js';
 export {PREVIEW_THEME_IDS} from './theme-expansion.js';
 export {HALLOWEEN_THEME_IDS} from './halloween-themes.js';
+export {AUTUMN_THEME_IDS} from './autumn-themes.js';
 export const SCHEDULE = LEGACY_OPENING_IDS;
 
 // Fields
@@ -89,3 +91,4 @@ export const THEMES = [
 // Preview artwork is deliberately outside the released calendar rotation.
 THEMES.push(...travelThemePreviews(THEMES[0]));
 THEMES.push(...halloweenThemePreviews(THEMES[0]));
+THEMES.push(...autumnThemePreviews(THEMES));

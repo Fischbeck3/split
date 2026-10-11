@@ -72,7 +72,7 @@ The place gently brightens when it is ready. Holding visibly depresses the drink
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
-Bookmark [theme review](https://dailysplit.us/#admin/pub) to try 28 glasses: the six public themes, 15 travel previews, and seven Halloween previews. The native picker, previous, and next use `REVIEW_THEMES`; both directions wrap through all 28. Calendar planning and future automatic pours continue to use the six active themes: `pub`, `beach`, `munich`, `sapporo`, `butterbeer`, and `peroni`. **Refill** starts another unrestricted, unsaved sip, and **Exit** returns to the daily game. This route is unlinked from public navigation. Anyone with the link can open it; it has no login, authentication, or publishing privileges.
+Bookmark [theme review](https://dailysplit.us/#admin/pub) to try 43 glasses: the six public themes, 15 travel previews, seven Halloween previews, and 15 autumn variations. The native picker, previous, and next use `REVIEW_THEMES`; both directions wrap through all 43. Calendar planning and future automatic pours continue to use the six active themes: `pub`, `beach`, `munich`, `sapporo`, `butterbeer`, and `peroni`. **Refill** starts another unrestricted, unsaved sip, and **Exit** returns to the daily game. This route is unlinked from public navigation. Anyone with the link can open it; it has no login, authentication, or publishing privileges.
 
 Each `#admin/<themeId>` review uses a deterministic pour derived from an isolated calendar pin, leaving the public calendar and daily pours unchanged. Review never restores or writes an official result, ignores friend benchmarks, and disables analytics before SDK initialization. Malformed `#admin` links stay in unsaved review and fall back to Guinness. Text shares and postcards say **Review** and carry the exact `#admin/<theme.id>` link to reopen the chosen glass and seed, without a friend benchmark.
 
@@ -80,7 +80,7 @@ Open `/next-days.html` for nine playable scene-and-glass concepts: Sapporo in Ja
 
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
-The existing glass definitions live in `site/js/themes.js`, with fields described at the top of that file; the 15 travel previews are defined in `site/js/theme-expansion.js` and the seven Halloween previews in `site/js/halloween-themes.js`. `ROTATION_IDS` in `site/js/calendar-data.js` selects the six active themes exposed by `site/js/core.js`; calendar choices and CLI validation use that set. `REVIEW_THEMES` adds the 22 isolated previews for the review route. The remaining older definitions and `LEGACY_ROTATION_IDS` stay privately resolvable for compatibility. Keep `LEGACY_OPENING_IDS`, legacy IDs, the October 9–14 assignments, and released gameplay parameters fixed. `SCHEDULE` remains the frozen opening list, not a place to schedule new days. Current work focuses on polishing the six developed themes before adding more. A future addition needs a finished scene, playable glass, matching postcard, explicit active-catalog inclusion, and reviewed date proposal. Run `npm test` to check that its mark can be reached, then preview its reviewed date. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
+The existing glass definitions live in `site/js/themes.js`, with fields described at the top of that file; the 15 travel previews are defined in `site/js/theme-expansion.js` the seven Halloween previews in `site/js/halloween-themes.js`, and the 15 autumn variations in `site/js/autumn-themes.js`. `ROTATION_IDS` in `site/js/calendar-data.js` selects the six active themes exposed by `site/js/core.js`; calendar choices and CLI validation use that set. `REVIEW_THEMES` adds the 37 isolated previews for the review route. The remaining older definitions and `LEGACY_ROTATION_IDS` stay privately resolvable for compatibility. Keep `LEGACY_OPENING_IDS`, legacy IDs, the October 9–14 assignments, and released gameplay parameters fixed. `SCHEDULE` remains the frozen opening list, not a place to schedule new days. A future addition needs a finished scene, playable glass, matching postcard, explicit active-catalog inclusion, and reviewed date proposal. Run `npm test` to check that its mark can be reached, then preview its reviewed date. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
 
 The extracted visual system is in [DESIGN.md](DESIGN.md), with component previews and extensions in `.impeccable/design.json`.
 
@@ -130,7 +130,7 @@ The new themes are isolated preview choices. They do not join the daily rotation
 
 ## Seven Halloween theme previews
 
-Open `/halloween-week.html` for seven painted Halloween settings, actual live-rendered glasses, unsaved playable reviews, and expandable sample postcards. October 25–31, 2026 is their proposed review order; these concepts are not scheduled daily pours. All seven are also available in the 28-glass `#admin` picker, and the travel review links to their gallery.
+Open `/halloween-week.html` for seven painted Halloween settings, actual live-rendered glasses, unsaved playable reviews, and expandable sample postcards. October 25–31, 2026 is their proposed review order; these concepts are not scheduled daily pours. All seven are also available in the 43-glass `#admin` picker, and the travel review links to their gallery.
 
 | Proposed night | Review | Glass and mark |
 |---|---|---|
@@ -143,6 +143,14 @@ Open `/halloween-week.html` for seven painted Halloween settings, actual live-re
 | October 31 | [Last orders](https://dailysplit.us/#admin/halloween-last-orders) | Guinness in a crypt beer garden · the G |
 
 The gallery continues Split's Fraunces and Karla typography with a dark plum surface and pumpkin amber actions. Five distinct Halloween marks join two views of the familiar Guinness glass. Thumbnails and sample postcards use the selected theme's exact isolated review parameters; neither the gallery nor its playable admin links writes a daily score.
+
+## Fifteen autumn variations
+
+Open [the autumn contact sheet](https://dailysplit.us/autumn-themes.html) for fifteen familiar beer memories with subtle changes in weather, light, foliage, and clothing. All fifteen are available under **Autumn** in the 43-glass `#admin` picker, starting with [the old Irish pub](https://dailysplit.us/#admin/autumn-pub). They retain their original beers, brand marks, vessel materials, scoring geometry, and sip behavior.
+
+Five Guinness settings return: the original Irish pub, Dublin, London, Edinburgh, and New York. The ten other settings are Amsterdam, Prague, Brussels, Copenhagen, Barcelona, Mexico City, Boston, Milwaukee, Colorado, and the High Sierras. Chicago's St. Patrick's Day scene remains separate. Colorado gains first-snow late-autumn conditions; the Sierra camp gains golden aspens. Miller High Life and Sierra Nevada keep their distinct brown bottles, Modelo stays clear, and the ballgame pour stays in a plastic cup.
+
+The original paintings remain intact. New sibling WebP assets carry exact editing prompts and source references in `site/assets/scenes/autumn-generation-a.json`, `autumn-generation-b.json`, and `autumn-generation-c.json`, with exact prompts embedded in each WebP or its matching sidecar. Each new painting has a measured table edge for the live game, gallery, and postcard. Sample postcards and playable reviews are unsaved, and these variants have no public calendar assignments. Christmas and winter variations are a possible November follow-up.
 
 ## Run it locally
 

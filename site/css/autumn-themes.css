@@ -1,0 +1,4 @@
+@import url('./fifteen-themes.css');
+:root{color-scheme:dark;--paper:#29251e;--ink:#f3ead5;--muted:#c4b59a;--line:#756749;--accent:#e0af68;background:var(--paper);color:var(--ink)}
+::selection{background:var(--accent);color:var(--paper)}::-webkit-scrollbar-thumb{background:#938164;border-color:var(--paper)}
+.wordmark{color:var(--accent)}.autumn-link{display:inline-block;margin-top:17px;color:var(--accent);font-size:14px;font-weight:700;min-height:28px}.autumn-link:hover{color:var(--ink)}.try-link:hover,.postcard-details summary:hover,.review-footer a:hover{color:var(--accent)}.download-link{color:var(--accent)}.download-link:hover{color:var(--ink)}

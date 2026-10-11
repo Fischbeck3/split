@@ -20,10 +20,13 @@ const DISPLAY_PROFILES = {corona:CORONA,'modelo-bottle':MODELO,'high-life-bottle
 export const RENDER_PROFILES = Object.freeze({...PROFILES, ...DISPLAY_PROFILES});
 
 /** G.glass identifies the displayed outline; theme.vessel still owns timing. */
-export const renderVessel = theme => theme.renderVessel || (theme.id === 'beach' && theme.vessel === 'bottle' ? 'corona'
-  : theme.id === 'modelo-mexico-city' ? 'modelo-bottle'
-    : theme.id === 'high-life-milwaukee' ? 'high-life-bottle'
-      : theme.id === 'sierra-high-sierras' ? 'sierra-bottle' : theme.vessel);
+export function renderVessel(theme){
+  const id = theme.baseThemeId || theme.id;
+  return theme.renderVessel || (id === 'beach' && theme.vessel === 'bottle' ? 'corona'
+    : id === 'modelo-mexico-city' ? 'modelo-bottle'
+      : id === 'high-life-milwaukee' ? 'high-life-bottle'
+        : id === 'sierra-high-sierras' ? 'sierra-bottle' : theme.vessel);
+}
 
 export function renderWidthAt(vessel, depth){
   const profile = DISPLAY_PROFILES[vessel];

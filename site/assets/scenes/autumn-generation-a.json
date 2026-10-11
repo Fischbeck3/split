@@ -1,0 +1,102 @@
+[
+  {
+    "id": "autumn-pub",
+    "base": "pub",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-2677457f-ba57-4ad7-9433-7b9ebbc9cc93.png",
+    "tabletop": 0.605,
+    "prompt": "Use case: lighting-weather edit. Edit the attached Irish pub painting into a modest late-autumn variant of this exact scene. Preserve the same room, composition, camera view, leaded central window, oak beams, distant friends, stone fireplace on the right, lamps, furniture, and broad clear foreground tabletop. Keep the same warmly painted illustrative brushwork and portrait 1024×1536 framing. Outside the existing window, show cool late-autumn dusk with a little distant golden-russet foliage and the same old town and church. Give the existing hearth a gentle warmer glow and the distant friends subtle wool layers. Changes should feel slight and familiar. Preserve the tabletop rear edge and its complete empty central live-glass zone, with no foreground vessel, beer, logo, lettering or signage added. No Halloween, Christmas, pumpkins, ornaments, garlands or harvest props. Only change season, light and clothing.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/irish-pub.webp",
+    "outputPath": "site/assets/scenes/autumn-pub.webp",
+    "tool": "built-in image_gen",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "framing": "table"
+  },
+  {
+    "id": "autumn-guinness-dublin",
+    "base": "guinness-dublin",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-8be4fab0-67a8-456f-a1ae-fe5697dae2f1.png",
+    "tabletop": 0.58,
+    "prompt": "Use case: lighting-weather edit. Edit this attached Dublin pub painting into a slight autumn version of the very same seat and view. Preserve the deep-green pub, central sash window, Liffey bridge and Dublin city outside it, carved dark-oak bar, brass lamps, furniture, distant friends and camera perspective exactly. Keep the original painterly illustrative style and portrait 1024×1536 composition. Change only the small trees visible outside the existing window to restrained gold and russet autumn foliage, use cooler lower autumn daylight through that same window and a little warmer amber light inside, and give distant friends subtle wool layers. Preserve the broad dark-oak foreground tabletop and its rear edge, leaving the central live-glass zone completely empty. No baked beer glass, bottle, drink, logo, text or new signage. No Halloween or Christmas decorations, pumpkins or seasonal props. A familiar scene with only modest autumn weather, light and coats.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-dublin.webp",
+    "outputPath": "site/assets/scenes/autumn-guinness-dublin.webp",
+    "tool": "built-in image_gen",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "framing": "table"
+  },
+  {
+    "id": "autumn-guinness-london",
+    "base": "guinness-london",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-70c03107-fc38-4961-91f4-84179e38acaf.png",
+    "tabletop": 0.65,
+    "prompt": "Use case: lighting-weather edit. Make a slight late-autumn version of the attached rainy London pub-window painting, preserving the exact pub seat, camera view, large sash window, brick street, red double-decker bus, wet pavement, friends and furniture. Keep the same painterly illustrative rendering and portrait 1024×1536 composition. The scene is already rainy: make only modest changes, with sparser amber and copper leaves on the small existing outside trees, a cooler rain-grey afternoon and gently warmer existing amber wall-lamp glow, plus subtle wool coats on distant friends. Preserve the same foreground wooden tabletop, its rear edge and an entirely clear central live-glass zone. No foreground glasses, bottles, beer, logos, text or signage added. No Halloween, Christmas, pumpkins, garlands or holiday decorations. Retain the recognizably identical London rainy-pub memory.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-london.webp",
+    "outputPath": "site/assets/scenes/autumn-guinness-london.webp",
+    "tool": "built-in image_gen",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "framing": "table"
+  },
+  {
+    "id": "autumn-guinness-edinburgh",
+    "base": "guinness-edinburgh",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-61987c58-1c36-4653-bb12-6d03b9f2a08b.png",
+    "tabletop": 0.632,
+    "prompt": "Use case: lighting-weather edit. Turn the attached Edinburgh stone-pub painting into a slight late-autumn version of the same winter scene. Preserve the exact room, stone fireplace on the right, warm existing fire, blue window on the left with the same castle and town view, beams, furniture, distant friends, plaid coat, clear foreground wooden tabletop and camera perspective. Keep the same painterly illustrative style and portrait 1024×1536 framing. Outside the window, remove winter snow from the same roofs and ground, replacing it with damp slate and cool autumn dusk, with a few restrained distant russet leaves. The fire remains warmly inviting; the friends keep subtle wool layers. The mantel should feel natural and unadorned, with no holly, ornaments, garlands or festive decorations. Preserve the tabletop rear edge and empty central live-glass zone. Do not add a foreground vessel, drink, beer, logo, lettering or signage. No Halloween, Christmas, pumpkins or seasonal props. Only a modest change of season and light.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-edinburgh.webp",
+    "outputPath": "site/assets/scenes/autumn-guinness-edinburgh.webp",
+    "tool": "built-in image_gen",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "framing": "table"
+  },
+  {
+    "id": "autumn-guinness-new-york",
+    "base": "guinness-new-york",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-2badb3c4-f9ed-4fb1-92b9-0cd01da90e72.png",
+    "tabletop": 0.659,
+    "prompt": "Use case: lighting-weather edit. Edit the attached New York Irish-bar pavement painting into a modest autumn version of this exact scene. Preserve the camera viewpoint, street perspective, left brownstones, distant Empire State view, right green Irish pub frontage and warm lamps, yellow taxi, distant friends, furniture, purple-pink dusk and broad clear foreground wooden table. Keep its painterly illustrative brushwork and portrait 1024×1536 composition. Change only the existing street trees to restrained golden and russet autumn foliage, add a few subtle fallen leaves at distant pavement edges, make dusk slightly cooler and put distant friends in understated light jackets. Preserve the foreground tabletop rear edge and a completely empty central live-glass zone. No baked foreground glass, bottle, beer, logo, text or signage added. No Halloween, Christmas, pumpkins, garlands or holiday props. The original New York beer memory should remain immediately recognizable, with only slight autumn changes.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-new-york.webp",
+    "outputPath": "site/assets/scenes/autumn-guinness-new-york.webp",
+    "tool": "built-in image_gen",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "framing": "table"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "autumn-heineken-amsterdam",
+    "base": "heineken-amsterdam",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait autumn seasonal edition of the attached existing Split travel scene, 1024 x 1536 pixels.\nInput image: the attached image is the EDIT TARGET. Make a subtle autumn edit of this exact picture, not a new composition.\nInvariants: preserve the identical viewpoint, framing, architecture, table geometry, rear tabletop edge height, furniture positions, background friends' identities and poses, all established props, and the richly painted gouache-and-colored-pencil travel postcard style. Preserve all untouched details. The center x=32–68% and foreground tabletop must remain empty and clear for a separately rendered live beer glass. Keep props that already sit at extreme table edges, but add no foreground objects. Keep believable depth and tactile worn materials.\nChange only seasonal foliage, the temperature/quality of ambient light and subtle seasonally appropriate clothing as described below. The result should be recognizably the same original memory, slightly autumnal rather than dramatically restaged.\nAvoid: Halloween or Christmas decoration, pumpkins, ghost decorations, cobwebs, snow, new beer, foreground glass, cup, bottle or can, added readable text, brand, logo, sign lettering, UI, border, watermark. No filter-like brown wash. Opaque full bleed portrait.\nSeasonal edit: Amsterdam canal terrace in early autumn. Turn the existing canal-side canopy and opposite-bank trees to softly varied gold, ochre and a little muted copper, keeping some green natural to early autumn. Make the canal water reflections slightly cooler steel-blue between warm amber building reflections. Retain the beautiful late-afternoon sun but lower it slightly and give the distant friends light autumn jackets without changing their poses. Keep the existing bicycles, houses, boats, chairs and table completely in place. This is a restrained seasonal change of the existing scene.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-e5440b8e-b95f-4294-97c3-574f17ac29b0.png",
+    "outputPath": "site/assets/scenes/autumn-heineken-amsterdam.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.609,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit preserves viewpoint, scene identity and tabletop geometry. Clear central live-vessel zone, restrained authentic autumn foliage/light/clothing; no holiday decoration or new foreground drink."
+  },
+  {
+    "name": "autumn-pilsner-prague",
+    "base": "pilsner-prague",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait autumn seasonal edition of the attached existing Split travel scene, 1024 x 1536 pixels.\nInput image: the attached image is the EDIT TARGET. Make a subtle autumn edit of this exact picture, not a new composition.\nInvariants: preserve the identical viewpoint, framing, architecture, table geometry, rear tabletop edge height, furniture positions, background friends' identities and poses, all established props, and the richly painted gouache-and-colored-pencil travel postcard style. Preserve all untouched details. The center x=32–68% and foreground tabletop must remain empty and clear for a separately rendered live beer glass. Keep props that already sit at extreme table edges, but add no foreground objects. Keep believable depth and tactile worn materials.\nChange only seasonal foliage, the temperature/quality of ambient light and subtle seasonally appropriate clothing as described below. The result should be recognizably the same original memory, slightly autumnal rather than dramatically restaged.\nAvoid: Halloween or Christmas decoration, pumpkins, ghost decorations, cobwebs, snow, new beer, foreground glass, cup, bottle or can, added readable text, brand, logo, sign lettering, UI, border, watermark. No filter-like brown wash. Opaque full bleed portrait.\nSeasonal edit: Prague cellar in cool autumn dusk. Preserve every vaulted brick arch and the room exactly. Slightly enrich the copper lamps' amber glow against cooler subtle blue-gray ambient shadows deep in the rear arch/doorway, giving the sense of a chilly evening outdoors. Make existing coats draped over chairs look like autumn wool and give the existing friends understated sweaters or light wool layers without moving them. Retain the framed Prague picture as a picture; add no new window or architectural feature. This is a subtle cozy indoor seasonal lighting/clothing edit.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-4d7104bb-6fbb-4311-8d58-c6fa9adebf84.png",
+    "outputPath": "site/assets/scenes/autumn-pilsner-prague.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.562,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit preserves viewpoint, scene identity and tabletop geometry. Clear central live-vessel zone, restrained authentic autumn foliage/light/clothing; no holiday decoration or new foreground drink."
+  },
+  {
+    "name": "autumn-stella-brussels",
+    "base": "stella-brussels",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait autumn seasonal edition of the attached existing Split travel scene, 1024 x 1536 pixels.\nInput image: the attached image is the EDIT TARGET. Make a subtle autumn edit of this exact picture, not a new composition.\nInvariants: preserve the identical viewpoint, framing, architecture, table geometry, rear tabletop edge height, furniture positions, background friends' identities and poses, all established props, and the richly painted gouache-and-colored-pencil travel postcard style. Preserve all untouched details. The center x=32–68% and foreground tabletop must remain empty and clear for a separately rendered live beer glass. Keep props that already sit at extreme table edges, but add no foreground objects. Keep believable depth and tactile worn materials.\nChange only seasonal foliage, the temperature/quality of ambient light and subtle seasonally appropriate clothing as described below. The result should be recognizably the same original memory, slightly autumnal rather than dramatically restaged.\nAvoid: Halloween or Christmas decoration, pumpkins, ghost decorations, cobwebs, snow, new beer, foreground glass, cup, bottle or can, added readable text, brand, logo, sign lettering, UI, border, watermark. No filter-like brown wash. Opaque full bleed portrait.\nSeasonal edit: Brussels pavement café on a crisp autumn blue-hour evening after rain. Shift the existing upper-left leaves and peripheral planting subtly toward golden ochre and quiet russet, and add only a few fallen golden leaves on the distant wet cobbles near side edges, none on the central foreground marble table. Slightly cool the blue twilight sky and reflections while retaining warm amber lamps. Existing café friends wear comfortable autumn coats, unchanged poses. Keep Grand Place façades, chairs, umbrellas and table geometry unchanged. Subtle seasonal atmosphere.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/stella-brussels.webp",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/stella-brussels.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-58c0d903-f1e8-41dd-b08d-4f0f77c8a57c.png",
+    "outputPath": "site/assets/scenes/autumn-stella-brussels.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.638,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit preserves viewpoint, scene identity and tabletop geometry. Clear central live-vessel zone, restrained authentic autumn foliage/light/clothing; no holiday decoration or new foreground drink."
+  },
+  {
+    "name": "autumn-carlsberg-copenhagen",
+    "base": "carlsberg-copenhagen",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait autumn seasonal edition of the attached existing Split travel scene, 1024 x 1536 pixels.\nInput image: the attached image is the EDIT TARGET. Make a subtle autumn edit of this exact picture, not a new composition.\nInvariants: preserve the identical viewpoint, framing, architecture, table geometry, rear tabletop edge height, furniture positions, background friends' identities and poses, all established props, and the richly painted gouache-and-colored-pencil travel postcard style. Preserve all untouched details. The center x=32–68% and foreground tabletop must remain empty and clear for a separately rendered live beer glass. Keep props that already sit at extreme table edges, but add no foreground objects. Keep believable depth and tactile worn materials.\nChange only seasonal foliage, the temperature/quality of ambient light and subtle seasonally appropriate clothing as described below. The result should be recognizably the same original memory, slightly autumnal rather than dramatically restaged.\nAvoid: Halloween or Christmas decoration, pumpkins, ghost decorations, cobwebs, snow, new beer, foreground glass, cup, bottle or can, added readable text, brand, logo, sign lettering, UI, border, watermark. No filter-like brown wash. Opaque full bleed portrait.\nSeasonal edit: Copenhagen waterfront terrace in crisp early autumn daylight. Shift existing upper-left harbor foliage and edge plantings toward varied ochre, muted gold and olive while leaving some green. Use gently cooler, more muted Nordic daylight and steel-blue canal reflections, retaining all colorful buildings, boats and masts. Give existing friends light wool scarves and jackets without changing their poses or identities; retain the blanket already draped over the left chair. Keep the entire foreground pale wooden table empty, in exactly the same position. Restrained authentic autumn harbor air.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-70236f43-9555-49dc-bfa6-02e3376edc03.png",
+    "outputPath": "site/assets/scenes/autumn-carlsberg-copenhagen.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.651,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit preserves viewpoint, scene identity and tabletop geometry. Clear central live-vessel zone, restrained authentic autumn foliage/light/clothing; no holiday decoration or new foreground drink."
+  },
+  {
+    "name": "autumn-estrella-barcelona",
+    "base": "estrella-barcelona",
+    "prompt": "Use case: lighting-weather.\nAsset type: portrait autumn seasonal edition of the attached existing Split travel scene, 1024 x 1536 pixels.\nInput image: the attached image is the EDIT TARGET. Make a subtle autumn edit of this exact picture, not a new composition.\nInvariants: preserve the identical viewpoint, framing, architecture, table geometry, rear tabletop edge height, furniture positions, background friends' identities and poses, all established props, and the richly painted gouache-and-colored-pencil travel postcard style. Preserve all untouched details. The center x=32–68% and foreground tabletop must remain empty and clear for a separately rendered live beer glass. Keep props that already sit at extreme table edges, but add no foreground objects. Keep believable depth and tactile worn materials.\nChange only seasonal foliage, the temperature/quality of ambient light and subtle seasonally appropriate clothing as described below. The result should be recognizably the same original memory, slightly autumnal rather than dramatically restaged.\nAvoid: Halloween or Christmas decoration, pumpkins, ghost decorations, cobwebs, snow, new beer, foreground glass, cup, bottle or can, added readable text, brand, logo, sign lettering, UI, border, watermark. No filter-like brown wash. Opaque full bleed portrait.\nSeasonal edit: Barcelona tapas street in a mild Mediterranean autumn evening. Preserve the narrow street, houses, shutters, umbrellas, friends, table and little plates at outer edges exactly. Slightly lower and soften the warm amber ambient light with a cooler dusk-blue sky, as though the autumn sun has just dipped behind the buildings. Give existing friends only light casual jackets; do not make it wintry. Shift a small amount of existing vine foliage near outer edges to muted rusty copper, retain mostly Mediterranean green and greatly reduce only the out-of-season flower profusion. Subtle autumn cues appropriate to Barcelona, no blanket orange foliage. Central tabletop remains completely empty.",
+    "baseSource": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-7a5fe2ed-d4ad-41fa-8b3d-dbfedd0fd7c0.png",
+    "outputPath": "site/assets/scenes/autumn-estrella-barcelona.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.576,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit preserves viewpoint, scene identity and tabletop geometry. Clear central live-vessel zone, restrained authentic autumn foliage/light/clothing; no holiday decoration or new foreground drink."
+  }
+]
