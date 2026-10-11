@@ -2,7 +2,9 @@
 // the top of Guinness's G crossbar, or the center of the other five emblems.
 // Coordinates below are fractions of h. Guinness uses a decoded self-hosted
 // print; the other emblems and the asset fallback use canvas geometry.
-import {guinnessPrintImage} from './brand-assets.js';
+import {guinnessPrintImage, isGuinnessTheme} from './brand-assets.js';
+import {TRAVEL_BRAND_DRAWERS} from './travel-brand-marks.js';
+import {HALLOWEEN_MARK_DRAWERS} from './halloween-marks.js';
 
 // Coordinates in the source SVG, whose top edge is cropped to y=14.
 // This is the filled top of the G's crossbar, not the wordmark's midpoint.
@@ -202,7 +204,11 @@ const CONCEPT_DRAWERS = new Map([['Sapporo',sapporo],['Butterbeer',hogwarts],['P
 
 /** Paint a released or named concept brand at its scoring origin. Other themes keep their generic mark. */
 export function drawBrandMark(c, theme, cx, cy, h){
-  const draw = Object.hasOwn(DRAWERS, theme?.id) ? DRAWERS[theme.id] : CONCEPT_DRAWERS.get(theme?.name);
+  const draw = isGuinnessTheme(theme) ? guinness
+    : Object.hasOwn(DRAWERS, theme?.id) ? DRAWERS[theme.id]
+      : Object.hasOwn(TRAVEL_BRAND_DRAWERS, theme?.brand) ? TRAVEL_BRAND_DRAWERS[theme.brand]
+        : Object.hasOwn(HALLOWEEN_MARK_DRAWERS, theme?.brand) ? HALLOWEEN_MARK_DRAWERS[theme.brand]
+          : CONCEPT_DRAWERS.get(theme?.name);
   if (!draw || ![cx,cy,h].every(Number.isFinite) || h <= 0) return false;
   c.save(); c.translate(cx,cy); c.scale(h,h); c.lineJoin = 'round'; c.lineCap = 'round';
   draw(c,theme); c.restore(); return true;

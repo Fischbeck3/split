@@ -72,7 +72,7 @@ The place gently brightens when it is ready. Holding visibly depresses the drink
 
 Open `/design.html` to try the first three days together and see their sample image and text shares. The sample cards are illustrative preview results; no daily scores are saved there. Open `/#day1`, `/#day2`, or `/#day3` for an individual preview. The same `#dayN` format works for other day numbers. Preview scores never save to the daily record.
 
-Bookmark [theme review](https://dailysplit.us/#admin/pub) to try the six developed glasses. The native picker, previous, and next use the same active catalog as calendar planning and future automatic pours: `pub`, `beach`, `munich`, `sapporo`, `butterbeer`, and `peroni`. Both directions wrap through those six. **Refill** starts another unrestricted, unsaved sip, and **Exit** returns to the daily game. This route is unlinked from public navigation. Anyone with the link can open it; it has no login, authentication, or publishing privileges.
+Bookmark [theme review](https://dailysplit.us/#admin/pub) to try 28 glasses: the six public themes, 15 travel previews, and seven Halloween previews. The native picker, previous, and next use `REVIEW_THEMES`; both directions wrap through all 28. Calendar planning and future automatic pours continue to use the six active themes: `pub`, `beach`, `munich`, `sapporo`, `butterbeer`, and `peroni`. **Refill** starts another unrestricted, unsaved sip, and **Exit** returns to the daily game. This route is unlinked from public navigation. Anyone with the link can open it; it has no login, authentication, or publishing privileges.
 
 Each `#admin/<themeId>` review uses a deterministic pour derived from an isolated calendar pin, leaving the public calendar and daily pours unchanged. Review never restores or writes an official result, ignores friend benchmarks, and disables analytics before SDK initialization. Malformed `#admin` links stay in unsaved review and fall back to Guinness. Text shares and postcards say **Review** and carry the exact `#admin/<theme.id>` link to reopen the chosen glass and seed, without a friend benchmark.
 
@@ -80,7 +80,7 @@ Open `/next-days.html` for nine playable scene-and-glass concepts: Sapporo in Ja
 
 Open `/motion.html` to play an illustrative sip across all three vessels, or freeze Ready, Drinking, Just released, and Settled. This route uses the game's movement and liquid geometry and never saves a score. The three-day review links to it.
 
-Every glass definition lives in `site/js/themes.js`, with fields described at the top of that file. `ROTATION_IDS` in `site/js/calendar-data.js` selects the six active themes exposed by `site/js/core.js`; review, calendar choices, and CLI validation use that set. The remaining older definitions and `LEGACY_ROTATION_IDS` stay privately resolvable for compatibility. Keep `LEGACY_OPENING_IDS`, legacy IDs, the October 9–14 assignments, and released gameplay parameters fixed. `SCHEDULE` remains the frozen opening list, not a place to schedule new days. Current work focuses on polishing the six developed themes before adding more. A future addition needs a finished scene, playable glass, matching postcard, explicit active-catalog inclusion, and reviewed date proposal. Run `npm test` to check that its mark can be reached, then preview its reviewed date. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
+The existing glass definitions live in `site/js/themes.js`, with fields described at the top of that file; the 15 travel previews are defined in `site/js/theme-expansion.js` and the seven Halloween previews in `site/js/halloween-themes.js`. `ROTATION_IDS` in `site/js/calendar-data.js` selects the six active themes exposed by `site/js/core.js`; calendar choices and CLI validation use that set. `REVIEW_THEMES` adds the 22 isolated previews for the review route. The remaining older definitions and `LEGACY_ROTATION_IDS` stay privately resolvable for compatibility. Keep `LEGACY_OPENING_IDS`, legacy IDs, the October 9–14 assignments, and released gameplay parameters fixed. `SCHEDULE` remains the frozen opening list, not a place to schedule new days. Current work focuses on polishing the six developed themes before adding more. A future addition needs a finished scene, playable glass, matching postcard, explicit active-catalog inclusion, and reviewed date proposal. Run `npm test` to check that its mark can be reached, then preview its reviewed date. The launch date is fixed after release: changing it would renumber shared challenges. While the launch gate is closed, or before the configured launch date, the root route shows a preview sip.
 
 The extracted visual system is in [DESIGN.md](DESIGN.md), with component previews and extensions in `.impeccable/design.json`.
 
@@ -121,6 +121,28 @@ Subscribe to [the daily lineup](https://dailysplit.us/calendar.ics) or [the plan
 Each Pages build creates a rolling 90-day feed beginning seven UTC days before the build date, clamped to launch. The window moves when a new build is released; it does not advance on its own between deployments. Calendar clients refresh subscriptions on their own schedules, so reviewed changes may appear after the site release. Per-date event IDs stay stable across builds.
 
 The calendar links to authenticated PostHog views for a selected challenge and comparisons by glass, vessel, visual theme, and published campaign. The public calendar displays no private performance totals. The conversion definition is documented below.
+
+## Fifteen new theme previews
+
+Open `/fifteen-themes.html` to review five new Guinness settings and ten other beer memories. Every illustration has its actual rendered vessel, a playable unsaved review, and an expandable sample postcard. Chicago's Guinness scene celebrates St. Patrick's Day beside the green river; Boston's Samuel Adams comes in a clear plastic cup at Fenway. Milwaukee's Miller High Life uses a brown long-neck bottle, while Mexico City's Modelo Especial keeps its clear bottle. Coors Banquet comes in a frosty nonic pint on a Colorado lodge deck after skiing. Sierra Nevada Pale Ale comes in a brown short-neck bottle at a High Sierras campsite.
+
+The new themes are isolated preview choices. They do not join the daily rotation, change released challenges, or count as content-readiness approvals. Review the completed artwork, glass, and postcard before scheduling a theme through the existing content-calendar workflow. The exact generation prompts are saved alongside the scenes in [root-generation.json](site/assets/scenes/root-generation.json), [cities-generation.json](site/assets/scenes/cities-generation.json), and [outdoors-generation.json](site/assets/scenes/outdoors-generation.json).
+
+## Seven Halloween theme previews
+
+Open `/halloween-week.html` for seven painted Halloween settings, actual live-rendered glasses, unsaved playable reviews, and expandable sample postcards. October 25–31, 2026 is their proposed review order; these concepts are not scheduled daily pours. All seven are also available in the 28-glass `#admin` picker, and the travel review links to their gallery.
+
+| Proposed night | Review | Glass and mark |
+|---|---|---|
+| October 25 | [Pumpkin porch](https://dailysplit.us/#admin/halloween-pumpkin-porch) | Orange pumpkin ale in a squat tumbler · pumpkin |
+| October 26 | [Ghost stories](https://dailysplit.us/#admin/halloween-ghost-stories) | Pale gold wheat beer in a tall glass · ghost |
+| October 27 | [Witching hour](https://dailysplit.us/#admin/halloween-witching-hour) | Emerald brew in a handled mug · cauldron |
+| October 28 | [Raven’s Rest](https://dailysplit.us/#admin/halloween-ravens-rest) | Guinness in a haunted Irish pub · the G |
+| October 29 | [Vampire’s toast](https://dailysplit.us/#admin/halloween-vampires-toast) | Crimson brew in a stemmed chalice · bat |
+| October 30 | [Midnight carnival](https://dailysplit.us/#admin/halloween-midnight-carnival) | Violet brew in a nonic pint · skull |
+| October 31 | [Last orders](https://dailysplit.us/#admin/halloween-last-orders) | Guinness in a crypt beer garden · the G |
+
+The gallery continues Split's Fraunces and Karla typography with a dark plum surface and pumpkin amber actions. Five distinct Halloween marks join two views of the familiar Guinness glass. Thumbnails and sample postcards use the selected theme's exact isolated review parameters; neither the gallery nor its playable admin links writes a daily score.
 
 ## Run it locally
 

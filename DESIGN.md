@@ -154,7 +154,7 @@ components:
 
 Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place. The opening three travel from an old Irish pub to a Roman café table and a Tokyo izakaya. Each daily round offers three fresh pours of one glass and target: Sober, Tipsy, then Drunk. A visible lift, tip, and return make each sip legible; the highest score supplies the final result. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.
 
-The pub carries aged oak, a fireplace, and amber light; Rome carries warm stone and café tables at sunset; Tokyo carries rain-lit lanterns and a little wooden counter. Later days visit Munich's timber roof ribs and communal tables, The Hog’s Head's crooked beams, candles, and mounted boar's head, and Cabo's palapa shade and turquoise water. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn. The active catalog contains these six developed places; review, calendar planning, and automatic future pours use the same set.
+The pub carries aged oak, a fireplace, and amber light; Rome carries warm stone and café tables at sunset; Tokyo carries rain-lit lanterns and a little wooden counter. Later days visit Munich's timber roof ribs and communal tables, The Hog’s Head's crooked beams, candles, and mounted boar's head, and Cabo's palapa shade and turquoise water. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn. The active catalog contains these six developed places; calendar planning and automatic future pours use that set. Theme review adds fifteen travel previews and seven Halloween previews, for 28 review glasses. The Halloween week extends the same painted-place identity with five colored beers and distinct seasonal prints, plus two settings for the familiar Guinness pint.
 
 The scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed scene assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.
 
@@ -193,6 +193,10 @@ The six scheduled themes share semantic roles while changing the atmosphere. The
 
 Good, warning, and miss colors change with the light or dark theme. The dark warning uses pub gold. These colors communicate verdicts; they do not change the accuracy calculation or turn the positional strip into an attempt grid.
 
+### Review galleries
+
+The Halloween gallery inherits `site/css/fifteen-themes.css` and applies its local palette in `site/css/halloween-week.css`: dark plum `#231d2b` for the page and loading surfaces, cream `#f4e7ce` for foreground ink, pumpkin amber `#e7ad68` for the wordmark and actions, muted mauve `#c3b3bd` for supporting copy, plum separators `#66526a`, and scrollbar thumb `#89738c`. Selection uses amber with plum ink. These are route-specific adaptations of the established contact sheet; the playable glasses use their own dark semantic palettes from `site/js/halloween-themes.js`.
+
 **The Same Place Rule.** The game and its exported postcard use the same daily scene, vessel, mark, and settled liquid level. Keep the destination and palette coherent.
 
 **The Readable State Rule.** Use foreground ink for focus outlines and active preview labels. Accent color may underline a selection; it does not replace readable text.
@@ -214,6 +218,8 @@ The heavy serif gives the wordmark and score a familiar pub-sign character; Karl
 - **Label:** mode, vessel feel, preview navigation, practice status, and daily note stay compact. Day numbers and scores use tabular numerals where the DOM renders them.
 - **Score:** the result score uses the score role. The exported card scales Fraunces up within its fixed canvas rather than changing the font identity.
 
+The Halloween contact sheet inherits the fifteen-theme gallery's typography roles. Its Fraunces display title remains 37–58px on wide layouts and uses `clamp(38px, 6.8vw, 50px)` below 760px. Place titles adapt from 29px to 28px below 1150px, 27px below 760px, and 31px in the single-column layout below 440px. Beer labels are 14px, reduce to 13px below 760px, and return to 14px below 440px. The pumpkin-porch action uses 14px bold Karla. These intentional local sizes retain the inherited display, title, label, and supporting-copy roles.
+
 **The One Identity Rule.** Keep Fraunces for the Split wordmark, day titles, goals, verdicts, and scores. Keep Karla for instructions, controls, and supporting information.
 
 ## Layout
@@ -225,6 +231,8 @@ At widths of 700px and above, the HUD and sheet receive wider side padding and t
 The `site/design.html` review route shows all three opening days and their sample cards in three columns, switching to a single column at 900px. This is a preview composition, not a new in-game navigation structure. Its link to `site/motion.html` opens a separate three-vessel preview with sip playback and frozen Ready, Drinking, Just released, and Settled stages; neither preview saves daily scores.
 
 The bookmark-only `#admin/<themeId>` review keeps the vessel as the focal point on phone and desktop. A compact footer strip uses the current theme's sheet, ink, and separator colors. Entry, live, and result controls reserve space above it; the measured closed entry tray determines the vessel's available space, keeping its full silhouette clear of both tray and footer.
+
+`/halloween-week.html` extends the existing review contact sheet. A two-column introduction leads into seven portrait scene-and-glass canvases in proposed October 25–31 order. Its grid uses four columns, three below 1150px, two below 760px, and one below 440px. The shared container, rules, 4px scene corners, native postcard disclosures, and underlined actions preserve the travel gallery's layout language. Each Halloween painting uses table framing in `site/js/draw.js`: the whole upper scene stays visible, and wood from the same image extends below the measured table edge to anchor the vessel. The shared room-placement helper keeps this framing consistent across phone play, gallery thumbnails, and postcards without adding a title inset.
 
 ## Elevation & Depth
 
@@ -264,7 +272,27 @@ The bottom preview strip is shown only for hash-based day previews. Pub, Beach, 
 
 ### Theme review
 
-The catalog footer pairs familiar Karla controls with a persistent “Theme review · not saved” label. Previous and next use current-color SVG arrows in 44px targets, flanking a 44px native picker populated from `THEMES`; both directions wrap. Refill and Exit are compact underlined text actions. Intro, live status, results, and postcards keep the unsaved state explicit, while shared links preserve the selected theme. Review uses the existing visual system and hold gesture across the full catalog.
+The catalog footer pairs familiar Karla controls with a persistent “Theme review · not saved” label. Previous and next use current-color SVG arrows in 44px targets, flanking a 44px native picker populated from `REVIEW_THEMES`; both directions wrap through all 28 glasses: six public themes, fifteen travel previews, and seven Halloween previews. Refill and Exit are compact underlined text actions. Intro, live status, results, and postcards keep the unsaved state explicit, while shared links preserve the selected theme. Review uses the existing visual system and hold gesture across the full catalog.
+
+### Halloween week gallery
+
+The seven Halloween previews are defined in `site/js/halloween-themes.js` and presented by `site/halloween-week.html` and `site/js/halloween-week.js`. The proposed nights describe review order only; they do not add daily calendar assignments or content-readiness approvals.
+
+| Proposed night | Place and pour | Displayed vessel and target |
+|---|---|---|
+| October 25 | Pumpkin porch · orange pumpkin ale | Squat tumbler · pumpkin mouth |
+| October 26 | Ghost stories · pale gold wheat beer | Tall glass · ghost eyes |
+| October 27 | Witching hour · emerald brew | Handled mug · cauldron rim |
+| October 28 | Raven’s Rest · Guinness in a haunted Irish pub | Original tulip pint · G |
+| October 29 | Vampire’s toast · crimson brew | Stemmed chalice · bat wings |
+| October 30 | Midnight carnival · violet brew | Nonic pint · skull eyes |
+| October 31 | Last orders · Guinness in a crypt beer garden | Original tulip pint · G |
+
+The five seasonal prints in `site/js/halloween-marks.js` place their scored feature at local `y=0`, with dark and light keylines keeping the feature legible through beer and air. The same mark origin, selected glass, scene, and authoritative isolated review parameters feed the gallery, playable review, and sample postcard. Raven’s Rest and Last orders inherit the original Guinness print, tulip silhouette, stout, foam, target geometry, and sip response; their setting and UI palette supply the change.
+
+Scene links and “Try this glass” open `#admin/<themeId>` directly. Static thumbnails show a full pour and target cue, load nearby scenes lazily, and use no perpetual animation. Native disclosures generate a matching illustrative 100/100 sample postcard labeled “not saved,” with an explicit PNG download. Loading failures keep the description and playable link available. Keyboard focus and reduced motion inherit the existing review treatment.
+
+All seven 1024 × 1536 scene assets retain their exact generation prompts in `site/assets/scenes/halloween-generation-a.json` and `halloween-generation-b.json`, with a matching `.webp.json` prompt sidecar beside each exported painting. The manifests record original output paths, table-edge fractions, and WebP export settings. These provenance records describe the source artwork; the live vessel and mark remain canvas-rendered.
 
 ### Vessel and physics
 
@@ -333,3 +361,17 @@ Use the selected panels from the nine-option studio with the same table anchors 
 - **Don't** replace a player's completed daily three-sip average with a later practice round.
 - **Don't** save archive or preview sips, or renumber shared challenges by moving the launch date after release.
 - **Don't** introduce external font requests when the shipped font files already provide the required weights.
+
+## Fifteen additional preview places
+
+The approved extension adds five views of the existing Guinness pint: Dublin bar daylight, a rainy London window table, an Edinburgh winter hearth, a New York pavement table at dusk, and St. Patrick's Day beside Chicago's green river. The five use the original Guinness print, tulip silhouette, target geometry, stout, foam, and sip response. The setting, viewpoint, and UI palette supply the variation.
+
+Ten other previews pair a memorable beer with its drinking destination: Heineken/Amsterdam, Pilsner Urquell/Prague, Stella Artois/Brussels, Carlsberg/Copenhagen, Estrella Damm/Barcelona, Modelo Especial/Mexico City, Samuel Adams/Boston, Miller High Life/Milwaukee, Coors Banquet/Colorado après-ski, and Sierra Nevada Pale Ale/High Sierras camping. Boston uses a clear plastic ballpark cup at Fenway. Stella uses a stemmed chalice appearance with the tulip's liquid profile; Prague uses a handled mug. Modelo keeps a clear bottle; High Life uses a brown long-neck bottle. Coors Banquet uses a frosty nonic pint on a Colorado lodge deck, with snowy peaks, timber, and ski gloves nearby. Sierra Nevada Pale Ale uses a brown short-neck bottle at a High Sierras campsite, with granite peaks, pines, and friends around the camp. Each mark remains readable across the liquid boundary.
+
+The paintings preserve the incumbent travel-postcard treatment, quiet central glass area, distant company, and actual tabletop anchoring. Individual assets and their measured table-edge fractions are recorded in [root-generation.json](site/assets/scenes/root-generation.json), [cities-generation.json](site/assets/scenes/cities-generation.json), and [outdoors-generation.json](site/assets/scenes/outdoors-generation.json). Game and sample postcard use the same asset and mark. The High Sierras scene fits its mountain and campsite view above the anchored table, then extends the painting's actual wood beneath the bottle to preserve that view on phones.
+
+`/fifteen-themes.html` presents a paper contact sheet with five Guinness views followed by ten beer places and memories, actual rendered glasses, unsaved playable review links, and expandable sample postcards. The last two places are Après-ski and High Sierras. Five columns on a wide desktop become three, two, then one on a phone. Fraunces, Karla, ink, paper, and simple underlined actions continue the existing identity. Sample postcards explicitly identify their illustrative perfect split and unsaved status.
+
+The contact sheet uses paper `#f6f0e3`, ink `#203d2d`, muted text `#536456`, separators `#c6cdba`, and green actions `#285c44`. Its wide display title scales from 37px to 58px, section titles from 30px to 39px, and place titles from 27px to 31px across layouts. Supporting copy uses 13–18px Karla; secondary metadata uses 12px. Scene corners are 4px and postcard corners 3px, keeping the illustrated panels close to printed photographs. Section rules have 29–32px of top padding before their headings.
+
+The fifteen remain preview-only, outside the published rotation and content-readiness approvals. The original six scheduled themes and all released seeds retain their meaning. The review catalog exposes the six existing themes, these fifteen travel previews, and the seven Halloween previews without restoring the retired generic prototypes.

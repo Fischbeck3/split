@@ -1,0 +1,104 @@
+[
+  {
+    "name": "heineken-amsterdam",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Amsterdam, canal-side caf\u00e9 terrace on a warm golden afternoon. Red brick gabled canal houses on the opposite bank, bicycles leaning along a railing at the far left, reflected sunlight on quiet canal water, small friends chatting at a distant side table. Weathered oak foreground terrace table, warm red brick and greenish canal reflections. Soft amber light, settled holiday afternoon.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-c99d4515-070b-484a-a2d5-86b9077b9e9f.png",
+    "outputPath": "site/assets/scenes/heineken-amsterdam.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.609,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "pilsner-prague",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Prague brick-vaulted cellar beer hall. Low old arched brick vaults, dark heavy wood benches and tables, copper-warm pendant lights, coats over distant chairs, three small friends talking at a table near the left outer edge. Foreground heavy dark honey-brown oak table. Intimate amber-and-umber palette with moss-dark shadows, substantial beautiful worn materials, first evening of a shared trip.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-f38e767b-cb93-4604-a348-3946f9f79171.png",
+    "outputPath": "site/assets/scenes/pilsner-prague.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.562,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "stella-brussels",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Brussels pavement caf\u00e9 at blue-hour dusk after rain. Ornate old fa\u00e7ades, warm amber street lamps, wet cobblestones reflecting the lights, a few small friends chatting near the outer right. Foreground pale warm marble caf\u00e9 table spanning full image width. Indigo sky, muted cream and amber architecture, elegant soft evening glow, an easy pause between dinner and the next street.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-d998c835-ebc3-442c-a688-c938b0cbd6d4.png",
+    "outputPath": "site/assets/scenes/stella-brussels.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.638,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "carlsberg-copenhagen",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Copenhagen waterfront terrace with a calm Nyhavn canal view. Distinct colorful narrow Danish harbor fa\u00e7ades, sailboat masts and small boats, very long summer daylight, small friends chatting at a distant terrace table at outer left. Foreground pale weathered outdoor wooden table. Pale blue, coral, butter yellow, and sea green palette; bright but soft afternoon, clean Scandinavian air and warm memories.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-b5e59c88-f08e-424f-9339-edd876d4f4cd.png",
+    "outputPath": "site/assets/scenes/carlsberg-copenhagen.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.651,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "estrella-barcelona",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Barcelona, an intimate tapas street caf\u00e9 on a warm evening. Peach stucco and old stone apartment fa\u00e7ades, dark green wooden shutters, warm pools from wall lamps, a narrow pedestrian street receding into soft night, small friends at a far side table. Foreground worn honey-colored wooden caf\u00e9 table fills exactly bottom32%: its rear edge precisely y=68%. Small ceramic tapas plates ONLY at extreme lower-left and lower-right corners, leaving the central70% of the table empty. Muted peach, ochre, bottle-green and warm night-blue palette, an unhurried Mediterranean dinner.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-4f70ca71-9f39-4e5f-a481-9b83d64195f8.png",
+    "outputPath": "site/assets/scenes/estrella-barcelona.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.576,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "modelo-mexico-city",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache with fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, lived-in moments with friends, quietly cinematic rather than a tourist landmark collage.\nComposition: eye level of someone seated at a table. The foreground tabletop spans the FULL width of the image and fills exactly the bottom 32 percent, with its straight rear edge positioned precisely at 68 percent of image height. Keep the tabletop completely EMPTY across the central 70 percent. Reserve a calm, unobstructed central zone between x=30\u201370 percent and y=25\u201380 percent for a separate live game glass that will be composited later. Architecture, friends, and modest props must stay distant or near the outer edges. Anonymous friends should be small, peripheral figures, never a main portrait.\nConstraints: scenery ONLY. Absolutely no foreground beer, no glass, cup, mug, bottle, can, or drink anywhere on the foreground table. No readable text, no logos, no signage lettering, no interface, borders, title, watermarks. Full bleed image. Do not draw the future glass.\nScene/backdrop: Mexico City old neighborhood cantina before dinner. Teal and ochre decorative tiled lower walls, deep green painted door frame, warmly glowing lamps, soft textured old plaster, understated vintage wooden chairs, small friends at a distant left-side table. Foreground old dark wood cantina table, fullwidth, rear edge precisely y=68% leaving only bottom32% as tabletop. Warm late-day light through an open side doorway, inviting ochre, turquoise, amber and warm brown, familiar relaxed company rather than spectacle.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-e54d0ec5-6050-4b1d-8b65-484abd47b05c.png",
+    "outputPath": "site/assets/scenes/modelo-mexico-city.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.557,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  }
+]

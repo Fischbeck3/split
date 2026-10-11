@@ -1,5 +1,5 @@
 // A bookmark-only, unsaved glass catalog. It grants no publishing privileges.
-import {THEMES, dayParams, keyForDay} from './core.js';
+import {REVIEW_THEMES as THEMES, dayParams, keyForDay} from './core.js';
 
 export function reviewHash(themeId){
   if (!THEMES.some(theme => theme.id === themeId)) throw new Error('Unknown review theme');

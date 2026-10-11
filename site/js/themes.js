@@ -4,6 +4,10 @@
 // live in calendar-data.js; appending a theme cannot reroll released challenges.
 export {LAUNCH} from './config.js';
 import {LEGACY_OPENING_IDS} from './calendar-data.js';
+import {travelThemePreviews} from './theme-expansion.js';
+import {halloweenThemePreviews} from './halloween-themes.js';
+export {PREVIEW_THEME_IDS} from './theme-expansion.js';
+export {HALLOWEEN_THEME_IDS} from './halloween-themes.js';
 export const SCHEDULE = LEGACY_OPENING_IDS;
 
 // Fields
@@ -81,3 +85,7 @@ export const THEMES = [
   {id: 'cola', name: 'Cola', line: 'Fizz. Split the C.', vessel: 'tall', body: ['#4a2416', '#140a07'], head: '#dcc9b0', headT: 0.045,
     mark: 'letter', letter: 'C', markFill: '#e6382f', markStroke: '#fff3ea', target: 'the C', bubbles: true}
 ];
+
+// Preview artwork is deliberately outside the released calendar rotation.
+THEMES.push(...travelThemePreviews(THEMES[0]));
+THEMES.push(...halloweenThemePreviews(THEMES[0]));

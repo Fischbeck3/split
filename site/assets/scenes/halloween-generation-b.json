@@ -1,0 +1,53 @@
+[
+  {
+    "id": "halloween-vampires-toast",
+    "tool": "built-in ImageGen",
+    "useCase": "illustration-story",
+    "prompt": "Use case: illustration-story\nAsset type: portrait backdrop for Split, an illustrated beer-sipping game. New Halloween scene: Vampire's toast.\nScene/backdrop: a Gothic castle banqueting room prepared for a Halloween dinner with friends. Tall pointed stone arches, velvet burgundy drapes, clustered taper candles, dark foliage, subtle bat garlands and a carved pumpkin, moonlight at an arched window. Small distant friends dressed as theatrical vampires talk at the right rear; friendly Halloween party, no gore.\nStyle/medium: refined painterly travel illustration with believable materials, soft visible brushwork and natural perspective, matching an illustrated nostalgic beer-with-friends postcard.\nComposition/framing: 1024 by 1536 portrait. Seated table viewpoint. An EMPTY dark polished walnut table occupies the lower 40% with its rear edge about 60% down the frame; table runs across the entire bottom. The middle 35% of the width is quiet open space for a separately rendered large glass. Put candles, Halloween props and distant figures at the left and right edges and in the background, leaving center and foreground empty. Full room recognizable above the tabletop.\nLighting/mood: ruby candlelight against cold indigo moonlight, warm ivory candle wax, rich dark wood, theatrical but inviting.\nConstraints: backdrop only; NO foreground glass, drink, beer bottle, labels, typography, logos, words, interface, borders or watermark. Empty tabletop center is essential. Opaque full bleed image.",
+    "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-a2d4cc65-35b4-4421-9247-3cee8372d3a0.png",
+    "output": "halloween-vampires-toast.webp",
+    "width": 1024,
+    "height": 1536,
+    "table": 0.548,
+    "framing": "table",
+    "export": {
+      "format": "WebP",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "id": "halloween-midnight-carnival",
+    "tool": "built-in ImageGen",
+    "useCase": "illustration-story",
+    "prompt": "Use case: illustration-story\nAsset type: portrait backdrop for Split, an illustrated beer-sipping game. New Halloween scene: Midnight carnival.\nScene/backdrop: a vintage seaside boardwalk carnival on Halloween night. Crooked striped sideshow booths, a distant old Ferris wheel with small amber bulbs, paper skull garlands and carved jack-o-lantern lanterns. Friendly distant adult friends dressed in Halloween costumes stand at the right edge talking by a booth. The center lane is empty, violet night sky and faint mist beyond.\nStyle/medium: refined painterly travel illustration with soft brushwork, believable worn materials and perspective, nostalgic postcard quality.\nComposition/framing: 1024 by 1536 portrait, seated viewpoint from a carnival beer table. An EMPTY weathered wooden tabletop spans the entire lower 40%; rear table edge near 60% frame height. Keep central x=.32 through .68 calm and open for a large separately rendered pint. Halloween props and booths sit around left and right edges and above the tabletop, with no foreground objects in the middle.\nLighting/mood: inky ultramarine sky, dusty plum shadows, pools of amber bulbs and orange pumpkin light; unmistakably Halloween, enchanting and social, no horror gore.\nConstraints: background only, no foreground drink or glass, beer bottle, labels, lettering, logos, words, UI, frame or watermark. Painted illustration, opaque full bleed. Empty central tabletop essential.",
+    "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-4b8976be-c25a-4ecb-8a1d-42c275331fa7.png",
+    "output": "halloween-midnight-carnival.webp",
+    "width": 1024,
+    "height": 1536,
+    "table": 0.534,
+    "framing": "table",
+    "export": {
+      "format": "WebP",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "id": "halloween-last-orders",
+    "tool": "built-in ImageGen",
+    "useCase": "illustration-story",
+    "prompt": "Use case: illustration-story\nAsset type: portrait scene backdrop for Split, an illustrated beer-sipping game. Halloween finale: Last orders.\nScene/backdrop: a convivial Halloween beer garden in the courtyard of a small old stone crypt, mossy Gothic arch and ivy-covered cemetery walls behind. Friendly distant adult friends in understated Halloween costumes talk at the rear right near a table; carved glowing jack-o-lanterns line the low walls, strings of amber lanterns above, thin mist beneath an enormous pearl moon. Stylized bats high overhead, weathered headstones at distant left. Feels like a secret outdoor pub on Halloween, festive and mysterious.\nStyle/medium: refined painterly travel illustration with soft brushwork, believable aged stone and wood, deep perspective and nostalgic postcard quality.\nComposition/framing: 1024 by 1536 portrait. Seated viewpoint. EMPTY worn dark oak beer-garden tabletop spans the entire lower 40%, rear edge around 60% frame height. Keep central x=.32 through .68 open and subdued for a separately rendered large Guinness pint. Place unmistakable Halloween ornaments around side edges and above the tabletop. Full moon and crypt arch remain visible in the top half. No foreground objects on the central table.\nLighting/mood: cold moonlit slate and deep forest green, amber candles and orange jack-o-lantern glow, inviting friends and spooky atmosphere. No gore.\nConstraints: backdrop only, no foreground glass/drink/beer bottle, no Guinness brand or other logos, labels, typography, words, UI, border or watermark. Opaque full bleed painting; empty central tabletop essential.",
+    "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-0abb1b2a-394b-438d-a6a8-1edd1dcc650c.png",
+    "output": "halloween-last-orders.webp",
+    "width": 1024,
+    "height": 1536,
+    "table": 0.533,
+    "framing": "table",
+    "export": {
+      "format": "WebP",
+      "quality": 88,
+      "method": 6
+    }
+  }
+]

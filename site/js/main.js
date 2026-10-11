@@ -1,6 +1,6 @@
 // The app: hold input, the drink, results, sharing and the record.
 import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL,
-  scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey, THEMES} from './core.js';
+  scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey, REVIEW_THEMES} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {createAnalytics, gameProperties, resultProperties as analyticsResultProperties, trackedResultAction} from './analytics.js';
@@ -542,7 +542,7 @@ async function init(){
   for (const [name,value] of Object.entries(light ? {good:'#267347',warn:'#936210',miss:'#b64037'} : {good:'#91dda8',warn:'#d9b874',miss:'#ffaaa0'})) document.documentElement.style.setProperty('--'+name,value);
   document.querySelector('meta[name="theme-color"]').content = palette.bg;
   $('hudSub').textContent = S.theme.name + (S.theme.id === 'pub' ? ' · Ireland' : S.theme.id === 'beach' ? ' · Cabo, Mexico' : S.theme.id === 'munich' ? ' · Munich, Germany' : ' · ' + S.theme.label);
-  $('introNo').textContent = S.review ? 'Review ' + S.num + '/' + THEMES.length : 'No. ' + String(S.num).padStart(3, '0');
+  $('introNo').textContent = S.review ? 'Review ' + S.num + '/' + REVIEW_THEMES.length : 'No. ' + String(S.num).padStart(3, '0');
   $('introName').textContent = S.theme.label;
   $('memoryLine').textContent = S.theme.memory || ''; $('memoryLine').hidden = !S.theme.memory;
   $('friendInvite').hidden = !S.friend;
@@ -560,7 +560,7 @@ async function init(){
         ? 'The sip keeps moving briefly after release. Release before the mark and let it settle.'
         : 'As the glass narrows, the beer line falls faster. Release before the mark and let the sip settle.';
   renderMotionPreference();
-  document.title = S.review ? 'Split theme review · ' + S.theme.name : 'Split No. ' + S.num + ' · ' + S.theme.label;
+  document.title = S.review ? 'Split theme review · ' + S.theme.label : 'Split No. ' + S.num + ' · ' + S.theme.label;
   scene.setAttribute('aria-label', S.theme.name + '. Match the beer line beneath the foam to the brief dashed target line across ' + S.theme.target + '.');
   if (S.designPreview){
     document.body.classList.add('preview'); $('previewNav').hidden = false;
@@ -570,8 +570,8 @@ async function init(){
   if (S.review){
     document.body.classList.add('preview', 'theme-review');
     $('reviewNav').hidden = false;
-    for (const theme of THEMES){
-      const option = document.createElement('option'); option.value = theme.id; option.textContent = theme.name;
+    for (const theme of REVIEW_THEMES){
+      const option = document.createElement('option'); option.value = theme.id; option.textContent = (theme.seasonal === 'halloween' ? 'Halloween · ' : '') + theme.name + ' · ' + theme.label;
       $('reviewTheme').appendChild(option);
     }
     $('reviewTheme').value = S.theme.id;

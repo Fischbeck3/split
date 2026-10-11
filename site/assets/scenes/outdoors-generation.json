@@ -1,0 +1,36 @@
+[
+  {
+    "name": "coors-apres-ski",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait travel beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache and fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, quietly cinematic memory of time with friends. Match a beautifully illustrated travel book, finely observed natural light, rich textured surfaces.\nComposition: eye level of someone seated at a table. A broad empty foreground tabletop spans the FULL width of the portrait. The straight rear edge of the tabletop is positioned at approximately 60 percent of image height, and the table fills the entire lower 40 percent. Keep the central 70 percent of the foreground tabletop totally empty. Reserve a calm unobstructed central zone between x=30–70 percent and y=25–80 percent for a separate live game glass composited later. Friends and props are small, distant, or on extreme outer edges.\nConstraints: scenery ONLY. NO foreground glass, cup, mug, bottle, beer can, or drink. No readable text, no logos, no signage lettering, no interface, border, title, watermark. Do not draw the future live game glass. Full bleed image.\nScene/backdrop: Colorado après-ski lodge deck after an easy day on the mountain. Sunshine across snowy Rocky Mountain peaks, blue sky with pale soft clouds, dark pine forests down the valley, rustic timber lodge wall partly framing the far-left edge, casually bundled friends small and distant at a side terrace table far-right; skis leaning discreetly against the lodge at the far-left edge. Foreground broad rustic oak picnic tabletop, beautifully worn warm grain and a little snow remaining only on extreme edge. Cold clear mountain blue and white against sun-warmed amber timber, relaxed company, bright winter late afternoon.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-abaa0bf6-5f0c-46fc-b534-d8369752c0f7.png",
+    "outputPath": "site/assets/scenes/coors-apres-ski.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.524,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  },
+  {
+    "name": "sierra-high-sierras",
+    "prompt": "Use case: illustration-story.\nAsset type: finished scenery background for a portrait travel beer game theme, 1024 x 1536 pixels.\nStyle/medium: richly painted editorial travel postcard, soft gouache and fine colored-pencil detail, believable perspective and tactile materials. Nostalgic, quietly cinematic memory of time with friends. Match a beautifully illustrated travel book, finely observed natural light, rich textured surfaces.\nComposition: eye level of someone seated at a table. A broad empty foreground tabletop spans the FULL width of the portrait. The straight rear edge of the tabletop is positioned at approximately 60 percent of image height, and the table fills the entire lower 40 percent. Keep the central 70 percent of the foreground tabletop totally empty. Reserve a calm unobstructed central zone between x=30–70 percent and y=25–80 percent for a separate live game glass composited later. Friends and props are small, distant, or on extreme outer edges.\nConstraints: scenery ONLY. NO foreground glass, cup, mug, bottle, beer can, or drink. No readable text, no logos, no signage lettering, no interface, border, title, watermark. Do not draw the future live game glass. Full bleed image.\nScene/backdrop: Camping in the High Sierras on a late golden summer evening. Immense pale granite peaks rise above still alpine lake and pine forest; granite shores and subtle reflected gold in the water. Small campsite at far-right edge with a modest tent, casually dressed friends small and distant resting together after a hike. No fire necessary, no massive festival camping clutter. Foreground broad rustic weathered wooden camping picnic table with warm silver-brown grain. Granite gray, pine green, lake teal, and warm dusk-gold; peaceful and lived-in outdoor memory, the lake and mountain view calm in the center.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-5f526153-d936-4424-b91c-9a7232333e09.png",
+    "outputPath": "site/assets/scenes/sierra-high-sierras.webp",
+    "tool": "built-in image_gen",
+    "tabletop": 0.594,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    }
+  }
+]

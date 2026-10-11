@@ -1,0 +1,67 @@
+{
+  "tool": "image_gen.imagegen",
+  "date": "2026-10-10",
+  "useCase": "stylized-concept",
+  "status": "isolated theme previews",
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "assets": [
+    {
+      "id": "guinness-dublin",
+      "prompt": "Use case: stylized-concept\nAsset type: individual illustrated background for Split's daily beer game; 1024×1536, full-bleed 2:3 portrait.\nStyle/medium: finely painted editorial travel-postcard illustration, rich gouache and colored pencil, understated paper grain, detailed believable materials and architecture, natural perspective, nostalgic holiday memory with friends. Painterly, polished, not a cartoon or flat vector.\nComposition: seated tabletop point of view. A full-width clean tabletop occupies the bottom 32%; its straight rear edge sits at exactly y68%. The middle 40% of the frame, x30-70%, is quiet and unoccupied from y25% through y90% for a separately rendered pint. Friends and small props only at distant outer edges. Keep scenery legible around either side of a large central glass. No drinks or objects on the central tabletop.\nConstraints: scenery ONLY; NO foreground glass, beer, bottle, cup, featured drink, featured central object, text, readable signage, logos, watermark, border, or interface. People only small soft anonymous background figures, no featured faces. No excessive glow; painted natural light and rich materials.\nPrimary request: Dublin, a daytime pint with old friends at the pub bar. Viewpoint from a tall bar stool rather than a dining table. The foreground is the broad polished dark walnut bartop; its rear edge remains at y68%. Beyond it, dark oak backbar shelves, a few antique brass fittings, green leather stools at the edges and one large sash window off-center admitting fresh gray Irish daylight. Two small friend silhouettes in the left background, a jacket draped over an edge stool, restrained convivial company. Cream daylight, dark walnut, bottle-green paint, soft brass gold. The middle remains calm for a stout pint. No row of prominently rendered beer glasses on the backbar.",
+      "file": "guinness-dublin.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-95f26662-2604-4aa2-8c8f-40bd4c1f4e08.png",
+      "tableEdgeFraction": 0.58
+    },
+    {
+      "id": "guinness-london",
+      "prompt": "Use case: stylized-concept\nAsset type: individual illustrated background for Split's daily beer game; 1024×1536, full-bleed 2:3 portrait.\nStyle/medium: finely painted editorial travel-postcard illustration, rich gouache and colored pencil, understated paper grain, detailed believable materials and architecture, natural perspective, nostalgic holiday memory with friends. Painterly, polished, not a cartoon or flat vector.\nComposition: seated tabletop point of view. A full-width clean tabletop occupies the bottom 32%; its straight rear edge sits at exactly y68%. The middle 40% of the frame, x30-70%, is quiet and unoccupied from y25% through y90% for a separately rendered pint. Friends and small props only at distant outer edges. Keep scenery legible around either side of a large central glass. No drinks or objects on the central tabletop.\nConstraints: scenery ONLY; NO foreground glass, beer, bottle, cup, featured drink, featured central object, text, readable signage, logos, watermark, border, or interface. People only small soft anonymous background figures, no featured faces. No excessive glow; painted natural light and rich materials.\nPrimary request: London, rainy afternoon at a pub's window table with friends. Viewpoint seated at a broad worn oak table beside a generous rain-streaked sash window. Old London redbrick street and one understated red bus far outside at the left edge, warm lamps inside at the right edge, coats hanging on chairs around distant side tables. The window occupies most of the background so the rain and pale overcast daylight define the scene, while the indoor table feels warm and familiar. Muted slate-blue daylight, redbrick, amber oak, cream glass reflections. A few anonymous small friends gather off-center. Avoid a tourist landmark montage.",
+      "file": "guinness-london.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-87041606-8300-4b9a-8bf1-266e55cab9ef.png",
+      "tableEdgeFraction": 0.65
+    },
+    {
+      "id": "guinness-edinburgh",
+      "prompt": "Use case: stylized-concept\nAsset type: individual illustrated background for Split's daily beer game; 1024×1536, full-bleed 2:3 portrait.\nStyle/medium: finely painted editorial travel-postcard illustration, rich gouache and colored pencil, understated paper grain, detailed believable materials and architecture, natural perspective, nostalgic holiday memory with friends. Painterly, polished, not a cartoon or flat vector.\nComposition: seated tabletop point of view. A full-width clean tabletop occupies the bottom 32%; its straight rear edge sits at exactly y68%. The middle 40% of the frame, x30-70%, is quiet and unoccupied from y25% through y90% for a separately rendered pint. Friends and small props only at distant outer edges. Keep scenery legible around either side of a large central glass. No drinks or objects on the central tabletop.\nConstraints: scenery ONLY; NO foreground glass, beer, bottle, cup, featured drink, featured central object, text, readable signage, logos, watermark, border, or interface. People only small soft anonymous background figures, no featured faces. No excessive glow; painted natural light and rich materials.\nPrimary request: Edinburgh, a winter evening at a low pub table beside a handsome old stone fireplace. Perspective close to a low, broad worn dark-oak table. Rough golden-gray stone walls, a naturally burning hearth positioned well to the right of the empty central glass area, heavy wooden beams, tartan coat or scarf at a far left chair, a small tall window near the upper left showing cold blue twilight over Edinburgh stone roofs. Small friends at a distant side booth, intimate company. Copper hearth light, cool blue winter window, soft charcoal-gray stone and rich dark walnut. Fireplace must frame the central pint rather than sit behind it; no large fire in center.",
+      "file": "guinness-edinburgh.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-5a7ce5b7-acfa-45cc-aaae-c4990b3da98d.png",
+      "tableEdgeFraction": 0.633
+    },
+    {
+      "id": "guinness-new-york",
+      "prompt": "Use case: stylized-concept\nAsset type: individual background painting for Split's daily beer game, exactly 1024×1536 2:3 portrait, full bleed.\nStyle: finely painted editorial travel-postcard illustration, gouache and colored pencil, subtle paper grain, rich believable architecture and materials, natural perspective, polished understated nostalgic memory with friends. No cartoon or flat vector.\nComposition: realistic seated point of view. Foreground is a broad clean full-width tabletop occupying the bottom32%; its straight backedge exactly y68%. Keep the entire middle40% x30-70% quiet and unoccupied from y25-90% for a large separately composited beer vessel. People and smallprops only outeredges/distance. Background landmarks should be visible beside central glass. No central foreground object.\nConstraints: scenery ONLY. NO foreground beer/glass/cup/bottle/drink, words, readable signage, logos, watermark, UI or borders. Small soft anonymous friends well offcenter only, no featured faces. Painted natural light, no neon glow or tourist landmark collage.\nPrimary request: New York, pavement table outside a neighborhood Irish bar with friends at dusk. Broad small oak cafe table foreground, brownstone row houses and stoops recede along the street at left, a classic green-painted pub facade and amber window light at the right edge. A few small seated friends at the far edge terrace, distant pedestrians and an understated yellow taxi much farther down the street. Planters and iron railings frame the view. Sky is lilac and soft blue at dusk, warm brick, deep pub green, golden streetlamp light. The glass goes center; preserve quiet center rather than prominently placed doors or traffic.",
+      "file": "guinness-new-york.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-6be64e7e-27b3-44da-bf94-684b697876f9.png",
+      "tableEdgeFraction": 0.66
+    },
+    {
+      "id": "sam-adams-boston",
+      "prompt": "Use case: stylized-concept\nAsset type: individual background painting for Split's daily beer game, exactly 1024×1536 2:3 portrait, full bleed.\nStyle: finely painted editorial travel-postcard illustration, gouache and colored pencil, subtle paper grain, rich believable architecture and materials, natural perspective, polished understated nostalgic memory with friends. No cartoon or flat vector.\nComposition: realistic seated point of view. Foreground is a broad clean full-width tabletop occupying the bottom32%; its straight backedge exactly y68%. Keep the entire middle40% x30-70% quiet and unoccupied from y25-90% for a large separately composited beer vessel. People and smallprops only outeredges/distance. Background landmarks should be visible beside central glass. No central foreground object.\nConstraints: scenery ONLY. NO foreground beer/glass/cup/bottle/drink, words, readable signage, logos, watermark, UI or borders. Small soft anonymous friends well offcenter only, no featured faces. Painted natural light, no neon glow or tourist landmark collage.\nPrimary request: a beer with friends at a Fenway Park ballgame in Boston. Viewpoint seated at a discreet wooden drink ledge beside stadium seats, looking toward the baseball diamond and familiar tall deep-green left-field wall. Stadium seats and a few soft friends in muted red caps live at the far left and right edges; sunlit turf and diamond extend across the middle background. Clear late-afternoon baseball daylight, grass green, warm brick stadium architecture, cream cloud sky, burgundy seat accents. A little peanut shell or folded paper ticket without lettering at extreme tabletop edge only. The foreground drinkledge is broad and fullwidth like a narrow tabletop at y68%. No players large or featured, no readable scoreboard or signage. Empty center is reserved for the game to render a big clear plastic beer cup.",
+      "file": "sam-adams-boston.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-d4cb2d56-7713-4c16-9f6c-3e72bbb535bd.png",
+      "tableEdgeFraction": 0.635
+    },
+    {
+      "id": "high-life-milwaukee",
+      "prompt": "Use case: stylized-concept\nAsset type: individual background painting for Split's daily beer game, exactly 1024×1536 2:3 portrait, full bleed.\nStyle: finely painted editorial travel-postcard illustration, gouache and colored pencil, subtle paper grain, rich believable architecture and materials, natural perspective, polished understated nostalgic memory with friends. No cartoon or flat vector.\nComposition: realistic seated point of view. Foreground is a broad clean full-width tabletop occupying the bottom32%; its straight backedge exactly y68%. Keep the entire middle40% x30-70% quiet and unoccupied from y25-90% for a large separately composited beer vessel. People and smallprops only outeredges/distance. Background landmarks should be visible beside central glass. No central foreground object.\nConstraints: scenery ONLY. NO foreground beer/glass/cup/bottle/drink, words, readable signage, logos, watermark, UI or borders. Small soft anonymous friends well offcenter only, no featured faces. Painted natural light, no neon glow or tourist landmark collage.\nPrimary request: Milwaukee, old friends meeting at a familiar neighborhood corner tavern. Perspective seated on a low barstool in front of a well-worn honey-oak bartop. Behind it, old brick walls, red leather booth cushions, a pool table far left, tall frosted-glass windows with pale late-afternoon daylight, hanging brass lamps, a glimpse of an old Milwaukee brick street through the far right window. Small friends at side booths, one empty stool pulled up nearby at the outer edge. Warm brass, faded burgundy, tobacco-oak, cream daylight. Humble and lived-in, not luxury, no tall fancy cocktail shelves. Calm center reserved for the clear long-neck Miller High Life bottle.",
+      "file": "high-life-milwaukee.webp",
+      "width": 1024,
+      "height": 1536,
+      "source": "/Users/fischbeck3/.codex/generated_images/01a128d3-6ebc-76d0-a4fd-968c2e7592fa/exec-d11c8854-1541-491f-9c1b-68d866798e41.png",
+      "tableEdgeFraction": 0.577
+    }
+  ]
+}

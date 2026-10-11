@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {THEMES, dayParams, keyForDay, startLevel, secondsToMark, DRAIN_LEVEL} from '../site/js/core.js';
+import {THEMES as RELEASED_THEMES, REVIEW_THEMES as THEMES, dayParams, keyForDay, startLevel, secondsToMark, DRAIN_LEVEL} from '../site/js/core.js';
 import {canRecordChallenge} from '../site/js/challenge.js';
 import {buildShareText} from '../site/js/share.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from '../site/js/theme-review.js';
@@ -72,7 +72,7 @@ test('a review cannot record on its date, after midnight, or before a launch', (
   }
 });
 
-test('repeated review rounds preserve daily storage, preferences and calendar drafts on all six glasses', () => {
+test('repeated review rounds preserve daily storage, preferences and calendar drafts across released and preview glasses', () => {
   const today = keyForDay(1), saved = JSON.stringify({days:{[today]:{num:1, theme:'pub', done:true, score:93, f:.08, L:.64, mode:'hold'}}});
   const storage = browserStorage([[storageKey, saved], ['split.sound.v1', 'on'], ['split.content-calendar.v1', '{"keep":"drafts"}']]);
   const before = new Map(storage.values);
@@ -120,7 +120,7 @@ test('review result links reopen the exact catalog glass and pour without a dail
 
 test('retired prototypes are absent from review choices and direct review routes', () => {
   const built = ['pub', 'beach', 'munich', 'sapporo', 'butterbeer', 'peroni'];
-  assert.deepEqual(THEMES.map(theme => theme.id), built);
+  assert.deepEqual(RELEASED_THEMES.map(theme => theme.id), built);
   for (const id of ['lager', 'pale', 'cider', 'red', 'coffee', 'choc', 'matcha', 'cola']) {
     assert.throws(() => reviewHash(id), /Unknown review theme/);
     const review = readThemeReview('#admin/' + id);

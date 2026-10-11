@@ -1,0 +1,8 @@
+@import url('./fifteen-themes.css');
+:root{color-scheme:dark;--paper:#231d2b;--ink:#f4e7ce;--muted:#c3b3bd;--line:#66526a;--accent:#e7ad68;background:var(--paper);color:var(--ink)}
+::selection{background:var(--accent);color:var(--paper)}::-webkit-scrollbar-thumb{background:#89738c;border-color:var(--paper)}
+.wordmark{color:var(--accent)}.review-intro h1{max-width:680px}.intro-copy .review-note{max-width:62ch}.week-link{display:inline-block;margin-top:17px;color:var(--accent);font-size:14px;font-weight:700;min-height:28px}.week-link:hover{color:var(--ink)}
+.halloween-grid{grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:38px}.theme h3{font-size:29px;line-height:1.12}.night-date{font-size:12px;font-weight:600;color:var(--muted);margin-top:8px;font-variant-numeric:tabular-nums}.beer-name{font-size:14px;margin-top:5px}.theme-memory{min-height:61px;color:var(--ink)}.vessel-info{color:var(--muted)}.try-link:hover,.postcard-details summary:hover{color:var(--accent)}.scene-loading{background:var(--paper);color:var(--ink)}.download-link{color:var(--accent)}.download-link:hover{color:var(--ink)}.review-footer a:hover{color:var(--accent)}
+@media(max-width:1150px){.halloween-grid{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px}.theme h3{font-size:28px}}
+@media(max-width:760px){.halloween-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:29px 17px}.theme h3{font-size:27px}.beer-name{font-size:13px}.theme-memory{min-height:58px}.review-intro h1{font-size:clamp(38px,6.8vw,50px)}}
+@media(max-width:440px){.halloween-grid{grid-template-columns:1fr;gap:32px}.theme h3{font-size:31px}.beer-name{font-size:14px}.theme-memory{min-height:0}.night-date{font-size:13px}}
