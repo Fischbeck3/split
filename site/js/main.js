@@ -25,8 +25,11 @@ let reducedMotion = motionQuery.matches;
 // Keep the device accessibility preference as the single motion setting.
 const stillGlass = () => reducedMotion;
 function renderMotionPreference(){
-  $('motionNote').hidden = !stillGlass();
-  $('motionNote').textContent = 'Reduced motion is on in your device settings. The glass stays upright; the sip works the same.';
+  const reduced = stillGlass();
+  $('motionNote').hidden = !reduced;
+  if (!reduced) return;
+  $('motionNoticeTitle').textContent = 'Motion is simplified on this device.';
+  $('motionNoticeCopy').textContent = 'Reduce Motion keeps the glass upright and skips Tipsy and Drunk blur and sway; timing and scoring stay the same. On iPhone, turn it off in Settings → Accessibility → Motion → Reduce Motion, then reopen Split.';
 }
 const onMotionPreferenceChange = event => {
   reducedMotion = event.matches;
