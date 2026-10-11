@@ -38,6 +38,19 @@ test('Start pulls the glass closer before allowing a hold or consuming a sip', (
   assert.doesNotMatch(app.element('footPill').textContent, /Best so far/);
 });
 
+test('reduced motion explains why the glass stays still before a sip begins', () => {
+  const normal = controllerApp(), reduced = controllerApp({practice:true, deviceReduced:true});
+  assert.equal(normal.element('motionNote').hidden, true, 'ordinary play has no extra motion notice');
+  assert.equal(reduced.element('intro').hidden, false, 'the notice appears in the entry tray');
+  assert.equal(reduced.element('motionNote').hidden, false, 'reduced motion is explicit before play');
+  assert.match(reduced.element('motionNoticeTitle').textContent, /Motion is simplified/i);
+  assert.match(reduced.element('motionNoticeCopy').textContent, /Settings → Accessibility → Motion → Reduce Motion/);
+  assert.match(reduced.element('motionNoticeCopy').textContent, /glass upright/i);
+  reduced.begin(); reduced.ready(); reduced.press(); reduced.advance(30);
+  assert.equal(reduced.element('drinkControl').disabled, false);
+  assert.equal(reduced.S.motion.angle, 0, 'the notice matches the actual still-glass behavior');
+});
+
 test('device reduced motion keeps a still glass but identical drinking physics in every stage', () => {
   const full = controllerApp({practice:true}), reduced = controllerApp({practice:true, deviceReduced:true});
   for (let round = 0; round < 3; round++){
