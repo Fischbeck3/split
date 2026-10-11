@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {HALLOWEEN_THEME_IDS, PREVIEW_THEME_IDS} from '../site/js/themes.js';
 import {HALLOWEEN_GUINNESS_IDS} from '../site/js/halloween-themes.js';
+import {CALENDAR} from '../site/js/calendar-data.js';
 import {THEMES,REVIEW_THEMES,themeById,themeForDay,makeDrinkState,stepDrink} from '../site/js/core.js';
 import {SCENES,MARKS,SCENE_ART,drawScene,drawMark,drawBackdrop,loadSceneAssets} from '../site/js/draw.js';
 import {renderVessel} from '../site/js/render-vessels.js';
@@ -28,13 +29,13 @@ function canvas(){
   return {c,calls};
 }
 
-test('the seven Halloween previews add a separate review week while preserving the public six and travel fifteen',()=>{
+test('the seven Halloween themes retain their review week and preserve the automatic six and travel fifteen',()=>{
   const nonAutumn=REVIEW_THEMES.filter(t=>t.seasonal!=='autumn');
   assert.equal(HALLOWEEN_THEME_IDS.length,7);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(nonAutumn.length,28);
   assert.equal(new Set(nonAutumn.map(t=>t.id)).size,28);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   for (let day=1;day<=730;day++){
-    assert.ok(THEMES.some(t=>t.id===themeForDay(day).id),'an isolated preview reached public day '+day);
+    assert.ok(THEMES.some(t=>t.id===themeForDay(day,{...CALENDAR,days:{}}).id),'a Halloween scene reached an automatic day '+day);
   }
   for (const id of HALLOWEEN_THEME_IDS){
     const theme=themeById(id),review=readThemeReview(reviewHash(id));

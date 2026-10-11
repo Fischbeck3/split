@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp, readFile, readdir, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
+import {CALENDAR as PUBLISHED_CALENDAR, LEGACY_OPENING_IDS, LEGACY_ROTATION_IDS, ROTATION_IDS} from '../site/js/calendar-data.js';
 import {addDateDays, createCalendarFeed, getCalendarAttribution, getCampaignForDate, getPublishedEntry,
   isDateKey, keyToDayNumber, latestLiveDate, normalizeCalendarPlan, validateCalendarPlan} from '../site/js/content-calendar.js';
 import {prepareCalendarChange, runCalendarCli, serializeCalendarPlan} from '../scripts/content-calendar.js';
@@ -36,27 +36,27 @@ test('published attribution never takes a holiday draft or campaign span as appr
   assert.deepEqual(getPublishedEntry('2026-10-09'), {themeId:'pub', campaignId:'opening-2026'});
   const entry = getPublishedEntry('2026-10-09'); entry.themeId = 'cola';
   assert.equal(getPublishedEntry('2026-10-09').themeId, 'pub');
-  assert.equal(getPublishedEntry('2026-10-25'), null);
-  assert.equal(getCampaignForDate('2026-10-25'), null);
-  assert.equal(getCampaignForDate('2026-10-25', CALENDAR, {includeDrafts:true}).id, 'halloween-2026');
+  assert.equal(getPublishedEntry('2026-10-25', CALENDAR), null);
+  assert.equal(getCampaignForDate('2026-10-25', CALENDAR), null);
+  assert.equal(getCampaignForDate('2026-10-25', CALENDAR, {includeDrafts:true}).id, 'unreviewed-holiday-2026');
   const t = {id:'pub', glassId:'guinness-tulip', vessel:'tulip', scene:'pub', visualTheme:'irish-pub'};
   assert.deepEqual(getCalendarAttribution('2026-10-10', t), {
     glass_id:'guinness-tulip', vessel:'tulip', scene:'pub', visual_theme:'irish-pub',
     campaign_id:'opening-2026', campaign_day:2, schedule_version:CALENDAR.version
   });
-  assert.equal(getCalendarAttribution('2026-10-25', t).campaign_id, 'none');
-  const partial = copy(); partial.campaigns['halloween-2026'].status = 'published';
+  assert.equal(getCalendarAttribution('2026-10-25', t, CALENDAR).campaign_id, 'none');
+  const partial = copy(); partial.campaigns['unreviewed-holiday-2026'].status = 'published';
   assert.equal(getCalendarAttribution('2026-10-25', t, partial).campaign_id, 'none');
-  assert.equal(getCalendarAttribution('2026-10-25', {id:'coffee', vessel:'cup'}).scene, 'bar');
+  assert.equal(getCalendarAttribution('2026-10-25', {id:'coffee', vessel:'cup'}, CALENDAR).scene, 'bar');
 });
 
 test('validation rejects missing themes, malformed campaigns and altered released selections', () => {
   assert.deepEqual(validateCalendarPlan(CALENDAR, {baseline:CALENDAR, now:NOW}), normalizeCalendarPlan(CALENDAR));
   const bad = change => {const plan = copy(); change(plan); return plan;};
   assert.throws(() => validateCalendarPlan(bad(plan => plan.drafts['2026-10-25'].themeId = 'concept-new'), {baseline:CALENDAR, now:NOW}), /unknown theme/);
-  assert.throws(() => validateCalendarPlan(bad(plan => plan.campaigns['halloween-2026'].endDate = '2026-02-30'), {baseline:CALENDAR, now:NOW}), /date span/);
+  assert.throws(() => validateCalendarPlan(bad(plan => plan.campaigns['unreviewed-holiday-2026'].endDate = '2026-02-30'), {baseline:CALENDAR, now:NOW}), /date span/);
   assert.throws(() => validateCalendarPlan(bad(plan => plan.drafts['2026-10-24'] = {...plan.drafts['2026-10-25']}), {baseline:CALENDAR, now:NOW}), /outside campaign/);
-  assert.throws(() => validateCalendarPlan(bad(plan => plan.campaigns['extra'] = {...plan.campaigns['halloween-2026']}), {baseline:CALENDAR, now:NOW}), /overlap/);
+  assert.throws(() => validateCalendarPlan(bad(plan => plan.campaigns['extra'] = {...plan.campaigns['unreviewed-holiday-2026']}), {baseline:CALENDAR, now:NOW}), /overlap/);
   assert.throws(() => validateCalendarPlan(bad(plan => plan.days['2026-10-09'].themeId = 'cola'), {baseline:CALENDAR, now:NOW}), /opening glass fixed/);
   assert.throws(() => validateCalendarPlan(bad(plan => plan.days['2026-10-15'] = {themeId:'pub', campaignId:'none'}), {baseline:CALENDAR, now:'2026-10-15T00:00:00Z'}), /served or globally live/);
   assert.throws(() => validateCalendarPlan(bad(plan => plan.campaigns['opening-2026'].name = 'Changed history'), {baseline:CALENDAR, now:NOW}), /served campaign/);
@@ -66,7 +66,7 @@ test('validation rejects missing themes, malformed campaigns and altered release
 });
 
 test('imported IDs must stay scalar strings instead of accepting JavaScript coercion', () => {
-  for (const [field, invalid] of [['themeId', ['choc']], ['themeId', true], ['campaignId', ['halloween-2026']], ['campaignId', true]]) {
+  for (const [field, invalid] of [['themeId', ['choc']], ['themeId', true], ['campaignId', ['unreviewed-holiday-2026']], ['campaignId', true]]) {
     const plan = copy(); plan.drafts['2026-10-25'][field] = invalid;
     assert.throws(() => normalizeCalendarPlan(plan), /invalid (theme|campaign) ID/);
     assert.throws(() => prepareCalendarChange(plan, {baseline:CALENDAR, now:NOW, publish:true}), /invalid (theme|campaign) ID/);
@@ -77,7 +77,7 @@ test('draft imports preserve published days; promotion requires ready content on
   const input = copy(); input.drafts['2026-10-25'].themeId = 'beach';
   const draftReview = prepareCalendarChange(input, {baseline:CALENDAR, now:NOW});
   assert.deepEqual(draftReview.plan.days, normalizeCalendarPlan(CALENDAR).days);
-  assert.equal(draftReview.plan.campaigns['halloween-2026'].status, 'draft');
+  assert.equal(draftReview.plan.campaigns['unreviewed-holiday-2026'].status, 'draft');
   assert.equal(draftReview.plan.version, CALENDAR.version + 1);
   assert.equal(draftReview.changes.length, 1);
   assert.deepEqual(draftReview.changes[0], {section:'drafts', key:'2026-10-25', before:CALENDAR.drafts['2026-10-25'], after:input.drafts['2026-10-25']});
@@ -86,7 +86,7 @@ test('draft imports preserve published days; promotion requires ready content on
   const promoted = prepareCalendarChange(input, {baseline:CALENDAR, now:NOW, publish:true, date:'2026-11-01'});
   assert.deepEqual(promoted.promotedDates, ['2026-11-01']);
   assert.equal(promoted.plan.days['2026-11-01'].themeId, 'pub');
-  assert.equal(promoted.plan.campaigns['halloween-2026'].status, 'draft');
+  assert.equal(promoted.plan.campaigns['unreviewed-holiday-2026'].status, 'draft');
   assert.equal(Object.keys(promoted.plan.drafts).length, 7);
   assert.throws(() => prepareCalendarChange(input, {baseline:CALENDAR, now:'2026-10-24T10:00:00Z', publish:true}), /globally live/);
   assert.throws(() => prepareCalendarChange(input, {baseline:CALENDAR, now:'2026-10-25T20:00:00Z', publish:true, date:'2026-10-31'}), /already started/);
@@ -107,7 +107,7 @@ test('draft imports preserve published days; promotion requires ready content on
   assert.equal(writes.length, 1);
   const saved = JSON.parse(writes[0][1].split('export const CALENDAR = ')[1].trim().slice(0, -1));
   assert.deepEqual(saved.days, normalizeCalendarPlan(CALENDAR).days);
-  assert.equal(saved.campaigns['halloween-2026'].status, 'draft');
+  assert.equal(saved.campaigns['unreviewed-holiday-2026'].status, 'draft');
   assert.equal(saved.drafts['2026-10-25'].themeId, 'beach');
   assert.equal(JSON.parse(logs[0]).mode, 'drafts');
   assert.equal(JSON.parse(logs[1]).mode, 'publish');
@@ -131,7 +131,7 @@ test('feeds keep actual and draft glass selections separate with stable all-day 
   assert.match(actual[0], /DTSTART;VALUE=DATE:20261025\r\nDTEND;VALUE=DATE:20261026/);
   assert.match(actual[0], /URL:https:\/\/dailysplit.us\/#day17/);
   assert.match(drafts.at(-1), /DTSTART;VALUE=DATE:20261025\r\nDTEND;VALUE=DATE:20261101/);
-  assert.match(drafts.at(-1), /UID:split-campaign-halloween-2026@dailysplit.us/);
+  assert.match(drafts.at(-1), /UID:split-campaign-unreviewed-holiday-2026@dailysplit.us/);
   assert.ok(drafts[0].includes('SEQUENCE:' + CALENDAR.version));
   const requested = [];
   createCalendarFeed({...options, plan, includeDrafts:true, resolveTheme:(date,id) => {requested.push([date,id]); return theme(date,id);}});
@@ -159,7 +159,7 @@ test('static builds emit both 90-day feeds without editing the source plan', asy
     assert.equal(events(await readFile(result.published, 'utf8')).length, 90);
     assert.equal(events(await readFile(result.planning, 'utf8')).length, 91);
     assert.equal(JSON.stringify(CALENDAR), before);
-    const later = await buildCalendarFeeds(directory, {plan:CALENDAR, now:'2026-11-01T00:00:00Z'});
+    const later = await buildCalendarFeeds(directory, {plan:PUBLISHED_CALENDAR, now:'2026-11-01T00:00:00Z'});
     assert.equal(later.startDate, '2026-10-25');
   } finally {await rm(directory, {recursive:true, force:true});}
 });

@@ -38,7 +38,7 @@ test('browser import cannot add, remove, or replace any published date, even a f
 test('browser import preserves published runs and cannot promote or create one', () => {
   const edited = copy(); edited.campaigns['opening-2026'].name = 'Rewritten opening';
   assert.throws(() => validate(edited), /served campaign/);
-  const promoted = copy(); promoted.campaigns['halloween-2026'].status = 'published';
+  const promoted = copy(); promoted.campaigns['unreviewed-holiday-2026'].status = 'published';
   assert.throws(() => validate(promoted), /Campaign content is not built and approved/);
   const created = copy(); created.campaigns['winter-2026'] = {
     name:'Winter week', startDate:'2026-12-01', endDate:'2026-12-07', status:'published', notes:''
@@ -63,7 +63,7 @@ test('source drafts remain readable after their live boundary, but cannot be edi
   assert.throws(() => validateBrowserPlan(edited, {baseline:CALENDAR, now}), /globally live date/);
   const removed = copy(); delete removed.drafts['2026-10-25'];
   assert.throws(() => validateBrowserPlan(removed, {baseline:CALENDAR, now}), /globally live date/);
-  const movedRun = copy(); movedRun.campaigns['halloween-2026'].notes = 'Changed run';
+  const movedRun = copy(); movedRun.campaigns['unreviewed-holiday-2026'].notes = 'Changed run';
   assert.throws(() => validateBrowserPlan(movedRun, {baseline:CALENDAR, now}), /already live runs unchanged/);
 });
 
@@ -74,7 +74,7 @@ test('future draft removal and standalone proposals need no campaign or publishi
   assert.equal(Object.hasOwn(result.drafts, '2026-10-25'), false);
   assert.equal(result.drafts['2026-11-01'].campaignId, 'none');
   assert.deepEqual(result.days, CALENDAR.days);
-  assert.equal(result.campaigns['halloween-2026'].status, 'draft');
+  assert.equal(result.campaigns['unreviewed-holiday-2026'].status, 'draft');
 });
 
 test('browser imports reject overlapping runs, unknown IDs, coercible IDs, and invalid dates', () => {
