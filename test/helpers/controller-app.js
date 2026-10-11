@@ -102,7 +102,7 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
     section('function renderStats(){', 'let toastTimer = '),
     section('const down = ', 'for (const target of '),
     section("window.addEventListener('pointerup'", "document.addEventListener('keydown'"),
-    section("$('practiceBtn').addEventListener('click'", "$('reviewTheme').addEventListener"),
+    section('function beginPractice(){', "$('reviewTheme').addEventListener"),
     section("$('reviewRefill').addEventListener('click'", "for (const id of ['introTodayBtn'"),
     'function restoreSession(){ const now = new Date();',
     section('  const rec = canRecordChallenge({key:S.key, kind:S.kind})', '  requestAnimationFrame(frame);'),
@@ -138,7 +138,7 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
   const sip = (heldFrames = 30) => { begin(); ready(); press(); advance(heldFrames); release(); settle(); return S.progress.rounds.at(-1); };
   return {S, storage, context, initial, element, events, draws, messages, reloads, location, scene, audio, advance, begin, ready, press, release, settle, sip,
     restore:() => run('restoreSession();'),
-    practice:() => element('practiceBtn').click(), reviewRefill:() => element('reviewRefill').click(),
+    practice:() => run('beginPractice();'), reviewRefill:() => element('reviewRefill').click(),
     finish:() => { context.frameTime = now; return run('finish(frameTime);'); },
     stats:() => { run('renderStats();'); return Object.fromEntries(['stDays','stStreak','stBest','stPerfect'].map(id => [id, element(id).textContent])); },
     clock:() => run('tickClock();'),

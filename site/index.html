@@ -63,7 +63,15 @@
       </div>
       <div class="intro-meta">
       <p class="daily-note" id="introNote">All three count. Same challenge for everyone.</p>
-      <details class="rules"><summary>How to play</summary><p>A dashed line briefly shows the target before each sip. Hold the glass, button, or space bar to tip and sip. Release a little early to bring it upright; the sip keeps flowing briefly. Match the settled beer line beneath the foam to that target. On Guinness, aim at the top of the G’s crossbar.</p><p>Try three fresh pours: Sober, Tipsy, then Drunk. Later sips sway and flow less evenly. Your final score is the average of all three, rounded to the nearest point. Misses count too. Reduced motion removes the zoom, sway and blur while keeping the same timing challenge.</p><p id="vesselHint">The line falls faster as the glass narrows. Release before the mark.</p><p>New glasses arrive at local midnight. Progress stays in this browser; an interrupted held sip counts as a miss. After three, repeat rounds are practice. Shared links open the same date’s glass; archives do not count toward your record.</p></details>
+      <details class="rules">
+        <summary id="howToPlayTitle">How to play</summary>
+        <div class="rules-body" role="region" aria-labelledby="howToPlayTitle" tabindex="0">
+          <p>A dashed line briefly shows the target before each sip. Hold the glass, button, or space bar to tip and sip. Release a little early to bring it upright; the sip keeps flowing briefly. Match the settled beer line beneath the foam to that target. On Guinness, aim at the top of the G’s crossbar.</p>
+          <p>Try three fresh pours: Sober, Tipsy, then Drunk. Later sips sway and flow less evenly. Your final score is the average of all three, rounded to the nearest point. Misses count too. Reduced motion removes the zoom, sway and blur while keeping the same timing challenge.</p>
+          <p id="vesselHint">The line falls faster as the glass narrows. Release before the mark.</p>
+          <p>New glasses arrive at local midnight. Progress stays in this browser; an interrupted held sip counts as a miss. Your three-sip average is your daily result. Shared links open the same date’s glass; archives do not count toward your record.</p>
+        </div>
+      </details>
       </div>
     </div>
   </section>
@@ -81,9 +89,16 @@
         <button class="outline" id="saveCardBtn" type="button">Save postcard</button>
       </div>
       <details class="share-copy"><summary>See text card</summary><pre id="shareText" tabindex="-1"></pre><button class="text-button" id="copyBtn" type="button">Copy text</button></details>
-      <div class="result-bottom"><button class="text-button" id="practiceBtn" type="button">Another sip · practice</button><p class="next">Next local midnight in <span id="countdown">--:--:--</span><button class="text-button" id="newDayBtn" type="button" hidden>Play today’s glass</button></p></div>
+      <button class="text-button" id="newDayBtn" type="button" hidden>Play today’s glass</button>
       <button class="text-button" id="officialBtn" type="button" hidden>Back to today's score</button>
       <div class="stats"><span><strong id="stDays">0</strong> days</span><span><strong id="stStreak">0</strong> streak</span><span>best <strong id="stBest">—</strong></span><span><strong id="stPerfect">0</strong> perfect</span></div>
+      <aside class="tip-jar" id="tipJar" aria-label="Support Daily Split">
+        <p>Enjoyed your round? Buy us a pint.</p>
+        <div class="tip-links">
+          <a class="outline" href="https://cash.app/$Fischbeck3" target="_blank" rel="noopener noreferrer" aria-label="Support Daily Split with Cash App (opens in a new tab)">Cash App</a>
+          <a class="outline" href="https://www.venmo.com/u/Fischbeck3" target="_blank" rel="noopener noreferrer" aria-label="Support Daily Split with Venmo (opens in a new tab)">Venmo</a>
+        </div>
+      </aside>
     </div>
   </section>
   <nav class="preview-nav" id="previewNav" aria-label="Preview the first three days" hidden><span>Design preview</span><a href="#day1">Pub</a><a href="#day2">Rome</a><a href="#day3">Tokyo</a></nav>

@@ -1,6 +1,6 @@
 // The app: hold input, the drink, results, sharing and the record.
 import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL,
-  scoreFromOffset, bandEmoji, detailText, pad, PERFECT, dayKey, REVIEW_THEMES} from './core.js';
+  scoreFromOffset, bandEmoji, detailText, PERFECT, dayKey, REVIEW_THEMES} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
 import {createAnalytics, gameProperties, resultProperties as analyticsResultProperties, trackedResultAction} from './analytics.js';
@@ -85,7 +85,6 @@ function renderChallengeStatus(now = new Date()){
     : S.storageFailed ? 'Progress stays in this tab. This round will not be saved.'
     : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of 3 saved. Finish your round.' : 'All three count. Same challenge for everyone.');
   if (['approaching','ready','drinking','between'].includes(S.state)) $('hudMode').textContent = roundStatus() + ' · ' + sipKind();
-  $('practiceBtn').textContent = 'Another round · ' + (S.review ? 'review' : S.preview ? 'preview' : S.kind === 'archive' ? 'archive' : 'practice');
   if (S.progress?.rounds.length && !S.progress.done) $('startLabel').textContent = 'Continue · ' + ROUND_STAGES[S.progress.rounds.length].label;
 }
 function refreshDayStatus(now = new Date()){
@@ -320,6 +319,7 @@ function shareText(){
 }
 function renderResult(){
   const r = S.result;
+  $('tipJar').hidden = S.preview || S.review;
   $('resScore').textContent = r.score; $('resScore').className = 'tone-' + r.tone;
   $('resLabel').textContent = r.label; $('resLabel').className = 'tone-' + r.tone;
   $('resDetail').textContent = r.drained ? 'You drank the lot.' : Math.round(Math.abs(r.f) * 100) === 0 ? 'Dead center. A lovely sip.' : Math.round(Math.abs(r.f) * 100) + '% of the mark’s height ' + (r.f < 0 ? 'high.' : 'low.');
@@ -427,10 +427,7 @@ function renderStats(){
   while (st.days[dayKey(cur)] && st.days[dayKey(cur)].done){ streak++; cur.setDate(cur.getDate() - 1); }
   $('stDays').textContent = keys.length; $('stStreak').textContent = streak; $('stBest').textContent = best === null ? '—' : best; $('stPerfect').textContent = perfect;
 }
-function msToMidnight(){ const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1) - n; }
 function tickClock(){
-  const s = Math.max(0, Math.floor(msToMidnight() / 1000));
-  $('countdown').textContent = pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
   refreshDayStatus();
 }
 let toastTimer = 0;
@@ -495,12 +492,12 @@ $('nextSipBtn').addEventListener('click', begin);
 $('shareBtn').addEventListener('click', share);
 $('saveCardBtn').addEventListener('click', savePostcard);
 $('copyBtn').addEventListener('click', copyText);
-$('practiceBtn').addEventListener('click', () => {
+function beginPractice(){
   S.practice = true; S.progress = null; S.focus = 0;
   begin();
-});
+}
 $('reviewTheme').addEventListener('change', event => { location.hash = reviewHash(event.target.value); });
-$('reviewRefill').addEventListener('click', () => { if (S.review && S.P){ S.practice = true; S.progress = null; S.focus = 0; begin(); } });
+$('reviewRefill').addEventListener('click', () => { if (S.review && S.P) beginPractice(); });
 for (const id of ['introTodayBtn', 'liveTodayBtn', 'newDayBtn']) $(id).addEventListener('click', () => location.assign('./'));
 $('officialBtn').addEventListener('click', () => {
   refreshDayStatus();
@@ -578,7 +575,6 @@ async function init(){
     $('reviewPrev').href = reviewHash(adjacentReviewTheme(S.theme.id, -1));
     $('reviewNext').href = reviewHash(adjacentReviewTheme(S.theme.id, 1));
     document.querySelector('.stats').hidden = true;
-    document.querySelector('.next').hidden = true;
   }
 
   renderRounds('introRounds', [], 0);
