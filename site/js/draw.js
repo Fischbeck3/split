@@ -7,12 +7,12 @@ import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
 import {loadBrandAssets, isGuinnessTheme} from './brand-assets.js';
-import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS, WINTER_THEME_IDS} from './themes.js';
+import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS, WINTER_THEME_IDS, HOLIDAY_THEME_IDS} from './themes.js';
 import {AUTUMN_BASE_IDS} from './autumn-themes.js';
 import {WINTER_BASE_IDS} from './winter-themes.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS];
-export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull'];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS, ...HOLIDAY_THEME_IDS];
+export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull', 'turkey', 'football', 'wishbone', 'pie', 'dreidel', 'jam'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
 export const SCENE_ART = {
@@ -52,6 +52,13 @@ export const SCENE_ART = {
       'winter-estrella-barcelona':0.576172,'winter-modelo-mexico-city':0.557292,'winter-sam-adams-boston':0.638021,
       'winter-high-life-milwaukee':0.576823,'winter-coors-apres-ski':0.524089,'winter-sierra-high-sierras':0.59375})[id],
     framing:'table',fallback:WINTER_BASE_IDS[index]
+  }])),
+  ...Object.fromEntries(HOLIDAY_THEME_IDS.map(id => [id,{
+    url:new URL('../assets/scenes/'+id+'.webp',import.meta.url).href,
+    table:({'thanksgiving-homecoming':.531,'thanksgiving-friendsgiving':.567,'thanksgiving-harvest-porch':.484,
+      'thanksgiving-football':.489583,'thanksgiving-wishbone':.535807,'thanksgiving-pie-kitchen':.501302,'thanksgiving-fireside':.568359,
+      'hanukkah-window-lights':.606771,'hanukkah-dreidel-night':.515625,'hanukkah-bakery':.494792})[id],
+    framing:'table',fallback:'pub'
   }]))
 };
 const sceneImages = new Map(), sceneLoads = new Map();

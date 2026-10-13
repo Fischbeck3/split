@@ -1,0 +1,26 @@
+{
+  "id": "thanksgiving-wishbone",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp"
+  ],
+  "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a welcoming country dining room at candlelit Thanksgiving twilight. The large empty foreground table has a simple cream linen cloth, with its rear edge at about 60% image height and natural subtle fabric texture. Small distant grown family and friends gather around a SECONDARY dining table toward the back of the room; their roast meal and candles are far background details. Formal warm wood furniture and a china cabinet give old-house warmth. A bay window reveals the blue twilight of an autumn garden with bare branches and remaining golden leaves. Warm candlelight, cream linen, dark wood, muted ochre and dusk blue. Keep the main foreground table completely empty and the central backdrop calm.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-636d53f9-8a2c-469e-8996-07b700285575.png",
+  "outputPath": "site/assets/scenes/thanksgiving-wishbone.webp",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "tabletop": 0.535807,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original style/table reference and generated scene. Candlelit country dining room, cream linen foreground, distant adult gathering with roast meal on a secondary table, autumn bay window and wood/china cabinet. Entire foreground table clear. Actual rear tabletop edge recorded from exported composition.",
+  "rearTableEdgeY": 823,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+}

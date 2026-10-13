@@ -1,0 +1,26 @@
+{
+  "id": "thanksgiving-football",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sam-adams-boston.webp"
+  ],
+  "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a comfortable Midwest living room during Thanksgiving football afternoon. Low golden afternoon sun enters an original-looking broad window onto a yard of russet and gold autumn trees. Small grown friends sit in comfortable chairs around the far room, with soft knit blankets on the chair backs. A television on the far side of the room shows only a generic green American-football field with small indistinct players, no score overlay, team insignia, numbers, or text. The foreground is an entirely empty warm wooden coffee/bar table, its rear edge at about 60% height. Quiet cream walls, warm wood and an autumn amber/soft-blue palette. Familiar relaxed afternoon at home.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-2ebe87a2-5b7e-4acf-a481-4d9b5b2c7ad4.png",
+  "outputPath": "site/assets/scenes/thanksgiving-football.webp",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "tabletop": 0.489583,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original style/material reference and generated scene. Warm Midwest living room, adult friends in chairs, autumn window, knit blankets, distant generic football television. Entire foreground wood table clear; no branded overlay or readable text. Actual rear tabletop edge is higher than the requested approximate 60% and is recorded from the exported composition.",
+  "rearTableEdgeY": 752,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+}

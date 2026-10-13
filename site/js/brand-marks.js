@@ -5,6 +5,7 @@
 import {guinnessPrintImage, isGuinnessTheme} from './brand-assets.js';
 import {TRAVEL_BRAND_DRAWERS} from './travel-brand-marks.js';
 import {HALLOWEEN_MARK_DRAWERS} from './halloween-marks.js';
+import {HOLIDAY_MARK_DRAWERS} from './holiday-marks.js';
 
 // Coordinates in the source SVG, whose top edge is cropped to y=14.
 // This is the filled top of the G's crossbar, not the wordmark's midpoint.
@@ -208,7 +209,8 @@ export function drawBrandMark(c, theme, cx, cy, h){
     : Object.hasOwn(DRAWERS, theme?.id) ? DRAWERS[theme.id]
       : Object.hasOwn(TRAVEL_BRAND_DRAWERS, theme?.brand) ? TRAVEL_BRAND_DRAWERS[theme.brand]
         : Object.hasOwn(HALLOWEEN_MARK_DRAWERS, theme?.brand) ? HALLOWEEN_MARK_DRAWERS[theme.brand]
-          : CONCEPT_DRAWERS.get(theme?.name);
+          : Object.hasOwn(HOLIDAY_MARK_DRAWERS, theme?.brand) ? HOLIDAY_MARK_DRAWERS[theme.brand]
+            : CONCEPT_DRAWERS.get(theme?.name);
   if (!draw || ![cx,cy,h].every(Number.isFinite) || h <= 0) return false;
   c.save(); c.translate(cx,cy); c.scale(h,h); c.lineJoin = 'round'; c.lineCap = 'round';
   draw(c,theme); c.restore(); return true;

@@ -1,0 +1,71 @@
+[
+  {
+    "id": "hanukkah-window-lights",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-new-york.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: new scenery illustration for the Split beer game, opaque full-bleed 1024 x 1536 portrait.\nInput image: Image 1 is ONLY a style and composition reference, not an edit target. Make a NEW distinct place and scene. Match its rich painted gouache and colored-pencil travel-postcard brushwork, believable depth, tactile worn surfaces and warm human scale. Do not copy its pub/cantina architecture, beer bottles, signage, religious skyline details or existing setting.\nComposition: a broad EMPTY foreground tabletop occupies approximately the bottom 40% of the portrait, with its rear edge around y=60%. Its center x=30–70% must be entirely unobstructed bare wood, reserved for a separately rendered live beer vessel. Every person, ritual object, lamp, pastry or game piece is on a side/background surface behind that rear edge, well away from the central live-vessel zone.\nScene: a quiet, welcoming Jewish city apartment at blue winter dusk, with a muted city skyline through a large LEFT-side window. A brass Hanukkah chanukiah sits clearly on that left window ledge, roughly x=8–30%, with the skyline and cold blue sky behind it. A warm shaded electric lamp and a small group of adult friends sharing conversation occupy the deeper RIGHT side of the room. Worn oak floor, soft upholstered chairs, small framed artwork with no text, and a navy throw create an intimate home. The broad foreground table is clear warm wood, not part of their side gathering.\nChanukiah accuracy: show ONE culturally accurate Hanukkah chanukiah, not a seven-branch menorah. Its simple brass candle holder has EXACTLY NINE visible candle positions: FOUR identical equal-height festival candles to the left, FOUR identical equal-height festival candles to the right, all EIGHT festival candles aligned in one straight horizontal row, plus ONE clearly raised central shamash/helper candle above the row. Every candle is individually visible and countable, with no overlapping, hidden or extra positions. Total candle count NINE. Keep this holder in the indicated side/background window or sideboard, never centered behind the future live beer glass.\n\nLighting count for first-night Hanukkah: exactly ONE festival candle is lit, the rightmost of the eight equal-height festival candles, and the single raised central shamash is also lit. EXACTLY TWO flames total. All seven other festival candles are visibly present but unlit, with dark bare wicks and no flame or halo.\nConstraints: scenery only, adult friends or family, warm and specific Jewish Hanukkah gathering. NO foreground glass, bottle, beer, drink, cup, mug or can; no readable text, logos, signs, UI, border or watermark. NO Christmas tree, Santa, wreath, garland, stocking, cross, ornament, or generic Christmas blend. Do not introduce another candle holder or background candle flames that confuse the intended count. Keep all foreground table center empty. Maintain the opaque full-bleed portrait style.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-d839289a-2775-4824-8d2d-f076a1c725d6.png",
+    "outputPath": "site/assets/scenes/hanukkah-window-lights.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.606771,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected output once: quiet new Jewish apartment with city skyline, adult friends and warm electric lamp. Left window chanukiah has exactly nine visible candles: four equal-height festival candles each side of one raised central shamash. Exactly two flames: rightmost festival candle plus shamash; seven festival candles unlit. No candle-count issue. No Christmas elements. Foreground wood center is empty. Central rear tabletop edge at pixel y=932."
+  },
+  {
+    "id": "hanukkah-dreidel-night",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-dublin.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: new scenery illustration for the Split beer game, opaque full-bleed 1024 x 1536 portrait.\nInput image: Image 1 is ONLY a style and composition reference, not an edit target. Make a NEW distinct place and scene. Match its rich painted gouache and colored-pencil travel-postcard brushwork, believable depth, tactile worn surfaces and warm human scale. Do not copy its pub/cantina architecture, beer bottles, signage, religious skyline details or existing setting.\nComposition: a broad EMPTY foreground tabletop occupies approximately the bottom 40% of the portrait, with its rear edge around y=60%. Its center x=30–70% must be entirely unobstructed bare wood, reserved for a separately rendered live beer vessel. Every person, ritual object, lamp, pastry or game piece is on a side/background surface behind that rear edge, well away from the central live-vessel zone.\nScene: a lively warm Jewish apartment dreidel game night in navy and ochre tones. Three or four ADULT friends or adult family sit in the deeper RIGHT side at a secondary game table, laughing over small wooden dreidels and scattered foil-wrapped chocolate coins; these game objects remain small and distant, no readable lettering. A snow-dusted window shows cold blue evening light on the LEFT. A simple brass Hanukkah chanukiah stands clearly on the LEFT background sideboard by that window, roughly x=8–30%. Comfortable room with warm shaded electric lamps and worn wood, no pub or bar fixtures. The foreground table is entirely clear bare wood, separate from the game table.\nChanukiah accuracy: show ONE culturally accurate Hanukkah chanukiah, not a seven-branch menorah. Its simple brass candle holder has EXACTLY NINE visible candle positions: FOUR identical equal-height festival candles to the left, FOUR identical equal-height festival candles to the right, all EIGHT festival candles aligned in one straight horizontal row, plus ONE clearly raised central shamash/helper candle above the row. Every candle is individually visible and countable, with no overlapping, hidden or extra positions. Total candle count NINE. Keep this holder in the indicated side/background window or sideboard, never centered behind the future live beer glass.\n\nLighting count for fourth-night Hanukkah: exactly FOUR festival candles are lit, the four candles on the RIGHT of the raised central shamash, and the raised shamash is also lit. EXACTLY FIVE flames total. The four festival candles to the LEFT are visibly present but unlit, with dark bare wicks and no flame or halo.\nConstraints: scenery only, adult friends or family, warm and specific Jewish Hanukkah gathering. NO foreground glass, bottle, beer, drink, cup, mug or can; no readable text, logos, signs, UI, border or watermark. NO Christmas tree, Santa, wreath, garland, stocking, cross, ornament, or generic Christmas blend. Do not introduce another candle holder or background candle flames that confuse the intended count. Keep all foreground table center empty. Maintain the opaque full-bleed portrait style.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-5f299235-9402-4f08-991d-f4e13bcd484c.png",
+    "outputPath": "site/assets/scenes/hanukkah-dreidel-night.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.515625,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected output once: distinct warm apartment game night with adult friends, small distant dreidels and chocolate coins, navy/ochre palette and snowy window. Left sideboard chanukiah has exactly nine visible candles: four equal-height festival candles each side of one raised central shamash. Exactly five flames: four right-side festival candles plus shamash; four left-side festival candles unlit. No candle-count issue. No Christmas elements. Foreground wood center is empty. Central rear tabletop edge at pixel y=792."
+  },
+  {
+    "id": "hanukkah-bakery",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/modelo-mexico-city.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: new scenery illustration for the Split beer game, opaque full-bleed 1024 x 1536 portrait.\nInput image: Image 1 is ONLY a style and composition reference, not an edit target. Make a NEW distinct place and scene. Match its rich painted gouache and colored-pencil travel-postcard brushwork, believable depth, tactile worn surfaces and warm human scale. Do not copy its pub/cantina architecture, beer bottles, signage, religious skyline details or existing setting.\nComposition: a broad EMPTY foreground tabletop occupies approximately the bottom 40% of the portrait, with its rear edge around y=60%. Its center x=30–70% must be entirely unobstructed bare wood, reserved for a separately rendered live beer vessel. Every person, ritual object, lamp, pastry or game piece is on a side/background surface behind that rear edge, well away from the central live-vessel zone.\nScene: a warm neighborhood Jewish bakery gathering after closing on a cold blue winter evening. A copper oven and wooden pastry shelves fill the deep RIGHT background, and adult friends and the adult baker gather around a distant rear counter. On that distant counter are small plates of round, powdered, JELLY-FILLED sufganiyot: plump solid round doughnuts with tiny red jam dots, absolutely NO central holes or ring doughnuts. A LEFT-side window shows a quiet blue evening neighborhood and hosts one clearly visible brass Hanukkah chanukiah on the window ledge, roughly x=8–30%. Warm plaster, old baking trays and copper create tactile bakery atmosphere. The broad foreground table is pale worn wood or warm stone, completely empty and clear, distinct from the pastry counter.\nChanukiah accuracy: show ONE culturally accurate Hanukkah chanukiah, not a seven-branch menorah. Its simple brass candle holder has EXACTLY NINE visible candle positions: FOUR identical equal-height festival candles to the left, FOUR identical equal-height festival candles to the right, all EIGHT festival candles aligned in one straight horizontal row, plus ONE clearly raised central shamash/helper candle above the row. Every candle is individually visible and countable, with no overlapping, hidden or extra positions. Total candle count NINE. Keep this holder in the indicated side/background window or sideboard, never centered behind the future live beer glass.\n\nLighting count for the eighth night of Hanukkah: all EIGHT equal-height festival candles are lit, four on each side, and the ONE raised central shamash is also lit. EXACTLY NINE visible flames total, with no additional candles elsewhere.\nConstraints: scenery only, adult friends or family, warm and specific Jewish Hanukkah gathering. NO foreground glass, bottle, beer, drink, cup, mug or can; no readable text, logos, signs, UI, border or watermark. NO Christmas tree, Santa, wreath, garland, stocking, cross, ornament, or generic Christmas blend. Do not introduce another candle holder or background candle flames that confuse the intended count. Keep all foreground table center empty. Maintain the opaque full-bleed portrait style.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-48451b7a-d2dc-446d-9b43-710f3c39787f.png",
+    "outputPath": "site/assets/scenes/hanukkah-bakery.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.494792,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected output once: distinct neighborhood bakery with copper oven, pastry shelves and adult baker/friends. Sufganiyot are solid round powdered jelly-filled doughnuts with small red jam dots and no central holes. Left window chanukiah has exactly nine visible candles: four equal-height festival candles each side of one raised central shamash, all eight festival candles and shamash lit, nine flames total. No candle-count issue. No Christmas elements. Foreground tabletop center is empty. Central rear tabletop edge at pixel y=760."
+  }
+]

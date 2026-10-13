@@ -1,0 +1,106 @@
+[
+  {
+    "id": "thanksgiving-football",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sam-adams-boston.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a comfortable Midwest living room during Thanksgiving football afternoon. Low golden afternoon sun enters an original-looking broad window onto a yard of russet and gold autumn trees. Small grown friends sit in comfortable chairs around the far room, with soft knit blankets on the chair backs. A television on the far side of the room shows only a generic green American-football field with small indistinct players, no score overlay, team insignia, numbers, or text. The foreground is an entirely empty warm wooden coffee/bar table, its rear edge at about 60% height. Quiet cream walls, warm wood and an autumn amber/soft-blue palette. Familiar relaxed afternoon at home.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-2ebe87a2-5b7e-4acf-a481-4d9b5b2c7ad4.png",
+    "outputPath": "site/assets/scenes/thanksgiving-football.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.489583,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original style/material reference and generated scene. Warm Midwest living room, adult friends in chairs, autumn window, knit blankets, distant generic football television. Entire foreground wood table clear; no branded overlay or readable text. Actual rear tabletop edge is higher than the requested approximate 60% and is recorded from the exported composition.",
+    "rearTableEdgeY": 752,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+  },
+  {
+    "id": "thanksgiving-wishbone",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a welcoming country dining room at candlelit Thanksgiving twilight. The large empty foreground table has a simple cream linen cloth, with its rear edge at about 60% image height and natural subtle fabric texture. Small distant grown family and friends gather around a SECONDARY dining table toward the back of the room; their roast meal and candles are far background details. Formal warm wood furniture and a china cabinet give old-house warmth. A bay window reveals the blue twilight of an autumn garden with bare branches and remaining golden leaves. Warm candlelight, cream linen, dark wood, muted ochre and dusk blue. Keep the main foreground table completely empty and the central backdrop calm.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-636d53f9-8a2c-469e-8996-07b700285575.png",
+    "outputPath": "site/assets/scenes/thanksgiving-wishbone.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.535807,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original style/table reference and generated scene. Candlelit country dining room, cream linen foreground, distant adult gathering with roast meal on a secondary table, autumn bay window and wood/china cabinet. Entire foreground table clear. Actual rear tabletop edge recorded from exported composition.",
+    "rearTableEdgeY": 823,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+  },
+  {
+    "id": "thanksgiving-pie-kitchen",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/modelo-mexico-city.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a cozy retro blue-and-teal tiled home kitchen after Thanksgiving dinner. Cool dusk shows through the kitchen window, while a warm oven glow and soft old kitchen lamps light the room. Cooling pies sit only on a FAR back counter; a small flour-dusted tea towel stays at the outer margin of that distant counter. Small grown friends chat in a doorway at the back, in relaxed ordinary autumn clothing. Teal cabinet paint, honest warm plaster, worn tile, and a few simple shelves give the home character. A broad empty butcher-block foreground counter/table starts at a horizontal rear edge around 60% height and fills the entire lower image; it has no props, no ingredients and no drink. Quiet middle, warm wood, teal and dusk-blue atmosphere.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-c09c6bcd-952d-4b72-931e-da8dbbef9ea6.png",
+    "outputPath": "site/assets/scenes/thanksgiving-pie-kitchen.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.501302,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original style/composition reference and generated scene. Retro teal cabinetry and blue tile, cooling pies on distant oven/counter, towel at far margin, warm oven, dusk autumn window and adult friends in back doorway. Entire wood foreground clear with no vessel or food. Actual table edge is higher than the approximate 60% prompt and is recorded from the exported composition.",
+    "rearTableEdgeY": 770,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+  },
+  {
+    "id": "thanksgiving-fireside",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-edinburgh.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an opaque 1024 by 1536 pixel portrait scenery illustration for the Split beer game.\nInput images: Image 1 is only a style, material, and composition reference. Create a NEW setting described below; do not edit or copy the reference location.\nStyle/medium: the same richly painted travel-postcard world as the reference, with hand-painted gouache color, fine pencil detail, tactile wood and fabric, lived-in architecture, and natural atmospheric perspective.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. A large empty foreground tabletop extends from a clean, almost horizontal rear edge at about 60% of image height to the bottom border. The entire foreground is clear. Keep the central x30\u201370% of the composition quiet for a live beer vessel the game will draw separately. People are small distant adults in the background, off the main central axis.\nScene: a late-night cabin sitting room after Thanksgiving. A stone fireplace throws cozy amber firelight across aged wood beams and dark walls; a simple autumn-leaf wreath is above the mantel, with no Christmas ornaments. Tartan armchairs, coats hung near the back doorway, and soft wool blankets make the room comfortable. Small distant grown friends sit and talk in the far room. A window is deep indigo with a faint view of bare autumn trees outside, no snowfall required. The broad aged wooden foreground table is completely empty, extending from a clean rear edge around 60% height to the bottom border, leaving a calm middle for the live glass. Candle-amber fire against deep indigo, worn stone and timber, quiet late-night warmth.\nConstraints: no foreground vessels, glassware, bottles, cups, cans, drinks, food, plates, labels, brands, logos, readable text, interface, border, or watermark. No objects resting on the foreground table. No Halloween faces, jack-o-lanterns, Christmas decorations, Santa, colonial costumes, fantasy features, or close-up people. All Thanksgiving meal details remain distant background elements. Make the place and social warmth carry the scene.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-fb305ed2-ec1f-4cfd-ae17-f4407756178f.png",
+    "outputPath": "site/assets/scenes/thanksgiving-fireside.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.568359,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original style/composition reference and generated scene. New cabin room with stone fire, autumn leaf wreath, tartan chairs and wool, coats, adult friends in far room and deep indigo bare-tree window. Entire aged wood foreground table clear; no holiday mix-up, drink, logo or readable text.",
+    "rearTableEdgeY": 873,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes"
+  }
+]

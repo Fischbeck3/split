@@ -8,10 +8,12 @@ import {travelThemePreviews} from './theme-expansion.js';
 import {halloweenThemePreviews} from './halloween-themes.js';
 import {autumnThemePreviews} from './autumn-themes.js';
 import {winterThemePreviews} from './winter-themes.js';
+import {holidayThemePreviews} from './holiday-themes.js';
 export {PREVIEW_THEME_IDS} from './theme-expansion.js';
 export {HALLOWEEN_THEME_IDS} from './halloween-themes.js';
 export {AUTUMN_THEME_IDS} from './autumn-themes.js';
 export {WINTER_THEME_IDS} from './winter-themes.js';
+export {HOLIDAY_THEME_IDS} from './holiday-themes.js';
 export const SCHEDULE = LEGACY_OPENING_IDS;
 
 // Fields
@@ -95,3 +97,4 @@ THEMES.push(...travelThemePreviews(THEMES[0]));
 THEMES.push(...halloweenThemePreviews(THEMES[0]));
 THEMES.push(...autumnThemePreviews(THEMES));
 THEMES.push(...winterThemePreviews(THEMES));
+THEMES.push(...holidayThemePreviews(THEMES[0]));

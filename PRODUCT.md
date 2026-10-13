@@ -36,7 +36,7 @@ The Christmas/winter extension uses the same fifteen bases as autumn, with five 
 
 ## Evidence on Hand
 
-README.md documents the shipped game. DESIGN.md records the incumbent identity and scene/vessel rules. site/js/themes.js contains the existing drinks; site/js/theme-expansion.js, site/js/halloween-themes.js, site/js/autumn-themes.js, and site/js/winter-themes.js contain the seasonal and travel review choices. site/assets/scenes and site/assets/concepts contain the developed illustration assets. The user approved the fifteen-theme lineup, Chicago's holiday setting, and the two outdoor beer memories, then requested all seven Halloween concepts in `#admin` to review while away from the computer. The user subsequently requested fifteen slight autumn variations, then fifteen Christmas/winter variations of current themes and their publication to `#admin` for review.
+README.md documents the shipped game. DESIGN.md records the incumbent identity and scene/vessel rules. site/js/themes.js contains the existing drinks; site/js/theme-expansion.js, site/js/halloween-themes.js, site/js/autumn-themes.js, site/js/winter-themes.js, and site/js/holiday-themes.js contain the seasonal and travel review choices. site/assets/scenes and site/assets/concepts contain the developed illustration assets. The user approved the fifteen-theme lineup, Chicago's holiday setting, and the two outdoor beer memories, then requested all seven Halloween concepts in `#admin` to review while away from the computer. The user subsequently requested fifteen slight autumn variations, then fifteen Christmas/winter variations of current themes and their publication to `#admin` for review.
 
 ## Product Principles
 
@@ -48,3 +48,6 @@ README.md documents the shipped game. DESIGN.md records the incumbent identity a
 ## Accessibility & Inclusion
 
 Preserve the existing keyboard controls, readable contrast, responsive phone layout, and reduced-motion behavior.
+
+
+The holiday-week request adds seven Thanksgiving themes and three Hanukkah themes to the unsaved catalog, bringing it to 68. The Thanksgiving collection spans homecoming, Friendsgiving, harvest porch, football afternoon, candlelit wishbone toast, pie kitchen, and after-dinner fire. Two use Guinness and five use distinct seasonal glass prints. The December collection curates fourteen already-built winter scenes into two Christmas review weeks, with the three new Hanukkah gatherings in their own section. The plain Sierra winter camp remains in the original winter gallery. The ten new painted places have empty foregrounds, live glasses, explicit split features, exact generation provenance, and measured table anchors. The user’s confirmed current lineup remains unchanged; this request creates no new daily dates, scheduling jobs, or automatic tasks.

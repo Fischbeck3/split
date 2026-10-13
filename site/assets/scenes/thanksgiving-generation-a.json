@@ -1,0 +1,71 @@
+[
+  {
+    "id": "thanksgiving-homecoming",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/irish-pub.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: NEW portrait Thanksgiving travel-memory scenery background for Split, 1024 x 1536 pixels, opaque full bleed.\nInput image: attached illustration is a STYLE AND COMPOSITION REFERENCE ONLY, not an edit target. Create the new setting below, while inheriting its richly painted gouache-and-colored-pencil travel postcard world, tactile materials, gentle cinematic light and believable deep perspective. It is NOT the same reference room/place with decorations added.\nComposition: eye level from a seated person at an EMPTY foreground table. A broad wooden tabletop spans the entire image width and occupies roughly the lower40%, with its rear edge near y=60%. The ENTIRE foreground tabletop is empty, including its margins. Leave central x=30\u201370% quiet and clear for a large live glass composited later. Meaningful Thanksgiving props must belong to distant secondary tables, background ledges, stairs, sidewalls or far side margins BEHIND the foreground table. Adult friends are small and distant at side edges.\nConstraints: backdrop scenery only. No foreground drink, drinking glass, cup, mug, bottle, beer can, logo, readable text, sign lettering, UI, border or watermark. No Halloween faces, carved jack-o-lanterns, ghost decoration, Christmas ornaments, Christmas lights, snow, colonial costumes or costumes of any kind. Natural present-day adult company. No oversize central object. The foreground surface and central live-vessel zone must remain fully bare. Match the reference's finely observed illustrated craft, not photorealism or flat vector art.\nScene/backdrop: A NEW small hometown Irish tavern in the United States on Thanksgiving eve, a familiar meeting place for friends back home. Aged honey-dark oak bar and paneling, modest cozy stone fireplace off to the RIGHT, copper pendant lamps, rain streaking a side window at LEFT that looks onto a small hometown brick main street at late blue evening. No Irish castle or recognizable foreign skyline. Small distant adult friends in warm autumn coats sit together at a back side table, a couple jackets over chairs. A modest russet autumn-leaf garland hangs along a peripheral background shelf, understated hometown hospitality. Rich warm copper lamplight and firelight against cool rainy navy, the room feels worn and real. A NEW broad empty aged-oak foreground pub table, rear edge near60%.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-a1826454-0fc1-4f72-98e9-c59a3b08618b.png",
+    "outputPath": "site/assets/scenes/thanksgiving-homecoming.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.531,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New hometown tavern, visibly distinct from reference viewpoint. Autumn leaf garland, rain, copper lamps and distant modern friends. Broad bare foreground tabletop; no holiday costumes, Halloween faces, Christmas or foreground vessel."
+  },
+  {
+    "id": "thanksgiving-friendsgiving",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-new-york.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: NEW portrait Thanksgiving travel-memory scenery background for Split, 1024 x 1536 pixels, opaque full bleed.\nInput image: attached illustration is a STYLE AND COMPOSITION REFERENCE ONLY, not an edit target. Create the new setting below, while inheriting its richly painted gouache-and-colored-pencil travel postcard world, tactile materials, gentle cinematic light and believable deep perspective. It is NOT the same reference room/place with decorations added.\nComposition: eye level from a seated person at an EMPTY foreground table. A broad wooden tabletop spans the entire image width and occupies roughly the lower40%, with its rear edge near y=60%. The ENTIRE foreground tabletop is empty, including its margins. Leave central x=30\u201370% quiet and clear for a large live glass composited later. Meaningful Thanksgiving props must belong to distant secondary tables, background ledges, stairs, sidewalls or far side margins BEHIND the foreground table. Adult friends are small and distant at side edges.\nConstraints: backdrop scenery only. No foreground drink, drinking glass, cup, mug, bottle, beer can, logo, readable text, sign lettering, UI, border or watermark. No Halloween faces, carved jack-o-lanterns, ghost decoration, Christmas ornaments, Christmas lights, snow, colonial costumes or costumes of any kind. Natural present-day adult company. No oversize central object. The foreground surface and central live-vessel zone must remain fully bare. Match the reference's finely observed illustrated craft, not photorealism or flat vector art.\nScene/backdrop: A NEW INDOOR city brick loft for Friendsgiving on a late autumn afternoon. This is not the reference's outdoor pub street. Beautiful rough red brick walls, tall old industrial windows looking over rusty autumn treetops and a modest urban skyline, iron window mullions and warm timber floorboards. Small distant modern adult friends gather at a SECONDARY long dining table set BACK at the RIGHT side, casually talking over harvest food and simple autumn flowers; all food/flowers remain at that distant secondary table. Golden afternoon daylight cuts gently across the brick, warm terracotta, pumpkin-gold, smoky blue outside, thoughtful informal company. A separate broad empty foreground wooden bar table fills lower40%; no food, dishes or drinks anywhere on that foreground surface. Calm spacious central view and tactile urban material.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-5df165cd-7912-4969-9283-1189585a2526.png",
+    "outputPath": "site/assets/scenes/thanksgiving-friendsgiving.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.567,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New indoor brick loft with tall skyline/treetop windows, late afternoon light and modern adult company at a distant secondary harvest dining table. Entire foreground wooden table bare and clear. No Halloween/Christmas cues or foreground vessels."
+  },
+  {
+    "id": "thanksgiving-harvest-porch",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sierra-high-sierras.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: NEW portrait Thanksgiving travel-memory scenery background for Split, 1024 x 1536 pixels, opaque full bleed.\nInput image: attached illustration is a STYLE AND COMPOSITION REFERENCE ONLY, not an edit target. Create the new setting below, while inheriting its richly painted gouache-and-colored-pencil travel postcard world, tactile materials, gentle cinematic light and believable deep perspective. It is NOT the same reference room/place with decorations added.\nComposition: eye level from a seated person at an EMPTY foreground table. A broad wooden tabletop spans the entire image width and occupies roughly the lower40%, with its rear edge near y=60%. The ENTIRE foreground tabletop is empty, including its margins. Leave central x=30\u201370% quiet and clear for a large live glass composited later. Meaningful Thanksgiving props must belong to distant secondary tables, background ledges, stairs, sidewalls or far side margins BEHIND the foreground table. Adult friends are small and distant at side edges.\nConstraints: backdrop scenery only. No foreground drink, drinking glass, cup, mug, bottle, beer can, logo, readable text, sign lettering, UI, border or watermark. No Halloween faces, carved jack-o-lanterns, ghost decoration, Christmas ornaments, Christmas lights, snow, colonial costumes or costumes of any kind. Natural present-day adult company. No oversize central object. The foreground surface and central live-vessel zone must remain fully bare. Match the reference's finely observed illustrated craft, not photorealism or flat vector art.\nScene/backdrop: A NEW rural FARMHOUSE PORCH on a bright golden autumn afternoon. This is not the reference's alpine lake campsite: no jagged alpine peaks, lake or camping tent. Weathered pale painted porch columns, simple railing, rolling farm valley with autumn trees, pasture fields and a small distant barn, warm clear afternoon sky. Uncarved pumpkins, natural gourds, dried corn and harvest baskets sit at the FAR LEFT and FAR RIGHT background porch margins on steps and against the wall, not on the foreground tabletop. A few modern adult friends stand farther back near the side railing talking in casual autumn layers. Rusty ochre leaves, warm golden fields, pale sage porch paint, beautiful weathered silver-brown timber. A broad completely empty foreground wooden porch table, rear edge around60%.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-6d0e5598-ea66-40eb-8817-5b3eaef897bc.png",
+    "outputPath": "site/assets/scenes/thanksgiving-harvest-porch.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.484,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New pale farmhouse porch and golden rural valley with adult friends at far left; uncarved pumpkins, corn and harvest baskets behind the table along side margins. Bright autumn afternoon distinct from homecoming and loft. Entire weathered foreground tabletop bare, no Halloween/Christmas/snow or foreground vessel."
+  }
+]
