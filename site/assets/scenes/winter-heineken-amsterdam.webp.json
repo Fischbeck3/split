@@ -1,0 +1,28 @@
+{
+  "id": "winter-heineken-amsterdam",
+  "base": "heineken-amsterdam",
+  "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp",
+  "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: this same Amsterdam canal terrace on a blue winter evening. Make the existing overhead trees bare; dust the existing bridge, bicycles, canal rail, and roof edges with light snow. Keep the water open with cool blue reflections. Warm golden window lights glow within the existing canal houses. Add just a small festive warm-white light strand following the existing rail; remove summer flowers or replace their peripheral foliage with modest winter greenery. The same distant friends wear coats, at the same table. Keep the large foreground wooden table dry and completely clear, with its rear edge unchanged.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp"
+  ],
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-15afc7ce-c072-41b5-97c9-0fc836e2a4dd.png",
+  "outputPath": "site/assets/scenes/winter-heineken-amsterdam.webp",
+  "tool": "built-in image_gen edit",
+  "tabletop": 0.608724,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original and generated edit. Same canal, bridge, bicycles, house facades, friends, chairs and table. Bare snow-dusted trees, open blue canal, warm windows and small lights. Clear dry foreground; no baked vessel or text.",
+  "rearTableEdgeY": 935,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270)",
+  "promptSidecar": "site/assets/scenes/winter-heineken-amsterdam.webp.json"
+}

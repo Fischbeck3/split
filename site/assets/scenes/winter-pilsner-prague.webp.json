@@ -1,0 +1,28 @@
+{
+  "id": "winter-pilsner-prague",
+  "base": "pilsner-prague",
+  "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp",
+  "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: preserve this exact cozy Prague brick-vaulted beer cellar, every arch, copper pendant, barrel, portrait, bench, floor, wooden door, and seated friends. Decorate a few of the existing brick arch edges with restrained evergreen garlands and small deep-red ribbons. The existing wall and table candles cast warmer, softer Christmas light, and the same peripheral friends wear winter layers. This source has no exterior opening: do not invent a window or snowy view. No decorative tree is needed. Keep every bit of the empty foreground wooden tabletop geometry in place.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp"
+  ],
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-b3e65a88-d1f4-4319-9b29-58fba6e89472.png",
+  "outputPath": "site/assets/scenes/winter-pilsner-prague.webp",
+  "tool": "built-in image_gen edit",
+  "tabletop": 0.563151,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original and generated edit. Brick vaults, copper lamps, portrait, barrels, door, friends and foreground table preserved. Evergreen arch garlands, red ribbons, warm candles and winter layers. No invented exterior opening or tree; clear foreground.",
+  "rearTableEdgeY": 865,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270)",
+  "promptSidecar": "site/assets/scenes/winter-pilsner-prague.webp.json"
+}

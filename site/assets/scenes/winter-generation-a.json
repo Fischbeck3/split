@@ -1,0 +1,122 @@
+[
+  {
+    "id": "winter-pub",
+    "base": "pub",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/irish-pub.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: winter and Christmas variation of the attached existing Split travel illustration, 1024 x 1536 portrait.\nInput image: attached image is the EDIT TARGET. Edit this exact scene; do not create a new composition.\nInvariants: preserve the same camera viewpoint, architectural identity, furniture and friends positions, perspective, original table geometry and rear tabletop edge height, and the rich finely painted gouache/colored-pencil travel postcard style. Preserve all untouched materials and details. The central foreground table remains completely empty and unobstructed; center x=32–68% is reserved for a separate live game glass composited later.\nChange only winter ambient conditions, modest Christmas details at background/outer edges, and seasonally appropriate clothing described below. Maintain believable nostalgia and friends gathering.\nConstraints: backdrop ONLY, opaque full bleed. NO new foreground glass, beer, cup, mug, bottle, can, logo, readable text, letters, signage, UI, frame or watermark. Remove any barely readable incidental lettering while preserving the building/sign surface. No foreground props, no snow indoors, no kitschy Santa decoration, no Halloween decorations. Keep the painting's carefully observed materials, light and depth.\nWinter edit: An old Irish pub at Christmastime, the same exact familiar room. Emphasize the existing warm hearth fire. Add an elegant modest evergreen garland along the background fireplace mantel at the RIGHT, a few small red wool stockings hanging beside the hearth away from the foreground. Through the original diamond-paned rear window, show softly snowy rooftops and a pale cold winter dusk. The distant friends stay in their same seats, warm sweaters and coats nearby. Amber firelight, dark green foliage and very restrained red, tactile dark timber. Do not put anything on the empty central foreground wooden table.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/irish-pub.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-0b3e9a2f-2ab4-49d3-af3b-fdc48bd3e54a.png",
+    "outputPath": "site/assets/scenes/winter-pub.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.602,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Same viewpoint, original room/table identity and clear central foreground retained. Background greenery/lights and winter window light distinguish this edition without a foreground vessel or interior snow."
+  },
+  {
+    "id": "winter-guinness-dublin",
+    "base": "guinness-dublin",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-dublin.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: winter and Christmas variation of the attached existing Split travel illustration, 1024 x 1536 portrait.\nInput image: attached image is the EDIT TARGET. Edit this exact scene; do not create a new composition.\nInvariants: preserve the same camera viewpoint, architectural identity, furniture and friends positions, perspective, original table geometry and rear tabletop edge height, and the rich finely painted gouache/colored-pencil travel postcard style. Preserve all untouched materials and details. The central foreground table remains completely empty and unobstructed; center x=32–68% is reserved for a separate live game glass composited later.\nChange only winter ambient conditions, modest Christmas details at background/outer edges, and seasonally appropriate clothing described below. Maintain believable nostalgia and friends gathering.\nConstraints: backdrop ONLY, opaque full bleed. NO new foreground glass, beer, cup, mug, bottle, can, logo, readable text, letters, signage, UI, frame or watermark. Remove any barely readable incidental lettering while preserving the building/sign surface. No foreground props, no snow indoors, no kitschy Santa decoration, no Halloween decorations. Keep the painting's carefully observed materials, light and depth.\nWinter edit: The same Dublin pub window seat in daylight during a modest Christmas gathering. Add a small evergreen wreath on an outer wall area and warm tiny fairy lights around the original window frame and peripheral dark wood, keeping the window and central view legible. The original Dublin street/bridge beyond the window feels cold and pale in early winter with bare trees; soft winter daylight rather than heavy snowfall. Existing friends at left wear comfortable wool layers without changing poses. Original green paneling, brass fittings and bar remain exact. Keep all Christmas detail restrained and background only; empty central foreground table untouched.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-dublin.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-b15e6da9-1a9e-409e-ad05-af3af2f616a9.png",
+    "outputPath": "site/assets/scenes/winter-guinness-dublin.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.58,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Same viewpoint, original room/table identity and clear central foreground retained. Background greenery/lights and winter window light distinguish this edition without a foreground vessel or interior snow."
+  },
+  {
+    "id": "winter-guinness-london",
+    "base": "guinness-london",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-london.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: winter and Christmas variation of the attached existing Split travel illustration, 1024 x 1536 portrait.\nInput image: attached image is the EDIT TARGET. Edit this exact scene; do not create a new composition.\nInvariants: preserve the same camera viewpoint, architectural identity, furniture and friends positions, perspective, original table geometry and rear tabletop edge height, and the rich finely painted gouache/colored-pencil travel postcard style. Preserve all untouched materials and details. The central foreground table remains completely empty and unobstructed; center x=32–68% is reserved for a separate live game glass composited later.\nChange only winter ambient conditions, modest Christmas details at background/outer edges, and seasonally appropriate clothing described below. Maintain believable nostalgia and friends gathering.\nConstraints: backdrop ONLY, opaque full bleed. NO new foreground glass, beer, cup, mug, bottle, can, logo, readable text, letters, signage, UI, frame or watermark. Remove any barely readable incidental lettering while preserving the building/sign surface. No foreground props, no snow indoors, no kitschy Santa decoration, no Halloween decorations. Keep the painting's carefully observed materials, light and depth.\nWinter edit: The same London pub window on a rainy winter dusk. Retain the original red double-decker bus outside on the wet street. Make outside dusk colder and blue-gray with street lamps reflected in rain. Hang two or three small glowing golden star ornaments near the TOP outer parts of the original window; add modest holly around its peripheral frame. Friends remain in their original seats in winter sweaters, coats on chairs as already present. Preserve the same houses and window mullions, welcoming amber pub lamps. No snow inside and no central foreground decorations; tabletop totally bare.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-london.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-d138f449-8e47-4c9d-b053-e8841cf5be1e.png",
+    "outputPath": "site/assets/scenes/winter-guinness-london.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.651,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit keeps original viewpoint, architecture, perspective and rear table edge; central foreground is clear and no live vessel is painted. Distinct restrained winter/Christmas cues remain in background and outer edges; snow only outdoors."
+  },
+  {
+    "id": "winter-guinness-edinburgh",
+    "base": "guinness-edinburgh",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-edinburgh.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: winter and Christmas variation of the attached existing Split travel illustration, 1024 x 1536 portrait.\nInput image: attached image is the EDIT TARGET. Edit this exact scene; do not create a new composition.\nInvariants: preserve the same camera viewpoint, architectural identity, furniture and friends positions, perspective, original table geometry and rear tabletop edge height, and the rich finely painted gouache/colored-pencil travel postcard style. Preserve all untouched materials and details. The central foreground table remains completely empty and unobstructed; center x=32–68% is reserved for a separate live game glass composited later.\nChange only winter ambient conditions, modest Christmas details at background/outer edges, and seasonally appropriate clothing described below. Maintain believable nostalgia and friends gathering.\nConstraints: backdrop ONLY, opaque full bleed. NO new foreground glass, beer, cup, mug, bottle, can, logo, readable text, letters, signage, UI, frame or watermark. Remove any barely readable incidental lettering while preserving the building/sign surface. No foreground props, no snow indoors, no kitschy Santa decoration, no Halloween decorations. Keep the painting's carefully observed materials, light and depth.\nWinter edit: The same Edinburgh stone pub fireside, the strongest plain-winter mood of this set. Keep the glowing fire at RIGHT; enrich its warm ember light just slightly. Through the existing window show Edinburgh Castle and rooftops carrying soft winter snow under a cold blue dusk. Retain the tartan scarf/blanket on the original LEFT background chair, with tangible wool texture. Use only minimal festive evergreen at the existing mantel arrangement, no stockings, no bright Christmas ornaments, no added tree. Friends stay exactly positioned in understated winter layers. Preserve the empty foreground oak tabletop and every architectural feature.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-edinburgh.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-06eace79-4847-493c-b8fc-e7b1ac33b41c.png",
+    "outputPath": "site/assets/scenes/winter-guinness-edinburgh.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.632,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit keeps original viewpoint, architecture, perspective and rear table edge; central foreground is clear and no live vessel is painted. Distinct restrained winter/Christmas cues remain in background and outer edges; snow only outdoors."
+  },
+  {
+    "id": "winter-guinness-new-york",
+    "base": "guinness-new-york",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-new-york.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: winter and Christmas variation of the attached existing Split travel illustration, 1024 x 1536 portrait.\nInput image: attached image is the EDIT TARGET. Edit this exact scene; do not create a new composition.\nInvariants: preserve the same camera viewpoint, architectural identity, furniture and friends positions, perspective, original table geometry and rear tabletop edge height, and the rich finely painted gouache/colored-pencil travel postcard style. Preserve all untouched materials and details. The central foreground table remains completely empty and unobstructed; center x=32–68% is reserved for a separate live game glass composited later.\nChange only winter ambient conditions, modest Christmas details at background/outer edges, and seasonally appropriate clothing described below. Maintain believable nostalgia and friends gathering.\nConstraints: backdrop ONLY, opaque full bleed. NO new foreground glass, beer, cup, mug, bottle, can, logo, readable text, letters, signage, UI, frame or watermark. Remove any barely readable incidental lettering while preserving the building/sign surface. No foreground props, no snow indoors, no kitschy Santa decoration, no Halloween decorations. Keep the painting's carefully observed materials, light and depth.\nWinter edit: The same New York outdoor Irish pub street terrace at snowy winter dusk. Replace the leafy street canopy with bare winter branches lightly dusted with snow and put modest soft snow on brownstone steps and peripheral planters, keeping the sidewalk perspective intact. Add one small natural Christmas tree with warm lights near the pub wall at the far RIGHT BACKGROUND, and a restrained strand of warm string lights along the pub façade above the friends. Existing distant friends are bundled in coats and scarves in their same seats/poses. Cool violet-blue dusk with warm amber pub windows, distant skyline retained. Foreground table remains dry and totally empty in the central70%, no snow/props/beer on it.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-new-york.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128db-141e-7b81-b407-1408b4acfe47/exec-ad5a53ab-12cb-498e-87b0-bc54ed3678b1.png",
+    "outputPath": "site/assets/scenes/winter-guinness-new-york.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.657,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Reference edit keeps original viewpoint, architecture, perspective and rear table edge; central foreground is clear and no live vessel is painted. Distinct restrained winter/Christmas cues remain in background and outer edges; snow only outdoors."
+  }
+]

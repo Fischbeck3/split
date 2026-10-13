@@ -7,10 +7,11 @@ import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
 import {loadBrandAssets, isGuinnessTheme} from './brand-assets.js';
-import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS} from './themes.js';
+import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS, WINTER_THEME_IDS} from './themes.js';
 import {AUTUMN_BASE_IDS} from './autumn-themes.js';
+import {WINTER_BASE_IDS} from './winter-themes.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
@@ -42,6 +43,15 @@ export const SCENE_ART = {
       'autumn-estrella-barcelona':.576,'autumn-modelo-mexico-city':.556641,'autumn-sam-adams-boston':.638021,
       'autumn-high-life-milwaukee':.576823,'autumn-coors-apres-ski':.524089,'autumn-sierra-high-sierras':.593750})[id],
     framing:'table',fallback:AUTUMN_BASE_IDS[index]
+  }])),
+  ...Object.fromEntries(WINTER_THEME_IDS.map((id,index) => [id, {
+    url:new URL('../assets/scenes/'+id+'.webp',import.meta.url).href,
+    table:({'winter-pub':0.602,'winter-guinness-dublin':0.58,'winter-guinness-london':0.651,
+      'winter-guinness-edinburgh':0.632,'winter-guinness-new-york':0.657,'winter-heineken-amsterdam':0.608724,
+      'winter-pilsner-prague':0.563151,'winter-stella-brussels':0.639323,'winter-carlsberg-copenhagen':0.64974,
+      'winter-estrella-barcelona':0.576172,'winter-modelo-mexico-city':0.557292,'winter-sam-adams-boston':0.638021,
+      'winter-high-life-milwaukee':0.576823,'winter-coors-apres-ski':0.524089,'winter-sierra-high-sierras':0.59375})[id],
+    framing:'table',fallback:WINTER_BASE_IDS[index]
   }]))
 };
 const sceneImages = new Map(), sceneLoads = new Map();

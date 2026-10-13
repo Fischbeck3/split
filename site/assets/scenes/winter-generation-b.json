@@ -1,0 +1,142 @@
+[
+  {
+    "id": "winter-heineken-amsterdam",
+    "base": "heineken-amsterdam",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: this same Amsterdam canal terrace on a blue winter evening. Make the existing overhead trees bare; dust the existing bridge, bicycles, canal rail, and roof edges with light snow. Keep the water open with cool blue reflections. Warm golden window lights glow within the existing canal houses. Add just a small festive warm-white light strand following the existing rail; remove summer flowers or replace their peripheral foliage with modest winter greenery. The same distant friends wear coats, at the same table. Keep the large foreground wooden table dry and completely clear, with its rear edge unchanged.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-15afc7ce-c072-41b5-97c9-0fc836e2a4dd.png",
+    "outputPath": "site/assets/scenes/winter-heineken-amsterdam.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.608724,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original and generated edit. Same canal, bridge, bicycles, house facades, friends, chairs and table. Bare snow-dusted trees, open blue canal, warm windows and small lights. Clear dry foreground; no baked vessel or text.",
+    "rearTableEdgeY": 935,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "promptSidecar": "site/assets/scenes/winter-heineken-amsterdam.webp.json"
+  },
+  {
+    "id": "winter-pilsner-prague",
+    "base": "pilsner-prague",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: preserve this exact cozy Prague brick-vaulted beer cellar, every arch, copper pendant, barrel, portrait, bench, floor, wooden door, and seated friends. Decorate a few of the existing brick arch edges with restrained evergreen garlands and small deep-red ribbons. The existing wall and table candles cast warmer, softer Christmas light, and the same peripheral friends wear winter layers. This source has no exterior opening: do not invent a window or snowy view. No decorative tree is needed. Keep every bit of the empty foreground wooden tabletop geometry in place.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/pilsner-prague.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-b3e65a88-d1f4-4319-9b29-58fba6e89472.png",
+    "outputPath": "site/assets/scenes/winter-pilsner-prague.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.563151,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original and generated edit. Brick vaults, copper lamps, portrait, barrels, door, friends and foreground table preserved. Evergreen arch garlands, red ribbons, warm candles and winter layers. No invented exterior opening or tree; clear foreground.",
+    "rearTableEdgeY": 865,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270)",
+    "promptSidecar": "site/assets/scenes/winter-pilsner-prague.webp.json"
+  },
+  {
+    "id": "winter-stella-brussels",
+    "base": "stella-brussels",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/stella-brussels.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: preserve this exact Grand Place Brussels caf\u00e9 view at Christmas-market dusk, its town-hall spire, gilded guildhall facades, burgundy awnings, lamps, caf\u00e9 furniture and the same small friends. Turn the existing wet cobblestones into a cold reflective square with restrained frost or light snow at its edges. Add a few small distant Christmas-market stalls along the far sides of the square, preserving the view down its center and all architectural outlines; their tiny warm lights echo the existing lanterns. A modest evergreen wreath hangs under the existing caf\u00e9 awning. Keep the cream marble foreground tabletop and its rear edge identical, clear of all props and drinks.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/stella-brussels.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-5db7bce6-b92e-482b-91d8-7295ee82f86f.png",
+    "outputPath": "site/assets/scenes/winter-stella-brussels.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.639323,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original and generated edit. Same Grand Place architecture, spire, burgundy awnings, lamps, seated friends, chairs and clear marble table. Small distant market stalls, warm lights, wreath, and snow at square edges; architecture remains legible.",
+    "rearTableEdgeY": 982,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes",
+    "promptSidecar": "site/assets/scenes/winter-stella-brussels.webp.json"
+  },
+  {
+    "id": "winter-carlsberg-copenhagen",
+    "base": "carlsberg-copenhagen",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: this exact Copenhagen Nyhavn harbor terrace in crisp snowy winter light, with all colorful facades, masts, boats, rail, caf\u00e9 furniture, blanket and the same friends remaining in their original positions. Add light snow to roof edges, quay and outer terrace edges, keep the harbor water open and deep blue, and make the existing windows glow warm gold. The existing lamps glow like hygge lanterns. Replace only the summer planting at the original terrace edge with modest evergreen foliage, without adding a large tree or occupying the table. The friends wear winter coats. Preserve the large weathered pale wooden foreground tabletop entirely clear and dry, with the same rear edge.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-e00eda07-cf41-48f3-be9a-4ad271557693.png",
+    "outputPath": "site/assets/scenes/winter-carlsberg-copenhagen.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.64974,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original and generated edit. Same colorful Nyhavn facades, masts, boats, blanket, friends and clear weathered table. Open blue harbor, snow along roofs and quay, evergreen terrace foliage, lanterns and gold window lights. No foreground drink or new table props.",
+    "rearTableEdgeY": 998,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes",
+    "promptSidecar": "site/assets/scenes/winter-carlsberg-copenhagen.webp.json"
+  },
+  {
+    "id": "winter-estrella-barcelona",
+    "base": "estrella-barcelona",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: preserve this exact narrow Barcelona Gothic Quarter tapas lane, same cathedral spire, balconies, shutters, stone facades, lamps, umbrella, seats, peripheral tapas plates and the same small friends. Make it a Mediterranean Christmas evening, cool and dry, with no snow or frost anywhere. A restrained canopy of small warm-white star lights hangs over the existing street between its buildings, high above the path. Warm tapas-bar windows glow, and the same friends now wear coats. Keep the recognizable architecture and the original tabletop geometry unchanged; its center stays empty, while the existing tapas plates remain at the extreme outer edges. No new tabletop decorations.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-2ec67f83-0136-4bfa-883d-41b965f5adab.png",
+    "outputPath": "site/assets/scenes/winter-estrella-barcelona.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.576172,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Inspected original and generated edit. Same Gothic Quarter lane, cathedral spire, balconies, shutters, umbrella, friends and clear center of table; original tapas at extreme edges retained. Warm star-light canopy, coats and festive greenery. Dry Mediterranean evening with no snow or frost.",
+    "rearTableEdgeY": 885,
+    "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+    "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes",
+    "promptSidecar": "site/assets/scenes/winter-estrella-barcelona.webp.json"
+  }
+]

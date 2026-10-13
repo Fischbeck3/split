@@ -1,0 +1,28 @@
+{
+  "id": "winter-estrella-barcelona",
+  "base": "estrella-barcelona",
+  "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp",
+  "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: preserve this exact narrow Barcelona Gothic Quarter tapas lane, same cathedral spire, balconies, shutters, stone facades, lamps, umbrella, seats, peripheral tapas plates and the same small friends. Make it a Mediterranean Christmas evening, cool and dry, with no snow or frost anywhere. A restrained canopy of small warm-white star lights hangs over the existing street between its buildings, high above the path. Warm tapas-bar windows glow, and the same friends now wear coats. Keep the recognizable architecture and the original tabletop geometry unchanged; its center stays empty, while the existing tapas plates remain at the extreme outer edges. No new tabletop decorations.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp"
+  ],
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-2ec67f83-0136-4bfa-883d-41b965f5adab.png",
+  "outputPath": "site/assets/scenes/winter-estrella-barcelona.webp",
+  "tool": "built-in image_gen edit",
+  "tabletop": 0.576172,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original and generated edit. Same Gothic Quarter lane, cathedral spire, balconies, shutters, umbrella, friends and clear center of table; original tapas at extreme edges retained. Warm star-light canopy, coats and festive greenery. Dry Mediterranean evening with no snow or frost.",
+  "rearTableEdgeY": 885,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes",
+  "promptSidecar": "site/assets/scenes/winter-estrella-barcelona.webp.json"
+}

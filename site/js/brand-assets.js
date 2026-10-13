@@ -2,11 +2,12 @@
 import {GUINNESS_THEME_IDS} from './theme-expansion.js';
 import {HALLOWEEN_GUINNESS_IDS} from './halloween-themes.js';
 import {AUTUMN_GUINNESS_IDS} from './autumn-themes.js';
+import {WINTER_GUINNESS_IDS} from './winter-themes.js';
 const GUINNESS_PRINT_URL = new URL('../assets/brands/guinness-glass-print.svg', import.meta.url).href;
 let guinnessImage = null, guinnessLoad = null;
 
 /** The original glass print is common to every Guinness seat and ambience. */
-export const isGuinnessTheme = theme => theme?.id === 'pub' || theme?.brand === 'guinness' || GUINNESS_THEME_IDS.includes(theme?.id) || HALLOWEEN_GUINNESS_IDS.includes(theme?.id) || AUTUMN_GUINNESS_IDS.includes(theme?.id);
+export const isGuinnessTheme = theme => theme?.id === 'pub' || theme?.brand === 'guinness' || GUINNESS_THEME_IDS.includes(theme?.id) || HALLOWEEN_GUINNESS_IDS.includes(theme?.id) || AUTUMN_GUINNESS_IDS.includes(theme?.id) || WINTER_GUINNESS_IDS.includes(theme?.id);
 
 /** Other drinks use vector marks and never request the Guinness print. */
 export async function loadBrandAssets(theme){

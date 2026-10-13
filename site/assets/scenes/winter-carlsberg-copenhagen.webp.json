@@ -1,0 +1,28 @@
+{
+  "id": "winter-carlsberg-copenhagen",
+  "base": "carlsberg-copenhagen",
+  "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp",
+  "prompt": "Use case: lighting-weather.\nAsset type: an opaque 1024 by 1536 pixel portrait painted scenery background for the Split beer game.\nInput images: Image 1 is the edit target. Edit this actual image, preserving its identity rather than reimagining the place.\nPrimary request: make a Christmas/winter variation by changing only the seasonal environment, holiday lighting, and warm clothing described below.\nInvariants: preserve the exact original viewpoint, composition, recognizable architecture, perspective, furniture positions, small friends in the same positions, full-bleed 2:3 framing, and richly painted gouache/pencil travel-postcard style. Keep the foreground tabletop geometry and its rear edge at exactly the same height as the original. The center of the foreground table must stay empty and clear because the game draws a live beer vessel there.\nSeasonal changes: this exact Copenhagen Nyhavn harbor terrace in crisp snowy winter light, with all colorful facades, masts, boats, rail, caf\u00e9 furniture, blanket and the same friends remaining in their original positions. Add light snow to roof edges, quay and outer terrace edges, keep the harbor water open and deep blue, and make the existing windows glow warm gold. The existing lamps glow like hygge lanterns. Replace only the summer planting at the original terrace edge with modest evergreen foliage, without adding a large tree or occupying the table. The friends wear winter coats. Preserve the large weathered pale wooden foreground tabletop entirely clear and dry, with the same rear edge.\nConstraints: scenery only. No foreground glass, bottle, cup, mug, can, beer, drink, brand logo, lettering, signs, text, UI, watermark, border, or new foreground props. Preserve the original table surface and clear middle. No Santa, fantasy scenery, giant decorations, repeated decorative Christmas tree, or change of location. Warm holiday lights must remain small plausible details within the existing architecture.",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp"
+  ],
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-e00eda07-cf41-48f3-be9a-4ad271557693.png",
+  "outputPath": "site/assets/scenes/winter-carlsberg-copenhagen.webp",
+  "tool": "built-in image_gen edit",
+  "tabletop": 0.64974,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Inspected original and generated edit. Same colorful Nyhavn facades, masts, boats, blanket, friends and clear weathered table. Open blue harbor, snow along roofs and quay, evergreen terrace foliage, lanterns and gold window lights. No foreground drink or new table props.",
+  "rearTableEdgeY": 998,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the tabletop rear edge.",
+  "embeddedPrompt": "EXIF ImageDescription (270), UTF-8 bytes",
+  "promptSidecar": "site/assets/scenes/winter-carlsberg-copenhagen.webp.json"
+}

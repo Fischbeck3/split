@@ -32,8 +32,9 @@ function canvas(){
 
 test('fifteen autumn seats retain the review order and leave automatic fallbacks unchanged',()=>{
   assert.equal(AUTUMN_THEME_IDS.length,15);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(HALLOWEEN_THEME_IDS.length,7);
-  assert.equal(REVIEW_THEMES.length,43);assert.equal(new Set(REVIEW_THEMES.map(t=>t.id)).size,43);
-  assert.deepEqual(REVIEW_THEMES.slice(-15).map(t=>t.id),AUTUMN_THEME_IDS);
+  const autumnCatalog=REVIEW_THEMES.filter(t=>t.seasonal!=='winter');
+  assert.equal(autumnCatalog.length,43);assert.equal(new Set(autumnCatalog.map(t=>t.id)).size,43);
+  assert.deepEqual(autumnCatalog.slice(-15).map(t=>t.id),AUTUMN_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   assert.equal(AUTUMN_GUINNESS_IDS.length,5);assert.equal(AUTUMN_BASE_IDS.includes('guinness-chicago'),false);
   for (let day=1;day<=730;day++) assert.ok(THEMES.includes(themeForDay(day,{...CALENDAR,days:{}})),'seasonal artwork reached an automatic day '+day);

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "winter-modelo-mexico-city",
+    "base": "modelo-mexico-city",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/modelo-mexico-city.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: scenery background for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is the edit target. Edit this actual painting; do not invent a new composition.\nInvariants: preserve the exact original scene, viewpoint, architecture, mountain or city silhouettes, perspective, furniture and foreground tabletop geometry, including the rear table-edge height. Keep the same rich gouache-and-colored-pencil travel-postcard painterly style, worn tactile materials and depth. The center of the foreground table, x=30–70%, must remain completely clear bare wood for a separately rendered live beer vessel.\nSeasonal edit: the same Mexico City cantina during a cool dry December evening. The open green doorway shows the same church and street in cool blue evening light, with absolutely no snow. Existing lanterns glow warm amber on the ochre plaster and teal tiles. Add restrained cream paper stars and warm festive string lights high in the background, a little green Christmas greenery along the rear arch, and a modest poinsettia at the far background side, never on the foreground table. The existing distant friends wear light jackets and stay in their seats. Keep this recognizably Mexican and comfortably festive, with no skulls, marigold altars or Día de Muertos imagery.\nConstraints: change only the requested seasonal light, weather, scenery and festive background details. Keep any additions behind the foreground table edge and away from the live-glass zone. Do not add foreground beer, glass, bottle, cup, mug, can, drink, brand, logo, readable text, signage lettering, interface, frame, border or watermark. Do not move the table or camera. No Halloween or Day of the Dead cues. Preserve the original 2:3 portrait composition.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/modelo-mexico-city.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-82c9b1b0-e217-48e6-805d-054498c77285.png",
+    "outputPath": "site/assets/scenes/winter-modelo-mexico-city.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.557292,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Original cantina viewpoint, church doorway, teal tile, chairs and table geometry preserved. Warm paper stars, background greenery and poinsettia mark a dry December evening with no snow or Día de Muertos cues. Center foreground remains bare."
+  },
+  {
+    "id": "winter-sam-adams-boston",
+    "base": "sam-adams-boston",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sam-adams-boston.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: scenery background for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is the edit target. Edit this actual painting; do not invent a new composition.\nInvariants: preserve the exact original scene, viewpoint, architecture, mountain or city silhouettes, perspective, furniture and foreground tabletop geometry, including the rear table-edge height. Keep the same rich gouache-and-colored-pencil travel-postcard painterly style, worn tactile materials and depth. The center of the foreground table, x=30–70%, must remain completely clear bare wood for a separately rendered live beer vessel.\nSeasonal edit: preserve the exact Fenway Park vantage point, Green Monster, skyline, tall light towers, seating arrangement and empty foreground wood ledge. Make this a quiet off-season winter Fenway memory at cool dusk: the stands are EMPTY, with a light dusting of snow on their seats and rail edges, and the field is empty with snow-dusted grass and infield. Remove all baseball players and game-day spectators; absolutely no baseball game is being played. Add a restrained row of warm holiday bulbs along the distant concourse. Keep the familiar green stadium walls visible beneath the winter mood. The atmosphere is peaceful and still. Preserve the clear foreground tabletop; small existing peanut shells and paper at its extreme edges may remain but add no new objects.\nConstraints: change only the requested seasonal light, weather, scenery and festive background details. Keep any additions behind the foreground table edge and away from the live-glass zone. Do not add foreground beer, glass, bottle, cup, mug, can, drink, brand, logo, readable text, signage lettering, interface, frame, border or watermark. Do not move the table or camera. No Halloween or Day of the Dead cues. Preserve the original 2:3 portrait composition.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sam-adams-boston.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-7ad2e484-e634-4eb8-ae2a-8a355b424289.png",
+    "outputPath": "site/assets/scenes/winter-sam-adams-boston.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.638021,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Original Fenway viewpoint, Green Monster, skyline, towers, seating and tabletop preserved. Empty snow-dusted field and stands carry a peaceful winter dusk; distant warm concourse bulbs provide restrained holiday cues. No active game or spectators. Center foreground remains bare."
+  },
+  {
+    "id": "winter-high-life-milwaukee",
+    "base": "high-life-milwaukee",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/high-life-milwaukee.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: scenery background for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is the edit target. Edit this actual painting; do not invent a new composition.\nInvariants: preserve the exact original scene, viewpoint, architecture, mountain or city silhouettes, perspective, furniture and foreground tabletop geometry, including the rear table-edge height. Keep the same rich gouache-and-colored-pencil travel-postcard painterly style, worn tactile materials and depth. The center of the foreground table, x=30–70%, must remain completely clear bare wood for a separately rendered live beer vessel.\nSeasonal edit: this same Milwaukee neighborhood tavern in December, preserving its brick walls, tin ceiling, pool table, rear bar, booths, window locations, street and clock-tower view. Outside the windows, softly falling snow and settled snow on the visible street and roofs meet a cold blue winter evening. Inside, the familiar lamps stay warm amber. Add modest colored vintage Christmas bulbs and evergreen garland high over the rear bar, away from the foreground glass zone. Existing distant patrons remain in their seats, wearing bundled winter layers; retain coats on the booth. The foreground tabletop remains the same clear bare worn wood. A warmly inhabited old bar with believable small festive details.\nConstraints: change only the requested seasonal light, weather, scenery and festive background details. Keep any additions behind the foreground table edge and away from the live-glass zone. Do not add foreground beer, glass, bottle, cup, mug, can, drink, brand, logo, readable text, signage lettering, interface, frame, border or watermark. Do not move the table or camera. No Halloween or Day of the Dead cues. Preserve the original 2:3 portrait composition.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/high-life-milwaukee.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-7d0aed5a-bac7-4249-8669-3c2587242345.png",
+    "outputPath": "site/assets/scenes/winter-high-life-milwaukee.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.576823,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Original tavern brick, tin ceiling, pool table, booths, street clock-tower view and tabletop preserved. Colored vintage bulbs and background evergreen garland contrast with a snowy blue evening outside; patrons remain bundled in their original seats. Central foreground wood remains clear."
+  },
+  {
+    "id": "winter-coors-apres-ski",
+    "base": "coors-apres-ski",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/coors-apres-ski.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: scenery background for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is the edit target. Edit this actual painting; do not invent a new composition.\nInvariants: preserve the exact original scene, viewpoint, architecture, mountain or city silhouettes, perspective, furniture and foreground tabletop geometry, including the rear table-edge height. Keep the same rich gouache-and-colored-pencil travel-postcard painterly style, worn tactile materials and depth. The center of the foreground table, x=30–70%, must remain completely clear bare wood for a separately rendered live beer vessel.\nSeasonal edit: preserve this exact Colorado ski-lodge deck, wood lodge wall, lantern, skis, railing, mountain silhouettes and distant friends' table. Make it deep winter at cold late-afternoon blue hour: the same pines are heavily snow-laden, the same mountain slopes carry deep fresh snow, and the lodge lantern glows amber. Add restrained warm festive lodge lights under the existing upper eaves and along the distant railing, giving a cozy après-ski December feeling. The same distant friends stay seated in insulated ski jackets and hats. Keep the foreground wooden tabletop bare and entirely clear in its center, with snow only at its extreme outer edges; preserve its rear edge and grain geometry. No new foreground objects.\nConstraints: change only the requested seasonal light, weather, scenery and festive background details. Keep any additions behind the foreground table edge and away from the live-glass zone. Do not add foreground beer, glass, bottle, cup, mug, can, drink, brand, logo, readable text, signage lettering, interface, frame, border or watermark. Do not move the table or camera. No Halloween or Day of the Dead cues. Preserve the original 2:3 portrait composition.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/coors-apres-ski.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-f2743fbe-913e-43fb-b154-ca9df0647755.png",
+    "outputPath": "site/assets/scenes/winter-coors-apres-ski.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.524089,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Original lodge wall, skis, railing, distant friends, mountain silhouettes and table geometry preserved. Deep winter blue hour brings snow-laden pines, white slopes, amber lodge lamps and warm festive lights above and behind the foreground. Center tabletop is bare, with snow restricted to outer edges."
+  },
+  {
+    "id": "winter-sierra-high-sierras",
+    "base": "sierra-high-sierras",
+    "basePath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sierra-high-sierras.webp",
+    "prompt": "Use case: lighting-weather.\nAsset type: scenery background for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is the edit target. Edit this actual painting; do not invent a new composition.\nInvariants: preserve the exact original scene, viewpoint, architecture, mountain or city silhouettes, perspective, furniture and foreground tabletop geometry, including the rear table-edge height. Keep the same rich gouache-and-colored-pencil travel-postcard painterly style, worn tactile materials and depth. The center of the foreground table, x=30–70%, must remain completely clear bare wood for a separately rendered live beer vessel.\nSeasonal edit: the same High Sierras lakeside campsite at quiet blue-hour winter dusk. Preserve the exact granite-peak outlines, lake shore, trees, rocks, right-side tent, distant friends and camera view. Give the high peaks and shores natural winter snow, dark-green snow-touched pines, and cool steel-blue lake reflections under a deep blue-violet winter sky. The existing small tent glows softly warm from inside. Add one small distant campfire beside the existing campsite friends near the right shoreline, keeping the fire well behind the foreground table and the friends in winter layers. This is plain winter wilderness with NO Christmas decorations, lights, garlands, ornaments or holiday props. Preserve the broad foreground table's exact geometry and rear edge, leaving its central bare wood completely clear; small snow patches can remain only at the extreme outer corners.\nConstraints: change only the requested seasonal light, weather, scenery and festive background details. Keep any additions behind the foreground table edge and away from the live-glass zone. Do not add foreground beer, glass, bottle, cup, mug, can, drink, brand, logo, readable text, signage lettering, interface, frame, border or watermark. Do not move the table or camera. No Halloween or Day of the Dead cues. Preserve the original 2:3 portrait composition.",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sierra-high-sierras.webp"
+    ],
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-8746d9c2-1b5c-43f3-a04e-c8aae6bb804c.png",
+    "outputPath": "site/assets/scenes/winter-sierra-high-sierras.webp",
+    "tool": "built-in image_gen edit",
+    "tabletop": 0.59375,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "Original granite peaks, lake shore, pines, rocks, right-side tent, distant friends and table preserved. Winter blue hour carries snowy peaks and shore, cold lake reflections, a warm glowing tent and small distant campfire. Plain wilderness winter with no Christmas decorations. Central tabletop remains clear bare wood."
+  }
+]
