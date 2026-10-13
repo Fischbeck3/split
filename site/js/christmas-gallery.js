@@ -1,13 +1,14 @@
 import {mountSeasonalGallery} from './seasonal-gallery.js';
-import {CHRISTMAS_REVIEW_IDS,HANUKKAH_THEME_IDS} from './holiday-themes.js';
-const names=['Christmas at the Irish pub','Prague Christmas cellar','Brussels Christmas lights','Dublin Christmas gathering',
-  'Amsterdam snowy canals','Milwaukee Christmas tavern','London winter lights','Barcelona Christmas tapas',
-  'Copenhagen winter harbor','Edinburgh winter hearth','Mexico City December cantina','Christmas après-ski',
-  'New York Christmas evening','Boston winter ballpark'];
-const vessels=['Guinness tulip pint','Handled beer mug','Stella chalice','Guinness tulip pint','Tall lager glass',
-  'Brown long-neck bottle','Guinness tulip pint','Small tapas glass','Slim lager glass','Guinness tulip pint',
-  'Clear beer bottle','Frosty nonic pint','Guinness tulip pint','Clear plastic ballpark cup'];
-const places=CHRISTMAS_REVIEW_IDS.map((id,i)=>({id,name:names[i],vessel:vessels[i]}));
+import {CHRISTMAS_THEME_IDS} from './christmas-themes.js';
+import {HANUKKAH_THEME_IDS} from './holiday-themes.js';
+const names=['Christmas around the home tree','Vienna Christmas market','Paris Christmas café','Milwaukee Christmas record night',
+  'Dublin Christmas snug','Amsterdam Christmas canal boat','Christmas at Tivoli','London Christmas supper',
+  'Seville Christmas patio','Mexico City posada courtyard','Colorado Christmas lodge','Scottish Christmas train',
+  'Boston holiday rooftop','High Sierras Christmas cabin'];
+const vessels=['Guinness tulip pint','Handled beer mug','Stella chalice','Brown long-neck bottle','Guinness tulip pint',
+  'Tall lager glass','Slim lager glass','Guinness tulip pint','Small tapas glass','Clear beer bottle',
+  'Frosty nonic pint','Guinness tulip pint','Clear plastic party cup','Brown short-neck bottle'];
+const places=CHRISTMAS_THEME_IDS.map((id,i)=>({id,name:names[i],vessel:vessels[i]}));
 const hanukkahNames=['Window lights','Dreidel night','Bakery gathering'];
 const hanukkahVessels=['Guinness tulip pint','Golden lager glass','Amber ale tumbler'];
 mountSeasonalGallery([

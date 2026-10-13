@@ -7,11 +7,12 @@ import {createHearthMotion, updateHearthMotion} from './hearth.js';
 import {targetGeometry} from './target.js';
 import {drawBrandMark} from './brand-marks.js';
 import {loadBrandAssets, isGuinnessTheme} from './brand-assets.js';
-import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS, WINTER_THEME_IDS, HOLIDAY_THEME_IDS} from './themes.js';
+import {PREVIEW_THEME_IDS, HALLOWEEN_THEME_IDS, AUTUMN_THEME_IDS, WINTER_THEME_IDS, HOLIDAY_THEME_IDS, CHRISTMAS_THEME_IDS} from './themes.js';
 import {AUTUMN_BASE_IDS} from './autumn-themes.js';
 import {WINTER_BASE_IDS} from './winter-themes.js';
+import {CHRISTMAS_BASE_IDS} from './christmas-themes.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS, ...HOLIDAY_THEME_IDS];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS, ...HOLIDAY_THEME_IDS, ...CHRISTMAS_THEME_IDS];
 export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull', 'turkey', 'football', 'wishbone', 'pie', 'dreidel', 'jam'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
@@ -59,6 +60,11 @@ export const SCENE_ART = {
       'thanksgiving-football':.489583,'thanksgiving-wishbone':.535807,'thanksgiving-pie-kitchen':.501302,'thanksgiving-fireside':.568359,
       'hanukkah-window-lights':.606771,'hanukkah-dreidel-night':.515625,'hanukkah-bakery':.494792})[id],
     framing:'table',fallback:'pub'
+  }])),
+  ...Object.fromEntries(CHRISTMAS_THEME_IDS.map((id,index)=>[id,{
+    url:new URL('../assets/scenes/'+id+'.webp',import.meta.url).href,
+    table:({'christmas-guinness-home-tree':0.505,'christmas-pilsner-vienna-market':0.54,'christmas-stella-paris-cafe':0.567,'christmas-high-life-record-night':0.484,'christmas-guinness-dublin-snug':0.505,'christmas-heineken-amsterdam-boat':0.51237,'christmas-carlsberg-tivoli':0.582682,'christmas-guinness-london-supper':0.565755,'christmas-estrella-seville-patio':0.567057,'christmas-modelo-posada':0.556641,'christmas-coors-sleigh-lodge':0.532552,'christmas-guinness-edinburgh-train':0.542969,'christmas-sam-adams-boston-rooftop':0.531901,'christmas-sierra-high-sierras-cabin':0.516927})[id],
+    framing:'table',fallback:CHRISTMAS_BASE_IDS[index]
   }]))
 };
 const sceneImages = new Map(), sceneLoads = new Map();

@@ -1,0 +1,25 @@
+{
+  "id": "christmas-sierra-high-sierras-cabin",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/sierra-high-sierras.webp"
+  ],
+  "prompt": "Use case: illustration-story.\nAsset type: opaque 1024 by 1536 pixel portrait scenery for the Split beer game.\nInput images: Image 1 is a STYLE, material, and broad composition reference only. Generate the entirely NEW Christmas setting described below, not an edit of the reference location.\nStyle/medium: the existing richly painted travel-postcard world, hand-painted gouache color with fine pencil detail, tactile natural timber and fabric, believable architecture and atmospheric depth.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. The large COMPLETELY EMPTY foreground tabletop has a clean almost-horizontal rear edge near y=920 on the 1536-pixel canvas (approximately 60% height). From that edge down to the bottom border, the ENTIRE foreground is the bare table surface. Keep central x30-70% quiet and visually open for a live glass drawn separately. All adult friends are small distant figures well behind this table, no close-up or foreground people.\nNew scene: a rustic High Sierras alpine-cabin INTERIOR at Christmas twilight, with worn wood walls, a tall rugged stone hearth and soft wool blankets over the far seating. One beautiful full-height Christmas fir with SPARSE warm colored bulbs stands near a SIDE window revealing snow-covered pines and a Sierra granite ridge. Small adult friends sit at a distance near the fire. A simple warm cabin lamp and amber hearth contrast with ice-blue twilight outdoors. Calm, humble mountain-cabin architecture, distinct from a grand ski lodge. The entire foreground is a completely bare wooden table with its clean rear edge near60% height. This is a new interior cabin, not the lakeside tent or winter camp in the reference.\nConstraints: no foreground vessels, glassware, beer, bottles, cans, cups, drinks, food, plates, candles or other props. No brand labels, logos, readable text, operator names, venue signs, UI, watermarks, borders, scoring marks or target lines. No children, Halloween decorations, Hanukkah props or Santa figure. Decorations belong in the architecture or distant background; the whole foreground table stays completely bare. Keep the painting opaque.",
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-e1b38b2e-adfd-4dff-9ed4-6c48133057ef.png",
+  "outputPath": "site/assets/scenes/christmas-sierra-high-sierras-cabin.webp",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "tabletop": 0.516927,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Reopened and visually inspected final RGB WebP. New rustic Sierra cabin with tall rugged stone hearth, wool seating, full fir with warm gold and small colored lights, grown friends near fire, snowy pines and granite ridge through side window. Entire bare wooden foreground clear; no tent or lakeside-camp recreation, readable text or logo.",
+  "rearTableEdgeY": 794,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the rear table edge."
+}

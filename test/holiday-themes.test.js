@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {THANKSGIVING_THEME_IDS,HANUKKAH_THEME_IDS,HOLIDAY_THEME_IDS,HOLIDAY_GUINNESS_IDS,CHRISTMAS_REVIEW_IDS} from '../site/js/holiday-themes.js';
-import {WINTER_THEME_IDS} from '../site/js/themes.js';
+import {CHRISTMAS_THEME_IDS,WINTER_THEME_IDS} from '../site/js/themes.js';
 import {CALENDAR} from '../site/js/calendar-data.js';
 import {THEMES,CALENDAR_THEMES,REVIEW_THEMES,themeById,themeForDay,makeDrinkState,stepDrink,secondsToMark,scoreFromOffset} from '../site/js/core.js';
 import {SCENE_ART,SCENES,MARKS,drawScene,drawMark,drawBackdrop,loadSceneAssets} from '../site/js/draw.js';
@@ -29,9 +29,10 @@ function canvas(){
 
 test('seven Thanksgiving and three Hanukkah additions stay in unsaved review without acquiring dates',()=>{
   assert.equal(THANKSGIVING_THEME_IDS.length,7);assert.equal(HANUKKAH_THEME_IDS.length,3);
-  assert.equal(REVIEW_THEMES.length,68);assert.equal(new Set(REVIEW_THEMES.map(t=>t.id)).size,68);
-  assert.deepEqual(REVIEW_THEMES.slice(-10).map(t=>t.id),HOLIDAY_THEME_IDS);
-  assert.equal(REVIEW_THEMES.filter(t=>!HOLIDAY_THEME_IDS.includes(t.id)).length,58);
+  const holidayCatalog=REVIEW_THEMES.filter(t=>!CHRISTMAS_THEME_IDS.includes(t.id));
+  assert.equal(holidayCatalog.length,68);assert.equal(new Set(holidayCatalog.map(t=>t.id)).size,68);
+  assert.deepEqual(holidayCatalog.slice(-10).map(t=>t.id),HOLIDAY_THEME_IDS);
+  assert.equal(holidayCatalog.filter(t=>!HOLIDAY_THEME_IDS.includes(t.id)).length,58);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   assert.equal(CALENDAR_THEMES.length,23);
   assert.ok(Object.values(CALENDAR.days).every(id=>!HOLIDAY_THEME_IDS.includes(id) && !WINTER_THEME_IDS.includes(id)));
@@ -48,12 +49,11 @@ test('seven Thanksgiving and three Hanukkah additions stay in unsaved review wit
   }
 });
 
-test('the Christmas fortnight reuses fourteen saved winter glasses and leaves the original fifteen intact',()=>{
-  assert.equal(CHRISTMAS_REVIEW_IDS.length,14);assert.equal(new Set(CHRISTMAS_REVIEW_IDS).size,14);
+test('the confirmed Christmas collection uses fourteen new IDs and preserves the saved fifteen',()=>{
+  assert.equal(CHRISTMAS_REVIEW_IDS.length,14);assert.deepEqual(CHRISTMAS_REVIEW_IDS,CHRISTMAS_THEME_IDS);
   assert.equal(WINTER_THEME_IDS.length,15);
-  assert.ok(CHRISTMAS_REVIEW_IDS.every(id=>WINTER_THEME_IDS.includes(id)));
-  assert.ok(!CHRISTMAS_REVIEW_IDS.includes('winter-sierra-high-sierras'));
-  for(const id of CHRISTMAS_REVIEW_IDS)assert.equal(readThemeReview('#admin/'+id).theme,themeById(id));
+  assert.ok(CHRISTMAS_REVIEW_IDS.every(id=>!WINTER_THEME_IDS.includes(id)));
+  assert.ok(WINTER_THEME_IDS.every(id=>readThemeReview('#admin/'+id).theme===themeById(id)));
   const gallery=readFileSync(new URL('../site/js/christmas-gallery.js',import.meta.url),'utf8');
   assert.ok(gallery.includes("places.slice(0,7)") && gallery.includes('places.slice(7)'));
   assert.ok(gallery.includes('HANUKKAH_THEME_IDS.map'));

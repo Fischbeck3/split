@@ -32,7 +32,7 @@ function canvas(){
 
 test('fifteen autumn seats retain the review order and leave automatic fallbacks unchanged',()=>{
   assert.equal(AUTUMN_THEME_IDS.length,15);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(HALLOWEEN_THEME_IDS.length,7);
-  const autumnCatalog=REVIEW_THEMES.filter(t=>!['winter','thanksgiving','hanukkah'].includes(t.seasonal));
+  const autumnCatalog=REVIEW_THEMES.filter(t=>!['winter','thanksgiving','hanukkah','christmas'].includes(t.seasonal));
   assert.equal(autumnCatalog.length,43);assert.equal(new Set(autumnCatalog.map(t=>t.id)).size,43);
   assert.deepEqual(autumnCatalog.slice(-15).map(t=>t.id),AUTUMN_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);

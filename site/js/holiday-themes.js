@@ -10,13 +10,8 @@ export const HOLIDAY_THEME_IDS = Object.freeze([...THANKSGIVING_THEME_IDS,...HAN
 export const HOLIDAY_GUINNESS_IDS = Object.freeze([
   'thanksgiving-homecoming','thanksgiving-fireside','hanukkah-window-lights'
 ]);
-// Fourteen already-built winter scenes, arranged with a familiar G every third glass.
-export const CHRISTMAS_REVIEW_IDS = Object.freeze([
-  'winter-pub','winter-pilsner-prague','winter-stella-brussels','winter-guinness-dublin',
-  'winter-heineken-amsterdam','winter-high-life-milwaukee','winter-guinness-london',
-  'winter-estrella-barcelona','winter-carlsberg-copenhagen','winter-guinness-edinburgh',
-  'winter-modelo-mexico-city','winter-coors-apres-ski','winter-guinness-new-york','winter-sam-adams-boston'
-]);
+// The confirmed fortnight now uses fourteen new Christmas settings.
+export {CHRISTMAS_THEME_IDS as CHRISTMAS_REVIEW_IDS} from './christmas-themes.js';
 
 const colors=(bg,sheet,accent,muted,line)=>({bg,sheet,accent,muted,line,fg:'#f8eed9',accentFg:bg});
 const harvest=colors('#2b241c','#3c3022','#e1b776','#cbb99f','#79654d');

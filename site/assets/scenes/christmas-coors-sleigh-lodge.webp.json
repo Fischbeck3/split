@@ -1,0 +1,25 @@
+{
+  "id": "christmas-coors-sleigh-lodge",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/coors-apres-ski.webp"
+  ],
+  "prompt": "Use case: illustration-story.\nAsset type: opaque 1024 by 1536 pixel portrait scenery for the Split beer game.\nInput images: Image 1 is a STYLE, material, and broad composition reference only. Generate the entirely NEW Christmas setting described below, not an edit of the reference location.\nStyle/medium: the existing richly painted travel-postcard world, hand-painted gouache color with fine pencil detail, tactile natural timber and fabric, believable architecture and atmospheric depth.\nComposition/framing: full-bleed 2:3 portrait at seated eye level. The large COMPLETELY EMPTY foreground tabletop has a clean almost-horizontal rear edge near y=920 on the 1536-pixel canvas (approximately 60% height). From that edge down to the bottom border, the ENTIRE foreground is the bare table surface. Keep central x30-70% quiet and visually open for a live glass drawn separately. All adult friends are small distant figures well behind this table, no close-up or foreground people.\nNew scene: a Christmas Colorado mountain-lodge lounge INTERIOR with high pitched timber beams and a stone fireplace. Rich fir garland and deep-red ribbons hang along the mantel. A tiny Christmas tree has vintage gold lights, distinct from the larger room architecture. An old wooden sled leans beside a large SIDE window revealing deep snow, pines and a Colorado mountain slope. A few grown friends sit in distant comfortable lounge chairs; ski boots rest on the floor behind that seating, never near the foreground table. Amber firelight and warm lamps contrast with a winter-blue side window. The large aged-wood foreground table is entirely bare. This is a new indoor mountain lounge, not the outdoor ski deck in the reference.\nConstraints: no foreground vessels, glassware, beer, bottles, cans, cups, drinks, food, plates, candles or other props. No brand labels, logos, readable text, operator names, venue signs, UI, watermarks, borders, scoring marks or target lines. No children, Halloween decorations, Hanukkah props or Santa figure. Decorations belong in the architecture or distant background; the whole foreground table stays completely bare. Keep the painting opaque.",
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-e363-7e51-93ef-0cba6b946e7b/exec-e8f1a453-7ca5-46df-8f59-e0aea06eab9b.png",
+  "outputPath": "site/assets/scenes/christmas-coors-sleigh-lodge.webp",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "tabletop": 0.532552,
+  "framing": "table",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "export": {
+    "format": "webp",
+    "quality": 88,
+    "method": 6
+  },
+  "inspection": "Reopened and visually inspected final RGB WebP. New indoor Colorado lodge with high pitched beams, stone fire, fir garland and red ribbons, warm gold tree, sled and snowy pines/mountain window. Adult friends and ski boots stay behind the seating. Entire aged-wood foreground table is empty; no baked vessel, text or brand.",
+  "rearTableEdgeY": 818,
+  "tableMeasurement": "Visual inspection and strongest central 201-pixel row gradient at the rear table edge."
+}

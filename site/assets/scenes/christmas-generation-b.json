@@ -1,0 +1,117 @@
+[
+  {
+    "id": "christmas-heineken-amsterdam-boat",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/heineken-amsterdam.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an entirely NEW Christmas scenery illustration for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is a STYLE AND COMPOSITION reference ONLY, never an edit target. Invent the distinct new place described below. Match the original rich painted gouache-and-colored-pencil travel-postcard world, believable depth, worn tactile materials, detailed but soft brushwork and warm human scale. Do not recreate or recolor the reference setting.\nComposition: seated eye level, looking over a separate broad wooden foreground table into the new setting. The ENTIRE foreground table is EMPTY, not just its center. The rear tabletop edge is clean and nearly horizontal at approximately y=60% of the image, and the empty wood fills the lower 40%. Keep the quiet live-vessel zone x=30–70% entirely bare. All holiday decorations, objects, people and secondary tables are behind that edge and far from the center. Friends are small, distant ADULTS, never close portraits.\nNew scene: Christmas evening INSIDE a small Dutch COVERED PASSENGER CANAL BOAT moving quietly through Amsterdam. This is a cozy timber boat cabin, NOT an outdoor canal terrace. Warm varnished timber ribs curve over the low cabin ceiling, with broad side windows looking out toward softly lit arched bridges, tall Dutch gabled canal houses, snow along canal edges and gold reflections in cold blue water. The boat's interior has restrained hanging evergreen and small warm Christmas lights along the overhead ribs. Small adult friends in winter coats sit in distant side seats near the far windows, smiling together. The view and perspective unmistakably place the camera inside the moving passenger boat. A completely bare varnished wooden foreground table inside this boat fills the lower part of the painting. Blue winter evening outside, amber cabin warmth inside.\nConstraints: strong recognizable Christmas atmosphere in this new scene, with the described locally appropriate materials and setting. Scenery only: NO foreground beer, glass, bottle, cup, mug, can, food, plate, cutlery, napkin or other table object. NO brand, logo, readable text, signage lettering, interface, printed scoring mark, watermark, border or frame. No Halloween, Hanukkah candles, chanukiah, menorah or dreidels. Maintain an entirely clear foreground tabletop and opaque full-bleed 2:3 portrait. This is an illustrative memory, not an identifiable named venue or branded event.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-94b64806-8b51-4312-b05f-482a1b554abd.png",
+    "outputPath": "site/assets/scenes/christmas-heineken-amsterdam-boat.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.51237,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New covered canal-boat cabin rather than the old outdoor terrace. Varnished ribs, broad side windows, snow along canal edges, illuminated arched bridge, Dutch gables, hanging evergreen and warm Christmas bulbs. Small adult friends sit behind the entirely bare foreground table. Painted travel-postcard style retained. Rear edge measured at central y=787."
+  },
+  {
+    "id": "christmas-carlsberg-tivoli",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/carlsberg-copenhagen.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an entirely NEW Christmas scenery illustration for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is a STYLE AND COMPOSITION reference ONLY, never an edit target. Invent the distinct new place described below. Match the original rich painted gouache-and-colored-pencil travel-postcard world, believable depth, worn tactile materials, detailed but soft brushwork and warm human scale. Do not recreate or recolor the reference setting.\nComposition: seated eye level, looking over a separate broad wooden foreground table into the new setting. The ENTIRE foreground table is EMPTY, not just its center. The rear tabletop edge is clean and nearly horizontal at approximately y=60% of the image, and the empty wood fills the lower 40%. Keep the quiet live-vessel zone x=30–70% entirely bare. All holiday decorations, objects, people and secondary tables are behind that edge and far from the center. Friends are small, distant ADULTS, never close portraits.\nNew scene: a Copenhagen GARDEN FAIRGROUND AT CHRISTMAS, viewed from inside a sheltered wooden garden pavilion or covered terrace, NOT the harbor. The open pavilion looks across a snowy garden toward a richly illuminated traditional carousel and romantic old fairground architecture, with warm gold bulbs outlining roofs and carousel detail. Snow rests on fir trees and paths; evergreen garlands and glowing string bulbs frame the pavilion overhead. Small adult friends in coats are distant off to one side beside a quiet secondary table. The central view carries charming fairground lights through deep blue winter dusk, with tangible Danish timber and a festive, sheltered hush. The separate foreground wooden table is entirely empty. No readable park or ride signs, names, logos or commercial marks.\nConstraints: strong recognizable Christmas atmosphere in this new scene, with the described locally appropriate materials and setting. Scenery only: NO foreground beer, glass, bottle, cup, mug, can, food, plate, cutlery, napkin or other table object. NO brand, logo, readable text, signage lettering, interface, printed scoring mark, watermark, border or frame. No Halloween, Hanukkah candles, chanukiah, menorah or dreidels. Maintain an entirely clear foreground tabletop and opaque full-bleed 2:3 portrait. This is an illustrative memory, not an identifiable named venue or branded event.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-150eaf04-5df4-45de-8ac1-6507a8ad909a.png",
+    "outputPath": "site/assets/scenes/christmas-carlsberg-tivoli.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.582682,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New sheltered garden pavilion facing an illuminated carousel and old fairground architecture rather than the harbor. Snowy firs, overhead evergreen, glowing bulbs and distant adult friends create strong Christmas identity. Foreground table is entirely empty. No readable signs or branded ride marks. Painted travel-postcard style retained. Rear edge measured at central y=895."
+  },
+  {
+    "id": "christmas-guinness-london-supper",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/guinness-london.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an entirely NEW Christmas scenery illustration for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is a STYLE AND COMPOSITION reference ONLY, never an edit target. Invent the distinct new place described below. Match the original rich painted gouache-and-colored-pencil travel-postcard world, believable depth, worn tactile materials, detailed but soft brushwork and warm human scale. Do not recreate or recolor the reference setting.\nComposition: seated eye level, looking over a separate broad wooden foreground table into the new setting. The ENTIRE foreground table is EMPTY, not just its center. The rear tabletop edge is clean and nearly horizontal at approximately y=60% of the image, and the empty wood fills the lower 40%. Keep the quiet live-vessel zone x=30–70% entirely bare. All holiday decorations, objects, people and secondary tables are behind that edge and far from the center. Friends are small, distant ADULTS, never close portraits.\nNew scene: a London CHRISTMAS SUPPER AT HOME in an original Georgian rowhouse dining room, NOT a pub. Dark green plaster walls, elegant old wood trim and a bay window onto damp London roofs in blue night establish a residential room. A warm fireplace has a tasteful fir garland over the mantel. A beautiful small Christmas tree with warm white lights stands at the far side. Small adult friends linger after dinner around a long secondary supper table deep in the room; a few candles and cleared plates remain on that distant table, well behind and separate from the live-glass foreground. The mood is quiet after-dinner conversation, amber fire and candlelight against a cool wet London night. An entirely separate aged wooden table in the foreground remains completely EMPTY, with clean horizontal rear edge and no food or objects.\nConstraints: strong recognizable Christmas atmosphere in this new scene, with the described locally appropriate materials and setting. Scenery only: NO foreground beer, glass, bottle, cup, mug, can, food, plate, cutlery, napkin or other table object. NO brand, logo, readable text, signage lettering, interface, printed scoring mark, watermark, border or frame. No Halloween, Hanukkah candles, chanukiah, menorah or dreidels. Maintain an entirely clear foreground tabletop and opaque full-bleed 2:3 portrait. This is an illustrative memory, not an identifiable named venue or branded event.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-d5da3c23-51f9-43d7-9b86-a301ed6ee10e.png",
+    "outputPath": "site/assets/scenes/christmas-guinness-london-supper.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.565755,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New Georgian residential dining room rather than the pub. Dark green walls, bay window to damp London roofs, fir-garland fireplace, far Christmas tree and adult friends lingering at a secondary supper table. Distant plates and candles stay behind the separate empty foreground table. Painted travel-postcard style retained. Rear edge measured at central y=869."
+  },
+  {
+    "id": "christmas-estrella-seville-patio",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/estrella-barcelona.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an entirely NEW Christmas scenery illustration for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is a STYLE AND COMPOSITION reference ONLY, never an edit target. Invent the distinct new place described below. Match the original rich painted gouache-and-colored-pencil travel-postcard world, believable depth, worn tactile materials, detailed but soft brushwork and warm human scale. Do not recreate or recolor the reference setting.\nComposition: seated eye level, looking over a separate broad wooden foreground table into the new setting. The ENTIRE foreground table is EMPTY, not just its center. The rear tabletop edge is clean and nearly horizontal at approximately y=60% of the image, and the empty wood fills the lower 40%. Keep the quiet live-vessel zone x=30–70% entirely bare. All holiday decorations, objects, people and secondary tables are behind that edge and far from the center. Friends are small, distant ADULTS, never close portraits.\nNew scene: a Christmas evening in a NEW ENCLOSED ANDALUSIAN COURTYARD IN SEVILLE, NOT the reference Barcelona street. Tiled columns support warm ochre arches and an iron balcony around the enclosed patio. Orange trees stand at the sides. Glowing paper Christmas stars and small gold bulbs hang overhead; evergreen is tied tastefully around the upper balcony and red poinsettias sit only at the far margins. Small adult friends sit far away at a secondary courtyard café table. Cobalt December sky shows above the courtyard, warm lantern light glows across patterned tile, and southern Spanish weather is mild with absolutely NO snow. A separate weathered wooden foreground tapas table is entirely bare and empty.\nConstraints: strong recognizable Christmas atmosphere in this new scene, with the described locally appropriate materials and setting. Scenery only: NO foreground beer, glass, bottle, cup, mug, can, food, plate, cutlery, napkin or other table object. NO brand, logo, readable text, signage lettering, interface, printed scoring mark, watermark, border or frame. No Halloween, Hanukkah candles, chanukiah, menorah or dreidels. Maintain an entirely clear foreground tabletop and opaque full-bleed 2:3 portrait. This is an illustrative memory, not an identifiable named venue or branded event.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-76a01e79-1426-4143-8a4a-c0f8a75d3c9d.png",
+    "outputPath": "site/assets/scenes/christmas-estrella-seville-patio.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.567057,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New enclosed Andalusian patio rather than the Barcelona street. Tiled columns, ochre arches, orange trees, balcony evergreen, glowing paper stars, gold bulbs and marginal poinsettias; distant adult friends at a secondary table. Mild blue December evening with no snow. Entire foreground tabletop is empty. Painted travel-postcard style retained. Rear edge measured at central y=871."
+  },
+  {
+    "id": "christmas-modelo-posada",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split/site/assets/scenes/modelo-mexico-city.webp"
+    ],
+    "prompt": "Use case: illustration-story.\nAsset type: an entirely NEW Christmas scenery illustration for the Split beer game, opaque full-bleed portrait 1024 x 1536.\nInput image: Image 1 is a STYLE AND COMPOSITION reference ONLY, never an edit target. Invent the distinct new place described below. Match the original rich painted gouache-and-colored-pencil travel-postcard world, believable depth, worn tactile materials, detailed but soft brushwork and warm human scale. Do not recreate or recolor the reference setting.\nComposition: seated eye level, looking over a separate broad wooden foreground table into the new setting. The ENTIRE foreground table is EMPTY, not just its center. The rear tabletop edge is clean and nearly horizontal at approximately y=60% of the image, and the empty wood fills the lower 40%. Keep the quiet live-vessel zone x=30–70% entirely bare. All holiday decorations, objects, people and secondary tables are behind that edge and far from the center. Friends are small, distant ADULTS, never close portraits.\nNew scene: an OPEN MEXICO CITY POSADA COURTYARD AFTER THE GATHERING, NOT the reference interior cantina. Warm ochre courtyard walls and deep archways surround a balmy blue December evening sky. Colorful cut-paper papel picado hangs high overhead without lettering; Christmas string lights and lanterns give warm festive light. A DISTINCT traditional Mexican SEVEN-POINT PAPER STAR PIÑATA hangs far off one side, clearly separate from all lights: exactly SEVEN radiating conical paper points, a clearly countable seven-point frontal silhouette, colorful paper and trailing tissue ribbons. Poinsettias and a small decorated fir stand by a far doorway. Small grown friends chat by distant secondary tables under the archways after the party. No snow, no Day of the Dead, no skulls, no marigold altars. The separate foreground wood cantina table is completely empty with no food or drinks.\nConstraints: strong recognizable Christmas atmosphere in this new scene, with the described locally appropriate materials and setting. Scenery only: NO foreground beer, glass, bottle, cup, mug, can, food, plate, cutlery, napkin or other table object. NO brand, logo, readable text, signage lettering, interface, printed scoring mark, watermark, border or frame. No Halloween, Hanukkah candles, chanukiah, menorah or dreidels. Maintain an entirely clear foreground tabletop and opaque full-bleed 2:3 portrait. This is an illustrative memory, not an identifiable named venue or branded event.",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a128da-beda-7001-85ed-cfe675875262/exec-6209522d-8119-41be-973a-f03235aacedf.png",
+    "outputPath": "site/assets/scenes/christmas-modelo-posada.webp",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "tabletop": 0.556641,
+    "framing": "table",
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "export": {
+      "format": "webp",
+      "quality": 88,
+      "method": 6
+    },
+    "inspection": "New open ochre courtyard rather than the interior cantina. Papel picado, warm Christmas lights, poinsettias, far decorated fir and distinct colorful dimensional star pinata hanging off to the upper side. The star shows six exterior cones and a front-facing center cone for the intended seven-point structure; seven exterior rays are not depicted. Small grown friends gather at distant tables. No snow or Day of the Dead elements. Entire foreground tabletop is empty. Painted travel-postcard style retained. Rear edge measured at central y=855."
+  }
+]
