@@ -79,18 +79,37 @@ function offsetLabel(result){
   return pct === 0 ? 'Dead center.' : pct + '% of mark ' + (result.f < 0 ? 'high' : 'low');
 }
 
+/** A shared result names its challenger, so a group chat becomes a rematch thread. */
+function rivalryLine(friend, result, round){
+  if (!friend || (friend.kind !== 'daily' && friend.kind !== 'archive-saved')) return null;
+  if (result.counts === false) return null;
+  const comparison = comparisonCopy(friend, result);
+  if (!comparison) return null;
+  const mine = round ? round.score : result.score, theirs = friend.score, points = Math.abs(comparison.delta);
+  if (comparison.status === 'win') return '⚔️ You ' + theirs + ' · Me ' + mine + ' — beat you by ' + points + '.';
+  if (comparison.status === 'lose') return '⚔️ You ' + theirs + ' · Me ' + mine + ' — you win by ' + points + '.';
+  return '⚔️ ' + mine + '–' + theirs + ' — dead heat.';
+}
+
 /** Pure text sharing. Each strip is its actual stopping position. */
-export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false}){
+export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false, streak = 0, friend = null}){
   const status = statusLabel(result, preview, archive, review);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
   const round = completedRound(result);
-  return [
+  const score = round ? round.score : result.score;
+  const lines = [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    round ? 'Average of 3 · ' + round.score + '/100' : result.score + '/100 · ' + result.label,
-    ...(round ? round.rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === round.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]),
-    round ? 'Beat my average. Your turn.' : 'Beat my sip. One sip. Your turn.',
-    challengeUrl({url, key, num, preview, archive, theme, result, review})
-  ].join('\n');
+    round ? 'Average of 3 · ' + score + '/100' : score + '/100 · ' + result.label,
+  ];
+  // A streak is the retention engine; Wordle proved it belongs in the share.
+  if (Number.isInteger(streak) && streak >= 2) lines.push('🔥 ' + streak + '-day streak');
+  lines.push(...(round ? round.rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === round.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]));
+  const rivalry = rivalryLine(friend, result, round);
+  if (rivalry) lines.push(rivalry);
+  // A specific number beats an abstraction: "Beat my 94" is a dare, "Beat my average" is a slogan.
+  lines.push(round ? 'Beat my ' + score + '. Your turn.' : 'Beat my ' + score + '. One sip. Your turn.');
+  lines.push(challengeUrl({url, key, num, preview, archive, theme, result, review}));
+  return lines.join('\n');
 }
 
 function fitText(c, value, x, y, maxW, size, family, weight = 700){
@@ -232,6 +251,6 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   c.beginPath(); c.moveTo(64, 1267); c.lineTo(1016, 1267); c.stroke(); c.globalAlpha = 1;
   // Keep the printed address short; the benchmark travels in the text link, not an unreadable query on paper.
   fitText(c, cardUrl(challengeUrl({url, key, num, preview, review, theme}), num), 64, 1313, 450, 27, BODY, 700);
-  c.textAlign = 'right'; fitText(c, round ? 'Beat my average. Your turn.' : 'Beat my sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
+  c.textAlign = 'right'; fitText(c, round ? 'Beat my ' + round.score + '. Your turn.' : 'Beat my ' + result.score + '. One sip. Your turn.', 1016, 1313, 510, 31, BODY, 700);
   return canvas;
 }

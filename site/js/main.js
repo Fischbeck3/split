@@ -316,9 +316,18 @@ function finish(now){
   showRoundOutcome(now);
 }
 
+// Consecutive completed days, ending today when today's round is done.
+function currentStreak(){
+  const st = LAUNCH_READY ? load() : {days:{}};
+  let streak = 0; const cur = new Date(); cur.setHours(0, 0, 0, 0);
+  if (!(st.days[dayKey(cur)] && st.days[dayKey(cur)].done)) cur.setDate(cur.getDate() - 1);
+  while (st.days[dayKey(cur)] && st.days[dayKey(cur)].done){ streak++; cur.setDate(cur.getDate() - 1); }
+  return streak;
+}
+
 // ---------- results and sharing ----------
 function shareText(){
-  return buildShareText({num:S.num, key:S.key, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive', review:S.review});
+  return buildShareText({num:S.num, key:S.key, theme:S.theme, result:S.result, url:SITE_URL, preview:S.preview, archive:S.kind === 'archive', review:S.review, streak:currentStreak(), friend:S.friend});
 }
 function renderResult(){
   const r = S.result;
@@ -425,9 +434,7 @@ function renderStats(){
     if (best === null || d.score > best) best = d.score;
     if (d.rounds?.length === 3 ? d.rounds.every(sip => Math.abs(sip.f) <= PERFECT && !sip.drained) : Math.abs(d.f) <= PERFECT && !d.drained) perfect++;
   }
-  let streak = 0; const cur = new Date(); cur.setHours(0, 0, 0, 0);
-  if (!(st.days[dayKey(cur)] && st.days[dayKey(cur)].done)) cur.setDate(cur.getDate() - 1);
-  while (st.days[dayKey(cur)] && st.days[dayKey(cur)].done){ streak++; cur.setDate(cur.getDate() - 1); }
+  const streak = currentStreak();
   $('stDays').textContent = keys.length; $('stStreak').textContent = streak; $('stBest').textContent = best === null ? '—' : best; $('stPerfect').textContent = perfect;
 }
 function tickClock(){
@@ -548,7 +555,7 @@ async function init(){
   $('friendInvite').hidden = !S.friend;
   if (S.friend){
     const kind = S.friend.kind === 'daily' || S.friend.kind === 'archive-saved' ? '' : ' (' + S.friend.kind + ')';
-    $('friendInvite').textContent = 'Your friend’s ' + (S.friend.scoring === 'average' ? 'average: ' : '') + S.friend.score + '/100' + kind + ' to beat.';
+    $('friendInvite').textContent = 'Your friend ' + (S.friend.scoring === 'average' ? 'averaged ' : 'scored ') + S.friend.score + kind + '. Beat it.';
   }
   $('introGoal').textContent = $('liveGoal').textContent = 'Split ' + S.theme.target + '.';
   $('introFeel').textContent = S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour');
