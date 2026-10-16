@@ -23,7 +23,7 @@ test('an official sip shares a /100 score, one truthful strip, and the exact cha
   const text = buildShareText({num: 1, theme: P.theme,
     result: {score: 98, label: 'Perfect split', f: 0.04, counts: true},
     url: 'https://split.example/play/?day=1#result'});
-  assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/play/', {num:1, score:98, f:0.04}));
+  assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n98/100 · Perfect split\n⬜⬜🟩⬜⬜\nBeat my 98. One sip. Your turn.\n' + benchmarkLink('https://split.example/play/', {num:1, score:98, f:0.04}));
   assert.doesNotMatch(text, /98%|Preview|Practice/);
 });
 
@@ -32,7 +32,7 @@ test('a day preview is explicitly identified without adding fake attempts', () =
   const text = buildShareText({num: 2, theme: P.theme,
     result: {score: 42, label: 'High in the P', f: -0.28, counts: false},
     url: 'https://split.example/?day=2', preview: true});
-  assert.equal(text, 'Split #002 · 🍺 Peroni · Trastevere sunset · Preview\n42/100 · High in the P\n⬜🟨⬜⬜⬜\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:2, score:42, f:-0.28, kind:'preview', preview:true}));
+  assert.equal(text, 'Split #002 · 🍺 Peroni · Trastevere sunset · Preview\n42/100 · High in the P\n⬜🟨⬜⬜⬜\nBeat my 42. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:2, score:42, f:-0.28, kind:'preview', preview:true}));
   assert.equal(text.split('\n').filter(line => line.includes('⬜')).length, 1);
 });
 
@@ -41,7 +41,7 @@ test('a practice sip is labeled and an overshoot keeps the outside-band arrow', 
   const text = buildShareText({num: 3, theme: P.theme,
     result: {score: 0, label: 'Below the star', f: 0.8, counts: false},
     url: 'https://split.example/'});
-  assert.equal(text, 'Split #003 · 🍺 Sapporo · Tokyo izakaya · Practice\n0/100 · Below the star\n⬜⬜⬜⬜⬜⬇️\nBeat my sip. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:3, score:0, f:0.8, kind:'practice'}));
+  assert.equal(text, 'Split #003 · 🍺 Sapporo · Tokyo izakaya · Practice\n0/100 · Below the star\n⬜⬜⬜⬜⬜⬇️\nBeat my 0. One sip. Your turn.\n' + benchmarkLink('https://split.example/', {num:3, score:0, f:0.8, kind:'practice'}));
 });
 
 const result = {score: 100, label: 'Perfect split', f: 0, counts: true};
@@ -64,7 +64,7 @@ test('a completed round shares its rounded average, three truthful strips and be
     '⬜🟨⬜⬜⬜  Sober 42/100\n' +
     '⬜⬜🟩⬜⬜  Tipsy 98/100 · Best\n' +
     '⬜⬜⬜⬜⬜⬇️  Drunk 0/100\n' +
-    'Beat my average. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
+    'Beat my 47. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
   const link = new URL(lastLine(text));
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
   assert.equal(friend.score, result.score); assert.equal(friend.f, result.f); assert.equal(friend.L, result.L);
@@ -266,7 +266,7 @@ test('three-sip postcards show the average while clearly identifying the best ph
     assert.ok(stages.every(call => call[3] > 996 && call[3] < 1230), 'all scores fit between the image and footer');
     assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 15, 'five physical bands for each of three sips');
     assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === '4% of mark low'));
-    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my average. Your turn.'));
+    assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my 47. Your turn.'));
   }
 });
 
@@ -276,7 +276,7 @@ test('a partial round keeps the original single-sip postcard and no stage summar
   assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'One stopping point'));
   assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === String(result.score) && call[3] === 1189));
   assert.equal(recording.calls.filter(call => call[0] === 'strokeRect').length, 5);
-  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my sip. Your turn.'));
+  assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'Beat my 47. One sip. Your turn.'));
   assert.ok(!recording.calls.some(call => call[0] === 'fillText' && /Average of 3|Sober|Tipsy|Drunk/.test(call[1])));
 });
 
@@ -288,4 +288,37 @@ test('average comparison postcards label the shared best line separately from th
   assert.ok(sharedLabel);
   assert.ok(recording.calls.some(call => call[0] === 'fillText' && call[1] === 'You 47 · Shared average 93'));
   assert.ok(!recording.photoCalls.some(call => call[0] === 'fillText' && call[1] === 'SHARED 93'));
+});
+
+test('a streak of two or more days joins the share as its own flex line', () => {
+  const P = dayParams(1), base = {num:1, key:P.key, theme:P.theme,
+    result:{score:98, label:'Perfect split', f:0.04, counts:true}};
+  assert.ok(buildShareText({...base, streak:6}).split('\n').includes('🔥 6-day streak'));
+  for (const streak of [0, 1]){
+    assert.ok(!buildShareText({...base, streak}).split('\n').some(line => line.includes('🔥')),
+      'a one-day or missing streak stays quiet');
+  }
+});
+
+test('a challenge-link round names the rivalry outcome in the shared text', () => {
+  const P = dayParams(1);
+  const friend = {score:93, kind:'daily', scoring:'average', rounds:[96, 86, 97], bestScore:97};
+  const won = buildShareText({num:1, key:P.key, theme:P.theme, result:completedThree(P, {offsets:[0, 0, 0]}), friend});
+  assert.ok(won.split('\n').includes('⚔️ You 93 · Me 100 — beat you by 7.'));
+  const lost = buildShareText({num:1, key:P.key, theme:P.theme, result:completedThree(P), friend});
+  assert.ok(lost.split('\n').includes('⚔️ You 93 · Me 47 — you win by 46.'));
+});
+
+test('a dead heat is named, while practice and preview comparisons stay out of the share', () => {
+  const P = dayParams(2);
+  const official = {score:93, label:'Near the star', f:0.1};
+  const tie = buildShareText({num:2, key:P.key, theme:P.theme,
+    result:{...official, counts:true}, friend:{score:93, kind:'daily'}});
+  assert.ok(tie.split('\n').includes('⚔️ 93–93 — dead heat.'));
+  const previewFriend = buildShareText({num:2, key:P.key, theme:P.theme,
+    result:{...official, counts:true}, friend:{score:90, kind:'preview'}});
+  assert.ok(!previewFriend.includes('⚔️'), 'a preview benchmark is not a fair rivalry');
+  const practice = buildShareText({num:2, key:P.key, theme:P.theme,
+    result:{...official, counts:false}, friend:{score:90, kind:'daily'}});
+  assert.ok(!practice.includes('⚔️'), 'a practice sip cannot claim a rivalry win');
 });
