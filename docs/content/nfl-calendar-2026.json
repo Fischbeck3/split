@@ -1,0 +1,474 @@
+{
+  "checkedAt": "2026-10-24",
+  "timezone": "America/Phoenix",
+  "games": [
+    {
+      "date": "2026-11-01",
+      "themeId": "nfl-commanders",
+      "eventId": "401873035",
+      "away": "Philadelphia Eagles",
+      "home": "Washington Commanders",
+      "kickoffUtc": "2026-11-02T01:20Z",
+      "broadcasts": [
+        "NBC"
+      ],
+      "selection": "SNF",
+      "reason": "Sunday Night Football pairs NFC East rivals.",
+      "officialSource": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=8"
+    },
+    {
+      "date": "2026-11-02",
+      "themeId": "nfl-seahawks",
+      "eventId": "401873036",
+      "away": "Chicago Bears",
+      "home": "Seattle Seahawks",
+      "kickoffUtc": "2026-11-03T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "Monday Night Football brings Chicago to Seattle.",
+      "officialSource": "https://www.seahawks.com/news/seahawks-2026-schedule-announced-highlighted-by-christmas-night-game",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=8"
+    },
+    {
+      "date": "2026-11-05",
+      "themeId": "nfl-jaguars",
+      "eventId": "401873037",
+      "away": "Jacksonville Jaguars",
+      "home": "Baltimore Ravens",
+      "kickoffUtc": "2026-11-06T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "Jacksonville gets the Thursday Night Football spotlight in Baltimore.",
+      "officialSource": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=9"
+    },
+    {
+      "date": "2026-11-08",
+      "themeId": "nfl-raiders",
+      "eventId": "401873047",
+      "away": "Las Vegas Raiders",
+      "home": "San Francisco 49ers",
+      "kickoffUtc": "2026-11-08T21:05Z",
+      "broadcasts": [
+        "CBS"
+      ],
+      "selection": "Rivalry",
+      "reason": "The former Bay Area neighbors meet again; the Raiders cup recalls Oakland.",
+      "officialSource": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=9"
+    },
+    {
+      "date": "2026-11-09",
+      "themeId": "nfl-vikings",
+      "eventId": "401873051",
+      "away": "Buffalo Bills",
+      "home": "Minnesota Vikings",
+      "kickoffUtc": "2026-11-10T01:15Z",
+      "broadcasts": [
+        "ESPN",
+        "ABC"
+      ],
+      "selection": "MNF",
+      "reason": "Minnesota hosts Buffalo on Monday Night Football.",
+      "officialSource": "https://www.vikings.com/news/nfl-schedule-2026-preview-colts-lions-bills-packers",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=9"
+    },
+    {
+      "date": "2026-11-12",
+      "themeId": "nfl-giants",
+      "eventId": "401873052",
+      "away": "Washington Commanders",
+      "home": "New York Giants",
+      "kickoffUtc": "2026-11-13T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "An NFC East rivalry in the Thursday Night Football window.",
+      "officialSource": "https://www.giants.com/news/nfl-schedule-2026-new-york-giants-tickets-information-cowboys-eagles-commanders",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=10"
+    },
+    {
+      "date": "2026-11-15",
+      "themeId": "nfl-bengals",
+      "eventId": "401873064",
+      "away": "Pittsburgh Steelers",
+      "home": "Cincinnati Bengals",
+      "kickoffUtc": "2026-11-16T01:20Z",
+      "broadcasts": [
+        "NBC"
+      ],
+      "selection": "SNF",
+      "reason": "The Steelers–Bengals AFC North rivalry gets Sunday Night Football.",
+      "officialSource": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=10"
+    },
+    {
+      "date": "2026-11-16",
+      "themeId": "nfl-ravens",
+      "eventId": "401873065",
+      "away": "Los Angeles Chargers",
+      "home": "Baltimore Ravens",
+      "kickoffUtc": "2026-11-17T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "Baltimore hosts the Chargers on Monday Night Football.",
+      "officialSource": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=10"
+    },
+    {
+      "date": "2026-11-19",
+      "themeId": "nfl-texans",
+      "eventId": "401873066",
+      "away": "Indianapolis Colts",
+      "home": "Houston Texans",
+      "kickoffUtc": "2026-11-20T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "AFC South rivals meet on Thursday Night Football.",
+      "officialSource": "https://www.houstontexans.com/schedule/",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=11"
+    },
+    {
+      "date": "2026-11-22",
+      "themeId": "nfl-49ers",
+      "eventId": "401873077",
+      "away": "Minnesota Vikings",
+      "home": "San Francisco 49ers",
+      "kickoffUtc": "2026-11-23T01:20Z",
+      "broadcasts": [
+        "NBC"
+      ],
+      "selection": "SNF",
+      "reason": "The 49ers and Vikings meet in Mexico City on Sunday Night Football. The cup scene recalls Candlestick Park.",
+      "officialSource": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=11"
+    },
+    {
+      "date": "2026-11-23",
+      "themeId": "nfl-commanders",
+      "eventId": "401873078",
+      "away": "Cincinnati Bengals",
+      "home": "Washington Commanders",
+      "kickoffUtc": "2026-11-24T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "Washington hosts Cincinnati on Monday Night Football.",
+      "officialSource": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=11"
+    },
+    {
+      "date": "2026-11-25",
+      "themeId": "nfl-rams",
+      "eventId": "401873079",
+      "away": "Green Bay Packers",
+      "home": "Los Angeles Rams",
+      "kickoffUtc": "2026-11-26T01:00Z",
+      "broadcasts": [
+        "Netflix"
+      ],
+      "selection": "Thanksgiving Eve",
+      "reason": "The Thanksgiving Eve standalone game pairs the Rams and Packers.",
+      "officialSource": "https://www.packers.com/news/packers-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=12"
+    },
+    {
+      "date": "2026-11-26",
+      "themeId": "nfl-cowboys",
+      "eventId": "401873080",
+      "away": "Philadelphia Eagles",
+      "home": "Dallas Cowboys",
+      "kickoffUtc": "2026-11-26T21:30Z",
+      "broadcasts": [
+        "Fox"
+      ],
+      "selection": "Thanksgiving",
+      "reason": "The Cowboys–Eagles rivalry anchors the Thanksgiving afternoon feature.",
+      "officialSource": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=12"
+    },
+    {
+      "date": "2026-11-27",
+      "themeId": "nfl-steelers",
+      "eventId": "401873083",
+      "away": "Denver Broncos",
+      "home": "Pittsburgh Steelers",
+      "kickoffUtc": "2026-11-27T20:00Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "Black Friday",
+      "reason": "Pittsburgh hosts Denver in the standalone Black Friday game.",
+      "officialSource": "https://www.steelers.com/news/steelers-release-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=12"
+    },
+    {
+      "date": "2026-11-29",
+      "themeId": "nfl-49ers",
+      "eventId": "401873091",
+      "away": "Seattle Seahawks",
+      "home": "San Francisco 49ers",
+      "kickoffUtc": "2026-11-29T21:25Z",
+      "broadcasts": [
+        "Fox"
+      ],
+      "selection": "Rivalry",
+      "reason": "The Seahawks–49ers NFC West rivalry takes priority over the night game.",
+      "officialSource": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=12"
+    },
+    {
+      "date": "2026-11-30",
+      "themeId": "nfl-panthers",
+      "eventId": "401873094",
+      "away": "Carolina Panthers",
+      "home": "Tampa Bay Buccaneers",
+      "kickoffUtc": "2026-12-01T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "A Carolina–Tampa Bay divisional meeting on Monday Night Football.",
+      "officialSource": "https://www.buccaneers.com/news/how-to-watch-buccaneers-vs-panthers-week-12-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=12"
+    },
+    {
+      "date": "2026-12-03",
+      "themeId": "nfl-chiefs",
+      "eventId": "401873096",
+      "away": "Kansas City Chiefs",
+      "home": "Los Angeles Rams",
+      "kickoffUtc": "2026-12-04T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "Kansas City visits the Rams on Thursday Night Football.",
+      "officialSource": "https://www.chiefs.com/news/here-s-a-look-at-the-chiefs-prime-time-slate-in-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=13"
+    },
+    {
+      "date": "2026-12-06",
+      "themeId": "nfl-browns",
+      "eventId": "401873097",
+      "away": "Cincinnati Bengals",
+      "home": "Cleveland Browns",
+      "kickoffUtc": "2026-12-06T18:00Z",
+      "broadcasts": [
+        "CBS"
+      ],
+      "selection": "Rivalry",
+      "reason": "The Battle of Ohio puts the Browns cup on a Bengals–Browns rivalry day.",
+      "officialSource": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=13"
+    },
+    {
+      "date": "2026-12-07",
+      "themeId": "nfl-seahawks",
+      "eventId": "401873108",
+      "away": "Dallas Cowboys",
+      "home": "Seattle Seahawks",
+      "kickoffUtc": "2026-12-08T01:15Z",
+      "broadcasts": [
+        "ESPN",
+        "ABC"
+      ],
+      "selection": "MNF",
+      "reason": "Seattle hosts Dallas on Monday Night Football.",
+      "officialSource": "https://www.seahawks.com/news/seahawks-2026-schedule-announced-highlighted-by-christmas-night-game",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=13"
+    },
+    {
+      "date": "2026-12-10",
+      "themeId": "nfl-patriots",
+      "eventId": "401873109",
+      "away": "Minnesota Vikings",
+      "home": "New England Patriots",
+      "kickoffUtc": "2026-12-11T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "New England hosts Minnesota on Thursday Night Football.",
+      "officialSource": "https://www.patriots.com/news/patriots-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=14"
+    },
+    {
+      "date": "2026-12-13",
+      "themeId": "nfl-packers",
+      "eventId": "401873122",
+      "away": "Buffalo Bills",
+      "home": "Green Bay Packers",
+      "kickoffUtc": "2026-12-14T01:20Z",
+      "broadcasts": [
+        "NBC"
+      ],
+      "selection": "SNF",
+      "reason": "Buffalo visits Lambeau Field for Sunday Night Football.",
+      "officialSource": "https://www.packers.com/news/packers-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=14"
+    },
+    {
+      "date": "2026-12-14",
+      "themeId": "nfl-jaguars",
+      "eventId": "401873123",
+      "away": "Pittsburgh Steelers",
+      "home": "Jacksonville Jaguars",
+      "kickoffUtc": "2026-12-15T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "Jacksonville hosts Pittsburgh on Monday Night Football.",
+      "officialSource": "https://www.steelers.com/news/steelers-release-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=14"
+    },
+    {
+      "date": "2026-12-17",
+      "themeId": "nfl-chargers",
+      "eventId": "401873124",
+      "away": "San Francisco 49ers",
+      "home": "Los Angeles Chargers",
+      "kickoffUtc": "2026-12-18T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "TNF",
+      "reason": "The Chargers host San Francisco in the Thursday Night Football window.",
+      "officialSource": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=15"
+    },
+    {
+      "date": "2026-12-19",
+      "themeId": "nfl-eagles",
+      "eventId": "401873125",
+      "away": "Seattle Seahawks",
+      "home": "Philadelphia Eagles",
+      "kickoffUtc": "2026-12-19T22:00Z",
+      "broadcasts": [
+        "Fox"
+      ],
+      "selection": "Saturday feature",
+      "reason": "The Saturday standalone afternoon game brings Seattle to Philadelphia.",
+      "officialSource": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=15"
+    },
+    {
+      "date": "2026-12-20",
+      "themeId": "nfl-lions",
+      "eventId": "401873138",
+      "away": "Detroit Lions",
+      "home": "Minnesota Vikings",
+      "kickoffUtc": "2026-12-21T01:20Z",
+      "broadcasts": [
+        "NBC"
+      ],
+      "selection": "SNF",
+      "reason": "The Lions–Vikings NFC North rivalry gets Sunday Night Football.",
+      "officialSource": "https://www.detroitlions.com/news/lions-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=15"
+    },
+    {
+      "date": "2026-12-21",
+      "themeId": "nfl-chiefs",
+      "eventId": "401873139",
+      "away": "New England Patriots",
+      "home": "Kansas City Chiefs",
+      "kickoffUtc": "2026-12-22T01:15Z",
+      "broadcasts": [
+        "ESPN",
+        "ABC"
+      ],
+      "selection": "MNF",
+      "reason": "Kansas City hosts New England on Monday Night Football.",
+      "officialSource": "https://www.chiefs.com/news/here-s-a-look-at-the-chiefs-prime-time-slate-in-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=15"
+    },
+    {
+      "date": "2026-12-24",
+      "themeId": "nfl-eagles",
+      "eventId": "401873140",
+      "away": "Houston Texans",
+      "home": "Philadelphia Eagles",
+      "kickoffUtc": "2026-12-25T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "Christmas Eve",
+      "reason": "Philadelphia hosts Houston in the Christmas Eve Thursday night game.",
+      "officialSource": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=16"
+    },
+    {
+      "date": "2026-12-25",
+      "themeId": "nfl-bears",
+      "eventId": "401873141",
+      "away": "Green Bay Packers",
+      "home": "Chicago Bears",
+      "kickoffUtc": "2026-12-25T18:00Z",
+      "broadcasts": [
+        "Netflix"
+      ],
+      "selection": "Christmas rivalry",
+      "reason": "The Packers–Bears rivalry is the Christmas Day choice, with the Bears cup at Soldier Field.",
+      "officialSource": "https://www.packers.com/news/packers-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=16"
+    },
+    {
+      "date": "2026-12-27",
+      "themeId": "nfl-49ers",
+      "eventId": "401873153",
+      "away": "San Francisco 49ers",
+      "home": "Kansas City Chiefs",
+      "kickoffUtc": "2026-12-27T21:25Z",
+      "broadcasts": [
+        "CBS"
+      ],
+      "selection": "Super Bowl rematch",
+      "reason": "The 49ers–Chiefs meeting recalls their recent Super Bowl matchups and takes priority over the night game.",
+      "officialSource": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=16"
+    },
+    {
+      "date": "2026-12-28",
+      "themeId": "nfl-giants",
+      "eventId": "401873155",
+      "away": "New York Giants",
+      "home": "Detroit Lions",
+      "kickoffUtc": "2026-12-29T01:15Z",
+      "broadcasts": [
+        "ESPN"
+      ],
+      "selection": "MNF",
+      "reason": "The Giants visit Detroit on Monday Night Football.",
+      "officialSource": "https://www.detroitlions.com/news/lions-announce-2026-schedule",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=16"
+    },
+    {
+      "date": "2026-12-31",
+      "themeId": "nfl-bengals",
+      "eventId": "401873156",
+      "away": "Baltimore Ravens",
+      "home": "Cincinnati Bengals",
+      "kickoffUtc": "2027-01-01T01:15Z",
+      "broadcasts": [
+        "Prime Video"
+      ],
+      "selection": "New Year’s Eve",
+      "reason": "Ravens–Bengals closes the year with an AFC North rivalry on Thursday night.",
+      "officialSource": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+      "fixtureSource": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&dates=2026&week=17"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ import {loadBrandAssets,nflPrintImage,nflPrintURL} from '../site/js/brand-assets
 import {checkCalendarContent} from '../scripts/check-calendar-content.js';
 import {addDateDays} from '../site/js/content-calendar.js';
 
-test('all 32 distinct NFL teams have built review cups while November and the fallback six remain unassigned',async()=>{
+test('all 32 distinct NFL teams retain built review cups and the fixed fallback six',async()=>{
   assert.equal(NFL_THEME_IDS.length,32);assert.equal(new Set(NFL_TEAMS.map(t=>t.team)).size,32);
   assert.equal(NFL_DIVISIONS.length,8);
   for(const division of NFL_DIVISIONS) assert.equal(NFL_TEAMS.filter(team=>team.division===division).length,4);
@@ -20,7 +20,6 @@ test('all 32 distinct NFL teams have built review cups while November and the fa
   assert.equal(REVIEW_THEMES.length,115);
   assert.equal(REVIEW_THEMES[81].id,'christmas-sierra-high-sierras-cabin');
   assert.equal(REVIEW_THEMES[82].id,'halloween-lantern-maze');
-  assert.ok(Object.keys(CALENDAR.days).every(date=>date<'2026-11-01'));
   for(const id of NFL_THEME_IDS){
     const theme=themeById(id),review=readThemeReview('#admin/'+id),art=SCENE_ART[id];
     assert.equal(theme.vessel,'cup');assert.equal(theme.material,'plastic');assert.equal(theme.mark,'team');

@@ -32,7 +32,9 @@ export function latestLiveDate(now = new Date()){
 }
 
 export function getPublishedEntry(date, plan = CALENDAR){
-  return isDateKey(date) && own(plan.days, date) ? {...plan.days[date]} : null;
+  if (!isDateKey(date) || !own(plan.days, date)) return null;
+  const entry = plan.days[date];
+  return {...entry, ...(entry.occasion ? {occasion:{...entry.occasion}} : {})};
 }
 export function getCampaignForDate(date, plan = CALENDAR, {includeDrafts = false} = {}){
   if (!isDateKey(date)) return null;
@@ -80,11 +82,25 @@ export function normalizeCalendarPlan(input){
     throw new Error('updatedAt must be an ISO timestamp.');
   }
   const entry = (value, date, draft) => {
-    fields(value, draft ? ['themeId', 'campaignId', 'notes'] : ['themeId', 'campaignId'], date);
+    fields(value, draft ? ['themeId', 'campaignId', 'notes', 'occasion'] : ['themeId', 'campaignId', 'occasion'], date);
     if (!isDateKey(date) || date < LAUNCH) throw new Error('Invalid or pre-launch calendar date: ' + date);
     if (typeof value.themeId !== 'string' || !ID.test(value.themeId)) throw new Error(date + ': invalid theme ID.');
     if (typeof value.campaignId !== 'string' || !ID.test(value.campaignId)) throw new Error(date + ': invalid campaign ID.');
-    return {themeId:value.themeId, campaignId:value.campaignId, ...(draft ? {notes:text(value.notes ?? '', date + ' notes')} : {})};
+    let occasion;
+    if (own(value, 'occasion')){
+      fields(value.occasion, ['title', 'detail', 'sourceUrl', 'checkedAt'], date + ' occasion');
+      const title = text(value.occasion.title, date + ' occasion title', 160).trim();
+      if (!title || title.includes('\n')) throw new Error(date + ': occasion title must be one nonempty line.');
+      const detail = text(value.occasion.detail, date + ' occasion detail', 1000);
+      const sourceUrl = text(value.occasion.sourceUrl, date + ' occasion source', 2048);
+      let url;
+      try { url = new URL(sourceUrl); } catch { throw new Error(date + ': invalid occasion source URL.'); }
+      if (url.protocol !== 'https:' || url.username || url.password) throw new Error(date + ': occasion source must be an HTTPS URL without credentials.');
+      if (!isDateKey(value.occasion.checkedAt) || value.occasion.checkedAt > date) throw new Error(date + ': invalid occasion check date.');
+      occasion = {title, detail, sourceUrl:url.href, checkedAt:value.occasion.checkedAt};
+    }
+    return {themeId:value.themeId, campaignId:value.campaignId, ...(draft ? {notes:text(value.notes ?? '', date + ' notes')} : {}),
+      ...(occasion ? {occasion} : {})};
   };
   const campaigns = sorted(record(input.campaigns, 'campaigns'), (value, id) => {
     fields(value, ['name', 'startDate', 'endDate', 'status', 'notes'], 'Campaign ' + id);
@@ -189,9 +205,12 @@ export function createCalendarFeed({startDate, endDate, plan = CALENDAR, resolve
     const description = [draft ? 'Draft lineup. ' + readiness.label + '. This does not change the daily game.' :
       entry ? 'Scheduled theme. Built and approved.' : 'Automatic rotation. Unplanned date; this fallback is not a reviewed theme assignment.',
       campaign ? campaign.name + ' (' + entry.campaignId + ').' : '', theme.vessel ? 'Glass: ' + theme.vessel + '.' : '',
-      theme.scene ? 'Place: ' + theme.scene + '.' : '', draft?.notes || '', 'The link opens an unsaved preview.'].filter(Boolean).join('\n');
+      theme.scene ? 'Place: ' + theme.scene + '.' : '', entry?.occasion ? entry.occasion.title + '\n' + entry.occasion.detail +
+        '\nMatchup checked ' + entry.occasion.checkedAt + '. NFL flex scheduling may change the game date or broadcast. Stadium artwork recalls fan memories, not necessarily the game venue.\nSource: ' + entry.occasion.sourceUrl : '',
+      draft?.notes || '', 'The link opens an unsaved preview.'].filter(Boolean).join('\n');
     event({uid:'split-' + date + '@dailysplit.us', start:date, end:addDateDays(date, 1),
-      summary:(draft ? 'Draft · ' + readiness.label + ' · ' : !entry ? 'Unplanned fallback · ' : '') + 'Split #' + String(number).padStart(3, '0') + ' · ' + (theme.name || theme.id) + ' · ' + (theme.label || theme.id),
+      summary:(draft ? 'Draft · ' + readiness.label + ' · ' : !entry ? 'Unplanned fallback · ' : '') + 'Split #' + String(number).padStart(3, '0') + ' · ' + (theme.name || theme.id) + ' · ' + (theme.label || theme.id) +
+        (entry?.occasion ? ' · ' + entry.occasion.title : ''),
       description, tentative:!!draft || !entry, url:SITE_URL + '#day' + number});
   }
   if (includeDrafts) for (const [id, campaign] of Object.entries(normalized.campaigns)){

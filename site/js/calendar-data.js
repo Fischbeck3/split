@@ -1,4 +1,5 @@
 import {NFL_THEME_IDS} from './nfl-themes.js';
+import {NFL_CALENDAR_DAYS} from './nfl-calendar.js';
 
 // Published dates choose the live glass. Drafts only appear in the planning calendar.
 // Keep the legacy lists fixed so new themes cannot reroll old automatic challenges.
@@ -19,8 +20,8 @@ export const CALENDAR_THEME_IDS = Object.freeze([
 
 export const CALENDAR = {
   // October 15–31 uses the reviewed autumn and Halloween scenes.
-  version: 5,
-  updatedAt: '2026-10-23T20:00:00.000Z',
+  version: 6,
+  updatedAt: '2026-10-24T17:00:00.000Z',
   days: {
     '2026-10-09': {themeId: 'pub', campaignId: 'opening-2026'},
     '2026-10-10': {themeId: 'peroni', campaignId: 'opening-2026'},
@@ -44,7 +45,8 @@ export const CALENDAR = {
     '2026-10-28': {themeId: 'halloween-ravens-rest', campaignId: 'halloween-2026'},
     '2026-10-29': {themeId: 'halloween-vampires-toast', campaignId: 'halloween-2026'},
     '2026-10-30': {themeId: 'halloween-midnight-carnival', campaignId: 'halloween-2026'},
-    '2026-10-31': {themeId: 'halloween-last-orders', campaignId: 'halloween-2026'}
+    '2026-10-31': {themeId: 'halloween-last-orders', campaignId: 'halloween-2026'},
+    ...NFL_CALENDAR_DAYS
   },
   drafts: {},
   campaigns: {

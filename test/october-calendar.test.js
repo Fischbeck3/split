@@ -57,16 +57,16 @@ test('calendar catalog survives CLI serialization without changing fallbacks or 
   assert.equal(contentReadiness({themeId:'autumn-pub', campaignId:'halloween-2026'}).ready, false, 'a built autumn pint cannot substitute for reviewed Halloween art');
 });
 
-test('both subscription feeds confirm October assignments and keep November tentative', () => {
+test('both subscription feeds confirm October and reviewed NFL dates while keeping gaps tentative', () => {
   for (const includeDrafts of [false, true]) {
-    const feed = createCalendarFeed({startDate:'2026-10-15', endDate:'2026-11-01', includeDrafts,
+    const feed = createCalendarFeed({startDate:'2026-10-15', endDate:'2026-11-03', includeDrafts,
       resolveTheme:(date, id) => id ? themeById(id) : dayParams(keyToDayNumber(date)).theme, now:'2026-10-11T18:18:55Z'}).replace(/\r\n[ \t]/g, '');
     const events = feed.split('BEGIN:VEVENT\r\n').slice(1);
-    assert.equal(events.length, 18);
-    assert.ok(events.slice(0, 17).every(event => event.includes('STATUS:CONFIRMED')));
+    assert.equal(events.length, 20);
+    assert.ok(events.slice(0, 19).every(event => event.includes('STATUS:CONFIRMED')));
     assert.match(events[10], /Pumpkin ale/);
     assert.match(events[16], /Last orders/);
-    assert.match(events[17], /STATUS:TENTATIVE/);
-    assert.match(events[17], /Unplanned fallback/);
+    assert.match(events[19], /STATUS:TENTATIVE/);
+    assert.match(events[19], /Unplanned fallback/);
   }
 });
