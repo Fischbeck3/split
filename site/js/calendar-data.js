@@ -21,7 +21,7 @@ export const CALENDAR_THEME_IDS = Object.freeze([
 export const CALENDAR = {
   // October 15–31 uses the reviewed autumn and Halloween scenes.
   version: 6,
-  updatedAt: '2026-10-24T17:00:00.000Z',
+  updatedAt: '2026-10-24T14:06:06.000Z',
   days: {
     '2026-10-09': {themeId: 'pub', campaignId: 'opening-2026'},
     '2026-10-10': {themeId: 'peroni', campaignId: 'opening-2026'},
