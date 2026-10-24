@@ -1,7 +1,7 @@
 // Target artwork and the brief line hint share vessel-local coordinates.
 // The painted mark can grow without changing the seeded scoring tolerance.
 import {renderWidthAt as widthAt} from './render-vessels.js';
-import {isGuinnessTheme} from './brand-assets.js';
+import {isGuinnessTheme,isNFLTheme} from './brand-assets.js';
 
 export const TARGET_HINT_MS = 1900;
 
@@ -18,7 +18,8 @@ export function targetGeometry(G, P, theme){
   const vesselHalfWidth = Math.max(0, widthAt(G.glass, P.markY) * G.halfW);
   // Guinness uses the complete harp and wordmark; h describes the full print.
   const enlargement = isGuinnessTheme(theme) ? 2.4 : theme.name === 'Butterbeer' ? 1.7 : 1.5;
-  const widthLimit = 1.15;
+  // Wide team marks keep a clear margin inside the cup walls.
+  const widthLimit = isNFLTheme(theme) ? .82 : 1.15;
   const markHeight = Math.max(0, Math.min(P.markH * gh * enlargement, vesselHalfWidth * widthLimit));
   const lineWidth = Math.min(3.5, Math.max(1.5, gh * .009), vesselHalfWidth * .12);
   const lineHalfWidth = Math.max(0, vesselHalfWidth - lineWidth / 2 - 1);

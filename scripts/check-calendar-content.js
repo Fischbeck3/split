@@ -2,6 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {themeById} from '../site/js/core.js';
+import {isNFLTheme,nflPrintURL} from '../site/js/brand-assets.js';
 import {SCENE_ART} from '../site/js/draw.js';
 import {assertContentReady, THEME_READINESS, isCampaignReady} from '../site/js/content-readiness.js';
 
@@ -23,6 +24,11 @@ export async function checkCalendarContent(plan, {read = readFile} = {}){
     try { bytes = await read(url); }
     catch { throw new Error(date + ': missing scene artwork for ' + entry.themeId + ': ' + url.pathname); }
     if (!bytes?.length) throw new Error(date + ': empty scene artwork for ' + entry.themeId);
+    if (isNFLTheme(theme)){
+      let print;
+      try {print=await read(new URL(nflPrintURL(theme)));}catch {throw new Error(date+': missing team print for '+entry.themeId);}
+      if (!approved.brandArtworkSha256 || createHash('sha256').update(print).digest('hex')!==approved.brandArtworkSha256) throw new Error(date+': team print changed since approval for '+entry.themeId+'. Review it before scheduling.');
+    }
     if (createHash('sha256').update(bytes).digest('hex') !== approved.artworkSha256){
       throw new Error(date + ': scene artwork changed since approval for ' + entry.themeId + '. Review it before scheduling.');
     }

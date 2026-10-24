@@ -32,7 +32,10 @@ test('every remaining October date has approved artwork, a reachable pour, and a
 });
 
 test('Halloween fills its exact Sunday–Saturday week and Guinness returns every three or four days', () => {
-  assert.deepEqual(Array.from({length:7}, (_, index) => CALENDAR.days['2026-10-' + (25 + index)].themeId), HALLOWEEN_THEME_IDS);
+  assert.deepEqual(Array.from({length:7}, (_, index) => CALENDAR.days['2026-10-' + (25 + index)].themeId), HALLOWEEN_THEME_IDS.slice(0,7));
+  assert.equal(CALENDAR.days['2026-10-24'].themeId,'halloween-lantern-maze');
+  assert.equal(CALENDAR.days['2026-10-24'].campaignId,'halloween-2026');
+  assert.equal(CALENDAR.campaigns['halloween-2026'].startDate,'2026-10-24');
   const guinness = Object.entries(CALENDAR.days).filter(([date, entry]) => date >= '2026-10-15' && themeById(entry.themeId).name === 'Guinness').map(([date]) => keyToDayNumber(date));
   assert.equal(guinness.length, 6);
   for (let index = 1; index < guinness.length; index++) assert.ok([3, 4].includes(guinness[index] - guinness[index - 1]));

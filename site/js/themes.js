@@ -10,6 +10,8 @@ import {autumnThemePreviews} from './autumn-themes.js';
 import {winterThemePreviews} from './winter-themes.js';
 import {holidayThemePreviews} from './holiday-themes.js';
 import {christmasThemePreviews} from './christmas-themes.js';
+import {nflThemePreviews} from './nfl-themes.js';
+export {NFL_THEME_IDS} from './nfl-themes.js';
 export {PREVIEW_THEME_IDS} from './theme-expansion.js';
 export {HALLOWEEN_THEME_IDS} from './halloween-themes.js';
 export {AUTUMN_THEME_IDS} from './autumn-themes.js';
@@ -96,8 +98,10 @@ export const THEMES = [
 
 // Preview artwork is deliberately outside the released calendar rotation.
 THEMES.push(...travelThemePreviews(THEMES[0]));
-THEMES.push(...halloweenThemePreviews(THEMES[0]));
+THEMES.push(...halloweenThemePreviews(THEMES[0]).filter(theme=>theme.id!=='halloween-lantern-maze'));
 THEMES.push(...autumnThemePreviews(THEMES));
 THEMES.push(...winterThemePreviews(THEMES));
 THEMES.push(...holidayThemePreviews(THEMES[0]));
 THEMES.push(...christmasThemePreviews(THEMES));
+THEMES.push(halloweenThemePreviews(THEMES[0]).find(theme=>theme.id==='halloween-lantern-maze'));
+THEMES.push(...nflThemePreviews());

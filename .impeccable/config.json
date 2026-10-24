@@ -80,6 +80,43 @@
         ],
         "createdAt": "2026-10-10T00:02:37.632Z",
         "reason": "Agent verified computed caption #556c73 on body #f6f0e3; detector incorrectly pairs it with iframe-only #142b24. Game iframe uses its own themed document."
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "site/nfl-teams.html"
+        ],
+        "createdAt": "2026-10-24T11:58:58.253Z",
+        "reason": "Agent verified computed desktop body16px, h1 53.76px, h2 37.12px and phone hierarchy. Nested CSS @import is not resolved by this detector."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgb(0, 0, 0)",
+        "files": [
+          "site/nfl-teams.html"
+        ],
+        "createdAt": "2026-10-24T11:58:58.283Z",
+        "reason": "Agent verified computed ink rgb(32,61,45), inherited from incumbent fifteen-themes.css. Black is a CSS import parser fallback, not the rendered color."
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "4px",
+        "files": [
+          "site/css/nfl-teams.css",
+          "site/nfl-teams.html"
+        ],
+        "createdAt": "2026-10-24T11:58:58.308Z",
+        "reason": "Agent preserved the incumbent catalog 4px media/input treatment from fifteen-themes.css; no new design-system radius was introduced."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "14px",
+        "files": [
+          "site/css/nfl-teams.css"
+        ],
+        "createdAt": "2026-10-24T11:58:58.326Z",
+        "reason": "Agent preserved incumbent 14px catalog navigation/action type from fifteen-themes.css. DESIGN.md sidecar omits this existing step."
       }
     ]
   }

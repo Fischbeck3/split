@@ -31,11 +31,12 @@ function canvas(){
 }
 
 test('fourteen new Christmas seats retain the review order and leave automatic fallbacks unchanged',()=>{
-  assert.equal(CHRISTMAS_THEME_IDS.length,14);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(HALLOWEEN_THEME_IDS.length,7);
-  assert.equal(REVIEW_THEMES.length,82);assert.equal(new Set(REVIEW_THEMES.map(t=>t.id)).size,82);
-  assert.deepEqual(REVIEW_THEMES.slice(-14).map(t=>t.id),CHRISTMAS_THEME_IDS);
+  assert.equal(CHRISTMAS_THEME_IDS.length,14);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(HALLOWEEN_THEME_IDS.length,8);
+  const originalCatalog=REVIEW_THEMES.filter(t=>t.seasonal!=='nfl' && t.id!=='halloween-lantern-maze');
+  assert.equal(originalCatalog.length,82);assert.equal(new Set(originalCatalog.map(t=>t.id)).size,82);
+  assert.deepEqual(originalCatalog.slice(-14).map(t=>t.id),CHRISTMAS_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
-  assert.equal(CALENDAR_THEMES.length,23);assert.ok(CALENDAR_THEMES.every(t=>!CHRISTMAS_THEME_IDS.includes(t.id)));
+  assert.equal(CALENDAR_THEMES.length,56);assert.ok(CALENDAR_THEMES.every(t=>!CHRISTMAS_THEME_IDS.includes(t.id)));
   assert.equal(CHRISTMAS_GUINNESS_IDS.length,4);assert.equal(CHRISTMAS_BASE_IDS.includes('guinness-chicago'),false);
   for (let day=1;day<=730;day++){
     assert.ok(THEMES.includes(themeForDay(day,{...CALENDAR,days:{}})),'seasonal artwork reached an automatic day '+day);
