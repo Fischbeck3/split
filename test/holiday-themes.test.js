@@ -29,12 +29,12 @@ function canvas(){
 
 test('seven Thanksgiving and three Hanukkah additions stay in unsaved review without acquiring dates',()=>{
   assert.equal(THANKSGIVING_THEME_IDS.length,7);assert.equal(HANUKKAH_THEME_IDS.length,3);
-  const holidayCatalog=REVIEW_THEMES.filter(t=>!CHRISTMAS_THEME_IDS.includes(t.id));
+  const holidayCatalog=REVIEW_THEMES.filter(t=>!CHRISTMAS_THEME_IDS.includes(t.id) && t.seasonal!=='nfl' && t.id!=='halloween-lantern-maze');
   assert.equal(holidayCatalog.length,68);assert.equal(new Set(holidayCatalog.map(t=>t.id)).size,68);
   assert.deepEqual(holidayCatalog.slice(-10).map(t=>t.id),HOLIDAY_THEME_IDS);
   assert.equal(holidayCatalog.filter(t=>!HOLIDAY_THEME_IDS.includes(t.id)).length,58);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
-  assert.equal(CALENDAR_THEMES.length,23);
+  assert.equal(CALENDAR_THEMES.length,56);
   assert.ok(Object.values(CALENDAR.days).every(id=>!HOLIDAY_THEME_IDS.includes(id) && !WINTER_THEME_IDS.includes(id)));
   for(let day=1;day<=730;day++){
     assert.ok(!HOLIDAY_THEME_IDS.includes(themeForDay(day).id));

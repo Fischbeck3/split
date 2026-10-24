@@ -1,9 +1,10 @@
-// An unscheduled Halloween week, kept separate from the travel preview set.
+// Eight Halloween settings; explicit date assignments live in calendar-data.js.
 export const HALLOWEEN_THEME_IDS = Object.freeze([
   'halloween-pumpkin-porch', 'halloween-ghost-stories', 'halloween-witching-hour',
-  'halloween-ravens-rest', 'halloween-vampires-toast', 'halloween-midnight-carnival', 'halloween-last-orders'
+  'halloween-ravens-rest', 'halloween-vampires-toast', 'halloween-midnight-carnival', 'halloween-last-orders',
+  'halloween-lantern-maze'
 ]);
-export const HALLOWEEN_GUINNESS_IDS = Object.freeze(['halloween-ravens-rest','halloween-last-orders']);
+export const HALLOWEEN_GUINNESS_IDS = Object.freeze(['halloween-ravens-rest','halloween-last-orders','halloween-lantern-maze']);
 
 const palette = (bg, sheet, accent, muted, line) => ({bg,sheet,accent,muted,line,fg:'#f8eed9',accentFg:bg});
 const porch = palette('#2b211a','#3c2b20','#edb562','#cbb297','#775b3f');
@@ -45,6 +46,8 @@ export function halloweenThemePreviews(pub){
       ['#9068bf','#563379'],'skull','the skull','The rides have stopped. Your table stays bright.',carnival,
       {feel:'violet fantasy beer',markFill:'#f8e9cf',head:'#eadef6',markHRange:[.15,.15]}),
     guinness('halloween-last-orders','Last orders','THE CRYPT BEER GARDEN',
-      'Pumpkins on the walls. One last pint beside the crypt.',crypt)
+      'Pumpkins on the walls. One last pint beside the crypt.',crypt),
+    guinness('halloween-lantern-maze','Lantern maze','THE HALLOWEEN CORN MAZE',
+      'Lanterns in the corn. A pint before the path turns.',porch)
   ];
 }

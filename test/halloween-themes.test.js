@@ -29,10 +29,10 @@ function canvas(){
   return {c,calls};
 }
 
-test('the seven Halloween themes retain their review week and preserve the automatic six and travel fifteen',()=>{
-  const nonAutumn=REVIEW_THEMES.filter(t=>!['autumn','winter','thanksgiving','hanukkah','christmas'].includes(t.seasonal));
-  assert.equal(HALLOWEEN_THEME_IDS.length,7);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(nonAutumn.length,28);
-  assert.equal(new Set(nonAutumn.map(t=>t.id)).size,28);
+test('the eight Halloween themes retain their review week and preserve the automatic six and travel fifteen',()=>{
+  const nonAutumn=REVIEW_THEMES.filter(t=>!['autumn','winter','thanksgiving','hanukkah','christmas','nfl'].includes(t.seasonal));
+  assert.equal(HALLOWEEN_THEME_IDS.length,8);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(nonAutumn.length,29);
+  assert.equal(new Set(nonAutumn.map(t=>t.id)).size,29);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
   for (let day=1;day<=730;day++){
     assert.ok(THEMES.some(t=>t.id===themeForDay(day,{...CALENDAR,days:{}}).id),'a Halloween scene reached an automatic day '+day);
@@ -51,8 +51,8 @@ test('the seven Halloween themes retain their review week and preserve the autom
   assert.equal(new Set(beers.map(t=>t.mark)).size,5,'colored beers need five different Halloween targets');
 });
 
-test('Raven’s Rest and Last Orders preserve every original Guinness foreground and physics feature',()=>{
-  assert.equal(HALLOWEEN_GUINNESS_IDS.length,2);
+test('all three Halloween Guinness settings preserve every original Guinness foreground and physics feature',()=>{
+  assert.equal(HALLOWEEN_GUINNESS_IDS.length,3);
   const original=physicalGlassParams('pub'),G={cx:187.5,top:170,bot:417,halfW:65,glass:'tulip'},backdrop={};
   const reference=canvas();drawScene(reference.c,{G,w:375,h:667,L:.63,theme:original.theme,P:original,backdrop,bubbles:false});
   const fields=['vessel','box','body','head','headT','mark','letter','markFill','markStroke','target','markRange','markHRange','speed','choppy'];

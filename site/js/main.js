@@ -578,7 +578,7 @@ async function init(){
     document.body.classList.add('preview', 'theme-review');
     $('reviewNav').hidden = false;
     for (const theme of REVIEW_THEMES){
-      const option = document.createElement('option'); option.value = theme.id; option.textContent = ({halloween:'Halloween · ',autumn:'Autumn · ',winter:'Christmas / winter · ',christmas:'Christmas · ',thanksgiving:'Thanksgiving · ',hanukkah:'Hanukkah · '}[theme.seasonal] || '') + theme.name + ' · ' + theme.label;
+      const option = document.createElement('option'); option.value = theme.id; option.textContent = ({halloween:'Halloween · ',autumn:'Autumn · ',winter:'Christmas / winter · ',christmas:'Christmas · ',thanksgiving:'Thanksgiving · ',hanukkah:'Hanukkah · ',nfl:'NFL · '}[theme.seasonal] || '') + theme.name + ' · ' + theme.label;
       $('reviewTheme').appendChild(option);
     }
     $('reviewTheme').value = S.theme.id;

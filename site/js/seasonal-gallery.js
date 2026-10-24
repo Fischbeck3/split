@@ -4,6 +4,7 @@ import {renderVessel} from './render-vessels.js';
 import {readThemeReview} from './theme-review.js';
 import {drawShareCard} from './share.js';
 import {SITE_URL} from './config.js';
+import {isNFLTheme,nflPrintImage} from './brand-assets.js';
 
 export function mountSeasonalGallery(groups){
 const PLACES = groups.flatMap(group => group.places.map(place => ({...place,grid:group.grid})));
@@ -62,6 +63,7 @@ async function loadReview(review){
       const [,artReady] = await Promise.all([loadSceneAssets(review.P.theme),checkArt(review.P.theme),fontReady]);
       paint(review); review.loadingLabel.hidden = true; review.loaded = true;
       if (!artReady) showIssue(review,'The illustrated scene could not load. You can still try the glass.');
+      else if (isNFLTheme(review.P.theme) && !nflPrintImage(review.P.theme)) showIssue(review,'The team print could not load. Open the glass to try it with the team initials.');
     } catch {
       review.loadingLabel.hidden = true;
       showIssue(review,'The preview could not load. Open the glass to try it.');

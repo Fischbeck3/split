@@ -2,7 +2,7 @@
 // the top of Guinness's G crossbar, or the center of the other five emblems.
 // Coordinates below are fractions of h. Guinness uses a decoded self-hosted
 // print; the other emblems and the asset fallback use canvas geometry.
-import {guinnessPrintImage, isGuinnessTheme} from './brand-assets.js';
+import {guinnessPrintImage, isGuinnessTheme, isNFLTheme, nflPrintImage} from './brand-assets.js';
 import {TRAVEL_BRAND_DRAWERS} from './travel-brand-marks.js';
 import {HALLOWEEN_MARK_DRAWERS} from './halloween-marks.js';
 import {HOLIDAY_MARK_DRAWERS} from './holiday-marks.js';
@@ -200,12 +200,25 @@ function hogwarts(c){
   c.beginPath(); c.moveTo(-.32,.57); c.quadraticCurveTo(0,.64,.32,.57); c.stroke();
 }
 
+function nfl(c,theme){
+  const image=nflPrintImage(theme);
+  if (image){
+    const ratio=image.naturalWidth/image.naturalHeight;
+    const height=Math.min(1.2,2.15/ratio),width=height*ratio;
+    c.drawImage(image,-width/2,-height/2,width,height);
+  } else {
+    // A legible team abbreviation keeps a failed print usable; the gallery flags it.
+    c.fillStyle=theme.markStroke;c.font='900 .55px Karla, sans-serif';
+    c.textAlign='center';c.textBaseline='middle';c.fillText(theme.brandText,0,0,1.9);
+  }
+}
+
 const DRAWERS = {pub: guinness, beach: corona, munich: bavaria, sapporo, peroni, butterbeer: hogwarts};
 const CONCEPT_DRAWERS = new Map([['Sapporo',sapporo],['Butterbeer',hogwarts],['Peroni',peroni]]);
 
 /** Paint a released or named concept brand at its scoring origin. Other themes keep their generic mark. */
 export function drawBrandMark(c, theme, cx, cy, h){
-  const draw = isGuinnessTheme(theme) ? guinness
+  const draw = isNFLTheme(theme) ? nfl : isGuinnessTheme(theme) ? guinness
     : Object.hasOwn(DRAWERS, theme?.id) ? DRAWERS[theme.id]
       : Object.hasOwn(TRAVEL_BRAND_DRAWERS, theme?.brand) ? TRAVEL_BRAND_DRAWERS[theme.brand]
         : Object.hasOwn(HALLOWEEN_MARK_DRAWERS, theme?.brand) ? HALLOWEEN_MARK_DRAWERS[theme.brand]

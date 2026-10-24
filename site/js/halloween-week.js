@@ -8,6 +8,7 @@ import {getPublishedEntry} from './content-calendar.js';
 import {contentReadiness} from './content-readiness.js';
 
 const NIGHTS = [
+  {id:'halloween-lantern-maze',day:24,vessel:'Guinness tulip pint · lantern-lit corn maze'},
   {id:'halloween-pumpkin-porch',day:25,vessel:'Squat tumbler · orange pumpkin ale'},
   {id:'halloween-ghost-stories',day:26,vessel:'Tall glass · pale gold wheat beer'},
   {id:'halloween-witching-hour',day:27,vessel:'Handled mug · emerald brew'},
