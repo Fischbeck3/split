@@ -113,6 +113,8 @@ function initCalendar(){
     $('glanceDate').textContent = longDate(today);
     $('todayDrink').textContent = live.theme.name;
     $('todayPlace').textContent = live.theme.label;
+    $('todayOccasion').hidden = !live.entry?.occasion;
+    $('todayOccasion').textContent = live.entry?.occasion?.title || '';
     $('todayContext').textContent = (today < LAUNCH ? 'Opens ' + shortDate(LAUNCH) + ' · ' : 'Today · ') +
       '#' + String(keyToDayNumber(first)).padStart(3, '0') + ' · ' + (live.readiness.ready ? 'Built & approved · ' + (campaign?.name || 'Reviewed date') : 'Automatic fallback · theme not planned');
     // Traffic charts use UTC; challenge comparisons use each player’s local
@@ -136,12 +138,13 @@ function initCalendar(){
       const dateLabel = element('span', 'upcoming-date', format(date, {weekday:'short'}) + ' ' + shortDate(date));
       const details = element('span', 'upcoming-glass');
       details.append(element('strong', '', next.entry ? next.theme.name : draft?.campaignId !== 'none' && plan.campaigns[draft?.campaignId] ? plan.campaigns[draft.campaignId].name : 'Theme needed'),
-        element('span', 'upcoming-place', next.entry ? next.theme.label : 'Game fallback: ' + next.theme.name));
+        element('span', 'upcoming-place', next.entry ? next.entry.occasion?.title || next.theme.label : 'Game fallback: ' + next.theme.name));
       const status = element('span', draft || !next.readiness.ready ? 'upcoming-draft' : 'upcoming-status',
         draft ? contentReadiness(draft).ready ? 'Draft · needs date review' : 'Draft · needs build & review' :
           next.status === 'Released' ? 'Ready · live elsewhere' : next.status);
       button.append(dateLabel, details, status);
       button.setAttribute('aria-label', longDate(date) + '. ' + next.status + '. ' + (next.entry ? next.theme.name + ', ' + next.theme.label : 'Automatic fallback: ' + next.theme.name) +
+        (next.entry?.occasion ? '. ' + next.entry.occasion.title : '') +
         (draft ? '. Draft proposal: ' + contentReadiness(draft).label : '') + '. Open day details.');
       button.addEventListener('click', () => { select(date, {reveal:true}); $('selectedDate').focus({preventScroll:true}); });
       row.append(button); $('upcomingDays').append(row);
@@ -184,10 +187,12 @@ function initCalendar(){
       cell.setAttribute('aria-selected', String(date === selected)); cell.tabIndex = date === selected ? 0 : -1;
       cell.dataset.date = date; cell.dataset.outside = String(monthKey(date) !== monthKey(viewDate));
       cell.dataset.today = String(date === localToday());
+      cell.dataset.event = String(!!live.entry?.occasion);
       cell.setAttribute('aria-label', longDate(date) + '. ' + live.status + '. ' + (live.entry ? live.theme.name + ', ' + live.theme.label : 'Automatic fallback: ' + live.theme.name) +
+        (live.entry?.occasion ? '. ' + live.entry.occasion.title : '') +
         (draft ? '. Draft: ' + contentReadiness(draft).label + '.' : '.'));
       cell.append(element('span', 'day-weekday', format(date, {weekday:'short'})), element('span', 'day-number', String(atNoon(date).getUTCDate())),
-        element('span', 'day-drink', live.entry ? live.theme.name : 'Theme needed'), element('span', 'day-place', live.entry ? live.theme.label : 'Fallback: ' + live.theme.name));
+        element('span', 'day-drink', live.entry ? live.theme.name : 'Theme needed'), element('span', 'day-place', live.entry ? live.entry.occasion?.title || live.theme.label : 'Fallback: ' + live.theme.name));
       if (draft) cell.append(element('span', 'day-draft', contentReadiness(draft).ready ? 'Draft · review date' : 'Draft · needs build'));
       else cell.append(element('span', 'day-note', live.status));
       cell.addEventListener('click', () => select(date));
@@ -227,9 +232,15 @@ function initCalendar(){
     $('selectedStatus').textContent = live.status + (live.entry ? ' · reviewed date' : ' · automatic game fallback') + (draft ? ' · unfinished proposal below' : '');
     $('selectedDrink').textContent = live.theme.name;
     $('selectedPlace').textContent = live.theme.label + (live.theme.location ? ' · ' + live.theme.location : '');
+    const occasion = live.entry?.occasion;
+    $('selectedOccasion').hidden = !occasion;
+    $('occasionTitle').textContent = occasion?.title || '';
+    $('occasionDetail').textContent = occasion?.detail || '';
+    $('occasionSource').textContent = occasion ? 'Official matchup · checked ' + shortDate(occasion.checkedAt) + ' ↗' : '';
+    $('occasionSource').href = occasion?.sourceUrl || '#';
     $('selectedVessel').textContent = live.theme.vessel.charAt(0).toUpperCase() + live.theme.vessel.slice(1);
     $('selectedNumber').textContent = '#' + String(keyToDayNumber(selected)).padStart(3, '0');
-    $('selectedRun').textContent = campaign?.name || 'Standalone rotation';
+    $('selectedRun').textContent = campaign?.name || (live.entry ? 'Reviewed standalone day' : 'Standalone rotation');
     $('selectedReadiness').textContent = live.entry ? live.readiness.label : 'Date unplanned';
     $('previewLink').href = SITE_URL + '#day' + keyToDayNumber(selected);
     $('previewNote').textContent = draft ? 'This preview shows the current lineup, before your proposal. Preview sips never save a daily result.' : 'Preview sips never save a daily result.';

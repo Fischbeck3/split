@@ -41,7 +41,7 @@ export function prepareCalendarChange(input, {baseline = CALENDAR, now = new Dat
         if (campaign.status === 'draft' && campaign.startDate <= live) throw new Error('Cannot publish a campaign that has already started: ' + entry.campaignId + '.');
         campaign.status = 'published';
       }
-      next.days[key] = {themeId:entry.themeId, campaignId:entry.campaignId};
+      next.days[key] = {themeId:entry.themeId, campaignId:entry.campaignId, ...(entry.occasion ? {occasion:{...entry.occasion}} : {})};
       delete next.drafts[key]; promoted.push(key);
     }
   }
