@@ -1,8 +1,10 @@
 // Build one coherent browser module graph per Git revision, without changing site/.
-import {cp, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
+import {cp, mkdir, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {resolve, relative, sep, extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildCalendarFeeds} from './build-calendar-feed.js';
+import {dayPages, renderDayPage, renderNotFound, socialImagePath} from './social-pages.js';
+import {SITE_URL, SOCIAL_IMAGE} from '../site/js/config.js';
 
 const SOURCE = fileURLToPath(new URL('../site/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../.pages/', import.meta.url));
@@ -141,8 +143,30 @@ export async function buildPages({revision = process.env.GITHUB_SHA, source = SO
     }
   }
   await visit(output);
-  if (input === resolve(SOURCE)) await buildCalendarFeeds(output);
+  if (input === resolve(SOURCE)){
+    await buildCalendarFeeds(output);
+    await buildDayPages(output);
+  }
   return {revision:version, destination:output};
+}
+
+const exists = path => stat(path).then(() => true, () => false);
+
+/** Write d/YYYY-MM-DD/index.html for each date, each previewing its own glass. */
+export async function buildDayPages(output, {now = new Date(), siteUrl = SITE_URL} = {}){
+  const html = await readFile(resolve(output, 'index.html'), 'utf8'), missing = new Set();
+  const pages = dayPages(now);
+  for (const P of pages){
+    const own = socialImagePath(P.theme), hasOwn = await exists(resolve(output, own));
+    if (!hasOwn) missing.add(P.theme.id);
+    const directory = resolve(output, 'd', P.key);
+    await mkdir(directory, {recursive:true});
+    await writeFile(resolve(directory, 'index.html'), renderDayPage(html, {P, siteUrl, image:hasOwn ? own : SOCIAL_IMAGE}));
+  }
+  if (!(await exists(resolve(output, '404.html')))) await writeFile(resolve(output, '404.html'), renderNotFound(siteUrl));
+  // A newly scheduled glass still shares, with the launch card, until its image is rendered.
+  if (missing.size) console.warn('Day pages use the launch card for: ' + [...missing].join(', ') + '. Run scripts/render-social-images.js.');
+  return {pages:pages.length, missing:[...missing]};
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)){

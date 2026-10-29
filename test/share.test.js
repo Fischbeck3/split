@@ -6,6 +6,7 @@ import {SITE_URL} from '../site/js/config.js';
 import {buildShareText, drawShareCard} from '../site/js/share.js';
 import {readFriendChallenge} from '../site/js/friend.js';
 import {shareResultText} from '../site/js/share-actions.js';
+import {playAddress, dayPageAddress} from '../site/js/day-page.js';
 
 const benchmarkLink = (base, {num, score = 100, f = 0, kind = 'daily', preview = false, drained = false, rounds = null}) => {
   const link = new URL(base);
@@ -15,8 +16,10 @@ const benchmarkLink = (base, {num, score = 100, f = 0, kind = 'daily', preview =
   link.searchParams.set('empty', drained ? '1' : '0');
   if (rounds) link.searchParams.set('rounds', rounds.join(','));
   if (preview) link.hash = 'day' + num;
-  return link.href;
+  return dayPageAddress(link.href);
 };
+// The game runs at the address a day page restores, so friend links are read from there.
+const played = text => { const link = text.split('\n').at(-1); return new URL(playAddress(link) ?? link); };
 
 test('an official sip shares a /100 score, one truthful strip, and the exact challenge link', () => {
   const P = dayParams(1);
@@ -60,12 +63,12 @@ test('a completed round shares its rounded average, three truthful strips and be
   const P = dayParams(1), result = completedThree(P);
   const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
   assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n' +
-    'Average of 3 · 47/100\n' +
+    'Split the G · Average of 3 · 47/100\n' +
     '⬜🟨⬜⬜⬜  Sober 42/100\n' +
     '⬜⬜🟩⬜⬜  Tipsy 98/100 · Best\n' +
     '⬜⬜⬜⬜⬜⬇️  Drunk 0/100\n' +
     'Beat my 47. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
-  const link = new URL(lastLine(text));
+  const link = played(text);
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
   assert.equal(friend.score, result.score); assert.equal(friend.f, result.f); assert.equal(friend.L, result.L);
   assert.equal(friend.scoring, 'average'); assert.equal(friend.bestScore, 98); assert.deepEqual(friend.rounds, [42, 98, 0]);
@@ -83,7 +86,7 @@ test('three-sip shares preserve truthful preview, practice, archive and review s
     const result = completedThree(P, {counts});
     const text = buildShareText({num:2, key:P.key, theme:P.theme, result, ...flags});
     assert.ok(text.split('\n')[0].endsWith(status ? ' · ' + status : P.theme.label));
-    assert.match(text, /\nAverage of 3 · 47\/100/);
+    assert.match(text, new RegExp('\\nSplit ' + P.theme.target + ' · Average of 3 · 47/100'));
     assert.equal(text.split('\n').filter(line => /Sober|Tipsy|Drunk/.test(line)).length, 3);
     assert.equal(lastLine(text), flags.review ? SITE_URL + '#admin/' + P.theme.id :
       benchmarkLink(SITE_URL, {num:2, score:47, f:0.04, rounds:[42, 98, 0], kind, preview:!!flags.preview}));
@@ -130,7 +133,7 @@ test('native sharing sends the three-sip body and its exact-day best benchmark a
 
 test('an explicit challenge key wins over the day-number fallback and unrelated URL data', () => {
   assert.equal(lastLine(buildShareText({...options, key: '2028-02-29', url: 'https://split.example/play/?campaign=friend&day=wrong#day42'})),
-    'https://split.example/play/?day=2028-02-29');
+    'https://split.example/play/d/2028-02-29/');
   assert.equal(lastLine(buildShareText({...options, url: 'https://split.example/play/?campaign=friend#result'})),
     benchmarkLink('https://split.example/play/', {num:2}));
 });
@@ -172,18 +175,30 @@ test('the outbound benchmark is always this result, never an inherited friend or
   const P = dayParams(1), f = -0.18, scored = scoreFromOffset(f, P.theme.target);
   const text = buildShareText({num:1, key:P.key, theme:P.theme, result:{...scored, f, counts:true},
     friend:{score:100, f:0}, url:benchmarkLink(SITE_URL, {num:1})});
-  const link = new URL(lastLine(text));
+  const link = played(text);
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
   assert.equal(friend.score, scored.score); assert.equal(friend.f, f);
   assert.equal(link.searchParams.getAll('vs').length, 1);
 });
 
-test('new full-precision offsets survive a share round trip without changing the stopping line', () => {
+test('offsets travel at four decimals, keeping the score and a stopping line far finer than a pixel', () => {
   const P = dayParams(2), f = 0.1234567890123456, scored = scoreFromOffset(f, P.theme.target);
   const text = buildShareText({num:2, key:P.key, theme:P.theme, result:{...scored, f, counts:true}});
-  const link = new URL(lastLine(text));
+  assert.match(lastLine(text), /[?&]f=0\.1235&/);
+  const link = played(text);
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:2, theme:P.theme});
-  assert.equal(friend.f, f); assert.equal(friend.L, P.markY + f * P.markH);
+  assert.equal(friend.score, scored.score); assert.equal(friend.f, 0.1235);
+  assert.ok(Math.abs(friend.L - (P.markY + f * P.markH)) < 1e-4 * P.markH);
+});
+
+test('day-page share links restore the exact challenge address the game reads', () => {
+  const P = dayParams(2), result = completedThree(P), text = buildShareText({num:2, key:P.key, theme:P.theme, result});
+  assert.equal(lastLine(text), SITE_URL + 'd/' + P.key + '/?vs=47&f=0.04&glass=' + P.theme.id + '&sip=daily&empty=0&rounds=42,98,0');
+  assert.equal(playAddress(lastLine(text)), SITE_URL + '?day=' + P.key + '&vs=47&f=0.04&glass=' + P.theme.id + '&sip=daily&empty=0&rounds=42,98,0');
+  assert.equal(playAddress('https://split.example/play/d/' + P.key + '/'), 'https://split.example/play/?day=' + P.key);
+  for (const href of [SITE_URL, SITE_URL + '?day=' + P.key, SITE_URL + 'd/' + P.key + '/?day=' + P.key, SITE_URL + 'd/2026-1-1/', SITE_URL + 'd/' + P.key + '/extra']){
+    assert.equal(playAddress(href), null, href);
+  }
 });
 
 test('drained shares keep their zero score, empty line and practice status', () => {
@@ -191,14 +206,14 @@ test('drained shares keep their zero score, empty line and practice status', () 
   const text = buildShareText({num:3, key:P.key, theme:P.theme,
     result:{score:0, label:'Drank the lot', f:2, L:DRAIN_LEVEL, drained:true, counts:false}});
   assert.match(text, / · Practice\n0\/100 · Drank the lot/);
-  const link = new URL(lastLine(text));
+  const link = played(text);
   assert.deepEqual(readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:3, theme:P.theme}),
     {score:0, f:2, L:DRAIN_LEVEL, drained:true, kind:'practice'});
 });
 
 test('inconsistent synthetic or damaged scores do not create a contradictory shared benchmark', () => {
   const text = buildShareText({...options, result:{...result, score:18, f:0}});
-  assert.equal(lastLine(text), SITE_URL + '?day=' + keyForDay(2));
+  assert.equal(lastLine(text), SITE_URL + 'd/' + keyForDay(2) + '/');
 });
 
 function recordingCanvas(){
