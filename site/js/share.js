@@ -5,6 +5,7 @@ import {isCalendarDateKey} from './challenge.js';
 import {SITE_URL} from './config.js';
 import {drawScene} from './draw.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
+import {dayPageAddress} from './day-page.js';
 import {ROUND_STAGES} from './rounds.js';
 
 const DISPLAY = 'Fraunces, "Playfair Display", Georgia, serif';
@@ -46,6 +47,8 @@ function canonicalUrl(url){
   }
 }
 
+// Four decimals of mark height is far finer than a pixel and keeps the link readable.
+const shortOffset = f => String(Number(f.toFixed(4)));
 function challengeUrl({url, key, num, preview, archive, theme, result, review}){
   const parsed = new URL(canonicalUrl(url));
   if (review){ parsed.hash = 'admin/' + theme.id; return parsed.href; }
@@ -55,15 +58,22 @@ function challengeUrl({url, key, num, preview, archive, theme, result, review}){
   if (result && theme && Number.isFinite(result.f)){
     const round = completedRound(result);
     parsed.searchParams.set('vs', String(round ? round.score : result.score));
-    parsed.searchParams.set('f', String(result.f));
+    parsed.searchParams.set('f', shortOffset(result.f));
     parsed.searchParams.set('glass', theme.id);
     parsed.searchParams.set('sip', preview ? 'preview' : archive ? result.counts === false ? 'archive' : 'archive-saved' : result.counts === false ? 'practice' : 'daily');
     parsed.searchParams.set('empty', result.drained ? '1' : '0');
     if (round) parsed.searchParams.set('rounds', round.rounds.map(sip => sip.score).join(','));
-    const accepted = readFriendChallenge({search: parsed.search, hash: parsed.hash, key: keyForDay(day), num: day, theme});
-    if (!accepted) for (const field of ['vs', 'f', 'glass', 'sip', 'empty', 'rounds']) parsed.searchParams.delete(field);
+    const accepts = f => {
+      parsed.searchParams.set('f', f);
+      return readFriendChallenge({search: parsed.search, hash: parsed.hash, key: keyForDay(day), num: day, theme});
+    };
+    // A rounded offset that lands outside the glass's range keeps its full precision.
+    if (!accepts(shortOffset(result.f)) && !accepts(String(result.f))){
+      for (const field of ['vs', 'f', 'glass', 'sip', 'empty', 'rounds']) parsed.searchParams.delete(field);
+    }
   }
-  return parsed.href;
+  // Each date has its own small page, so a group chat preview shows that day's glass.
+  return preview ? parsed.href : dayPageAddress(parsed.href);
 }
 
 function cardUrl(url, num){
@@ -99,7 +109,8 @@ export function buildShareText({num, key, theme, result, url = SITE_URL, preview
   const score = round ? round.score : result.score;
   const lines = [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    round ? 'Average of 3 · ' + score + '/100' : score + '/100 · ' + result.label,
+    // Lead with the dare people already know: Split the G, the star, the bat wings.
+    round ? (theme.target ? 'Split ' + theme.target + ' · ' : '') + 'Average of 3 · ' + score + '/100' : score + '/100 · ' + result.label,
   ];
   // A streak is the retention engine; Wordle proved it belongs in the share.
   if (Number.isInteger(streak) && streak >= 2) lines.push('🔥 ' + streak + '-day streak');
