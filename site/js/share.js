@@ -91,23 +91,31 @@ function rivalryLine(friend, result, round){
   return '⚔️ ' + mine + '–' + theirs + ' — dead heat.';
 }
 
-/** Pure text sharing. Each strip is its actual stopping position. */
+/** Short score rows stay readable in narrow message bubbles. The link retains
+ * the individual scores and best stopping position for friend comparisons. */
 export function buildShareText({num, key, theme, result, url = SITE_URL, preview = false, archive = false, review = false, streak = 0, friend = null}){
   const status = statusLabel(result, preview, archive, review);
   const emoji = theme.emoji || (theme.vessel === 'stein' ? '🍻' : '🍺');
   const round = completedRound(result);
   const score = round ? round.score : result.score;
-  const lines = [
+  const lines = round ? [
+    'Split #' + String(num).padStart(3, '0') + (status ? ' · ' + status : ''),
+    score + '/100 · Average of ' + round.rounds.length,
+    theme.label || theme.name,
+    '',
+    ...round.rounds.map((sip, index) => ROUND_LABELS[index] + ' ' + sip.score),
+    '',
+  ] : [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    round ? 'Average of ' + round.rounds.length + ' · ' + score + '/100' : score + '/100 · ' + result.label,
+    score + '/100 · ' + result.label,
   ];
   // A streak is the retention engine; Wordle proved it belongs in the share.
   if (Number.isInteger(streak) && streak >= 2) lines.push('🔥 ' + streak + '-day streak');
-  lines.push(...(round ? round.rounds.map((sip, index) => bandEmoji(sip.f) + '  ' + ROUND_LABELS[index] + ' ' + sip.score + '/100' + (index === round.bestIndex ? ' · Best' : '')) : [bandEmoji(result.f)]));
+  if (!round) lines.push(bandEmoji(result.f));
   const rivalry = rivalryLine(friend, result, round);
   if (rivalry) lines.push(rivalry);
   // A specific number beats an abstraction: "Beat my 94" is a dare, "Beat my average" is a slogan.
-  lines.push(round ? 'Beat my ' + score + '. Your turn.' : 'Beat my ' + score + '. One sip. Your turn.');
+  lines.push(round ? 'Beat my ' + score + '.' : 'Beat my ' + score + '. One sip. Your turn.');
   lines.push(challengeUrl({url, key, num, preview, archive, theme, result, review}));
   return lines.join('\n');
 }

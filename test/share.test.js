@@ -56,20 +56,18 @@ function completedThree(P, {offsets = [-0.28, 0.04, 0.8], counts = true} = {}){
     averageScore, bestScore:rounds[bestIndex].score, label:'Three-sip average'};
 }
 
-test('a completed round shares its rounded average, three truthful strips and best actual line', () => {
+test('a completed round shares short score rows and preserves the best actual line in its link', () => {
   const P = dayParams(1), result = completedThree(P);
   const text = buildShareText({num:1, key:P.key, theme:P.theme, result});
-  assert.equal(text, 'Split #001 · 🍺 Guinness · Old Irish pub\n' +
-    'Average of 3 · 47/100\n' +
-    '⬜🟨⬜⬜⬜  Sober 42/100\n' +
-    '⬜⬜🟩⬜⬜  Tipsy 98/100 · Best\n' +
-    '⬜⬜⬜⬜⬜⬇️  Drunk 0/100\n' +
-    'Beat my 47. Your turn.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
+  assert.equal(text, 'Split #001\n' +
+    '47/100 · Average of 3\nOld Irish pub\n\n' +
+    'Sober 42\nTipsy 98\nDrunk 0\n\n' +
+    'Beat my 47.\n' + benchmarkLink(SITE_URL, {num:1, score:47, f:0.04, rounds:[42, 98, 0]}));
   const link = new URL(lastLine(text));
   const friend = readFriendChallenge({search:link.search, hash:link.hash, key:P.key, num:1, theme:P.theme});
   assert.equal(friend.score, result.score); assert.equal(friend.f, result.f); assert.equal(friend.L, result.L);
   assert.equal(friend.scoring, 'average'); assert.equal(friend.bestScore, 98); assert.deepEqual(friend.rounds, [42, 98, 0]);
-  assert.equal(text.match(/ · Best/g).length, 1);
+  assert.doesNotMatch(text, /Best|⬜|🟨|🟩/);
 });
 
 test('three-sip shares preserve truthful preview, practice, archive and review status', () => {
@@ -82,8 +80,8 @@ test('three-sip shares preserve truthful preview, practice, archive and review s
   ]){
     const result = completedThree(P, {counts});
     const text = buildShareText({num:2, key:P.key, theme:P.theme, result, ...flags});
-    assert.ok(text.split('\n')[0].endsWith(status ? ' · ' + status : P.theme.label));
-    assert.match(text, /\nAverage of 3 · 47\/100/);
+    assert.equal(text.split('\n')[0], 'Split #002' + (status ? ' · ' + status : ''));
+    assert.match(text, /\n47\/100 · Average of 3/);
     assert.equal(text.split('\n').filter(line => /Sober|Tipsy|Drunk/.test(line)).length, 3);
     assert.equal(lastLine(text), flags.review ? SITE_URL + '#admin/' + P.theme.id :
       benchmarkLink(SITE_URL, {num:2, score:47, f:0.04, rounds:[42, 98, 0], kind, preview:!!flags.preview}));

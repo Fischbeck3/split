@@ -74,7 +74,8 @@ test('four-sip shares round-trip all scores and label comparisons against older 
   for(const [i,f] of [0,.1,.2,-.1].entries()) record=finish(record,i,sip(f));
   const text=buildShareText({num:P.num,key:P.key,theme:P.theme,result:{...record,counts:true}});
   assert.match(text,/Average of 4/);
-  assert.match(text,/Blackout \d+\/100/);
+  assert.deepEqual(text.split('\n').slice(4,8),record.rounds.map((r,i)=>ROUND_STAGES[i].label+' '+r.score));
+  assert.doesNotMatch(text,/⬜|🟩|🟨|🟧| · Best/);
   const link=new URL(text.split('\n').at(-1));
   const friend=readFriendChallenge({search:link.search,key:P.key,num:P.num,theme:P.theme});
   assert.equal(friend.score,record.score);
