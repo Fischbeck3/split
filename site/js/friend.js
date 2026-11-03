@@ -1,11 +1,12 @@
 // A shared sip is a self-reported benchmark, never a verified score or a new daily attempt.
 import {dayParams, keyForDay, scoreFromOffset, startLevel, DRAIN_LEVEL} from './core.js';
 import {isCalendarDateKey} from './challenge.js';
+import {BLACKOUT_START} from './config.js';
 
 const FIELDS = ['vs', 'f', 'glass', 'sip', 'empty'];
 const KINDS = new Set(['daily', 'practice', 'preview', 'archive', 'archive-saved']);
 const OFFSET = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?$/;
-const ROUND_SCORES = /^(?:0|[1-9]\d{0,2}),(?:0|[1-9]\d{0,2}),(?:0|[1-9]\d{0,2})$/;
+const ROUND_SCORES = /^(?:0|[1-9]\d{0,2})(?:,(?:0|[1-9]\d{0,2})){2,3}$/;
 
 /** Accept only an explicit matching glass. Invalid links may recover to today, but their sip must not follow. */
 export function readFriendChallenge({search = '', hash = '', key, num, theme} = {}){
@@ -31,7 +32,8 @@ export function readFriendChallenge({search = '', hash = '', key, num, theme} = 
   const score = Number(rawScore), f = Number(rawOffset), drained = rawEmpty === '1';
   if (!Number.isFinite(f) || Math.abs(f) > 20) return null;
   const rounds = rawRounds.length ? rawRounds[0].split(',').map(Number) : null;
-  if (rounds && (rounds.some(value => value > 100) || Math.round(rounds.reduce((sum, value) => sum + value, 0) / 3) !== score)) return null;
+  if (rounds?.length === 4 && key < BLACKOUT_START) return null;
+  if (rounds && (rounds.some(value => value > 100) || Math.round(rounds.reduce((sum, value) => sum + value, 0) / rounds.length) !== score)) return null;
   const bestScore = rounds ? Math.max(...rounds) : score;
   const averageFields = rounds ? {scoring:'average', rounds, bestScore} : {};
   if (drained){
@@ -47,11 +49,12 @@ export function readFriendChallenge({search = '', hash = '', key, num, theme} = 
 
 /** Keep the comparison about these two supplied sips, without implying a leaderboard or identity check. */
 export function comparisonCopy(friend, result){
-  const completedScores = result?.version === 2 && result.done === true && Array.isArray(result.rounds) && result.rounds.length === 3 &&
+  const completedScores = [2,3].includes(result?.version) && result.done === true && Array.isArray(result.rounds) && result.rounds.length === (result.version === 3 ? 4 : 3) &&
     result.rounds.every(sip => Number.isInteger(sip?.score) && sip.score >= 0 && sip.score <= 100) ? result.rounds.map(sip => sip.score) : null;
-  const resultScore = completedScores ? Math.round(completedScores.reduce((sum, score) => sum + score, 0) / 3) : result?.score;
+  const resultScore = completedScores ? Math.round(completedScores.reduce((sum, score) => sum + score, 0) / completedScores.length) : result?.score;
   if (!friend || !result || !Number.isInteger(friend.score) || !Number.isInteger(resultScore) ||
       friend.score < 0 || friend.score > 100 || resultScore < 0 || resultScore > 100) return null;
+  if (friend.rounds && completedScores && friend.rounds.length !== completedScores.length) return {status:'comparison', label:'Different round lengths', delta:0, text:'The shared average covers ' + friend.rounds.length + ' sips; yours covers ' + completedScores.length + '.'};
   const delta = resultScore - friend.score;
   const status = delta > 0 ? 'win' : delta < 0 ? 'lose' : 'tie';
   const subject = friend.scoring === 'average' ? 'average' : 'sip';

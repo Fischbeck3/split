@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {dayParams, bandEmoji, PERFECT, THEMES} from '../site/js/core.js';
-import {ROUND_STAGES, normalizeRoundRecord, summarizeRounds} from '../site/js/rounds.js';
+import {ROUND_STAGES, roundCount, normalizeRoundRecord, summarizeRounds} from '../site/js/rounds.js';
 
 const main = readFileSync(new URL('../site/js/main.js', import.meta.url), 'utf8');
 const render = main.slice(main.indexOf('function renderResult(){'), main.indexOf('function drawCard(){'));
@@ -33,7 +33,7 @@ function savedResult(savedTheme, kind = 'today'){
     return elements.get(id);
   };
   let created = 0;
-  const context = {S, $, ROUND_STAGES, normalizeRoundRecord, document:{createElement:tag => $(tag + ':' + ++created)},
+  const context = {S, $, ROUND_STAGES, roundCount, normalizeRoundRecord, document:{createElement:tag => $(tag + ':' + ++created)},
     load:() => ({days:{[S.key]:saved}}), bandEmoji, PERFECT,
     shareText:() => '', resetAction(){}, drawCard:() => ({toDataURL:() => 'data:image/png;base64,', toBlob:callback => callback({})}),
     refreshDayStatus(){}, canRecordChallenge:({kind}) => kind === 'today',

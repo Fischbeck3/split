@@ -1,5 +1,6 @@
 import {dayKey,dayNumber,dayParams} from './core.js';
 import {LAUNCH,LAUNCH_READY} from './config.js';
+import {loadRecords} from './record-store.js';
 import {inspectDaily,resetDaily,restoreDaily} from './personal-reset.js';
 
 const $ = id => document.getElementById(id);
@@ -26,6 +27,7 @@ function showDaily(message = ''){
   const num = dayNumber(now), theme = dayParams(num).theme;
   const date = new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(now);
   $('resetDay').textContent = 'No. ' + String(num).padStart(3,'0') + ' · ' + date + ' · ' + theme.name;
+  loadRecords(browserStorage(), key);
   const {record,backup} = inspectDaily(browserStorage(),key);
   const score = record && Number.isFinite(record.score) && record.score >= 0 && record.score <= 100;
   $('resetRecord').textContent = record ? (score ? 'Saved sip: ' + record.score + '/100' : 'You have a saved sip today.') : 'Your daily is fresh. No saved sip today.';

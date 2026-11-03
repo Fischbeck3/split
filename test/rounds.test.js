@@ -23,16 +23,16 @@ function completed(scores){
 }
 
 test('three stage profiles preserve each released glass, target and base rate', () => {
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.label), ['Sober','Tipsy','Drunk']);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.blur), [0,.345,1.2075]);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.sway), [0,.69,1.6675]);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadenceAmplitude), [0,.1495,.345]);
-  assert.deepEqual(ROUND_STAGES.map(stage => stage.cadencePeriod), [1,.92,.68]);
+  assert.deepEqual(ROUND_STAGES.slice(0,3).map(stage => stage.label), ['Sober','Tipsy','Drunk']);
+  assert.deepEqual(ROUND_STAGES.slice(0,3).map(stage => stage.blur), [0,.345,1.2075]);
+  assert.deepEqual(ROUND_STAGES.slice(0,3).map(stage => stage.sway), [0,.69,1.6675]);
+  assert.deepEqual(ROUND_STAGES.slice(0,3).map(stage => stage.cadenceAmplitude), [0,.1495,.345]);
+  assert.deepEqual(ROUND_STAGES.slice(0,3).map(stage => stage.cadencePeriod), [1,.92,.68]);
   assert.ok(Object.isFrozen(ROUND_STAGES));
   const glassFields = ['num','key','theme','markY','markH','K','wobble','choppy'];
   for (let num = 1; num <= THEMES.length; num++){
     const base = dayParams(num), copy = structuredClone(base);
-    for (let index = 0; index < ROUND_STAGES.length; index++){
+    for (let index = 0; index < 3; index++){
       const staged = roundParams(base, index);
       for (const key of glassFields) assert.equal(staged[key], base[key], num + ':' + key);
       assert.equal(staged.sipStage, index);

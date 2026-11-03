@@ -16,12 +16,12 @@ const ROUND_LABELS = ROUND_STAGES.map(stage => stage.label);
 // A partial or damaged round must not claim three completed attempts. Legacy sips
 // retain their original text and postcard, including previously saved results.
 function completedRound(result){
-  if (result.version !== 2 || result.done !== true || !Array.isArray(result.rounds) || result.rounds.length !== 3 ||
-      !Number.isInteger(result.bestIndex) || result.bestIndex < 0 || result.bestIndex > 2) return null;
+  if (![2,3].includes(result.version) || result.done !== true || !Array.isArray(result.rounds) || result.rounds.length !== (result.version === 3 ? 4 : 3) ||
+      !Number.isInteger(result.bestIndex) || result.bestIndex < 0 || result.bestIndex >= result.rounds.length) return null;
   if (!result.rounds.every(sip => sip && Number.isInteger(sip.score) && sip.score >= 0 && sip.score <= 100 &&
       Number.isFinite(sip.f) && Number.isFinite(sip.L) && typeof sip.label === 'string')) return null;
   const bestIndex = result.rounds.reduce((best, sip, index) => sip.score > result.rounds[best].score ? index : best, 0);
-  const best = result.rounds[bestIndex], score = Math.round(result.rounds.reduce((sum, sip) => sum + sip.score, 0) / 3);
+  const best = result.rounds[bestIndex], score = Math.round(result.rounds.reduce((sum, sip) => sum + sip.score, 0) / result.rounds.length);
   // Earlier v2 completions stored the best score at the top level. Their real
   // three sip scores are still sufficient to share a truthful average.
   if (bestIndex !== result.bestIndex || (result.scoring !== undefined && result.scoring !== 'average') ||
@@ -84,7 +84,7 @@ function rivalryLine(friend, result, round){
   if (!friend || (friend.kind !== 'daily' && friend.kind !== 'archive-saved')) return null;
   if (result.counts === false) return null;
   const comparison = comparisonCopy(friend, result);
-  if (!comparison) return null;
+  if (!comparison || comparison.status === 'comparison') return null;
   const mine = round ? round.score : result.score, theirs = friend.score, points = Math.abs(comparison.delta);
   if (comparison.status === 'win') return '⚔️ You ' + theirs + ' · Me ' + mine + ' — beat you by ' + points + '.';
   if (comparison.status === 'lose') return '⚔️ You ' + theirs + ' · Me ' + mine + ' — you win by ' + points + '.';
@@ -99,7 +99,7 @@ export function buildShareText({num, key, theme, result, url = SITE_URL, preview
   const score = round ? round.score : result.score;
   const lines = [
     'Split #' + String(num).padStart(3, '0') + ' · ' + emoji + ' ' + theme.name + ' · ' + theme.label + (status ? ' · ' + status : ''),
-    round ? 'Average of 3 · ' + score + '/100' : score + '/100 · ' + result.label,
+    round ? 'Average of ' + round.rounds.length + ' · ' + score + '/100' : score + '/100 · ' + result.label,
   ];
   // A streak is the retention engine; Wordle proved it belongs in the share.
   if (Number.isInteger(streak) && streak >= 2) lines.push('🔥 ' + streak + '-day streak');
@@ -225,7 +225,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   // Score and error use different units: a score is /100, an offset is mark height.
   c.textAlign = 'left';
   if (round){
-    c.font = '700 28px ' + BODY; c.fillText('Average of 3', 64, 1042);
+    c.font = '700 28px ' + BODY; c.fillText('Average of ' + round.rounds.length, 64, 1042);
   }
   c.font = '900 ' + (round ? 154 : 178) + 'px ' + DISPLAY;
   c.fillText(String(round ? round.score : result.score), 64, round ? 1203 : 1189);
@@ -233,7 +233,7 @@ export function drawShareCard(canvas, {num, key, theme, P, result, friend = null
   if (round){
     fitText(c, 'Best sip: ' + ROUND_LABELS[round.bestIndex] + ' ' + round.best.score + '/100', 536, 1036, 480, 28, BODY, 700);
     round.rounds.forEach((sip, index) => {
-      const y = 1058 + index * 58;
+      const y = 1058 + index * (round.rounds.length === 4 ? 42 : 58);
       drawBand(c, sip.f, 552, y, palette.ink, 0.5);
       c.fillStyle = palette.ink;
       fitText(c, ROUND_LABELS[index] + ' ' + sip.score + (index === round.bestIndex ? ' · Best' : ''), 770, y + 22, 246, 22, BODY, index === round.bestIndex ? 800 : 600);

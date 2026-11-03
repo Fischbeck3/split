@@ -1,5 +1,5 @@
 // The app: hold input, the drink, results, sharing and the record.
-import {dayParams, startLevel, makeDrinkState, stepDrink, isDrinkSettled, DRAIN_LEVEL,
+import {dayParams, startLevel, makeDrinkState, isDrinkSettled, DRAIN_LEVEL,
   scoreFromOffset, bandEmoji, detailText, PERFECT, dayKey, REVIEW_THEMES} from './core.js';
 import {drawScene, makeBackdrop, loadSceneAssets} from './draw.js';
 import {buildShareText, drawShareCard} from './share.js';
@@ -7,17 +7,20 @@ import {createAnalytics, gameProperties, resultProperties as analyticsResultProp
 import {getCalendarAttribution} from './content-calendar.js';
 import {makeMotionState, stepMotion, isMotionSettled} from './motion.js';
 import {resolveChallenge, canRecordChallenge} from './challenge.js';
-import {SITE_URL, LAUNCH, LAUNCH_READY, RECORD_RUN} from './config.js';
+import {SITE_URL, LAUNCH_READY, RECORD_STORE} from './config.js';
 import {readFriendChallenge, comparisonCopy} from './friend.js';
 import {targetHintOpacity} from './target.js';
 import {renderVessel} from './render-vessels.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from './theme-review.js';
-import {ROUND_STAGES, roundParams, normalizeRoundRecord, reserveRound, completeRound, recoverInterruptedRound, summarizeRounds} from './rounds.js';
+import {ROUND_STAGES, roundCount, roundParams, normalizeRoundRecord, reserveRound, completeRound, recoverInterruptedRound, summarizeRounds} from './rounds.js';
 import {focusedGlassBox, interpolateGlassBox} from './focus.js';
+import {loadRecords} from './record-store.js';
+import {stepStagedDrink as stepDrink, blackoutView} from './blackout-effects.js';
+import {makeBlackoutRenderer} from './blackout-view.js';
 
 const $ = id => document.getElementById(id);
 // Separate the friends run from earlier test attempts without moving the calendar.
-const STORE = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
+const STORE = RECORD_STORE;
 const themeReview = readThemeReview(location.hash);
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reducedMotion = motionQuery.matches;
@@ -29,11 +32,12 @@ function renderMotionPreference(){
   $('motionNote').hidden = !reduced;
   if (!reduced) return;
   $('motionNoticeTitle').textContent = 'Motion is simplified on this device.';
-  $('motionNoticeCopy').textContent = 'Reduce Motion keeps the glass upright and skips Tipsy and Drunk blur and sway; timing and scoring stay the same. On iPhone, turn it off in Settings → Accessibility → Motion → Reduce Motion, then reopen Split.';
+  $('motionNoticeCopy').textContent = 'Reduce Motion keeps the glass upright and skips blur, sway, double vision and light pulses. Blackout stays dark during the sip; timing and scoring stay the same. On iPhone, turn it off in Settings → Accessibility → Motion → Reduce Motion, then reopen Split.';
 }
 const onMotionPreferenceChange = event => {
   reducedMotion = event.matches;
   renderMotionPreference();
+  if (S.P?.blackout && ['ready','drinking'].includes(S.state)) $('footPill').textContent = reducedMotion ? 'The view goes dark while you sip. Release by feel.' : 'Double vision. Catch the mark between blackouts.';
   if (S.P && S.state !== 'drinking' && S.state !== 'locked') draw(performance.now());
 };
 if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotionPreferenceChange);
@@ -48,17 +52,19 @@ function resultProperties(){
   return analyticsResultProperties(S);
 }
 const scene = $('scene'), ctx = scene.getContext('2d');
+const blackoutRenderer = makeBlackoutRenderer();
 $('startHold').disabled = true;
 let W = 400, H = 700, DPR = 1, backdrop = null, backdropKey = '';
 function setPhase(phase){ S.state = phase; $('app').dataset.phase = phase; }
 
 function sipKind(){ return S.review ? 'Review · not saved' : S.preview ? 'Preview' : S.kind === 'archive' ? 'Archive' : S.practice ? 'Practice' : 'Today’s sip'; }
 function pourFeel(){ return S.theme.feel || (S.P.choppy ? 'Wobbly pour' : 'Smooth pour'); }
-function roundStatus(){ return ROUND_STAGES[S.round].label + ' · Sip ' + (S.round + 1) + ' of 3'; }
+function roundStatus(){ return ROUND_STAGES[S.round].label + ' · Sip ' + (S.round + 1) + ' of ' + roundCount(S.baseP); }
 function renderRounds(id, rounds = [], current = -1, bestIndex = -1){
   const list = $(id); list.replaceChildren();
   list.dataset.fresh = String(!rounds.length);
-  ROUND_STAGES.forEach((stage, index) => {
+  list.style.gridTemplateColumns = 'repeat(' + roundCount(S.baseP) + ',minmax(0,1fr))';
+  ROUND_STAGES.slice(0, roundCount(S.baseP)).forEach((stage, index) => {
     const item = document.createElement('li'), name = document.createElement('span'), score = document.createElement('strong');
     name.textContent = stage.label;
     score.textContent = rounds[index] ? rounds[index].score + '/100' : index === current ? 'Your turn' : '—';
@@ -86,7 +92,7 @@ function renderChallengeStatus(now = new Date()){
     ? 'Archive · ' + challengeDate() + '. Sips here are not saved.'
     : S.preview ? (todayAvailable && S.key <= dayKey(now) ? 'Today’s glass is ready. This preview is not saved.' : S.notice ? S.notice + ' Preview scores are not saved.' : 'Design preview. Your score will not be saved.')
     : S.storageFailed ? 'Progress stays in this tab. This round will not be saved.'
-    : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of 3 saved. Finish your round.' : 'All three count. Same challenge for everyone.');
+    : (S.notice ? S.notice + ' ' : '') + (S.progress?.rounds.length ? S.progress.rounds.length + ' of ' + roundCount(S.baseP) + ' saved. Finish your round.' : 'All ' + (roundCount(S.baseP) === 4 ? 'four' : 'three') + ' count. Same challenge for everyone.');
   if (['approaching','ready','drinking','between'].includes(S.state)) $('hudMode').textContent = roundStatus() + ' · ' + sipKind();
   if (S.progress?.rounds.length && !S.progress.done) $('startLabel').textContent = 'Continue · ' + ROUND_STAGES[S.progress.rounds.length].label;
 }
@@ -116,7 +122,7 @@ function refreshDayStatus(now = new Date()){
 }
 
 // ---------- storage ----------
-function load(){ try { const v = JSON.parse(localStorage.getItem(STORE)); return v && v.days && typeof v.days === 'object' && !Array.isArray(v.days) ? v : {days: {}}; } catch { return {days: {}}; } }
+function load(){ try { return loadRecords(localStorage, dayKey(new Date())); } catch { return {days:{}}; } }
 function save(st){ try { localStorage.setItem(STORE, JSON.stringify(st)); return true; } catch { return false; } }
 
 function recordingRound(now = new Date()){
@@ -150,6 +156,7 @@ function layout(){
   const app = $('app'); W = Math.max(280, app.clientWidth); H = Math.max(400, app.clientHeight);
   DPR = Math.min(2.5, window.devicePixelRatio || 1);
   scene.width = Math.round(W * DPR); scene.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  blackoutRenderer.resize(W, H, DPR);
   // Measure the closed entry tray on resize, including wrapped notes and the
   // review footer. Keep this same vessel box after Start so it never jumps.
   const intro = $('intro'), rules = intro.querySelector('.rules');
@@ -181,12 +188,17 @@ function draw(now){
   const foreground = focusedGlassBox(base, {w:W,h:H,floor:S.liveFloor,vessel:S.theme.vessel});
   const G = interpolateGlassBox(base, foreground, S.focus);
   const motion = {...S.motion, angle:S.motion.angle + S.visualSway};
-  const blur = !reducedMotion && ['ready','drinking'].includes(S.state) ? S.P.sipBlur || 0 : 0;
+  const view = S.P.blackout ? blackoutView({phase:S.state, elapsed:S.drink?.elapsed || 0,
+    idleTime:(now - S.focusAt) / 1000, reducedMotion}) : null;
+  const blur = view ? view.blur * Math.min(1, (G.bot - G.top) / 250)
+    : !reducedMotion && ['ready','drinking'].includes(S.state) ? S.P.sipBlur || 0 : 0;
   scene.style.filter = blur ? 'blur(' + blur + 'px)' : '';
-  drawScene(ctx, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion,
+  const paint = target => drawScene(target, {G, w: W, h: H, L: S.L, theme: S.theme, P: S.P, motion,
     drinking: S.state === 'drinking', drinkElapsed: S.drink?.elapsed || 0, now,
     bubbles: !reducedMotion, ambient: !reducedMotion, backdrop: currentBackdrop(base),
     targetHint: (S.state === 'intro' || S.state === 'ready') && S.targetAt !== null ? targetHintOpacity(now - S.targetAt, reducedMotion) : 0});
+  if (view && ['ready','drinking','locked'].includes(S.state)) blackoutRenderer.paint(ctx, {w:W,h:H,view,draw:paint});
+  else paint(ctx);
 }
 
 // ---------- the drink ----------
@@ -197,7 +209,7 @@ function begin(){
   S.baseP ||= S.P;
   S.progress ||= normalizeRoundRecord(null, S.baseP);
   S.round = S.progress.rounds.length;
-  if (S.round >= 3) return;
+  if (S.round >= roundCount(S.baseP)) return;
   S.P = roundParams(S.baseP, S.round); S.roundToken = null;
   setPhase('approaching'); S.L = S.L0; S.drained = false; S.holding = false; S.holdStart = 0;
   S.drink = makeDrinkState(S.P);
@@ -221,7 +233,7 @@ function begin(){
 function readyToSip(now){
   setPhase('ready'); S.focus = 1; S.targetAt = now;
   $('drinkControl').disabled = false; $('drinkControl').textContent = 'Hold to drink';
-  $('footPill').textContent = S.round === 0 ? 'Hold to sip. Release early; settle at the mark.' : S.round === 1 ? 'A little sway. Watch the line, then release.' : 'Less steady now. Find the mark and trust your timing.';
+  $('footPill').textContent = S.round === 3 ? (reducedMotion ? 'Sudden surges. The view goes dark while you sip.' : 'Double vision. Catch the mark between blackouts.') : S.round === 0 ? 'Hold to sip. Release early; settle at the mark.' : S.round === 1 ? 'A little sway. Watch the line, then release.' : 'Less steady now. Find the mark and trust your timing.';
   $('drinkControl').focus({preventScroll:true});
 }
 const wantsDrink = () => S.holding;
@@ -242,7 +254,7 @@ function frame(now){
     setPhase('drinking'); if (!S.holdStart) S.holdStart = now;
     drinkDt = Math.min(dt, Math.max(0, (now - S.holdStart) / 1000));
     analytics.capture('sip_started', {...gameProperties(S), sip_number:S.round+1, sip_stage:ROUND_STAGES[S.round].label.toLowerCase(), counts:recordingRound()});
-    $('footPill').textContent = 'Release early. Let the sip settle.';
+    $('footPill').textContent = S.P.blackout ? (reducedMotion ? 'Go by feel. Release to stop.' : 'Catch a glimpse. Release by feel.') : 'Release early. Let the sip settle.';
   }
   if (S.state === 'drinking'){
     if (wantsStop()) lock(now);
@@ -261,7 +273,7 @@ function frame(now){
   S.visualSway += (sway - S.visualSway) * (1 - Math.exp(-dt * 12));
   if (S.state === 'locked' && isDrinkSettled(S.drink) && isMotionSettled(S.motion) && Math.abs(S.visualSway) < .025 && now - S.lockAt > 350) finish(now);
   // Ambient layers need only 30 fps at rest; the sip retains its full frame rate.
-  if (S.state !== 'result' && ((S.state === 'drinking' || S.state === 'locked') || now - S.drawnAt >= 1000 / 30)){
+  if (S.state !== 'result' && (((S.state === 'drinking' || S.state === 'locked') && !S.P.blackout) || now - S.drawnAt >= 1000 / 30)){
     draw(now); S.drawnAt = now;
   }
   requestAnimationFrame(frame);
@@ -277,7 +289,7 @@ function showRoundOutcome(now = performance.now()){
   if (S.progress.done){
     S.result = {...S.progress, counts:recordingRound(), attribution:{...S.attribution}};
     S.L = S.result.L; S.motion = makeMotionState(); S.visualSway = 0;
-    draw(now); setPhase('result'); $('liveControls').hidden = true; $('hudMode').hidden = true;
+    setPhase('result'); draw(now); $('liveControls').hidden = true; $('hudMode').hidden = true;
     renderResult(); renderStats(); $('result').classList.add('fresh-sip');
     return;
   }
@@ -339,10 +351,10 @@ function renderResult(){
   const saved = load().days[S.key];
   $('officialBtn').hidden = r.counts || S.kind !== 'today' || !saved?.done || saved.theme !== S.theme.id;
   $('resStrip').textContent = bandEmoji(r.f);
-  $('resStrip').hidden = r.rounds?.length === 3;
+  $('resStrip').hidden = r.rounds?.length >= 3;
   $('resultRounds').hidden = !r.rounds?.length;
   if (r.rounds?.length) renderRounds('resultRounds', r.rounds, -1, r.bestIndex);
-  if (r.rounds?.length === 3){
+  if (r.rounds?.length >= 3){
     $('resDetail').textContent = 'Best sip: ' + ROUND_STAGES[r.bestIndex].label + ' · ' + r.bestScore + '/100. ' + $('resDetail').textContent;
   }
   const comparison = S.friend ? comparisonCopy(S.friend, r) : null;
@@ -352,7 +364,7 @@ function renderResult(){
     $('friendComparison').textContent = 'You ' + r.score + ' · Shared ' + (S.friend.scoring === 'average' ? 'average ' : 'sip ') + S.friend.score + kind + '. ' + comparison.text;
     $('friendComparison').dataset.outcome = comparison.status;
   }
-  $('result').dataset.perfect = String(r.rounds?.length === 3
+  $('result').dataset.perfect = String(r.rounds?.length >= 3
     ? r.rounds.every(sip => !sip.drained && Math.abs(sip.f) <= PERFECT)
     : !r.drained && Math.abs(r.f) <= PERFECT);
   $('result').style.setProperty('--stop-line', ((48 + r.L * 642) / 750 * 100) + '%');
@@ -364,7 +376,7 @@ function renderResult(){
   $('result').hidden = false;
   // Prepare the postcard separately; sharing the result never waits for its image.
   const c = drawCard(); $('cardImg').src = c.toDataURL('image/png'); $('cardImg').hidden = false;
-  $('cardImg').alt = (r.rounds?.length === 3 ? 'Average of three. ' : '') + S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both best stopping lines are shown.' : '');
+  $('cardImg').alt = (r.rounds?.length >= 3 ? 'Average of ' + (r.rounds.length === 4 ? 'four' : 'three') + '. ' : '') + S.theme.label + ': ' + r.score + ' out of 100. ' + r.label + '. ' + $('resDetail').textContent + ' ' + $('resKind').textContent + (comparison ? '. ' + comparison.text + ' Both best stopping lines are shown.' : '');
   S.card = new Promise(res => c.toBlob(blob => res({canvas: c, blob}), 'image/png'));
   $('result').scrollTop = 0;
 }
@@ -430,9 +442,9 @@ function renderStats(){
   const st = LAUNCH_READY ? load() : {days:{}}, keys = Object.keys(st.days).filter(k => st.days[k].done);
   let best = null, perfect = 0;
   for (const k of keys){
-    const saved = st.days[k], d = saved.version === 2 && Array.isArray(saved.rounds) ? summarizeRounds(saved.rounds) : saved;
+    const saved = st.days[k], d = [2,3].includes(saved.version) && Array.isArray(saved.rounds) ? summarizeRounds(saved.rounds) : saved;
     if (best === null || d.score > best) best = d.score;
-    if (d.rounds?.length === 3 ? d.rounds.every(sip => Math.abs(sip.f) <= PERFECT && !sip.drained) : Math.abs(d.f) <= PERFECT && !d.drained) perfect++;
+    if (d.rounds?.length >= 3 ? d.rounds.every(sip => Math.abs(sip.f) <= PERFECT && !sip.drained) : Math.abs(d.f) <= PERFECT && !d.drained) perfect++;
   }
   const streak = currentStreak();
   $('stDays').textContent = keys.length; $('stStreak').textContent = streak; $('stBest').textContent = best === null ? '—' : best; $('stPerfect').textContent = perfect;
@@ -462,7 +474,7 @@ const down = e => {
     setPhase('drinking'); S.last = S.holdStart;
     analytics.capture('sip_started', {...gameProperties(S), sip_number:S.round+1,
       sip_stage:ROUND_STAGES[S.round].label.toLowerCase(), counts:recordingRound()});
-    $('footPill').textContent = 'Release early. Let the sip settle.';
+    $('footPill').textContent = S.P.blackout ? (reducedMotion ? 'Go by feel. Release to stop.' : 'Catch a glimpse. Release by feel.') : 'Release early. Let the sip settle.';
   }
 };
 const up = () => {
@@ -536,6 +548,13 @@ async function init(){
   S.preview = S.kind === 'preview'; S.designPreview = S.preview && !!previewMatch && Number(previewMatch[1]) >= 1;
   S.followToday = followsToday(challenge);
   S.P = themeReview?.P || dayParams(S.num); S.baseP = S.P; S.theme = S.P.theme;
+  const four = roundCount(S.baseP) === 4;
+  $('introLine').textContent = four ? 'Four sips. Sober to Blackout. Every one counts.' : 'Three sips. Each a little less steady. Every one counts.';
+  $('roundRules').textContent = four
+    ? 'Try four fresh pours: Sober, Tipsy, Drunk, then Blackout. Blackout adds a surging pour, double vision, and glimpses between darkness. Your final score is the rounded average of all four. Reduced motion removes blur, sway and light pulses; Blackout stays dark during the sip with the same timing.'
+    : 'Try three fresh pours: Sober, Tipsy, then Drunk. Later sips sway and flow less evenly. Your final score is the rounded average of all three. Reduced motion removes zoom, sway and blur with the same timing.';
+  const store = load();
+  if (S.kind === 'today' && store.blackoutRelease?.date === S.key && store.blackoutRelease.previous && !store.days[S.key]) S.notice = 'Blackout is here. Your daily round has been reset so you can try all four.';
   S.attribution = getCalendarAttribution(S.key, S.theme);
   S.friend = S.review ? null : readFriendChallenge({search:location.search, hash:location.hash, key:S.key, num:S.num, theme:S.theme});
   analytics.capture('game_opened', gameProperties(S, now), now);
@@ -601,7 +620,7 @@ async function init(){
       writeProgress(S.progress);
       toast('This browser’s unfinished round could not be read. A fresh round is ready.');
     }
-    if (rec.pending || rec.version !== 2 || rec.scoring !== 'average') writeProgress(S.progress);
+    if (rec.pending || rec.version !== (roundCount(S.baseP) === 4 ? 3 : 2) || rec.scoring !== 'average') writeProgress(S.progress);
     renderRounds('introRounds', S.progress.rounds, S.progress.done ? -1 : S.progress.rounds.length);
     if (S.progress.done){
       S.L = S.progress.L; S.mode = S.progress.mode || 'hold'; S.focus = 1;

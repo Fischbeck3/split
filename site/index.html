@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Split · Three sips. Every one counts.</title>
-<meta name="description" content="One daily glass. Three sips: sober, tipsy, drunk. Hold to drink, release on the mark, and send your three-sip average to the group chat.">
+<title>Split · Four sips. Every one counts.</title>
+<meta name="description" content="One daily glass. Four sips: sober, tipsy, drunk, blackout. Hold to drink, release on the mark, and send your four-sip average to the group chat.">
 <meta name="theme-color" content="#142b24">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Split · One sip. Your turn.">
@@ -42,7 +42,7 @@
   </div>
   <div class="mode" id="hudMode" hidden></div>
   <div class="live-controls" id="liveControls" hidden>
-    <ol class="round-scores" id="liveRounds" aria-label="Your three sips"></ol>
+    <ol class="round-scores" id="liveRounds" aria-label="Your sips"></ol>
     <p class="live-goal" id="liveGoal">Split the G.</p>
     <p class="live-status" id="footPill" role="status" aria-live="polite"></p>
     <button class="drink-control" id="drinkControl" type="button">Hold to drink</button>
@@ -54,8 +54,8 @@
     <div class="sheet">
       <p class="friend-invite" id="friendInvite" hidden></p>
       <div class="goal-row"><h2 id="introGoal">Split the G.</h2><span class="feel" id="introFeel">Smooth pour</span></div>
-      <p class="instructions" id="introLine">Three sips. Each a little less steady. Every one counts.</p>
-      <ol class="round-scores intro-rounds" id="introRounds" aria-label="Sober, tipsy, then drunk"></ol>
+      <p class="instructions" id="introLine">Four sips. Sober to Blackout. Every one counts.</p>
+      <ol class="round-scores intro-rounds" id="introRounds" aria-label="Your sips"></ol>
       <aside class="motion-note" id="motionNote" role="status" hidden>
         <strong id="motionNoticeTitle"></strong>
         <span id="motionNoticeCopy"></span>
@@ -65,14 +65,14 @@
         <button class="text-button" id="introTodayBtn" type="button" hidden>Play today’s glass</button>
       </div>
       <div class="intro-meta">
-      <p class="daily-note" id="introNote">All three count. Same challenge for everyone.</p>
+      <p class="daily-note" id="introNote">All four count. Same challenge for everyone.</p>
       <details class="rules">
         <summary id="howToPlayTitle">How to play</summary>
         <div class="rules-body" role="region" aria-labelledby="howToPlayTitle" tabindex="0">
           <p>A dashed line briefly shows the target before each sip. Hold the glass, button, or space bar to tip and sip. Release a little early to bring it upright; the sip keeps flowing briefly. Match the settled beer line beneath the foam to that target. On Guinness, aim at the top of the G’s crossbar.</p>
-          <p>Try three fresh pours: Sober, Tipsy, then Drunk. Later sips sway and flow less evenly. Your final score is the average of all three, rounded to the nearest point. Misses count too. Reduced motion removes the zoom, sway and blur while keeping the same timing challenge.</p>
+          <p id="roundRules">Try four fresh pours: Sober, Tipsy, Drunk, then Blackout. Your final score is the rounded average of all four. Blackout adds a surging pour, double vision, and glimpses between darkness. Reduced motion removes blur, sway and light pulses; Blackout stays dark during the sip with the same timing.</p>
           <p id="vesselHint">The line falls faster as the glass narrows. Release before the mark.</p>
-          <p>New glasses arrive at local midnight. Progress stays in this browser; an interrupted held sip counts as a miss. Your three-sip average is your daily result. Shared links open the same date’s glass; archives do not count toward your record.</p>
+          <p>New glasses arrive at local midnight. Progress stays in this browser; an interrupted held sip counts as a miss. Your average is your daily result. Shared links open the same date’s glass; archives do not count toward your record.</p>
         </div>
       </details>
       </div>
@@ -86,7 +86,7 @@
       <div class="postcard-stage"><img class="cardimg" id="cardImg" alt="Your themed Split result card, showing the vessel, score, and stopping line" hidden><span class="line-shine" aria-hidden="true"></span></div>
       <p class="friend-comparison" id="friendComparison" role="status" hidden></p>
       <div class="result-score" aria-label="Score"><span id="resScore">0</span><span>/100</span><span id="resStrip" class="strip" aria-label="Position of the stopping line"></span></div>
-      <ol class="round-scores result-rounds" id="resultRounds" aria-label="Scores for all three sips" hidden></ol>
+      <ol class="round-scores result-rounds" id="resultRounds" aria-label="Scores for all sips" hidden></ol>
       <div class="row share-actions">
         <button class="big" id="shareBtn" type="button">Beat my average <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="outline" id="saveCardBtn" type="button">Save postcard</button>

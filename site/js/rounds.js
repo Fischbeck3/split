@@ -2,12 +2,18 @@
 // the caller; reservations prevent a later tab from replacing a recorded sip.
 import {DRAIN_LEVEL, hashStr, scoreFromOffset} from './core.js';
 import {stageCadence} from './sip-cadence.js';
+import {BLACKOUT_START} from './config.js';
+import {BLACKOUT_STAGE, blackoutFlow} from './blackout-effects.js';
 
 export const ROUND_STAGES = Object.freeze([
   Object.freeze({label:'Sober', blur:0, sway:0, cadenceAmplitude:0, cadencePeriod:1}),
   Object.freeze({label:'Tipsy', blur:.345, sway:.69, cadenceAmplitude:.1495, cadencePeriod:.92}),
-  Object.freeze({label:'Drunk', blur:1.2075, sway:1.6675, cadenceAmplitude:.345, cadencePeriod:.68})
+  Object.freeze({label:'Drunk', blur:1.2075, sway:1.6675, cadenceAmplitude:.345, cadencePeriod:.68}),
+  BLACKOUT_STAGE
 ]);
+
+// Exact-date archives keep their released three-sip rules.
+export const roundCount = P => P?.key && P.key < BLACKOUT_START ? 3 : 4;
 
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const stageIndex = index => Number.isInteger(index) && index >= 0 && index < ROUND_STAGES.length ? index : 0;
@@ -18,9 +24,10 @@ const structural = new Set(['version','num','theme','rounds','pending','done','b
 /** Preserve the released glass, target, base rate and seed. Only the staged
  * presentation and deterministic drinking cadence are added. */
 export function roundParams(baseP, index = 0){
-  const sipStage = stageIndex(index), stage = ROUND_STAGES[sipStage];
-  const seed = hashStr('split-round:' + (baseP.key ?? baseP.num) + ':' + baseP.theme.id + ':' + sipStage);
+  const sipStage = index < roundCount(baseP) ? stageIndex(index) : 0, stage = ROUND_STAGES[sipStage];
+  const seed = hashStr('split-round:' + (baseP.key ?? baseP.num) + ':' + baseP.theme.id + ':' + Math.min(sipStage, 2));
   return {...baseP, sipStage, sipBlur:stage.blur, sipSway:stage.sway,
+    ...(sipStage === 3 ? {blackout:true} : {}),
     sipCadenceAmplitude:stage.cadenceAmplitude, sipCadencePeriod:stage.cadencePeriod,
     sipCadencePhase:seed / 4294967296 * Math.PI * 2};
 }
@@ -30,7 +37,7 @@ export function roundParams(baseP, index = 0){
  * stage's amplitude bounds. Reduced motion never changes this calculation. */
 export function roundRate(P, elapsed = 0){
   const rate = Number.isFinite(P?.K) ? Math.max(0, P.K) : 0;
-  return rate * stageCadence(P, elapsed);
+  return rate * (P?.blackout ? blackoutFlow(P, elapsed) : stageCadence(P, elapsed));
 }
 
 // Copy JSON-safe own fields rather than retaining storage object references.
@@ -81,23 +88,23 @@ function individualResult(input, target = 'the mark'){
  * the representative stopping line; an equal later score keeps the earlier one.
  * This helper handles presentation arrays; record validation below rejects
  * malformed stored rounds instead of quietly granting replacement attempts. */
-export function summarizeRounds(rounds = []){
-  const clean = Array.isArray(rounds) ? rounds.slice(0, ROUND_STAGES.length).map(round => individualResult(round)).filter(Boolean) : [];
+export function summarizeRounds(rounds = [], expected = rounds?.length === 4 ? 4 : 3){
+  const clean = Array.isArray(rounds) ? rounds.slice(0, expected).map(round => individualResult(round)).filter(Boolean) : [];
   let bestIndex = null;
   for (let index = 0; index < clean.length; index++){
     if (bestIndex === null || clean[index].score > clean[bestIndex].score) bestIndex = index;
   }
-  const done = clean.length === ROUND_STAGES.length;
+  const done = clean.length === expected;
   const score = clean.length ? Math.round(clean.reduce((sum, round) => sum + round.score, 0) / clean.length) : null;
   return {...(bestIndex === null ? {} : clean[bestIndex]),
     ...(score === null ? {} : {score, averageScore:score}),
-    ...(done ? {label:'Three-sip average', tone:score >= 75 ? 'good' : score >= 25 ? 'warn' : 'miss'} : {}),
-    version:2, scoring:'average', rounds:clean, bestIndex,
+    ...(done ? {label:(expected === 4 ? 'Four' : 'Three') + '-sip average', tone:score >= 75 ? 'good' : score >= 25 ? 'warn' : 'miss'} : {}),
+    version:expected === 4 ? 3 : 2, scoring:'average', rounds:clean, bestIndex,
     bestScore:bestIndex === null ? null : clean[bestIndex].score, done};
 }
 
 function recordFromRounds(rounds, P, pending = null){
-  return {...summarizeRounds(rounds), num:P.num, theme:P.theme.id, pending};
+  return {...summarizeRounds(rounds, roundCount(P)), num:P.num, theme:P.theme.id, pending};
 }
 
 /** The caller applies legacy migration only to today's record. Archived
@@ -108,14 +115,15 @@ export function normalizeRoundRecord(record, P){
   if (record === undefined || record === null) return recordFromRounds([], P);
   if (!object(record) || record.theme !== P.theme.id
     || (record.num !== undefined && record.num !== P.num)) return null;
-  if (record.version === 2){
-    if (!Array.isArray(record.rounds) || record.rounds.length > ROUND_STAGES.length) return null;
+  if (record.version === 2 || record.version === 3){
+    if (record.version === 3 && roundCount(P) !== 4) return null;
+    if (!Array.isArray(record.rounds) || record.rounds.length > (record.version === 2 ? 3 : 4)) return null;
     const rounds = record.rounds.map(round => individualResult(round, P.theme.target));
     if (rounds.some(round => !round)) return null;
     let pending = null;
     if (record.pending !== undefined && record.pending !== null){
       if (!object(record.pending) || !validToken(record.pending.token)
-        || record.pending.index !== rounds.length || rounds.length >= ROUND_STAGES.length) return null;
+        || record.pending.index !== rounds.length || rounds.length >= roundCount(P)) return null;
       pending = {token:record.pending.token, index:record.pending.index};
     }
     return recordFromRounds(rounds, P, pending);

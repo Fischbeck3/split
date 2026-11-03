@@ -10,6 +10,9 @@ export const LAUNCH_READY = true;
 // The friends soft launch starts with fresh local records on the same Day 1.
 // Keep this run fixed; earlier test records remain in their original storage key.
 export const RECORD_RUN = 'friends-2026-10-09';
+export const BLACKOUT_START = '2026-11-02';
+export const LEGACY_RECORD_STORE = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
+export const RECORD_STORE = LEGACY_RECORD_STORE + ':blackout-2026-11-02';
 
 // Public PostHog project token (phc_...), never a personal API key.
 // A blank token disables analytics; local and preview hosts never send events.

@@ -1,8 +1,8 @@
 // Reset one browser's daily sip without changing the public run or other records.
-import {LAUNCH, RECORD_RUN} from './config.js';
+import {RECORD_STORE} from './config.js';
 import {isCalendarDateKey} from './challenge.js';
 
-export const recordStorageKey = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
+export const recordStorageKey = RECORD_STORE;
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 

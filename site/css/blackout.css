@@ -1,0 +1,42 @@
+.blackout-preview{display:flex;flex-direction:column;min-height:560px;overflow:visible}
+body:has(.blackout-preview){overflow:auto}
+.blackout-preview .hud{position:relative;flex:none}
+.blackout-preview .day-number{font-size:12px;letter-spacing:0}
+.app.blackout-preview .day-heading{position:relative;top:auto;left:auto;right:auto;margin:32px 24px 0;z-index:1}
+.app.blackout-preview .day-heading h1{font-size:clamp(34px,8vw,43px)}
+.blackout-preview .day-heading p{color:var(--fg)}
+.blackout-preview .experiment-controls{position:relative;z-index:2;margin:auto 26px calc(20px + env(safe-area-inset-bottom,0px));padding:16px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;text-align:center;flex:none}
+.stage-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:-4px -4px 16px}
+.stage-picker button{min-height:44px;padding:6px 2px;background:none;border:0;border-bottom:2px solid var(--line);color:var(--muted);font-size:13px;font-weight:700}
+.stage-picker button[aria-pressed=true]{color:var(--fg);border-color:var(--accent)}
+.stage-picker button:disabled{opacity:1;cursor:default}
+.stage-picker button:hover:not(:disabled){background:var(--line)}
+.blackout-preview .live-status{min-height:40px;margin-bottom:12px}
+.experiment-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px}
+.experiment-actions .big{width:100%}
+.experiment-actions #allStages{order:2;width:100%}
+.experiment-actions .text-button{min-height:44px}
+.experiment-footer{position:relative;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:10px;margin-top:8px;text-align:left;font-size:12px;color:var(--muted)}
+.experiment-footer select{min-width:0;flex:1;min-height:44px;background:var(--sheet);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font:600 13px var(--body)}
+.experiment-footer summary{display:flex;align-items:center;min-height:44px;color:var(--fg);cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.experiment-footer details[open]{position:absolute;left:-4px;right:-4px;bottom:0;background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:12px;max-height:min(64dvh,420px);overflow:auto;z-index:3;color:var(--fg)}
+.experiment-footer details p{font-size:14px;line-height:1.5;margin:10px 0}
+.experiment-note{font-size:12px;color:var(--muted);margin:8px 0 0}
+.experiment-scores{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:-8px 0 12px;font-size:13px;color:var(--fg);font-variant-numeric:tabular-nums}
+@media(max-height:740px){
+  .app.blackout-preview .day-heading{margin-top:20px}
+  .app.blackout-preview .day-heading h1{font-size:30px}
+  .blackout-preview .experiment-controls{padding:12px;margin-bottom:12px}
+  .stage-picker{margin-bottom:10px}
+  .blackout-preview .live-status{font-size:13px;min-height:36px;margin-bottom:8px}
+  .experiment-footer{padding-top:6px;margin-top:2px}
+}
+@media(max-width:360px){
+  .blackout-preview .hud{padding-inline:18px}
+  .blackout-preview .experiment-controls{margin-inline:14px}
+  .stage-picker button{font-size:12px}
+}
+@media(max-height:650px){
+  /* Keep the glass and Hold together; auxiliary controls can scroll below them. */
+  .app.blackout-preview{height:calc(100dvh + 100px)}
+}

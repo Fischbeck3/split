@@ -8,7 +8,9 @@ import {renderVessel} from '../../site/js/render-vessels.js';
 import {targetHintOpacity} from '../../site/js/target.js';
 import {canRecordChallenge, resolveChallenge} from '../../site/js/challenge.js';
 import {gameProperties} from '../../site/js/analytics.js';
-import {LAUNCH, LAUNCH_READY, RECORD_RUN} from '../../site/js/config.js';
+import {LAUNCH, LAUNCH_READY, RECORD_RUN, RECORD_STORE} from '../../site/js/config.js';
+import {loadRecords} from '../../site/js/record-store.js';
+import {stepStagedDrink, blackoutView} from '../../site/js/blackout-effects.js';
 
 const main = readFileSync(new URL('../../site/js/main.js', import.meta.url), 'utf8');
 function section(from, to){
@@ -16,7 +18,7 @@ function section(from, to){
   if (start < 0 || end <= start) throw new Error('Missing controller section: ' + from);
   return main.slice(start, end);
 }
-export const storageKey = 'split.v1:' + LAUNCH + ':' + RECORD_RUN;
+export const storageKey = RECORD_STORE;
 
 export function browserStorage(entries = [], {failWrites = false, failOnWrite = 0} = {}){
   const values = new Map(entries), writes = [];
@@ -68,7 +70,9 @@ export function controllerApp({P = core.dayParams(1), storage = browserStorage()
   const location = {search, hash, pathname:'/', href:'https://dailysplit.us/' + search + hash,
     reload:() => reloads.push({at:calendar, search:location.search, hash:location.hash})};
   const scene = {style:{}};
-  const context = vm.createContext({...core, ...motion, ...rounds, LAUNCH, LAUNCH_READY, RECORD_RUN,
+  const context = vm.createContext({...core, ...motion, ...rounds, LAUNCH, LAUNCH_READY, RECORD_RUN, RECORD_STORE,
+    loadRecords, blackoutView, stepDrink:stepStagedDrink,
+    blackoutRenderer:{resize(){},paint(ctx,{draw}){draw(ctx);}},
     Date:AppDate, Math, URLSearchParams, themeReview:review ? {} : null, $:element, document,
     scene, AudioContext, location, focusedGlassBox, interpolateGlassBox, renderVessel, targetHintOpacity,
     ctx:{}, makeBackdrop:() => ({}),

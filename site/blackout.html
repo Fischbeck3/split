@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101b17">
+  <meta name="robots" content="noindex">
+  <title>Split · Blackout experiment</title>
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/blackout.css">
+  <script type="module" src="js/blackout.js"></script>
+</head>
+<body>
+<main class="app blackout-preview" id="app" data-phase="loading">
+  <canvas id="scene" width="400" height="800" aria-label="Practice glass"></canvas>
+  <header class="hud">
+    <a class="wordmark" href="./" aria-label="Split, today's glass">Split<span class="split-dot" aria-hidden="true">.</span></a>
+    <span class="day-number">Experiment · not saved</span>
+  </header>
+  <div class="day-heading" id="heading">
+    <h1>Blackout</h1>
+    <p id="place">One more sip. Go by feel.</p>
+  </div>
+  <section class="experiment-controls" id="controls" aria-label="Practice a drink stage">
+    <div class="stage-picker" role="group" aria-label="Drink stage">
+      <button type="button" data-stage="0" aria-pressed="false" disabled>Sober</button>
+      <button type="button" data-stage="1" aria-pressed="false" disabled>Tipsy</button>
+      <button type="button" data-stage="2" aria-pressed="false" disabled>Drunk</button>
+      <button type="button" data-stage="3" aria-pressed="true" disabled>Blackout</button>
+    </div>
+    <ol class="experiment-scores" id="scores" aria-label="Practice scores" hidden></ol>
+    <h2 class="live-goal" id="goal">Split the G.</h2>
+    <p class="live-status" id="status" role="status" aria-live="polite">Loading your glass…</p>
+    <button class="drink-control" id="drinkControl" type="button" aria-pressed="false" disabled>Loading…</button>
+    <div class="experiment-actions">
+      <button class="text-button" id="allStages" type="button" disabled>Try all four in order</button>
+      <button class="big" id="nextStage" type="button" hidden>Next sip</button>
+      <button class="big" id="retry" type="button" hidden>Try again</button>
+    </div>
+    <div class="experiment-footer">
+      <label for="glass">Glass</label>
+      <select id="glass" disabled aria-label="Choose a glass"></select>
+      <details id="rules">
+        <summary>How to play</summary>
+        <p>Hold the glass, button, or space bar to sip. Release early and let the beer settle at the mark.</p>
+        <p>Blackout brings double vision, drifting afterimages, and a more erratic pour. The view fades into darkness between brief, uneven glimpses. Catch the mark and release by feel; the final result comes back into focus.</p>
+        <p>Try each stage separately, or play all four for a practice average. Nothing here changes your daily score.</p>
+        <p>Reduce Motion removes blur, double vision, and light pulses. Blackout uses a still, dark view during the sip, with the same erratic pour.</p>
+      </details>
+    </div>
+    <p class="experiment-note" id="motionNote" hidden>Reduced motion · still view, same pour.</p>
+  </section>
+  <noscript><p class="noscript">Split needs JavaScript to pour.</p></noscript>
+</main>
+</body>
+</html>

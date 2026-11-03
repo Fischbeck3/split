@@ -2,9 +2,10 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {LAUNCH, LAUNCH_READY, RECORD_RUN} from '../site/js/config.js';
+import {LAUNCH, LAUNCH_READY, RECORD_RUN, RECORD_STORE} from '../site/js/config.js';
 import {dayKey, dayNumber, dayParams} from '../site/js/core.js';
 import {recordStorageKey, inspectDaily, resetDaily, restoreDaily} from '../site/js/personal-reset.js';
+import {loadRecords} from '../site/js/record-store.js';
 
 const launchDate = new Date(LAUNCH + 'T12:00:00');
 const today = LAUNCH, tomorrow = dayKey(new Date(launchDate.getFullYear(), launchDate.getMonth(), launchDate.getDate() + 1, 12));
@@ -34,7 +35,7 @@ function unrelatedUntouched(browser){
 
 test('personal reset uses the actual app record run and inspecting is read-only', () => {
   const main = readFileSync(new URL('../site/js/main.js', import.meta.url), 'utf8');
-  const context = vm.createContext({LAUNCH, RECORD_RUN});
+  const context = vm.createContext({LAUNCH, RECORD_RUN, RECORD_STORE});
   vm.runInContext(main.match(/^const STORE = .+;$/m)[0], context);
   assert.equal(recordStorageKey, vm.runInContext('STORE', context));
   const browser = browserStorage();
@@ -209,7 +210,7 @@ test('the reset controller loads read-only and requires another explicit click a
       return elements.get(id);
     }
     const calls = {reset:[], undo:[]}, windowEvents = new Map();
-    const context = vm.createContext({Date:BrowserDate, Intl, dayKey, dayNumber, dayParams, LAUNCH, LAUNCH_READY,
+    const context = vm.createContext({Date:BrowserDate, Intl, dayKey, dayNumber, dayParams, LAUNCH, LAUNCH_READY, loadRecords,
       document:{getElementById:element}, window:{localStorage:browser.storage, addEventListener:(type, listener) => windowEvents.set(type, listener)},
       inspectDaily,
       resetDaily(storage, key){ calls.reset.push(key); return resetDaily(storage, key); },

@@ -12,7 +12,7 @@ Friends sharing a short daily beer-sipping challenge and comparing their results
 
 ## Product Purpose
 
-Split offers one daily glass, three sips, and an average score that can be shared with a friend. Each illustrated setting recalls a place and an occasion for sharing a beer.
+Split offers one daily glass, four sips, and an average score that can be shared with a friend. Challenges before November 2, 2026 retain three sips. Each illustrated setting recalls a place and an occasion for sharing a beer.
 
 ## Operating Context
 
@@ -20,7 +20,11 @@ The game runs in a browser and saves daily progress locally. The player holds to
 
 ## Capabilities and Constraints
 
-Three stages use the same daily glass: Sober, Tipsy, and Drunk. The rounded mean becomes the daily result; the best real sip supplies the postcard's stopping line. The launch calendar, released challenge seeds, existing saved scores, and date-specific shares must retain their meaning. New theme designs require review before they enter the published lineup.
+Challenges dated November 2, 2026 onward use four stages of the same daily glass: Sober, Tipsy, Drunk, and Blackout. Earlier dates retain the released three-stage rules. The rounded mean of every stage becomes the daily result; the best real sip supplies the postcard's stopping line. Text shares and postcards support both three- and four-sip rounds. The launch calendar, released challenge seeds, historical scores, and date-specific shares must retain their meaning. New theme designs require review before they enter the published lineup.
+
+Blackout combines a deterministic erratic pour with defocus, double vision, and glimpses separated by darkness. Its effects apply only to the game canvas; controls remain sharp, and the settled result returns to a clear view. The separate `/blackout.html` practice preview remains unsaved and sends no analytics. Shared effects keep its Blackout behavior aligned with the daily stage.
+
+The owner authorized deployment and a daily-usage reset with this release. On a browser's first updated visit on or after November 2, legacy history is copied into an isolated release store, the local today's previous record is backed up and removed from that copy, and the original store remains intact. Other dates are preserved. Old tabs remain isolated on the old key, and subsequent visits do not reset the new store again.
 
 The existing static HTML, CSS, and JavaScript implementation owns the game and its vessel geometry. Scene artwork supplies the environment; the glass, liquid, mark, scoring, and sip motion are rendered live. Play and postcard use the same setting and vessel.
 
@@ -40,14 +44,14 @@ README.md documents the shipped game. DESIGN.md records the incumbent identity a
 
 ## Product Principles
 
-- Keep the vessel and scoring mark legible throughout the sip.
+- Keep the vessel and scoring mark legible in Sober, Tipsy, and Drunk. Blackout intentionally obscures the canvas during drinking and settling, then restores a clear result.
 - Make each place recognizable through the beer, viewpoint, materials, light, and company.
-- Preserve an existing player's results and shared challenge.
+- Preserve historical results and shared challenges; retain a backup when applying the explicitly authorized Blackout daily reset.
 - Review new scenes and their matching postcards before publication.
 
 ## Accessibility & Inclusion
 
-Preserve the existing keyboard controls, readable contrast, responsive phone layout, and reduced-motion behavior.
+Preserve the existing keyboard controls, readable contrast, and responsive phone layout. Reduced Motion removes Blackout's echoes, blur, light pulses, and movement; it uses static darkness during drinking and settling with the same physics and scoring. This describes the implemented effect treatment, not formal flash-standard compliance.
 
 
 The holiday-week collection contains seven new Thanksgiving themes and three new Hanukkah themes. Thanksgiving spans homecoming, Friendsgiving, harvest porch, football afternoon, candlelit wishbone toast, pie kitchen, and after-dinner fire. Two use Guinness and five use distinct seasonal glass prints. Hanukkah has its own window-light, dreidel-night and bakery settings and traditions.

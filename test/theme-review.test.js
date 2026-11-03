@@ -4,6 +4,7 @@ import {THEMES as RELEASED_THEMES, REVIEW_THEMES as THEMES, dayParams, keyForDay
 import {canRecordChallenge} from '../site/js/challenge.js';
 import {buildShareText} from '../site/js/share.js';
 import {readThemeReview, reviewHash, adjacentReviewTheme} from '../site/js/theme-review.js';
+import {roundCount} from '../site/js/rounds.js';
 import {controllerApp, browserStorage, storageKey} from './helpers/controller-app.js';
 
 const atNoon = key => {
@@ -83,15 +84,16 @@ test('repeated review rounds preserve daily storage, preferences and calendar dr
     app.S.key = today;
     app.restore();
     assert.equal(app.S.progress, null, theme.id + ': review must not hydrate an official record');
-    for (let round = 0; round < 3; round++) app.sip(30);
+    const count = roundCount(review.P);
+    for (let round = 0; round < count; round++) app.sip(30);
     assert.equal(app.S.state, 'result', theme.id);
-    assert.equal(app.S.result.rounds.length, 3, theme.id);
+    assert.equal(app.S.result.rounds.length, count, theme.id);
     assert.equal(app.S.result.counts, false, theme.id);
     const firstReview = structuredClone(app.S.result.rounds);
     app.reviewRefill(); app.ready(); app.press(); app.advance(45); app.release(); app.settle();
-    app.sip(45); app.sip(45);
+    for (let round = 1; round < count; round++) app.sip(45);
     assert.equal(app.S.state, 'result', theme.id + ': refill gives a full new review round');
-    assert.equal(app.S.result.rounds.length, 3);
+    assert.equal(app.S.result.rounds.length, count);
     assert.notDeepEqual(structuredClone(app.S.result.rounds), firstReview, 'review feedback reflects the actual new pours');
     assert.equal(app.S.result.counts, false);
   }
