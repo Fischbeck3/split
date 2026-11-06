@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-09T13:07:09.314Z",
+  "generatedAt": "2026-11-06T19:24:03.025Z",
   "title": "Design System: Split",
   "extensions": {
     "colorMeta": {
@@ -586,7 +586,7 @@
   ],
   "narrative": {
     "northStar": "One sip. A place you remember.",
-    "overview": "Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place: an old Irish pub, a beach palapa in Cabo, or an Oktoberfest tent in Munich. The interface gives it a short destination, one clear target, and an easy way to start. A visible lift, tip, and return make the sip legible before its settled line supplies the score. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub carries aged oak, a fireplace, and amber light; Cabo carries palapa shade, turquoise water, and a distant rocky headland; Munich carries timber roof ribs, warm lamps, blue and white bunting, and communal tables. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn.\n\nThe scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed WebP assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.",
+    "overview": "Split pairs a familiar drink with the memory of sharing it with friends. The oversized canvas vessel sits in a painted place. The opening three travel from an old Irish pub to a Roman café table and a Tokyo izakaya. Challenges from November 2, 2026 offer four fresh pours of one glass and target: Sober, Tipsy, Drunk, then Blackout; earlier dates retain three. A visible lift, tip, and return make each sip legible. The rounded average supplies the result, and the best real sip supplies the postcard’s stopping line. The incumbent Fraunces and Karla pairing, Split wordmark, and illustrated glass remain the common identity across days.\n\nThe pub carries aged oak, a fireplace, and amber light; Rome carries warm stone and café tables at sunset; Tokyo carries rain-lit lanterns and a little wooden counter. Later days visit Munich's timber roof ribs and communal tables, The Hog’s Head's crooked beams, candles, and mounted boar's head, and Cabo's palapa shade and turquoise water. Small distant figures suggest company while leaving the central glass clear. The same place travels into a paper postcard with a destination title, the actual stopping line, and an invitation for a friend to take a turn. The six developed places remain the automatic fallback set. The 146-glass review catalog preserves its original 82 positions, followed by Lantern maze Guinness, 32 NFL stadium cups, and 31 December holiday entries. It contains fifteen travel previews, eight Halloween settings, fifteen autumn variations, fifteen Christmas/winter variations, seven Thanksgiving previews, three Hanukkah previews, fourteen entirely new Christmas previews, the NFL collection, and the December holiday entries alongside the original six. The eight Halloween nights extend the same painted-place identity with five colored beers and distinct seasonal prints, plus three settings for the familiar Guinness pint. The autumn variations make slight changes to weather, foliage, light, and clothing in existing non-holiday places while retaining their original glasses, marks, and pours. The fifteen saved Christmas/winter variations return to the same bases with local festive details and winter weather. Thanksgiving adds seven gatherings with two Guinness pints and five seasonal prints; three Hanukkah gatherings carry their own rituals. The Christmas fortnight presents fourteen newly painted places, with four Guinness settings and ten other familiar beers, in two seven-scene weeks followed by those three Hanukkah gatherings. That earlier Christmas fortnight request assigned no daily dates; its original branded foregrounds remain in its gallery. The subsequent all-December collection adds six festive cup designs across six new paintings and 25 reused Christmas/winter paintings, with a separate December entry for each date. NFL adds one live logo cup and one illustrated stadium or landmark memory per team, led by the 49ers at Candlestick Park. Calendar version 7 retains 16 November NFL assignments and replaces all 15 earlier December NFL assignments with the 31-day holiday collection. Fourteen November dates remain unplanned. Lantern maze is assigned to October 24; the original October 25–31 order, all earlier daily dates, and released seeds remain intact.\n\nThe scenery is illustrative travel art, not a photograph or a claim about a specific venue. Self-hosted compressed scene assets provide the atmosphere; the vessel, liquid, marks, and feedback remain live canvas geometry. A table anchor keeps the place consistent across screen sizes and exports, and the original vector backdrop remains available if an asset fails to load.",
     "keyCharacteristics": [
       "A large, unobscured vessel is the focal point.",
       "The place changes the palette, painted backdrop, vessel, and postcard together.",
@@ -612,8 +612,13 @@
         "section": "typography"
       },
       {
+        "name": "The Aim Rule",
+        "body": "The glass carries compact, recognizable brand artwork without permanent aiming arrows. A thin, contrasting dashed line briefly reveals the exact scored height on each fresh glass/attempt: 1.6 seconds visible, then a 300ms fade. Reduced motion shows a static cue for 1.9 seconds; starting the drink clears it immediately. Opening How to play repeats the intro cue. The line and logo share the vessel coordinate system; exported postcards omit the animated cue and retain their existing MARK/STOP guides. The Guinness glass uses its full serif wordmark and gold harp, adapted from the public Guinness brand SVG and spaced to match the VinePair pint reference. Its filled G crossbar top (source y=64.336) anchors exactly to the scored line; the full print scales to fit the tapered glass. Game, motion review, and postcard await the same self-hosted decoded print. Corona uses a five-tip jeweled crown; Bavaria a lozenge shield; Sapporo a gold star; Peroni a red wordmark with blue ribbons; Butterbeer a quartered Hogwarts-style school crest with four animal silhouettes and a central H. Its HOGWARTS caption uses visible glyph bounds to center the ink inside the enlarged top parchment, typeset at 11.2px before scaling into the crest. The H crossbar remains centered at crest y=0. The same artwork appears in concepts and postcards. Preserve released `markY`, `markH`, scoring tolerance, scores, and links when refining these marks.",
+        "section": "shapes"
+      },
+      {
         "name": "The Same Challenge Rule",
-        "body": "Postcards and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain #dayN and never count toward the daily record. Use the centralized public address from site/js/config.js. The launch date is fixed at 2026-10-09; changing it later would renumber existing challenges.",
+        "body": "Postcards and text shares retain the challenge date, so opening a result later preserves its glass and pour. Preview shares retain `#dayN` and never count toward the daily record. Use the centralized public address from `site/js/config.js`. The launch date is fixed at `2026-10-09`; changing it later would renumber existing challenges.",
         "section": "components"
       }
     ],
@@ -622,18 +627,18 @@
       "Do give each new place a coherent palette, recognizable vessel, short target, and matching destination postcard.",
       "Do keep the vessel and mark visible between the heading and controls at both normal and short phone heights.",
       "Do preserve the drained amount while tilting the rendered liquid, and wait for both drink and motion to settle before scoring.",
-      "Do show the real settled beer line, mark guide, score out of 100, and one-row position strip in shares.",
+      "Do show the average score out of 100, the best real sip's settled beer line and named score, and all three labeled scores and position strips in completed-round shares.",
       "Do label preview, archive, and practice results on both image and text shares, preserving whether an archived result was previously saved.",
-      "Do preserve the challenge date in shares and offer a clear route back to today’s glass from an archive.",
+      "Do preserve the challenge date in shares and offer a clear route back to today's glass from an archive.",
       "Do keep travel scenery illustrative, with a clear central vessel and the same table anchor in play and export.",
       "Do use foreground ink for focus and active preview text, retain the reduced-motion treatment, and expose the selected share text for manual copying when automatic copying fails.",
       "Do make the primary share action send the compact text result immediately, keeping postcard download an explicit secondary action."
     ],
     "donts": [
       "Don't let scenery, printed brand names, bunting, headings, or controls obscure the scoring mark.",
-      "Don't represent the five-cell position strip as attempts or a multi-row guessing history.",
+      "Don't represent the five cells within a position strip as separate attempts; each labeled row belongs to one actual sip.",
       "Don't express a score as an accuracy percentage; offset percentages measure mark height.",
-      "Don't replace a player's first daily score with a later practice sip.",
+      "Don't replace a player's completed daily three-sip average with a later practice round.",
       "Don't save archive or preview sips, or renumber shared challenges by moving the launch date after release.",
       "Don't introduce external font requests when the shipped font files already provide the required weights."
     ]
