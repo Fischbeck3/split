@@ -38,6 +38,12 @@ export function getPublishedEntry(date, plan = CALENDAR){
 }
 export function getCampaignForDate(date, plan = CALENDAR, {includeDrafts = false} = {}){
   if (!isDateKey(date)) return null;
+  const entry = includeDrafts ? plan.drafts[date] || plan.days[date] : plan.days[date];
+  if (entry){
+    const campaign = plan.campaigns[entry.campaignId];
+    return campaign && (includeDrafts || campaign.status === 'published') && date >= campaign.startDate && date <= campaign.endDate
+      ? {id:entry.campaignId, ...campaign} : null;
+  }
   for (const [id, campaign] of Object.entries(plan.campaigns)){
     if ((includeDrafts || campaign.status === 'published') && date >= campaign.startDate && date <= campaign.endDate){
       return {id, ...campaign};
@@ -206,7 +212,7 @@ export function createCalendarFeed({startDate, endDate, plan = CALENDAR, resolve
       entry ? 'Scheduled theme. Built and approved.' : 'Automatic rotation. Unplanned date; this fallback is not a reviewed theme assignment.',
       campaign ? campaign.name + ' (' + entry.campaignId + ').' : '', theme.vessel ? 'Glass: ' + theme.vessel + '.' : '',
       theme.scene ? 'Place: ' + theme.scene + '.' : '', entry?.occasion ? entry.occasion.title + '\n' + entry.occasion.detail +
-        '\nMatchup checked ' + entry.occasion.checkedAt + '. NFL flex scheduling may change the game date or broadcast. Stadium artwork recalls fan memories, not necessarily the game venue.\nSource: ' + entry.occasion.sourceUrl : '',
+        (entry.themeId.startsWith('nfl-') ? '\nMatchup checked ' + entry.occasion.checkedAt + '. NFL flex scheduling may change the game date or broadcast. Stadium artwork recalls fan memories, not necessarily the game venue.' : '\nOccasion checked ' + entry.occasion.checkedAt + '.') + '\nSource: ' + entry.occasion.sourceUrl : '',
       draft?.notes || '', 'The link opens an unsaved preview.'].filter(Boolean).join('\n');
     event({uid:'split-' + date + '@dailysplit.us', start:date, end:addDateDays(date, 1),
       summary:(draft ? 'Draft · ' + readiness.label + ' · ' : !entry ? 'Unplanned fallback · ' : '') + 'Split #' + String(number).padStart(3, '0') + ' · ' + (theme.name || theme.id) + ' · ' + (theme.label || theme.id) +

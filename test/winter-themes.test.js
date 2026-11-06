@@ -36,11 +36,9 @@ test('fifteen winter seats retain the review order and leave automatic fallbacks
   assert.equal(winterCatalog.length,58);assert.equal(new Set(winterCatalog.map(t=>t.id)).size,58);
   assert.deepEqual(winterCatalog.slice(-15).map(t=>t.id),WINTER_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
-  assert.equal(CALENDAR_THEMES.length,56);assert.ok(CALENDAR_THEMES.every(t=>!WINTER_THEME_IDS.includes(t.id)));
   assert.equal(WINTER_GUINNESS_IDS.length,5);assert.equal(WINTER_BASE_IDS.includes('guinness-chicago'),false);
   for (let day=1;day<=730;day++){
     assert.ok(THEMES.includes(themeForDay(day,{...CALENDAR,days:{}})),'seasonal artwork reached an automatic day '+day);
-    assert.ok(!WINTER_THEME_IDS.includes(themeForDay(day).id),'winter artwork acquired a published date '+day);
   }
   for (const id of WINTER_THEME_IDS){
     const theme=themeById(id),review=readThemeReview(reviewHash(id));

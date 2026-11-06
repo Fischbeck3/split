@@ -36,11 +36,9 @@ test('fourteen new Christmas seats retain the review order and leave automatic f
   assert.equal(originalCatalog.length,82);assert.equal(new Set(originalCatalog.map(t=>t.id)).size,82);
   assert.deepEqual(originalCatalog.slice(-14).map(t=>t.id),CHRISTMAS_THEME_IDS);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
-  assert.equal(CALENDAR_THEMES.length,56);assert.ok(CALENDAR_THEMES.every(t=>!CHRISTMAS_THEME_IDS.includes(t.id)));
   assert.equal(CHRISTMAS_GUINNESS_IDS.length,4);assert.equal(CHRISTMAS_BASE_IDS.includes('guinness-chicago'),false);
   for (let day=1;day<=730;day++){
     assert.ok(THEMES.includes(themeForDay(day,{...CALENDAR,days:{}})),'seasonal artwork reached an automatic day '+day);
-    assert.ok(!CHRISTMAS_THEME_IDS.includes(themeForDay(day).id),'Christmas artwork acquired a published date '+day);
   }
   for (const id of CHRISTMAS_THEME_IDS){
     const theme=themeById(id),review=readThemeReview(reviewHash(id));

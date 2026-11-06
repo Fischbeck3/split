@@ -236,8 +236,9 @@ function initCalendar(){
     $('selectedOccasion').hidden = !occasion;
     $('occasionTitle').textContent = occasion?.title || '';
     $('occasionDetail').textContent = occasion?.detail || '';
-    $('occasionSource').textContent = occasion ? 'Official matchup · checked ' + shortDate(occasion.checkedAt) + ' ↗' : '';
+    $('occasionSource').textContent = occasion ? (live.entry.themeId.startsWith('nfl-') ? 'Official matchup' : 'Occasion source') + ' · checked ' + shortDate(occasion.checkedAt) + ' ↗' : '';
     $('occasionSource').href = occasion?.sourceUrl || '#';
+    $('occasionNFLNote').hidden = !live.entry?.themeId.startsWith('nfl-');
     $('selectedVessel').textContent = live.theme.vessel.charAt(0).toUpperCase() + live.theme.vessel.slice(1);
     $('selectedNumber').textContent = '#' + String(keyToDayNumber(selected)).padStart(3, '0');
     $('selectedRun').textContent = campaign?.name || (live.entry ? 'Reviewed standalone day' : 'Standalone rotation');

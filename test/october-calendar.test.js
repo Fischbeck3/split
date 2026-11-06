@@ -36,11 +36,11 @@ test('Halloween fills its exact Sunday–Saturday week and Guinness returns ever
   assert.equal(CALENDAR.days['2026-10-24'].themeId,'halloween-lantern-maze');
   assert.equal(CALENDAR.days['2026-10-24'].campaignId,'halloween-2026');
   assert.equal(CALENDAR.campaigns['halloween-2026'].startDate,'2026-10-24');
-  const guinness = Object.entries(CALENDAR.days).filter(([date, entry]) => date >= '2026-10-15' && themeById(entry.themeId).name === 'Guinness').map(([date]) => keyToDayNumber(date));
+  const guinness = Object.entries(CALENDAR.days).filter(([date, entry]) => date >= '2026-10-15' && date <= '2026-10-31' && themeById(entry.themeId).name === 'Guinness').map(([date]) => keyToDayNumber(date));
   assert.equal(guinness.length, 6);
   for (let index = 1; index < guinness.length; index++) assert.ok([3, 4].includes(guinness[index] - guinness[index - 1]));
   assert.equal(themeById(CALENDAR.days['2026-10-31'].themeId).name, 'Guinness');
-  assert.ok(Object.values(CALENDAR.days).every(entry => !/chicago|sam-adams|apres-ski/.test(entry.themeId)), 'seasonally misplaced event scene was assigned');
+  assert.ok(Object.entries(CALENDAR.days).filter(([date])=>date<='2026-10-31').every(([,entry]) => !/chicago|sam-adams|apres-ski/.test(entry.themeId)), 'seasonally misplaced event scene was assigned');
 });
 
 test('calendar catalog survives CLI serialization without changing fallbacks or approving unused previews', async () => {

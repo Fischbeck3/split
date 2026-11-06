@@ -1,0 +1,737 @@
+{
+  "immutableThrough": "2026-11-07",
+  "calendar": {
+    "version": 6,
+    "updatedAt": "2026-10-24T14:06:06.000Z",
+    "days": {
+      "2026-10-09": {
+        "themeId": "pub",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-10": {
+        "themeId": "peroni",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-11": {
+        "themeId": "sapporo",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-12": {
+        "themeId": "munich",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-13": {
+        "themeId": "butterbeer",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-14": {
+        "themeId": "beach",
+        "campaignId": "opening-2026"
+      },
+      "2026-10-15": {
+        "themeId": "autumn-guinness-dublin",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-16": {
+        "themeId": "autumn-pilsner-prague",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-17": {
+        "themeId": "autumn-sierra-high-sierras",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-18": {
+        "themeId": "autumn-pub",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-19": {
+        "themeId": "autumn-heineken-amsterdam",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-20": {
+        "themeId": "autumn-stella-brussels",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-21": {
+        "themeId": "autumn-guinness-london",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-22": {
+        "themeId": "autumn-carlsberg-copenhagen",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-23": {
+        "themeId": "autumn-estrella-barcelona",
+        "campaignId": "autumn-2026"
+      },
+      "2026-10-24": {
+        "themeId": "halloween-lantern-maze",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-25": {
+        "themeId": "halloween-pumpkin-porch",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-26": {
+        "themeId": "halloween-ghost-stories",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-27": {
+        "themeId": "halloween-witching-hour",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-28": {
+        "themeId": "halloween-ravens-rest",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-29": {
+        "themeId": "halloween-vampires-toast",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-30": {
+        "themeId": "halloween-midnight-carnival",
+        "campaignId": "halloween-2026"
+      },
+      "2026-10-31": {
+        "themeId": "halloween-last-orders",
+        "campaignId": "halloween-2026"
+      },
+      "2026-11-01": {
+        "themeId": "nfl-commanders",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Eagles at Commanders · SNF",
+          "detail": "Sunday Night Football pairs NFC East rivals.",
+          "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-02": {
+        "themeId": "nfl-seahawks",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Bears at Seahawks · MNF",
+          "detail": "Monday Night Football brings Chicago to Seattle.",
+          "sourceUrl": "https://www.seahawks.com/news/seahawks-2026-schedule-announced-highlighted-by-christmas-night-game",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-05": {
+        "themeId": "nfl-jaguars",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Jaguars at Ravens · TNF",
+          "detail": "Jacksonville gets the Thursday Night Football spotlight in Baltimore.",
+          "sourceUrl": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-08": {
+        "themeId": "nfl-raiders",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Raiders at 49ers · Rivalry",
+          "detail": "The former Bay Area neighbors meet again; the Raiders cup recalls Oakland.",
+          "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-09": {
+        "themeId": "nfl-vikings",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Bills at Vikings · MNF",
+          "detail": "Minnesota hosts Buffalo on Monday Night Football.",
+          "sourceUrl": "https://www.vikings.com/news/nfl-schedule-2026-preview-colts-lions-bills-packers",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-12": {
+        "themeId": "nfl-giants",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Commanders at Giants · TNF",
+          "detail": "An NFC East rivalry in the Thursday Night Football window.",
+          "sourceUrl": "https://www.giants.com/news/nfl-schedule-2026-new-york-giants-tickets-information-cowboys-eagles-commanders",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-15": {
+        "themeId": "nfl-bengals",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Steelers at Bengals · SNF",
+          "detail": "The Steelers–Bengals AFC North rivalry gets Sunday Night Football.",
+          "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-16": {
+        "themeId": "nfl-ravens",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Chargers at Ravens · MNF",
+          "detail": "Baltimore hosts the Chargers on Monday Night Football.",
+          "sourceUrl": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-19": {
+        "themeId": "nfl-texans",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Colts at Texans · TNF",
+          "detail": "AFC South rivals meet on Thursday Night Football.",
+          "sourceUrl": "https://www.houstontexans.com/schedule/",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-22": {
+        "themeId": "nfl-49ers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Vikings at 49ers · SNF",
+          "detail": "The 49ers and Vikings meet in Mexico City on Sunday Night Football. The cup scene recalls Candlestick Park.",
+          "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-23": {
+        "themeId": "nfl-commanders",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Bengals at Commanders · MNF",
+          "detail": "Washington hosts Cincinnati on Monday Night Football.",
+          "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-25": {
+        "themeId": "nfl-rams",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Packers at Rams · Thanksgiving Eve",
+          "detail": "The Thanksgiving Eve standalone game pairs the Rams and Packers.",
+          "sourceUrl": "https://www.packers.com/news/packers-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-26": {
+        "themeId": "nfl-cowboys",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Eagles at Cowboys · Thanksgiving",
+          "detail": "The Cowboys–Eagles rivalry anchors the Thanksgiving afternoon feature.",
+          "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-27": {
+        "themeId": "nfl-steelers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Broncos at Steelers · Black Friday",
+          "detail": "Pittsburgh hosts Denver in the standalone Black Friday game.",
+          "sourceUrl": "https://www.steelers.com/news/steelers-release-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-29": {
+        "themeId": "nfl-49ers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Seahawks at 49ers · Rivalry",
+          "detail": "The Seahawks–49ers NFC West rivalry takes priority over the night game.",
+          "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-11-30": {
+        "themeId": "nfl-panthers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Panthers at Buccaneers · MNF",
+          "detail": "A Carolina–Tampa Bay divisional meeting on Monday Night Football.",
+          "sourceUrl": "https://www.buccaneers.com/news/how-to-watch-buccaneers-vs-panthers-week-12-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-03": {
+        "themeId": "nfl-chiefs",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Chiefs at Rams · TNF",
+          "detail": "Kansas City visits the Rams on Thursday Night Football.",
+          "sourceUrl": "https://www.chiefs.com/news/here-s-a-look-at-the-chiefs-prime-time-slate-in-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-06": {
+        "themeId": "nfl-browns",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Bengals at Browns · Rivalry",
+          "detail": "The Battle of Ohio puts the Browns cup on a Bengals–Browns rivalry day.",
+          "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-07": {
+        "themeId": "nfl-seahawks",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Cowboys at Seahawks · MNF",
+          "detail": "Seattle hosts Dallas on Monday Night Football.",
+          "sourceUrl": "https://www.seahawks.com/news/seahawks-2026-schedule-announced-highlighted-by-christmas-night-game",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-10": {
+        "themeId": "nfl-patriots",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Vikings at Patriots · TNF",
+          "detail": "New England hosts Minnesota on Thursday Night Football.",
+          "sourceUrl": "https://www.patriots.com/news/patriots-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-13": {
+        "themeId": "nfl-packers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Bills at Packers · SNF",
+          "detail": "Buffalo visits Lambeau Field for Sunday Night Football.",
+          "sourceUrl": "https://www.packers.com/news/packers-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-14": {
+        "themeId": "nfl-jaguars",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Steelers at Jaguars · MNF",
+          "detail": "Jacksonville hosts Pittsburgh on Monday Night Football.",
+          "sourceUrl": "https://www.steelers.com/news/steelers-release-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-17": {
+        "themeId": "nfl-chargers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "49ers at Chargers · TNF",
+          "detail": "The Chargers host San Francisco in the Thursday Night Football window.",
+          "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-19": {
+        "themeId": "nfl-eagles",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Seahawks at Eagles · Saturday feature",
+          "detail": "The Saturday standalone afternoon game brings Seattle to Philadelphia.",
+          "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-20": {
+        "themeId": "nfl-lions",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Lions at Vikings · SNF",
+          "detail": "The Lions–Vikings NFC North rivalry gets Sunday Night Football.",
+          "sourceUrl": "https://www.detroitlions.com/news/lions-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-21": {
+        "themeId": "nfl-chiefs",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Patriots at Chiefs · MNF",
+          "detail": "Kansas City hosts New England on Monday Night Football.",
+          "sourceUrl": "https://www.chiefs.com/news/here-s-a-look-at-the-chiefs-prime-time-slate-in-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-24": {
+        "themeId": "nfl-eagles",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Texans at Eagles · Christmas Eve",
+          "detail": "Philadelphia hosts Houston in the Christmas Eve Thursday night game.",
+          "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-25": {
+        "themeId": "nfl-bears",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Packers at Bears · Christmas rivalry",
+          "detail": "The Packers–Bears rivalry is the Christmas Day choice, with the Bears cup at Soldier Field.",
+          "sourceUrl": "https://www.packers.com/news/packers-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-27": {
+        "themeId": "nfl-49ers",
+        "campaignId": "none",
+        "occasion": {
+          "title": "49ers at Chiefs · Super Bowl rematch",
+          "detail": "The 49ers–Chiefs meeting recalls their recent Super Bowl matchups and takes priority over the night game.",
+          "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-28": {
+        "themeId": "nfl-giants",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Giants at Lions · MNF",
+          "detail": "The Giants visit Detroit on Monday Night Football.",
+          "sourceUrl": "https://www.detroitlions.com/news/lions-announce-2026-schedule",
+          "checkedAt": "2026-10-24"
+        }
+      },
+      "2026-12-31": {
+        "themeId": "nfl-bengals",
+        "campaignId": "none",
+        "occasion": {
+          "title": "Ravens at Bengals · New Year’s Eve",
+          "detail": "Ravens–Bengals closes the year with an AFC North rivalry on Thursday night.",
+          "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+          "checkedAt": "2026-10-24"
+        }
+      }
+    },
+    "drafts": {},
+    "campaigns": {
+      "opening-2026": {
+        "name": "Opening lineup",
+        "startDate": "2026-10-09",
+        "endDate": "2026-10-14",
+        "status": "published",
+        "notes": "The six approved opening glasses."
+      },
+      "autumn-2026": {
+        "name": "Autumn rounds",
+        "startDate": "2026-10-15",
+        "endDate": "2026-10-23",
+        "status": "published",
+        "notes": "Autumn pub and café evenings, with a Sierra camp on Saturday. Guinness on October 15, 18, and 21. Seasonal settings, without claiming a dated local event."
+      },
+      "halloween-2026": {
+        "name": "Halloween week",
+        "startDate": "2026-10-24",
+        "endDate": "2026-10-31",
+        "status": "published",
+        "notes": "Eight finished Halloween themes, starting with Lantern maze Guinness on October 24, then the original Sunday–Saturday lineup. Raven’s Rest Guinness on October 28 and Last orders Guinness on October 31. The four-day gap after October 24 keeps the opening three Halloween nights together."
+      }
+    }
+  },
+  "snapshots": {
+    "2026-10-09": {
+      "num": 1,
+      "key": "2026-10-09",
+      "theme": "pub",
+      "markY": 0.6336473895981908,
+      "markH": 0.10183376568136737,
+      "K": 0.16028254496864974,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-10": {
+      "num": 2,
+      "key": "2026-10-10",
+      "theme": "peroni",
+      "markY": 0.5663179596420377,
+      "markH": 0.12,
+      "K": 0.1561537075182423,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-11": {
+      "num": 3,
+      "key": "2026-10-11",
+      "theme": "sapporo",
+      "markY": 0.5226813578151632,
+      "markH": 0.12,
+      "K": 0.1159373656474054,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-12": {
+      "num": 4,
+      "key": "2026-10-12",
+      "theme": "munich",
+      "markY": 0.5053066613525152,
+      "markH": 0.19762092594988645,
+      "K": 0.13169651078991593,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-13": {
+      "num": 5,
+      "key": "2026-10-13",
+      "theme": "butterbeer",
+      "markY": 0.5629532196151558,
+      "markH": 0.135,
+      "K": 0.12857423663139345,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-14": {
+      "num": 6,
+      "key": "2026-10-14",
+      "theme": "beach",
+      "markY": 0.5980367915751412,
+      "markH": 0.08945404598489404,
+      "K": 0.1268917262274772,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-15": {
+      "num": 7,
+      "key": "2026-10-15",
+      "theme": "autumn-guinness-dublin",
+      "markY": 0.5380221837759018,
+      "markH": 0.10206367511069403,
+      "K": 0.14331513894256204,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-16": {
+      "num": 8,
+      "key": "2026-10-16",
+      "theme": "autumn-pilsner-prague",
+      "markY": 0.5632665079110302,
+      "markH": 0.13,
+      "K": 0.11251924959011377,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-17": {
+      "num": 9,
+      "key": "2026-10-17",
+      "theme": "autumn-sierra-high-sierras",
+      "markY": 0.5321701479097828,
+      "markH": 0.14,
+      "K": 0.13052694466896356,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-18": {
+      "num": 10,
+      "key": "2026-10-18",
+      "theme": "autumn-pub",
+      "markY": 0.595425559617579,
+      "markH": 0.11813091810094192,
+      "K": 0.14211933137383312,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-19": {
+      "num": 11,
+      "key": "2026-10-19",
+      "theme": "autumn-heineken-amsterdam",
+      "markY": 0.5629892417695374,
+      "markH": 0.13,
+      "K": 0.13673938325606289,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-20": {
+      "num": 12,
+      "key": "2026-10-20",
+      "theme": "autumn-stella-brussels",
+      "markY": 0.4158991432935,
+      "markH": 0.135,
+      "K": 0.11649251204449684,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-21": {
+      "num": 13,
+      "key": "2026-10-21",
+      "theme": "autumn-guinness-london",
+      "markY": 0.535927512422204,
+      "markH": 0.11169659153791145,
+      "K": 0.14792037216946483,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-22": {
+      "num": 14,
+      "key": "2026-10-22",
+      "theme": "autumn-carlsberg-copenhagen",
+      "markY": 0.563793716286309,
+      "markH": 0.13,
+      "K": 0.14254014063160866,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-23": {
+      "num": 15,
+      "key": "2026-10-23",
+      "theme": "autumn-estrella-barcelona",
+      "markY": 0.5772726556088309,
+      "markH": 0.13,
+      "K": 0.15683541970327497,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-24": {
+      "num": 16,
+      "key": "2026-10-24",
+      "theme": "halloween-lantern-maze",
+      "markY": 0.5169139776751399,
+      "markH": 0.1251404585177079,
+      "K": 0.1250462079094723,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-25": {
+      "num": 17,
+      "key": "2026-10-25",
+      "theme": "halloween-pumpkin-porch",
+      "markY": 0.5538234836584889,
+      "markH": 0.14,
+      "K": 0.16583347832318396,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-26": {
+      "num": 18,
+      "key": "2026-10-26",
+      "theme": "halloween-ghost-stories",
+      "markY": 0.5320355434622616,
+      "markH": 0.14,
+      "K": 0.1654425635980442,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-27": {
+      "num": 19,
+      "key": "2026-10-27",
+      "theme": "halloween-witching-hour",
+      "markY": 0.5601012807211373,
+      "markH": 0.15,
+      "K": 0.11286955140996724,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-28": {
+      "num": 20,
+      "key": "2026-10-28",
+      "theme": "halloween-ravens-rest",
+      "markY": 0.5007609593123198,
+      "markH": 0.11041316583985464,
+      "K": 0.158231681548059,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-29": {
+      "num": 21,
+      "key": "2026-10-29",
+      "theme": "halloween-vampires-toast",
+      "markY": 0.4469915615115315,
+      "markH": 0.135,
+      "K": 0.12058862009085715,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-30": {
+      "num": 22,
+      "key": "2026-10-30",
+      "theme": "halloween-midnight-carnival",
+      "markY": 0.5414190432883333,
+      "markH": 0.15,
+      "K": 0.13862893282901495,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-10-31": {
+      "num": 23,
+      "key": "2026-10-31",
+      "theme": "halloween-last-orders",
+      "markY": 0.6127506794780493,
+      "markH": 0.11645291197812185,
+      "K": 0.12312195732723921,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-01": {
+      "num": 24,
+      "key": "2026-11-01",
+      "theme": "nfl-commanders",
+      "markY": 0.565020466952119,
+      "markH": 0.19,
+      "K": 0.1588265589764342,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-02": {
+      "num": 25,
+      "key": "2026-11-02",
+      "theme": "nfl-seahawks",
+      "markY": 0.5680344692966901,
+      "markH": 0.19,
+      "K": 0.1532587754679844,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-03": {
+      "num": 26,
+      "key": "2026-11-03",
+      "theme": "beach",
+      "markY": 0.5280332458717749,
+      "markH": 0.08615797414910048,
+      "K": 0.1311474415101111,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-04": {
+      "num": 27,
+      "key": "2026-11-04",
+      "theme": "munich",
+      "markY": 0.5233546512015164,
+      "markH": 0.17803959518671036,
+      "K": 0.12341493950225413,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-05": {
+      "num": 28,
+      "key": "2026-11-05",
+      "theme": "nfl-jaguars",
+      "markY": 0.5456547478283755,
+      "markH": 0.19,
+      "K": 0.1434892475558445,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-06": {
+      "num": 29,
+      "key": "2026-11-06",
+      "theme": "munich",
+      "markY": 0.5744959093537182,
+      "markH": 0.19045440972782673,
+      "K": 0.16826175846159458,
+      "wobble": 0,
+      "choppy": false
+    },
+    "2026-11-07": {
+      "num": 30,
+      "key": "2026-11-07",
+      "theme": "pub",
+      "markY": 0.5178083018213511,
+      "markH": 0.10833298539277167,
+      "K": 0.13373258777894081,
+      "wobble": 0,
+      "choppy": false
+    }
+  }
+}
