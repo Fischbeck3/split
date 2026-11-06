@@ -1,0 +1,47 @@
+{
+  "id": "december-midnight",
+  "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the BOTTOM-RIGHT New Year's Eve neighborhood bar environment of the board. Warm festive neighborhood bar with deep midnight-blue windows, a beautiful Christmas tree still glowing at rear left, warm hanging Christmas lights along the ceiling and window frames, and a vintage round wall clock in the upper right with hands close to midnight. The clock uses simple tiny hour tick marks only, NO numerals or writing. A few small adult friends in the middle distance chatting in an intimate celebration, antique gold light, dark blue night, red ornaments and polished dark wood. A few elegant curled gold ribbons may hang far in background but NONE on the foreground table. No champagne, no foreground vessel, no bottles or glassware. The mandatory broad lower 40% is completely empty warm wood tabletop from straight horizontal rear edge at 60% height all the way to bottom. Detailed material texture, inviting painted travel postcard atmosphere.",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-c5b2f99e-0d23-4c96-b2b7-d0353d6a89d8.png",
+  "referencedImagePaths": [
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+    "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+  ],
+  "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-midnight.webp",
+  "dimensions": {
+    "width": 1024,
+    "height": 1536
+  },
+  "tabletop": 0.5533854166666666,
+  "tabletopMeasurement": {
+    "rearEdgeY": 850,
+    "imageHeight": 1536,
+    "fraction": 0.5533854166666666,
+    "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+    "estimatedUncertaintyPixels": 3
+  },
+  "framing": "table",
+  "exportSettings": {
+    "format": "WebP",
+    "colorMode": "RGB",
+    "quality": 88,
+    "method": 6,
+    "opaque": true,
+    "resized": false,
+    "cropped": false,
+    "sourcePreserved": true
+  },
+  "fileSizeBytes": 474804,
+  "validation": {
+    "foregroundEmpty": true,
+    "foregroundVesselAbsent": true,
+    "litDecoratedChristmasTreeVisible": true,
+    "stringLightsVisible": true,
+    "adultFriendsBehindTable": true,
+    "reviewedVisually": true
+  },
+  "notes": "Clock uses hour marks and a natural 12 numeral; no branding, caption or UI."
+}
+

@@ -1,7 +1,11 @@
+import {DECEMBER_READINESS} from './december-readiness.js';
+import {DECEMBER_THEME_IDS} from './december-themes.js';
+
 // A catalog glass is not automatically a finished, approved theme. Approvals
 // record the owner's release request and the verified scene, glass, and share card.
 // The October selections are documented in docs/content/october-2026.md.
 export const THEME_READINESS = Object.freeze({
+  ...DECEMBER_READINESS,
   pub: Object.freeze({scene:'pub', approval:'opening-2026', artworkSha256:'567d095e8fd66a90bed98052d8cfb08ec4f2c7ac2a66ad050029a934858bceca'}),
   peroni: Object.freeze({scene:'rome', approval:'opening-2026', artworkSha256:'77fb5b8009238c7d82a0a4013ebeb24aaa88b7b0f9d05d6d6bfced7a59b8b7e7'}),
   sapporo: Object.freeze({scene:'tokyo', approval:'opening-2026', artworkSha256:'4ff26a8f550860bd39ed709cd8cc4194f5b8bda371f2e0d64532f234a7da4bde'}),
@@ -63,6 +67,7 @@ export const THEME_READINESS = Object.freeze({
 // Reusing an approved glass does not approve a new holiday campaign. Each run
 // needs its own content review and an explicit list of approved themes.
 export const CAMPAIGN_READINESS = Object.freeze({
+  'december-2026':Object.freeze({approval:'docs/content/december-2026.md',themeIds:DECEMBER_THEME_IDS}),
   'opening-2026': Object.freeze({approval:'DESIGN.md: Selected six-day lineup',
     themeIds:Object.freeze(['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach'])}),
   'autumn-2026': Object.freeze({approval:'docs/content/october-2026.md: Autumn rounds',

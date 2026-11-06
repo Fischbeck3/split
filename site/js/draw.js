@@ -12,12 +12,19 @@ import {AUTUMN_BASE_IDS} from './autumn-themes.js';
 import {WINTER_BASE_IDS} from './winter-themes.js';
 import {CHRISTMAS_BASE_IDS} from './christmas-themes.js';
 import {NFL_SCENE_TABLES} from './nfl-scene-tables.js';
+import {drawFestivePrint} from './festive-print.js';
+import {DECEMBER_FEATURE_IDS} from './december-themes.js';
+import {DECEMBER_SCENE_TABLES} from './december-scene-tables.js';
 
-export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS, ...HOLIDAY_THEME_IDS, ...CHRISTMAS_THEME_IDS, ...NFL_THEME_IDS];
-export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull', 'turkey', 'football', 'wishbone', 'pie', 'dreidel', 'jam', 'team'];
+export const SCENES = ['pub', 'beach', 'munich', 'bar', 'tokyo', 'hogsmeade', 'rome', ...PREVIEW_THEME_IDS, ...HALLOWEEN_THEME_IDS, ...AUTUMN_THEME_IDS, ...WINTER_THEME_IDS, ...HOLIDAY_THEME_IDS, ...CHRISTMAS_THEME_IDS, ...NFL_THEME_IDS, ...DECEMBER_FEATURE_IDS];
+export const MARKS = ['letter', 'crown', 'crest', 'star', 'apple', 'shamrock', 'hop', 'bean', 'leaf', 'pumpkin', 'ghost', 'cauldron', 'bat', 'skull', 'turkey', 'football', 'wishbone', 'pie', 'dreidel', 'jam', 'team', 'fir', 'bauble'];
 const SERIF = 'Fraunces, "Playfair Display", Georgia, serif';
 const SANS = 'Karla, sans-serif';
 export const SCENE_ART = {
+  ...Object.fromEntries(DECEMBER_FEATURE_IDS.map(id=>[id,{
+    url:new URL('../assets/scenes/'+id+'.webp',import.meta.url).href,
+    table:DECEMBER_SCENE_TABLES[id],framing:'table',fallback:'pub'
+  }])),
   pub: {url: new URL('../assets/scenes/irish-pub.webp', import.meta.url).href, table: .606},
   beach: {url: new URL('../assets/scenes/cabo-beach.webp', import.meta.url).href, table: .627},
   munich: {url: new URL('../assets/scenes/munich-oktoberfest.webp', import.meta.url).href, table: .636},
@@ -722,6 +729,9 @@ export function drawScene(c, {G, w, h, L, theme, P, rollDeg = 0, now = 0, bubble
   c.restore();
   drawVesselFront(c, G, theme);
   drawGlassMaterial(c, G, theme);
+  if (theme.festivePrint){
+    c.save(); glassPath(c, G); c.clip(); drawFestivePrint(c, G, P, theme); c.restore();
+  }
   drawTarget(c, G, P, theme, targetHint);
   c.restore();
 }
