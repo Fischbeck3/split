@@ -11,6 +11,8 @@ import {winterThemePreviews} from './winter-themes.js';
 import {holidayThemePreviews} from './holiday-themes.js';
 import {christmasThemePreviews} from './christmas-themes.js';
 import {nflThemePreviews} from './nfl-themes.js';
+import {decemberThemes} from './december-themes.js';
+export {DECEMBER_THEME_IDS} from './december-themes.js';
 export {NFL_THEME_IDS} from './nfl-themes.js';
 export {PREVIEW_THEME_IDS} from './theme-expansion.js';
 export {HALLOWEEN_THEME_IDS} from './halloween-themes.js';
@@ -105,3 +107,5 @@ THEMES.push(...holidayThemePreviews(THEMES[0]));
 THEMES.push(...christmasThemePreviews(THEMES));
 THEMES.push(halloweenThemePreviews(THEMES[0]).find(theme=>theme.id==='halloween-lantern-maze'));
 THEMES.push(...nflThemePreviews());
+
+THEMES.push(...decemberThemes(THEMES));

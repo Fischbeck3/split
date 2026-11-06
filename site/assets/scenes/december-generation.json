@@ -1,0 +1,279 @@
+[
+  {
+    "id": "december-local",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the TOP-LEFT Irish Christmas pub environment of the board. A traditional dark-oak Irish neighborhood pub, carved wood panels and brass lamp glow, lush evergreen garlands threaded with tiny warm fairy lights, a small cheerful group of adult friends chatting near an open hearth in the middle distance. A beautifully decorated Christmas tree is clearly visible at rear right, lit with tiny gold lights and red baubles. Oak stools and warm pools of light provide depth. Restrained forest green, cranberry, stout-dark brown and warm brass. Foreground is the mandatory broad empty oak tabletop; above its straight rear edge, the room feels lived in and intimate. No bottles or glasses in the room; shelves may carry unlettered framed pictures and pottery shapes only far in background, avoiding drink-like vessels.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-f92aea68-d0e5-43bd-b9e1-044945428441.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-local.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.55078125,
+    "tabletopMeasurement": {
+      "rearEdgeY": 846,
+      "imageHeight": 1536,
+      "fraction": 0.55078125,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 458254,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": ""
+  },
+  {
+    "id": "december-market",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the TOP-MIDDLE European Christmas market environment of the board. Blue-hour outdoors in a beautiful old European town square; steep rooftops and a modest distant church spire, snowy wooden market stalls with amber glowing windows, abundant warm festoon Christmas lights strung overhead. A tall fully decorated glowing Christmas tree at rear right is a clear focal point. Small adult friends in wool coats chat in the middle distance beside stalls. Cool winter-blue evening air and light snow along rooftops, warm amber windows and cranberry ornaments. Snow belongs to the background, never on the foreground table. A protected outdoor wooden standing table spans the foreground in mandatory geometry; completely empty warm oak with soft reflected festival lights. No readable signs, vendor labels, drinks, cups or food on the table.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-f7fa5632-e87d-490c-857c-6f52ee26ee1c.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-market.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.5533854166666666,
+    "tabletopMeasurement": {
+      "rearEdgeY": 850,
+      "imageHeight": 1536,
+      "fraction": 0.5533854166666666,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 539284,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": ""
+  },
+  {
+    "id": "december-lodge",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the TOP-RIGHT Colorado ski-lodge environment of the board. A handsome timber lodge with high rafters, a tall picture window showing Colorado snowy mountain peaks at late afternoon, and a stone hearth with a warm glowing fire at left. A fully decorated illuminated Christmas tree stands at rear right; warm Christmas lights and garlands run along timber beams. A few small adult friends in winter sweaters relax in leather chairs in the middle distance. Beautiful honey timber, winter blue through the window, cranberry wool cushions, brass lamp glow. Believable roomy lodge architecture, textured stone and wood. Mandatory wholly empty broad wood tabletop at bottom 40%; keep the hearth, tree, furnishings and friends behind its straight rear edge.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-41c0ab18-e977-40be-8589-80e46aece788.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-lodge.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.5533854166666666,
+    "tabletopMeasurement": {
+      "rearEdgeY": 850,
+      "imageHeight": 1536,
+      "fraction": 0.5533854166666666,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 562518,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": ""
+  },
+  {
+    "id": "december-game-day",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the BOTTOM-LEFT Christmas football watch-party environment of the board. An inviting lived-in home with a soft sofa and worn upholstered armchairs, Christmas garlands, multicolor old-fashioned string bulbs across the upper wall and a clear, bright decorated Christmas tree at right. A few small adult friends wear generic navy, cream and red winter sweaters, seated well behind the foreground table. A modest distant wall-mounted TV shows only an indistinct green American-football field and tiny generic player marks: no legible scoreboard, no team logos, no names, no text. Television is secondary, Christmas immediately obvious. Warm brown wood, cranberry plaid, pine green, nostalgic multicolor bulbs. Mandatory large empty wooden table spans all of the lower 40%, with no snacks, cups, objects, hands, decorations or vessels on it.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-8f198c14-2daa-478e-b50f-ceba88e9ec95.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-game-day.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.5677083333333334,
+    "tabletopMeasurement": {
+      "rearEdgeY": 872,
+      "imageHeight": 1536,
+      "fraction": 0.5677083333333334,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 428114,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": "Generic TV football field includes yard-line marks; no team names, logos or scoreboard."
+  },
+  {
+    "id": "december-desert",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the BOTTOM-MIDDLE warm-climate Christmas environment of the board. A snow-free adobe courtyard at warm sunset edging into violet twilight, distant rugged desert mountains visible through a stucco arch. Terracotta walls, a few citrus branches with oranges at upper left, delicate glowing paper star lanterns and strings of warm Christmas bulbs overhead. A small fully decorated Christmas tree with red-and-gold ornaments and glowing lights stands beside the stucco arch. A low fire bowl with a modest glowing flame is far behind the foreground table, with a small group of adult friends in light sweaters chatting beyond it. Terracotta, soft sunset rose, dusk violet, evergreen and cranberry. No snow anywhere. Detailed stucco and wood, believable perspective. Mandatory completely empty broad wooden table spanning the lower 40%, straight rear edge at 60% image height; all fire, plants, people and decoration remain well behind that rear edge.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-9435bfda-1d79-46ee-bfd9-5d5e52b21dd6.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-desert.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.5859375,
+    "tabletopMeasurement": {
+      "rearEdgeY": 900,
+      "imageHeight": 1536,
+      "fraction": 0.5859375,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 500952,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": "Snow-free adobe courtyard with paper stars, warm sunset and distant desert mountains."
+  },
+  {
+    "id": "december-midnight",
+    "prompt": "Use case: stylized-concept. Asset type: PRODUCTION BACKGROUND PAINTING for a portrait daily game. Generate one new original scene, a single full-bleed 2:3 PORTRAIT image, 1024 pixels wide by 1536 pixels high. Reference image 1 is an approved six-panel concept board: use ONLY the designated panel's environment, atmosphere, and warm realistic gouache / colored-pencil travel-postcard style, NEVER its glass, labels, borders, or board layout. Reference images 2 and 3 show the game's empty-table composition and richly painted natural materials. These are style and composition REFERENCES, not edit targets. Create new art; do not crop, collage, or reproduce a board panel.\n\nMANDATORY COMPOSITION: The bottom 40% of the image is ONE wholly EMPTY warm wood tabletop spanning the entire image width. The straight, perfectly horizontal REAR EDGE of this tabletop lies at exactly 60% of the image height (y approximately 920 of 1536), from left edge to right edge. All the wood from y=920 through bottom is clear, uninterrupted table surface, carefully painted grain and subtle reflections only. No table legs visible. Table seen naturally from slightly above; believable perspective. Center 30%-70% width is clear for a separately rendered game vessel. The upper 60% holds the gathering and architecture, with small adult friends well behind the foreground table; no close-up portrait, no people leaning onto the foreground table. Table height and framing are crucial game geometry.\n\nALL SCENES must include a clearly visible decorated Christmas tree with glowing lights and red/gold ornaments, AND strings of holiday lights across architecture or overhead. Warm inviting realistic painted gouache with subtle colored-pencil surface texture; rich tactile natural materials and convincing depth; not a photograph, not vector art, not a loose abstract sketch. Follow the approved postcard aesthetic.\n\nABSOLUTE EXCLUSIONS: NO foreground glass, NO cup, NO mug, NO chalice, NO drink, NO bottle, NO vessel of any kind on or above the foreground table. No plates, coasters, candles, ribbons, greenery, confetti, presents or other objects on the foreground table. No branding, logos, writing, labels, watermark, typography, letters, captions, game UI, borders, frames or collage. No extra panels. Keep every item and decoration BEHIND the clear table.\n\nScene: Reinterpret the BOTTOM-RIGHT New Year's Eve neighborhood bar environment of the board. Warm festive neighborhood bar with deep midnight-blue windows, a beautiful Christmas tree still glowing at rear left, warm hanging Christmas lights along the ceiling and window frames, and a vintage round wall clock in the upper right with hands close to midnight. The clock uses simple tiny hour tick marks only, NO numerals or writing. A few small adult friends in the middle distance chatting in an intimate celebration, antique gold light, dark blue night, red ornaments and polished dark wood. A few elegant curled gold ribbons may hang far in background but NONE on the foreground table. No champagne, no foreground vessel, no bottles or glassware. The mandatory broad lower 40% is completely empty warm wood tabletop from straight horizontal rear edge at 60% height all the way to bottom. Detailed material texture, inviting painted travel postcard atmosphere.",
+    "tool": "built-in image_gen",
+    "mode": "generate",
+    "generatedPath": "/Users/fischbeck3/.codex/generated_images/01a1b23e-4c8e-7272-8ed7-59bf799259cb/exec-c5b2f99e-0d23-4c96-b2b7-d0353d6a89d8.png",
+    "referencedImagePaths": [
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/outputs/december-holiday-board/december-holiday-design-board.png",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-guinness-home-tree.webp",
+      "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/christmas-coors-sleigh-lodge.webp"
+    ],
+    "outputPath": "/Users/fischbeck3/Documents/ChatGPT/Daily Split/work/split-december/site/assets/scenes/december-midnight.webp",
+    "dimensions": {
+      "width": 1024,
+      "height": 1536
+    },
+    "tabletop": 0.5533854166666666,
+    "tabletopMeasurement": {
+      "rearEdgeY": 850,
+      "imageHeight": 1536,
+      "fraction": 0.5533854166666666,
+      "method": "Visual inspection of generated image at native resolution; horizontal rear table boundary.",
+      "estimatedUncertaintyPixels": 3
+    },
+    "framing": "table",
+    "exportSettings": {
+      "format": "WebP",
+      "colorMode": "RGB",
+      "quality": 88,
+      "method": 6,
+      "opaque": true,
+      "resized": false,
+      "cropped": false,
+      "sourcePreserved": true
+    },
+    "fileSizeBytes": 474804,
+    "validation": {
+      "foregroundEmpty": true,
+      "foregroundVesselAbsent": true,
+      "litDecoratedChristmasTreeVisible": true,
+      "stringLightsVisible": true,
+      "adultFriendsBehindTable": true,
+      "reviewedVisually": true
+    },
+    "notes": "Clock uses hour marks and a natural 12 numeral; no branding, caption or UI."
+  }
+]
+

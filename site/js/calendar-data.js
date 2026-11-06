@@ -1,5 +1,6 @@
 import {NFL_THEME_IDS} from './nfl-themes.js';
 import {NFL_CALENDAR_DAYS} from './nfl-calendar.js';
+import {DECEMBER_THEME_IDS,DECEMBER_CALENDAR_DAYS} from './december-themes.js';
 
 // Published dates choose the live glass. Drafts only appear in the planning calendar.
 // Keep the legacy lists fixed so new themes cannot reroll old automatic challenges.
@@ -15,13 +16,14 @@ export const CALENDAR_THEME_IDS = Object.freeze([
   'autumn-carlsberg-copenhagen', 'autumn-estrella-barcelona', 'autumn-guinness-edinburgh',
   'halloween-pumpkin-porch', 'halloween-ghost-stories', 'halloween-witching-hour',
   'halloween-ravens-rest', 'halloween-vampires-toast', 'halloween-midnight-carnival', 'halloween-last-orders', 'halloween-lantern-maze',
-  ...NFL_THEME_IDS
+  ...NFL_THEME_IDS,
+  ...DECEMBER_THEME_IDS
 ]);
 
 export const CALENDAR = {
   // October 15–31 uses the reviewed autumn and Halloween scenes.
-  version: 6,
-  updatedAt: '2026-10-24T14:06:06.000Z',
+  version: 7,
+  updatedAt: '2026-11-06T19:00:00.000Z',
   days: {
     '2026-10-09': {themeId: 'pub', campaignId: 'opening-2026'},
     '2026-10-10': {themeId: 'peroni', campaignId: 'opening-2026'},
@@ -46,10 +48,12 @@ export const CALENDAR = {
     '2026-10-29': {themeId: 'halloween-vampires-toast', campaignId: 'halloween-2026'},
     '2026-10-30': {themeId: 'halloween-midnight-carnival', campaignId: 'halloween-2026'},
     '2026-10-31': {themeId: 'halloween-last-orders', campaignId: 'halloween-2026'},
-    ...NFL_CALENDAR_DAYS
+    ...NFL_CALENDAR_DAYS,
+    ...DECEMBER_CALENDAR_DAYS
   },
   drafts: {},
   campaigns: {
+    'december-2026': {name:'A December full of cheer',startDate:'2026-12-01',endDate:'2026-12-31',status:'published',notes:'Holiday gatherings and festive cups throughout December. Replaces the previous December NFL assignments; November is unchanged.'},
     'opening-2026': {name: 'Opening lineup', startDate: '2026-10-09', endDate: '2026-10-14', status: 'published', notes: 'The six approved opening glasses.'},
     'autumn-2026': {name: 'Autumn rounds', startDate: '2026-10-15', endDate: '2026-10-23', status: 'published', notes: 'Autumn pub and café evenings, with a Sierra camp on Saturday. Guinness on October 15, 18, and 21. Seasonal settings, without claiming a dated local event.'},
     'halloween-2026': {name: 'Halloween week', startDate: '2026-10-24', endDate: '2026-10-31', status: 'published', notes: 'Eight finished Halloween themes, starting with Lantern maze Guinness on October 24, then the original Sunday–Saturday lineup. Raven’s Rest Guinness on October 28 and Last orders Guinness on October 31. The four-day gap after October 24 keeps the opening three Halloween nights together.'}

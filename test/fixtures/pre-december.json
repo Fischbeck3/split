@@ -1,0 +1,693 @@
+{
+  "days": {
+    "2026-10-09": {
+      "themeId": "pub",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-10": {
+      "themeId": "peroni",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-11": {
+      "themeId": "sapporo",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-12": {
+      "themeId": "munich",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-13": {
+      "themeId": "butterbeer",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-14": {
+      "themeId": "beach",
+      "campaignId": "opening-2026"
+    },
+    "2026-10-15": {
+      "themeId": "autumn-guinness-dublin",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-16": {
+      "themeId": "autumn-pilsner-prague",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-17": {
+      "themeId": "autumn-sierra-high-sierras",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-18": {
+      "themeId": "autumn-pub",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-19": {
+      "themeId": "autumn-heineken-amsterdam",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-20": {
+      "themeId": "autumn-stella-brussels",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-21": {
+      "themeId": "autumn-guinness-london",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-22": {
+      "themeId": "autumn-carlsberg-copenhagen",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-23": {
+      "themeId": "autumn-estrella-barcelona",
+      "campaignId": "autumn-2026"
+    },
+    "2026-10-24": {
+      "themeId": "halloween-lantern-maze",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-25": {
+      "themeId": "halloween-pumpkin-porch",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-26": {
+      "themeId": "halloween-ghost-stories",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-27": {
+      "themeId": "halloween-witching-hour",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-28": {
+      "themeId": "halloween-ravens-rest",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-29": {
+      "themeId": "halloween-vampires-toast",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-30": {
+      "themeId": "halloween-midnight-carnival",
+      "campaignId": "halloween-2026"
+    },
+    "2026-10-31": {
+      "themeId": "halloween-last-orders",
+      "campaignId": "halloween-2026"
+    },
+    "2026-11-01": {
+      "themeId": "nfl-commanders",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Eagles at Commanders \u00b7 SNF",
+        "detail": "Sunday Night Football pairs NFC East rivals.",
+        "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-02": {
+      "themeId": "nfl-seahawks",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Bears at Seahawks \u00b7 MNF",
+        "detail": "Monday Night Football brings Chicago to Seattle.",
+        "sourceUrl": "https://www.seahawks.com/news/seahawks-2026-schedule-announced-highlighted-by-christmas-night-game",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-05": {
+      "themeId": "nfl-jaguars",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Jaguars at Ravens \u00b7 TNF",
+        "detail": "Jacksonville gets the Thursday Night Football spotlight in Baltimore.",
+        "sourceUrl": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-08": {
+      "themeId": "nfl-raiders",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Raiders at 49ers \u00b7 Rivalry",
+        "detail": "The former Bay Area neighbors meet again; the Raiders cup recalls Oakland.",
+        "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-09": {
+      "themeId": "nfl-vikings",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Bills at Vikings \u00b7 MNF",
+        "detail": "Minnesota hosts Buffalo on Monday Night Football.",
+        "sourceUrl": "https://www.vikings.com/news/nfl-schedule-2026-preview-colts-lions-bills-packers",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-12": {
+      "themeId": "nfl-giants",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Commanders at Giants \u00b7 TNF",
+        "detail": "An NFC East rivalry in the Thursday Night Football window.",
+        "sourceUrl": "https://www.giants.com/news/nfl-schedule-2026-new-york-giants-tickets-information-cowboys-eagles-commanders",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-15": {
+      "themeId": "nfl-bengals",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Steelers at Bengals \u00b7 SNF",
+        "detail": "The Steelers\u2013Bengals AFC North rivalry gets Sunday Night Football.",
+        "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-16": {
+      "themeId": "nfl-ravens",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Chargers at Ravens \u00b7 MNF",
+        "detail": "Baltimore hosts the Chargers on Monday Night Football.",
+        "sourceUrl": "https://www.baltimoreravens.com/news/baltimore-ravens-2026-schedule",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-19": {
+      "themeId": "nfl-texans",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Colts at Texans \u00b7 TNF",
+        "detail": "AFC South rivals meet on Thursday Night Football.",
+        "sourceUrl": "https://www.houstontexans.com/schedule/",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-22": {
+      "themeId": "nfl-49ers",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Vikings at 49ers \u00b7 SNF",
+        "detail": "The 49ers and Vikings meet in Mexico City on Sunday Night Football. The cup scene recalls Candlestick Park.",
+        "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-23": {
+      "themeId": "nfl-commanders",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Bengals at Commanders \u00b7 MNF",
+        "detail": "Washington hosts Cincinnati on Monday Night Football.",
+        "sourceUrl": "https://www.bengals.com/news/bengals-2026-season-schedule-announced",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-25": {
+      "themeId": "nfl-rams",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Packers at Rams \u00b7 Thanksgiving Eve",
+        "detail": "The Thanksgiving Eve standalone game pairs the Rams and Packers.",
+        "sourceUrl": "https://www.packers.com/news/packers-announce-2026-schedule",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-26": {
+      "themeId": "nfl-cowboys",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Eagles at Cowboys \u00b7 Thanksgiving",
+        "detail": "The Cowboys\u2013Eagles rivalry anchors the Thanksgiving afternoon feature.",
+        "sourceUrl": "https://www.philadelphiaeagles.com/news/eagles-schedule-release-2026",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-27": {
+      "themeId": "nfl-steelers",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Broncos at Steelers \u00b7 Black Friday",
+        "detail": "Pittsburgh hosts Denver in the standalone Black Friday game.",
+        "sourceUrl": "https://www.steelers.com/news/steelers-release-2026-schedule",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-29": {
+      "themeId": "nfl-49ers",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Seahawks at 49ers \u00b7 Rivalry",
+        "detail": "The Seahawks\u201349ers NFC West rivalry takes priority over the night game.",
+        "sourceUrl": "https://www.49ers.com/news/a-game-by-game-look-at-the-san-francisco-49ers-2026-schedule-release",
+        "checkedAt": "2026-10-24"
+      }
+    },
+    "2026-11-30": {
+      "themeId": "nfl-panthers",
+      "campaignId": "none",
+      "occasion": {
+        "title": "Panthers at Buccaneers \u00b7 MNF",
+        "detail": "A Carolina\u2013Tampa Bay divisional meeting on Monday Night Football.",
+        "sourceUrl": "https://www.buccaneers.com/news/how-to-watch-buccaneers-vs-panthers-week-12-2026",
+        "checkedAt": "2026-10-24"
+      }
+    }
+  },
+  "reviewIds": [
+    "pub",
+    "beach",
+    "munich",
+    "sapporo",
+    "butterbeer",
+    "peroni",
+    "guinness-dublin",
+    "guinness-london",
+    "guinness-edinburgh",
+    "guinness-new-york",
+    "guinness-chicago",
+    "heineken-amsterdam",
+    "pilsner-prague",
+    "stella-brussels",
+    "carlsberg-copenhagen",
+    "estrella-barcelona",
+    "modelo-mexico-city",
+    "sam-adams-boston",
+    "high-life-milwaukee",
+    "coors-apres-ski",
+    "sierra-high-sierras",
+    "halloween-pumpkin-porch",
+    "halloween-ghost-stories",
+    "halloween-witching-hour",
+    "halloween-ravens-rest",
+    "halloween-vampires-toast",
+    "halloween-midnight-carnival",
+    "halloween-last-orders",
+    "autumn-pub",
+    "autumn-guinness-dublin",
+    "autumn-guinness-london",
+    "autumn-guinness-edinburgh",
+    "autumn-guinness-new-york",
+    "autumn-heineken-amsterdam",
+    "autumn-pilsner-prague",
+    "autumn-stella-brussels",
+    "autumn-carlsberg-copenhagen",
+    "autumn-estrella-barcelona",
+    "autumn-modelo-mexico-city",
+    "autumn-sam-adams-boston",
+    "autumn-high-life-milwaukee",
+    "autumn-coors-apres-ski",
+    "autumn-sierra-high-sierras",
+    "winter-pub",
+    "winter-guinness-dublin",
+    "winter-guinness-london",
+    "winter-guinness-edinburgh",
+    "winter-guinness-new-york",
+    "winter-heineken-amsterdam",
+    "winter-pilsner-prague",
+    "winter-stella-brussels",
+    "winter-carlsberg-copenhagen",
+    "winter-estrella-barcelona",
+    "winter-modelo-mexico-city",
+    "winter-sam-adams-boston",
+    "winter-high-life-milwaukee",
+    "winter-coors-apres-ski",
+    "winter-sierra-high-sierras",
+    "thanksgiving-homecoming",
+    "thanksgiving-friendsgiving",
+    "thanksgiving-harvest-porch",
+    "thanksgiving-football",
+    "thanksgiving-wishbone",
+    "thanksgiving-pie-kitchen",
+    "thanksgiving-fireside",
+    "hanukkah-window-lights",
+    "hanukkah-dreidel-night",
+    "hanukkah-bakery",
+    "christmas-guinness-home-tree",
+    "christmas-pilsner-vienna-market",
+    "christmas-stella-paris-cafe",
+    "christmas-high-life-record-night",
+    "christmas-guinness-dublin-snug",
+    "christmas-heineken-amsterdam-boat",
+    "christmas-carlsberg-tivoli",
+    "christmas-guinness-london-supper",
+    "christmas-estrella-seville-patio",
+    "christmas-modelo-posada",
+    "christmas-coors-sleigh-lodge",
+    "christmas-guinness-edinburgh-train",
+    "christmas-sam-adams-boston-rooftop",
+    "christmas-sierra-high-sierras-cabin",
+    "halloween-lantern-maze",
+    "nfl-49ers",
+    "nfl-seahawks",
+    "nfl-rams",
+    "nfl-cardinals",
+    "nfl-cowboys",
+    "nfl-giants",
+    "nfl-eagles",
+    "nfl-commanders",
+    "nfl-packers",
+    "nfl-bears",
+    "nfl-lions",
+    "nfl-vikings",
+    "nfl-saints",
+    "nfl-buccaneers",
+    "nfl-falcons",
+    "nfl-panthers",
+    "nfl-bills",
+    "nfl-dolphins",
+    "nfl-jets",
+    "nfl-patriots",
+    "nfl-ravens",
+    "nfl-bengals",
+    "nfl-browns",
+    "nfl-steelers",
+    "nfl-texans",
+    "nfl-colts",
+    "nfl-jaguars",
+    "nfl-titans",
+    "nfl-chiefs",
+    "nfl-raiders",
+    "nfl-broncos",
+    "nfl-chargers"
+  ],
+  "daily": {
+    "2026-10-09": {
+      "theme": "pub",
+      "markY": 0.6336473895981908,
+      "markH": 0.10183376568136737,
+      "K": 0.16028254496864974
+    },
+    "2026-10-10": {
+      "theme": "peroni",
+      "markY": 0.5663179596420377,
+      "markH": 0.12,
+      "K": 0.1561537075182423
+    },
+    "2026-10-11": {
+      "theme": "sapporo",
+      "markY": 0.5226813578151632,
+      "markH": 0.12,
+      "K": 0.1159373656474054
+    },
+    "2026-10-12": {
+      "theme": "munich",
+      "markY": 0.5053066613525152,
+      "markH": 0.19762092594988645,
+      "K": 0.13169651078991593
+    },
+    "2026-10-13": {
+      "theme": "butterbeer",
+      "markY": 0.5629532196151558,
+      "markH": 0.135,
+      "K": 0.12857423663139345
+    },
+    "2026-10-14": {
+      "theme": "beach",
+      "markY": 0.5980367915751412,
+      "markH": 0.08945404598489404,
+      "K": 0.1268917262274772
+    },
+    "2026-10-15": {
+      "theme": "autumn-guinness-dublin",
+      "markY": 0.5380221837759018,
+      "markH": 0.10206367511069403,
+      "K": 0.14331513894256204
+    },
+    "2026-10-16": {
+      "theme": "autumn-pilsner-prague",
+      "markY": 0.5632665079110302,
+      "markH": 0.13,
+      "K": 0.11251924959011377
+    },
+    "2026-10-17": {
+      "theme": "autumn-sierra-high-sierras",
+      "markY": 0.5321701479097828,
+      "markH": 0.14,
+      "K": 0.13052694466896356
+    },
+    "2026-10-18": {
+      "theme": "autumn-pub",
+      "markY": 0.595425559617579,
+      "markH": 0.11813091810094192,
+      "K": 0.14211933137383312
+    },
+    "2026-10-19": {
+      "theme": "autumn-heineken-amsterdam",
+      "markY": 0.5629892417695374,
+      "markH": 0.13,
+      "K": 0.13673938325606289
+    },
+    "2026-10-20": {
+      "theme": "autumn-stella-brussels",
+      "markY": 0.4158991432935,
+      "markH": 0.135,
+      "K": 0.11649251204449684
+    },
+    "2026-10-21": {
+      "theme": "autumn-guinness-london",
+      "markY": 0.535927512422204,
+      "markH": 0.11169659153791145,
+      "K": 0.14792037216946483
+    },
+    "2026-10-22": {
+      "theme": "autumn-carlsberg-copenhagen",
+      "markY": 0.563793716286309,
+      "markH": 0.13,
+      "K": 0.14254014063160866
+    },
+    "2026-10-23": {
+      "theme": "autumn-estrella-barcelona",
+      "markY": 0.5772726556088309,
+      "markH": 0.13,
+      "K": 0.15683541970327497
+    },
+    "2026-10-24": {
+      "theme": "halloween-lantern-maze",
+      "markY": 0.5169139776751399,
+      "markH": 0.1251404585177079,
+      "K": 0.1250462079094723
+    },
+    "2026-10-25": {
+      "theme": "halloween-pumpkin-porch",
+      "markY": 0.5538234836584889,
+      "markH": 0.14,
+      "K": 0.16583347832318396
+    },
+    "2026-10-26": {
+      "theme": "halloween-ghost-stories",
+      "markY": 0.5320355434622616,
+      "markH": 0.14,
+      "K": 0.1654425635980442
+    },
+    "2026-10-27": {
+      "theme": "halloween-witching-hour",
+      "markY": 0.5601012807211373,
+      "markH": 0.15,
+      "K": 0.11286955140996724
+    },
+    "2026-10-28": {
+      "theme": "halloween-ravens-rest",
+      "markY": 0.5007609593123198,
+      "markH": 0.11041316583985464,
+      "K": 0.158231681548059
+    },
+    "2026-10-29": {
+      "theme": "halloween-vampires-toast",
+      "markY": 0.4469915615115315,
+      "markH": 0.135,
+      "K": 0.12058862009085715
+    },
+    "2026-10-30": {
+      "theme": "halloween-midnight-carnival",
+      "markY": 0.5414190432883333,
+      "markH": 0.15,
+      "K": 0.13862893282901495
+    },
+    "2026-10-31": {
+      "theme": "halloween-last-orders",
+      "markY": 0.6127506794780493,
+      "markH": 0.11645291197812185,
+      "K": 0.12312195732723921
+    },
+    "2026-11-01": {
+      "theme": "nfl-commanders",
+      "markY": 0.565020466952119,
+      "markH": 0.19,
+      "K": 0.1588265589764342
+    },
+    "2026-11-02": {
+      "theme": "nfl-seahawks",
+      "markY": 0.5680344692966901,
+      "markH": 0.19,
+      "K": 0.1532587754679844
+    },
+    "2026-11-03": {
+      "theme": "beach",
+      "markY": 0.5280332458717749,
+      "markH": 0.08615797414910048,
+      "K": 0.1311474415101111
+    },
+    "2026-11-04": {
+      "theme": "munich",
+      "markY": 0.5233546512015164,
+      "markH": 0.17803959518671036,
+      "K": 0.12341493950225413
+    },
+    "2026-11-05": {
+      "theme": "nfl-jaguars",
+      "markY": 0.5456547478283755,
+      "markH": 0.19,
+      "K": 0.1434892475558445
+    },
+    "2026-11-06": {
+      "theme": "munich",
+      "markY": 0.5744959093537182,
+      "markH": 0.19045440972782673,
+      "K": 0.16826175846159458
+    },
+    "2026-11-07": {
+      "theme": "pub",
+      "markY": 0.5178083018213511,
+      "markH": 0.10833298539277167,
+      "K": 0.13373258777894081
+    },
+    "2026-11-08": {
+      "theme": "nfl-raiders",
+      "markY": 0.5482258587796242,
+      "markH": 0.19,
+      "K": 0.1654986203694716
+    },
+    "2026-11-09": {
+      "theme": "nfl-vikings",
+      "markY": 0.5419391169631854,
+      "markH": 0.19,
+      "K": 0.14666290093678983
+    },
+    "2026-11-10": {
+      "theme": "munich",
+      "markY": 0.5928698483109474,
+      "markH": 0.17702663219533862,
+      "K": 0.1125928943604231
+    },
+    "2026-11-11": {
+      "theme": "pub",
+      "markY": 0.5925564293190837,
+      "markH": 0.10255737031111495,
+      "K": 0.16775974846910685
+    },
+    "2026-11-12": {
+      "theme": "nfl-giants",
+      "markY": 0.5313161043752916,
+      "markH": 0.19,
+      "K": 0.12642889672890306
+    },
+    "2026-11-13": {
+      "theme": "sapporo",
+      "markY": 0.5475894556893036,
+      "markH": 0.12,
+      "K": 0.12212477246299386
+    },
+    "2026-11-14": {
+      "theme": "munich",
+      "markY": 0.5323475916218012,
+      "markH": 0.19919245955534282,
+      "K": 0.14051905343309046
+    },
+    "2026-11-15": {
+      "theme": "nfl-bengals",
+      "markY": 0.5799393968144432,
+      "markH": 0.19,
+      "K": 0.1604621886275709
+    },
+    "2026-11-16": {
+      "theme": "nfl-ravens",
+      "markY": 0.5672168907546438,
+      "markH": 0.19,
+      "K": 0.14538129235152156
+    },
+    "2026-11-17": {
+      "theme": "sapporo",
+      "markY": 0.5277590241946746,
+      "markH": 0.12,
+      "K": 0.12335942823905498
+    },
+    "2026-11-18": {
+      "theme": "beach",
+      "markY": 0.5732092863228172,
+      "markH": 0.08966172982472925,
+      "K": 0.1357730250619352
+    },
+    "2026-11-19": {
+      "theme": "nfl-texans",
+      "markY": 0.5575616657105275,
+      "markH": 0.19,
+      "K": 0.12422227780800313
+    },
+    "2026-11-20": {
+      "theme": "munich",
+      "markY": 0.5449653211329132,
+      "markH": 0.18433109744451942,
+      "K": 0.16641556264832616
+    },
+    "2026-11-21": {
+      "theme": "peroni",
+      "markY": 0.5256811257684604,
+      "markH": 0.12,
+      "K": 0.13559252323582768
+    },
+    "2026-11-22": {
+      "theme": "nfl-49ers",
+      "markY": 0.5350133550539613,
+      "markH": 0.19,
+      "K": 0.15862165675964207
+    },
+    "2026-11-23": {
+      "theme": "nfl-commanders",
+      "markY": 0.546859238431789,
+      "markH": 0.19,
+      "K": 0.14005641793366522
+    },
+    "2026-11-24": {
+      "theme": "beach",
+      "markY": 0.5960238009737805,
+      "markH": 0.07574974739924073,
+      "K": 0.15911159136332573
+    },
+    "2026-11-25": {
+      "theme": "nfl-rams",
+      "markY": 0.5480420851684176,
+      "markH": 0.19,
+      "K": 0.13134970721323044
+    },
+    "2026-11-26": {
+      "theme": "nfl-cowboys",
+      "markY": 0.5404019828839227,
+      "markH": 0.19,
+      "K": 0.14571728580165655
+    },
+    "2026-11-27": {
+      "theme": "nfl-steelers",
+      "markY": 0.5787266024691052,
+      "markH": 0.19,
+      "K": 0.14546432669740172
+    },
+    "2026-11-28": {
+      "theme": "pub",
+      "markY": 0.5952624617516995,
+      "markH": 0.1080980930197984,
+      "K": 0.14152076660655438
+    },
+    "2026-11-29": {
+      "theme": "nfl-49ers",
+      "markY": 0.5526702974876389,
+      "markH": 0.19,
+      "K": 0.14276000817772003
+    },
+    "2026-11-30": {
+      "theme": "nfl-panthers",
+      "markY": 0.5407803322258405,
+      "markH": 0.19,
+      "K": 0.1583075685054064
+    }
+  }
+}

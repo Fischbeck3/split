@@ -13,46 +13,46 @@ const verified = JSON.parse(await readFile(new URL('../docs/content/nfl-calendar
 const phoenixDate = instant => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Phoenix',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(instant));
 const normalized = () => normalizeCalendarPlan(CALENDAR);
 
-test('every published NFL cup belongs to its verified game, on the Phoenix game date',()=>{
+test('original NFL selections retain their provenance; November remains published',()=>{
   assert.equal(verified.games.length,31);
   assert.equal(verified.timezone,'America/Phoenix');
   assert.deepEqual(Object.keys(NFL_CALENDAR_DAYS),verified.games.map(game=>game.date));
   for(const game of verified.games){
-    const entry=getPublishedEntry(game.date),team=NFL_TEAMS.find(team=>team.id===entry.themeId);
+    const entry=NFL_CALENDAR_DAYS[game.date],team=NFL_TEAMS.find(team=>team.id===entry.themeId);
     assert.equal(phoenixDate(game.kickoffUtc),game.date,game.eventId);
     assert.ok([game.away,game.home].includes(team.team),game.date+' features a team that is not playing');
     assert.equal(entry.themeId,game.themeId);
     assert.equal(entry.occasion.sourceUrl,game.officialSource);
     assert.equal(entry.occasion.checkedAt,verified.checkedAt);
     assert.equal(contentReadiness(entry).ready,true);
-    assert.equal(dayParams(keyToDayNumber(game.date)).theme.id,entry.themeId);
+    if(game.date<'2026-12-01'){
+      assert.deepEqual(getPublishedEntry(game.date),entry);
+      assert.equal(dayParams(keyToDayNumber(game.date)).theme.id,entry.themeId);
+    }
     assert.equal(entry.campaignId,'none');
-    assert.equal(getCalendarAttribution(game.date,themeById(entry.themeId)).campaign_id,'none');
+    if(game.date<'2026-12-01') assert.equal(getCalendarAttribution(game.date,themeById(entry.themeId)).campaign_id,'none');
   }
   assert.deepEqual(validateCalendarPlan(CALENDAR,{now:'2026-10-24T17:00:00Z'}),normalized());
 });
 
-test('holiday and rivalry anchors use actual fixtures while remaining dates stay unplanned',()=>{
+test('November holiday and rivalry anchors remain while unassigned November dates stay unplanned',()=>{
   for(const [date,id,title] of [
     ['2026-11-15','nfl-bengals','Steelers at Bengals'],
     ['2026-11-26','nfl-cowboys','Eagles at Cowboys'],
     ['2026-11-29','nfl-49ers','Seahawks at 49ers'],
-    ['2026-11-30','nfl-panthers','Panthers at Buccaneers'],
-    ['2026-12-06','nfl-browns','Bengals at Browns'],
-    ['2026-12-25','nfl-bears','Packers at Bears'],
-    ['2026-12-31','nfl-bengals','Ravens at Bengals']
+    ['2026-11-30','nfl-panthers','Panthers at Buccaneers']
   ]){
     assert.equal(CALENDAR.days[date].themeId,id);
     assert.ok(CALENDAR.days[date].occasion.title.startsWith(title));
   }
   let unplanned=0;
-  for(let date='2026-11-01';date<='2026-12-31';date=addDateDays(date,1)){
+  for(let date='2026-11-01';date<='2026-11-30';date=addDateDays(date,1)){
     if(!Object.hasOwn(NFL_CALENDAR_DAYS,date)){
       assert.equal(getPublishedEntry(date),null);
       unplanned++;
     }
   }
-  assert.equal(unplanned,30);
+  assert.equal(unplanned,14);
   assert.equal(getPublishedEntry('2027-01-01'),null);
 });
 
@@ -70,8 +70,8 @@ test('occasion provenance survives export, promotion and all-day subscription fe
   assert.match(events[0],/Matchup checked 2026-10-24/);
   assert.match(events[0],/Source: https/);
   assert.match(events[1],/DTSTART;VALUE=DATE:20261130\r\nDTEND;VALUE=DATE:20261201/);
-  assert.match(events[2],/Unplanned fallback/);
-  assert.match(events[2],/STATUS:TENTATIVE/);
+  assert.match(events[2],/Market lights/);
+  assert.match(events[2],/STATUS:CONFIRMED/);
   assert.ok(!events[2].includes('Matchup checked'));
   const entry=getPublishedEntry('2026-11-29');entry.occasion.title='Changed';
   assert.ok(CALENDAR.days['2026-11-29'].occasion.title.startsWith('Seahawks'));

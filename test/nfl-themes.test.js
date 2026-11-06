@@ -17,7 +17,7 @@ test('all 32 distinct NFL teams retain built review cups and the fixed fallback 
   for(const division of NFL_DIVISIONS) assert.equal(NFL_TEAMS.filter(team=>team.division===division).length,4);
   assert.equal(NFL_TEAMS.find(team=>team.id==='nfl-49ers').label,'Candlestick Park');
   assert.deepEqual(ROTATION_IDS,['pub','beach','munich','sapporo','butterbeer','peroni']);
-  assert.equal(REVIEW_THEMES.length,115);
+  assert.equal(REVIEW_THEMES.filter(t=>t.seasonal!=='december').length,115);
   assert.equal(REVIEW_THEMES[81].id,'christmas-sierra-high-sierras-cabin');
   assert.equal(REVIEW_THEMES[82].id,'halloween-lantern-maze');
   for(const id of NFL_THEME_IDS){

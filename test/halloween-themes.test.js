@@ -30,7 +30,7 @@ function canvas(){
 }
 
 test('the eight Halloween themes retain their review week and preserve the automatic six and travel fifteen',()=>{
-  const nonAutumn=REVIEW_THEMES.filter(t=>!['autumn','winter','thanksgiving','hanukkah','christmas','nfl'].includes(t.seasonal));
+  const nonAutumn=REVIEW_THEMES.filter(t=>!['autumn','winter','thanksgiving','hanukkah','christmas','nfl','december'].includes(t.seasonal));
   assert.equal(HALLOWEEN_THEME_IDS.length,8);assert.equal(PREVIEW_THEME_IDS.length,15);assert.equal(nonAutumn.length,29);
   assert.equal(new Set(nonAutumn.map(t=>t.id)).size,29);
   assert.deepEqual(THEMES.map(t=>t.id),['pub','beach','munich','sapporo','butterbeer','peroni']);
