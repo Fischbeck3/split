@@ -32,7 +32,7 @@ test('every published NFL cup belongs to its verified game, on the Phoenix game 
   assert.deepEqual(validateCalendarPlan(CALENDAR,{now:'2026-10-24T17:00:00Z'}),normalized());
 });
 
-test('holiday and rivalry anchors use actual fixtures while remaining dates stay unplanned',()=>{
+test('holiday and rivalry anchors preserve their actual fixtures alongside reviewed seasonal dates',()=>{
   for(const [date,id,title] of [
     ['2026-11-15','nfl-bengals','Steelers at Bengals'],
     ['2026-11-26','nfl-cowboys','Eagles at Cowboys'],
@@ -47,12 +47,12 @@ test('holiday and rivalry anchors use actual fixtures while remaining dates stay
   }
   let unplanned=0;
   for(let date='2026-11-01';date<='2026-12-31';date=addDateDays(date,1)){
-    if(!Object.hasOwn(NFL_CALENDAR_DAYS,date)){
+    if(['2026-11-03','2026-11-04','2026-11-06','2026-11-07'].includes(date)){
       assert.equal(getPublishedEntry(date),null);
       unplanned++;
     }
   }
-  assert.equal(unplanned,30);
+  assert.equal(unplanned,4);
   assert.equal(getPublishedEntry('2027-01-01'),null);
 });
 
@@ -70,8 +70,8 @@ test('occasion provenance survives export, promotion and all-day subscription fe
   assert.match(events[0],/Matchup checked 2026-10-24/);
   assert.match(events[0],/Source: https/);
   assert.match(events[1],/DTSTART;VALUE=DATE:20261130\r\nDTEND;VALUE=DATE:20261201/);
-  assert.match(events[2],/Unplanned fallback/);
-  assert.match(events[2],/STATUS:TENTATIVE/);
+  assert.match(events[2],/Dublin Christmas gathering/);
+  assert.match(events[2],/STATUS:CONFIRMED/);
   assert.ok(!events[2].includes('Matchup checked'));
   const entry=getPublishedEntry('2026-11-29');entry.occasion.title='Changed';
   assert.ok(CALENDAR.days['2026-11-29'].occasion.title.startsWith('Seahawks'));

@@ -2,6 +2,25 @@
 // record the owner's release request and the verified scene, glass, and share card.
 // The October selections are documented in docs/content/october-2026.md.
 export const THEME_READINESS = Object.freeze({
+  'thanksgiving-friendsgiving': Object.freeze({scene:'thanksgiving-friendsgiving', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'6c5fae97d09700acf65f420cf659ddd7c3017e389471b71b30c732fe78eb4aea'}),
+  'thanksgiving-homecoming': Object.freeze({scene:'thanksgiving-homecoming', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'eb09b752b650e0d9bc65fee1f18a8a0f6a4c1cfcfc5e7548145205a0d635344d'}),
+  'thanksgiving-fireside': Object.freeze({scene:'thanksgiving-fireside', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'d4b43dd9a706fe6015594663f26e1f7dd9a45555f26181f7f234f76e1dff9aa2'}),
+  'winter-guinness-dublin': Object.freeze({scene:'winter-guinness-dublin', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'074116bb70e7cf80023d628293ac47093bde528426886e5f2e11929adbc90b0c'}),
+  'winter-heineken-amsterdam': Object.freeze({scene:'winter-heineken-amsterdam', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'63435fab95e523928160f59a2691c3f95257d9ee957740b8d2ae615e01c0ca40'}),
+  'hanukkah-window-lights': Object.freeze({scene:'hanukkah-window-lights', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'a156744d3dd202f035826ae54c5e3218b255b510a8380792b09bec63dee1decf'}),
+  'winter-pilsner-prague': Object.freeze({scene:'winter-pilsner-prague', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'6a557bd436d06bc271e38bed6a57419bf2aec3b3b15b90a01ab8d86a9f11f764'}),
+  'winter-guinness-edinburgh': Object.freeze({scene:'winter-guinness-edinburgh', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'69ca87ac240a298603c18101102c37a61b5e65feabf50f235d9e43ed6cdf9f78'}),
+  'christmas-pilsner-vienna-market': Object.freeze({scene:'christmas-pilsner-vienna-market', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'e1e560549667a758d7ce52ccf0e416ea1262632d7b77dbb95a9d10f6b28a3b7d'}),
+  'hanukkah-bakery': Object.freeze({scene:'hanukkah-bakery', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'85560fef8a14d3a26e0516647ab77d50db65916be18329e9a9bddd817a05a590'}),
+  'christmas-guinness-home-tree': Object.freeze({scene:'christmas-guinness-home-tree', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'e2f3dfcb71016f797ef109a0778ff87abbec85e82771779b89026d7c2e0c1d90'}),
+  'christmas-guinness-dublin-snug': Object.freeze({scene:'christmas-guinness-dublin-snug', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'cc3139887401969391ed63772f4154ce5227045f697727faee1ceadbbffb18e0'}),
+  'christmas-modelo-posada': Object.freeze({scene:'christmas-modelo-posada', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'bdabe237c3f67e785ce1403b272238bb15af723e5137f48bbe4bbccc9bdf13cd'}),
+  'christmas-guinness-london-supper': Object.freeze({scene:'christmas-guinness-london-supper', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'ec2121f43aa3511405493f49e3432c61ea997cd195d0eeff1292f7b47cf7ac28'}),
+  'winter-guinness-london': Object.freeze({scene:'winter-guinness-london', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'6e6ee4bc8b05db5d04681f477aa107fa9e5bb50da3abdb856b4bd1c89508b2f5'}),
+  'christmas-stella-paris-cafe': Object.freeze({scene:'christmas-stella-paris-cafe', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'9e1e24ba2d08fbd92890136b4ad8112a87eb14b0579b0b93f1a3cd8439a6a232'}),
+  'christmas-guinness-edinburgh-train': Object.freeze({scene:'christmas-guinness-edinburgh-train', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'48bb68f85d41e3767e5d152d6317a155e214b81a1ec15cda44d0712acaa556c1'}),
+  'winter-guinness-new-york': Object.freeze({scene:'winter-guinness-new-york', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'63406e3c70fa3ed61a896ebb2bc65b749ce60cf648d428cfd18bef6e62d9d533'}),
+  'christmas-high-life-record-night': Object.freeze({scene:'christmas-high-life-record-night', approval:'docs/content/seasonal-calendar-2026.md', artworkSha256:'75d28a40bcc259eb6fb4a1878c72cecf0a563535248e94e3241293fb1ec55c1f'}),
   pub: Object.freeze({scene:'pub', approval:'opening-2026', artworkSha256:'567d095e8fd66a90bed98052d8cfb08ec4f2c7ac2a66ad050029a934858bceca'}),
   peroni: Object.freeze({scene:'rome', approval:'opening-2026', artworkSha256:'77fb5b8009238c7d82a0a4013ebeb24aaa88b7b0f9d05d6d6bfced7a59b8b7e7'}),
   sapporo: Object.freeze({scene:'tokyo', approval:'opening-2026', artworkSha256:'4ff26a8f550860bd39ed709cd8cc4194f5b8bda371f2e0d64532f234a7da4bde'}),
@@ -63,6 +82,14 @@ export const THEME_READINESS = Object.freeze({
 // Reusing an approved glass does not approve a new holiday campaign. Each run
 // needs its own content review and an explicit list of approved themes.
 export const CAMPAIGN_READINESS = Object.freeze({
+  'november-autumn-2026': Object.freeze({approval:'docs/content/seasonal-calendar-2026.md: November autumn evenings',
+    themeIds:Object.freeze(["autumn-guinness-dublin","autumn-stella-brussels","autumn-pilsner-prague","autumn-guinness-edinburgh","autumn-guinness-london","autumn-carlsberg-copenhagen","autumn-pub"])}),
+  'thanksgiving-gatherings-2026': Object.freeze({approval:'docs/content/seasonal-calendar-2026.md: Thanksgiving gatherings',
+    themeIds:Object.freeze(["thanksgiving-friendsgiving","thanksgiving-homecoming","thanksgiving-fireside"])}),
+  'december-lights-2026': Object.freeze({approval:'docs/content/seasonal-calendar-2026.md: December lights',
+    themeIds:Object.freeze(["winter-guinness-dublin","winter-heineken-amsterdam","hanukkah-window-lights","winter-pilsner-prague","winter-guinness-edinburgh","christmas-pilsner-vienna-market","hanukkah-bakery"])}),
+  'christmas-gatherings-2026': Object.freeze({approval:'docs/content/seasonal-calendar-2026.md: Christmas gatherings',
+    themeIds:Object.freeze(["christmas-guinness-home-tree","christmas-guinness-dublin-snug","christmas-modelo-posada","christmas-guinness-london-supper","winter-guinness-london","christmas-stella-paris-cafe","christmas-guinness-edinburgh-train","winter-guinness-new-york","christmas-high-life-record-night"])}),
   'opening-2026': Object.freeze({approval:'DESIGN.md: Selected six-day lineup',
     themeIds:Object.freeze(['pub', 'peroni', 'sapporo', 'munich', 'butterbeer', 'beach'])}),
   'autumn-2026': Object.freeze({approval:'docs/content/october-2026.md: Autumn rounds',
